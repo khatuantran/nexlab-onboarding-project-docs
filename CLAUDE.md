@@ -71,7 +71,23 @@ Examples:
 
 ## Tech-stack specifics
 
-*(Will be filled after Step 3 when ADR-001-tech-stack lands. Until then, defer on lint/test/build command specifics.)*
+Full rationale: [.specs/adr/ADR-001-tech-stack.md](.specs/adr/ADR-001-tech-stack.md). Absolute minimum an AI must know working in this repo:
+
+- **Package manager**: `pnpm` (NOT npm / yarn). `pnpm install`, `pnpm add -w <pkg>` for root, `pnpm --filter @onboarding/<app> add <pkg>` for per-app.
+- **Monorepo**: `apps/web` (React+Vite), `apps/api` (Express), `packages/shared` (Zod schemas + TS types). Shared schemas — **reuse**, don't redefine on FE or BE.
+- **Language**: TypeScript strict. No `any` without a comment explaining why.
+- **Tests**: Vitest (unit), Playwright (E2E). Run with `pnpm test` / `pnpm test:watch` / `pnpm test:e2e`.
+- **Lint/format**: `pnpm lint` and `pnpm format`. Both must pass before commit (enforced by husky pre-commit).
+- **Typecheck**: `pnpm typecheck` (root). Must pass.
+- **API conventions**:
+  - Base URL: `/api/v1/...`
+  - Errors: `{ error: { code, message, details? } }` + correct HTTP status.
+  - Validation: Zod at every route boundary.
+  - Auth: session cookie `sid` (httpOnly). Session store = Redis via `connect-redis`.
+- **DB**: Drizzle ORM. Schema in `apps/api/src/db/schema.ts`. Migrations in `apps/api/src/db/migrations/` — **never hand-edit committed migration files**; run `pnpm db:generate` to produce new migration after schema change.
+- **Env**: `.env.local` at repo root (gitignored). Template in `.env.example`.
+
+When in doubt about a tech choice, read ADR-001 first. If the question isn't covered and is architectural, propose **ADR-002** rather than silently deciding.
 
 ---
 

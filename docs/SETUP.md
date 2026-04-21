@@ -1,0 +1,291 @@
+# Local Setup Guide
+
+> **Trạng thái**: 🎯 **Target setup** — đây là state cuối cùng sau khi các task của US-001 hoàn thành (Bước 6). Hiện tại chưa có code chạy được. Dùng tài liệu này làm "hợp đồng" giữa SDD spec và implementation.
+>
+> Mỗi mục có nhãn: ✅ `works now` · 🟡 `pending (task T-N)` · ⏳ `v2`. Hiện tại tất cả đều 🟡 vì chưa có code.
+
+---
+
+## 1. Prerequisites ✅
+
+Cài các tool sau trên máy dev (kiểm version sau dấu `|`):
+
+| Tool | Version tối thiểu | Verify |
+|---|---|---|
+| Node.js | 20.x LTS | `node -v` |
+| pnpm | 9.x | `pnpm -v` |
+| Docker Desktop (hoặc Docker Engine) | 24+ | `docker -v` |
+| Docker Compose v2 | 2.20+ | `docker compose version` |
+| Git | 2.40+ | `git -v` |
+
+Khuyến nghị (optional):
+- **nvm** để quản lý Node version.
+- **direnv** để auto-load `.env.local` (không bắt buộc).
+
+---
+
+## 2. Clone & install 🟡 (pending T1)
+
+```bash
+git clone <repo-url> nexlab-onboarding-project-docs
+cd nexlab-onboarding-project-docs
+pnpm install
+```
+
+Sau `pnpm install`, cấu trúc workspace:
+
+```
+apps/
+  web/         # React + Vite
+  api/         # Express
+packages/
+  shared/      # TS types, Zod schemas
+```
+
+---
+
+## 3. Environment variables 🟡 (pending T1)
+
+Copy template rồi điền:
+
+```bash
+cp .env.example .env.local
+```
+
+Biến môi trường tối thiểu:
+
+```dotenv
+# Web
+VITE_API_BASE_URL=http://localhost:3001/api/v1
+
+# API
+API_PORT=3001
+NODE_ENV=development
+DATABASE_URL=postgresql://dev:dev@localhost:5432/onboardingdb
+REDIS_URL=redis://localhost:6379
+SESSION_SECRET=change-me-to-random-long-string
+SESSION_COOKIE_NAME=sid
+COOKIE_SECURE=false
+LOG_LEVEL=debug
+```
+
+**Không commit `.env.local`** — đã có trong `.gitignore`.
+
+---
+
+## 4. Start infrastructure 🟡 (pending T8)
+
+```bash
+docker compose up -d postgres redis
+```
+
+Verify:
+
+```bash
+docker compose ps
+# postgres   Up (healthy)
+# redis      Up (healthy)
+```
+
+Smoke test Postgres:
+
+```bash
+docker compose exec postgres psql -U dev -d onboardingdb -c "select 1;"
+```
+
+Smoke test Redis:
+
+```bash
+docker compose exec redis redis-cli ping
+# PONG
+```
+
+---
+
+## 5. Database migration 🟡 (pending T3)
+
+Tạo schema:
+
+```bash
+pnpm --filter @onboarding/api db:migrate
+```
+
+Hoặc từ root:
+
+```bash
+pnpm db:migrate
+```
+
+Lệnh này chạy `drizzle-kit migrate` với `DATABASE_URL` từ `.env.local`.
+
+Xem schema snapshot hiện tại:
+
+```bash
+pnpm db:check
+```
+
+---
+
+## 6. Seed data 🟡 (pending T4)
+
+Seed 1 project + 1 feature đầy đủ 5 section để US-001 có data để demo:
+
+```bash
+pnpm db:seed
+```
+
+Kết quả mong đợi (console):
+
+```
+✓ Seeded 1 project: "Demo Project"
+✓ Seeded 1 feature: "Login with email" (5 sections)
+✓ Seeded 1 admin user: admin@local / password: dev12345
+```
+
+Reset DB + reseed (dev only — destructive):
+
+```bash
+pnpm db:reset
+```
+
+---
+
+## 7. Start dev servers 🟡 (pending T2, T6)
+
+2 process, chạy song song. Cách đơn giản nhất:
+
+```bash
+pnpm dev
+```
+
+Dưới capo dùng `pnpm -r --parallel dev` chạy cả 2 workspace:
+
+- **API**: http://localhost:3001 (Express, auto-reload qua `tsx watch`)
+- **Web**: http://localhost:5173 (Vite dev server, HMR)
+
+Vite đã proxy `/api/*` → API backend trong `vite.config.ts`.
+
+---
+
+## 8. Smoke-test checklist 🟡 (pending T5, T7)
+
+Sau khi start thành công, verify theo thứ tự:
+
+### 8.1 API health
+
+```bash
+curl -s http://localhost:3001/api/v1/health | jq
+```
+
+Expect:
+
+```json
+{ "status": "ok", "db": "ok", "redis": "ok", "version": "0.1.0" }
+```
+
+### 8.2 Read seeded feature via API
+
+```bash
+curl -s http://localhost:3001/api/v1/projects/demo/features/login-with-email | jq
+```
+
+Expect: feature object với `sections` array length 5.
+
+### 8.3 Web — feature detail page
+
+Mở browser: http://localhost:5173/projects/demo/features/login-with-email
+
+Expect: trang hiển thị tên feature + 5 section headers (Business, User Flow, Business Rules, Tech Notes, Screenshots).
+
+---
+
+## 9. Run tests 🟡 (pending — test sẽ thêm cùng từng task TDD)
+
+```bash
+# Tất cả unit tests
+pnpm test
+
+# Watch mode (làm TDD)
+pnpm test:watch
+
+# Web test only
+pnpm --filter @onboarding/web test
+
+# API test only
+pnpm --filter @onboarding/api test
+
+# E2E (Playwright) — phải có dev server đang chạy
+pnpm test:e2e
+```
+
+---
+
+## 10. Common commands ✅
+
+| Command | Mục đích |
+|---|---|
+| `pnpm dev` | Start web + api (parallel) |
+| `pnpm build` | Build web + api cho production |
+| `pnpm lint` | ESLint cho toàn repo |
+| `pnpm format` | Prettier format |
+| `pnpm typecheck` | `tsc --noEmit` toàn repo |
+| `pnpm test` | Vitest chạy 1 lần |
+| `pnpm db:migrate` | Drizzle migrate up |
+| `pnpm db:generate` | Generate migration từ schema change |
+| `pnpm db:seed` | Seed dev data |
+| `docker compose up -d` | Start postgres + redis |
+| `docker compose down` | Stop + remove containers |
+| `docker compose down -v` | Stop + xoá data volumes (reset DB) |
+
+---
+
+## 11. Troubleshooting
+
+**Port đã bị chiếm (3001 / 5173 / 5432 / 6379)**
+```bash
+lsof -iTCP:3001 -sTCP:LISTEN
+kill <PID>
+```
+Hoặc đổi port trong `.env.local` + `docker-compose.yml`.
+
+**`pnpm install` lỗi peer deps**
+```bash
+pnpm install --prefer-offline
+# hoặc
+rm -rf node_modules apps/*/node_modules packages/*/node_modules pnpm-lock.yaml
+pnpm install
+```
+
+**DB connection refused**
+1. `docker compose ps` — kiểm postgres có healthy không.
+2. `docker compose logs postgres` — xem có error.
+3. `.env.local` DATABASE_URL port có khớp với `docker-compose.yml` không.
+
+**Session không persist khi login**
+1. `COOKIE_SECURE=false` cho local (cookie secure yêu cầu HTTPS).
+2. Redis có running không: `docker compose exec redis redis-cli ping`.
+
+**Drizzle migration lỗi "relation already exists"**
+DB đang có schema cũ xung đột. Reset:
+```bash
+docker compose down -v && docker compose up -d postgres redis
+pnpm db:migrate && pnpm db:seed
+```
+
+---
+
+## 12. Production deploy ⏳ (v2)
+
+- **v1 target**: Docker Compose trên 1 VPS (DO Droplet / Hetzner). Nginx reverse proxy, Let's Encrypt cert, managed Postgres.
+- **v2 target**: K8s cluster. Manifests sẽ viết dần ở `infra/k8s/` — **không** là blocker cho MVP.
+
+Xem [ADR-001](../.specs/adr/ADR-001-tech-stack.md) section 2.6 cho chi tiết infra.
+
+---
+
+## 13. Khi có vấn đề
+
+1. Đọc `CLAUDE.md` nếu đang dùng AI assistant.
+2. Đọc lại `.specs/00-vision.md` + `.specs/adr/ADR-001-tech-stack.md`.
+3. Kiểm `.specs/stories/US-001/tasks.md` xem task nào chưa done.
+4. Tạo issue nội bộ (khi có repo host).
