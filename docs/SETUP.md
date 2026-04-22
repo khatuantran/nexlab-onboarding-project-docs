@@ -2,7 +2,7 @@
 
 > **Trạng thái**: Sống cùng implementation. Nhãn mỗi section: ✅ `works now` · 🟡 `pending (task T-N)` · ⏳ `v2`. Xem [roadmap.md](../.specs/roadmap.md).
 >
-> Progress hiện tại: **T1-T2 ✅ done** (monorepo + API skeleton + Docker Compose). T3-T10 còn 🟡 (US-001 đã mở rộng từ 8 → 10 tasks: +T3-BE, +T4-FE senior infra scaffold).
+> Progress hiện tại: **T1-T3 ✅ done** (monorepo + API skeleton + Docker Compose + BE infra scaffold). T4-T10 còn 🟡.
 
 ---
 
@@ -251,24 +251,25 @@ pnpm test:e2e
 
 Progress: ✅ = live sau T1 · 🟡 = pending task.
 
-| Command             | Mục đích                                     | Status                    |
-| ------------------- | -------------------------------------------- | ------------------------- |
-| `pnpm install`      | Install workspace deps                       | ✅ T1                     |
-| `pnpm lint`         | ESLint cho toàn repo                         | ✅ T1                     |
-| `pnpm format`       | Prettier format                              | ✅ T1                     |
-| `pnpm typecheck`    | `tsc --noEmit` all workspaces                | ✅ T1                     |
-| `pnpm test`         | Vitest (passWithNoTests hiện tại)            | ✅ T1                     |
-| `pnpm smoke`        | `scripts/smoke.sh` = lint + typecheck + test | ✅ T1                     |
-| `pnpm dev`          | Start API (web added in T4 scaffold)         | ⚠️ API ✅ T2 / Web 🟡 T4  |
-| `pnpm build`        | Build api prod (web prod in T4)              | ⚠️ API ✅ T2 / Web 🟡 T4  |
-| `pnpm docker:up`    | Start postgres + redis                       | ✅ T2                     |
-| `pnpm docker:down`  | Stop containers                              | ✅ T2                     |
-| `pnpm docker:reset` | Stop + xoá data volumes                      | ✅ T2                     |
-| `pnpm docker:logs`  | Tail logs postgres + redis                   | ✅ T2                     |
-| `pnpm db:generate`  | Generate migration từ schema change          | 🟡 T3 (config) / T5 (use) |
-| `pnpm db:migrate`   | Drizzle migrate up                           | 🟡 T3 (config) / T5 (use) |
-| `pnpm db:seed`      | Seed dev data                                | 🟡 T5                     |
-| `pnpm test:e2e`     | Playwright E2E                               | 🟡 T10                    |
+| Command             | Mục đích                                     | Status                      |
+| ------------------- | -------------------------------------------- | --------------------------- |
+| `pnpm install`      | Install workspace deps                       | ✅ T1                       |
+| `pnpm lint`         | ESLint cho toàn repo                         | ✅ T1                       |
+| `pnpm format`       | Prettier format                              | ✅ T1                       |
+| `pnpm typecheck`    | `tsc --noEmit` all workspaces                | ✅ T1                       |
+| `pnpm test`         | Vitest (passWithNoTests hiện tại)            | ✅ T1                       |
+| `pnpm smoke`        | `scripts/smoke.sh` = lint + typecheck + test | ✅ T1                       |
+| `pnpm dev`          | Start API (web added in T4 scaffold)         | ⚠️ API ✅ T2 / Web 🟡 T4    |
+| `pnpm build`        | Build api prod (web prod in T4)              | ⚠️ API ✅ T2 / Web 🟡 T4    |
+| `pnpm docker:up`    | Start postgres + redis                       | ✅ T2                       |
+| `pnpm docker:down`  | Stop containers                              | ✅ T2                       |
+| `pnpm docker:reset` | Stop + xoá data volumes                      | ✅ T2                       |
+| `pnpm docker:logs`  | Tail logs postgres + redis                   | ✅ T2                       |
+| `pnpm db:generate`  | Generate migration từ schema change          | ⚠️ T3 ✅ config / T5 schema |
+| `pnpm db:migrate`   | Drizzle migrate up                           | ⚠️ T3 ✅ config / T5 schema |
+| `pnpm db:check`     | Drizzle-kit consistency check                | ⚠️ T3 ✅ config / T5 schema |
+| `pnpm db:seed`      | Seed dev data                                | 🟡 T5                       |
+| `pnpm test:e2e`     | Playwright E2E                               | 🟡 T10                      |
 
 ---
 

@@ -4,7 +4,7 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ## Trạng thái
 
-🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T2/10 done** — API skeleton + `/api/v1/health` + Docker Compose wired. Next: [T3 — Backend infrastructure scaffold (senior BE)](.specs/stories/US-001/tasks.md#t3--backend-infrastructure-scaffold-senior-be).
+🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T3/10 done** — BE infra scaffold (middleware stack, drizzle config, test helpers, shared ErrorCode enum). Next: [T4 — Frontend infrastructure scaffold (senior FE)](.specs/stories/US-001/tasks.md#t4--frontend-infrastructure-scaffold-senior-fe).
 
 ## Vấn đề đang giải quyết
 
