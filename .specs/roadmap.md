@@ -18,7 +18,7 @@ Roadmap này mô tả milestone + target date. **Không phải kế hoạch chi 
 
 ### M1 — US-001 Read path 🟡 In Progress _(target 2026-05-31)_
 
-Implement US-001 qua 10 task (T1-T10). **Progress: 4/10 done.**
+Implement US-001 qua 10 task (T1-T10). **Progress: 5/10 done.**
 
 | Task                                                                                                             | Status        | Commit    |
 | ---------------------------------------------------------------------------------------------------------------- | ------------- | --------- |
@@ -26,8 +26,8 @@ Implement US-001 qua 10 task (T1-T10). **Progress: 4/10 done.**
 | [T2 Docker + API skeleton](stories/US-001/tasks.md#t2--docker-compose--api-skeleton)                             | ✅ 2026-04-23 | `829a51a` |
 | [T3 Backend infra scaffold (senior BE)](stories/US-001/tasks.md#t3--backend-infrastructure-scaffold-senior-be)   | ✅ 2026-04-23 | `d778093` |
 | [T4 Frontend infra scaffold (senior FE)](stories/US-001/tasks.md#t4--frontend-infrastructure-scaffold-senior-fe) | ✅ 2026-04-23 | `c286860` |
-| [T5 DB schema + seed](stories/US-001/tasks.md#t5--db-schema--migration--seed)                                    | 🟡 Next       | —         |
-| [T6 Auth endpoints](stories/US-001/tasks.md#t6--auth-endpoints--session-middleware)                              | 🟡            | —         |
+| [T5 DB schema + seed](stories/US-001/tasks.md#t5--db-schema--migration--seed)                                    | ✅ 2026-04-23 | `e94af92` |
+| [T6 Auth endpoints](stories/US-001/tasks.md#t6--auth-endpoints--session-middleware)                              | 🟡 Next       | —         |
 | [T7 Read + search API](stories/US-001/tasks.md#t7--read-api--search-api)                                         | 🟡            | —         |
 | [T8 Login page + auth guard](stories/US-001/tasks.md#t8--login-page--auth-guard)                                 | 🟡            | —         |
 | [T9 Landing + feature detail](stories/US-001/tasks.md#t9--landing--feature-detail-pages)                         | 🟡            | —         |

@@ -4,7 +4,7 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ## Trạng thái
 
-🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T4/10 done** — FE infra scaffold (Vite + Tailwind + shadcn primitives + React Router + TanStack Query + apiFetch wrapper + MSW test setup). Next: [T5 — DB schema + Drizzle migration + seed](.specs/stories/US-001/tasks.md#t5--db-schema--migration--seed).
+🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T5/10 done** — DB schema (4 tables + 2 enums) + migration + FTS triggers + seed (admin + author + demo project + 5-section feature). Next: [T6 — Auth endpoints + session middleware](.specs/stories/US-001/tasks.md#t6--auth-endpoints--session-middleware).
 
 ## Vấn đề đang giải quyết
 
@@ -40,7 +40,7 @@ Full decision: [ADR-001](.specs/adr/ADR-001-tech-stack.md). Summary:
 
 ## Cấu trúc thư mục
 
-```
+```text
 .specs/          Specs (vision, personas, requirements, stories, ADRs, traceability, risks, roadmap)
 docs/            Human docs (SETUP, CONTRIBUTING, TESTING)
 apps/            (implementation phase) apps/web (React) + apps/api (Express)

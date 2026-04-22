@@ -2,7 +2,7 @@
 
 > **Trạng thái**: Sống cùng implementation. Nhãn mỗi section: ✅ `works now` · 🟡 `pending (task T-N)` · ⏳ `v2`. Xem [roadmap.md](../.specs/roadmap.md).
 >
-> Progress hiện tại: **T1-T4 ✅ done** (monorepo + API skeleton + Docker Compose + BE infra scaffold + FE infra scaffold). T5-T10 còn 🟡.
+> Progress hiện tại: **T1-T5 ✅ done** (monorepo + API + Docker Compose + BE+FE infra scaffolds + DB schema/migration/seed với FTS triggers). T6-T10 còn 🟡.
 
 ---
 
@@ -125,7 +125,7 @@ docker compose exec redis redis-cli ping
 
 ---
 
-## 5. Database migration 🟡 (pending T5)
+## 5. Database migration ✅ (T5 done)
 
 Tạo schema:
 
@@ -149,7 +149,7 @@ pnpm db:check
 
 ---
 
-## 6. Seed data 🟡 (pending T5)
+## 6. Seed data ✅ (T5 done)
 
 Seed 1 project + 1 feature đầy đủ 5 section để US-001 có data để demo:
 
@@ -251,25 +251,25 @@ pnpm test:e2e
 
 Progress: ✅ = live sau T1 · 🟡 = pending task.
 
-| Command             | Mục đích                                     | Status                      |
-| ------------------- | -------------------------------------------- | --------------------------- |
-| `pnpm install`      | Install workspace deps                       | ✅ T1                       |
-| `pnpm lint`         | ESLint cho toàn repo                         | ✅ T1                       |
-| `pnpm format`       | Prettier format                              | ✅ T1                       |
-| `pnpm typecheck`    | `tsc --noEmit` all workspaces                | ✅ T1                       |
-| `pnpm test`         | Vitest (passWithNoTests hiện tại)            | ✅ T1                       |
-| `pnpm smoke`        | `scripts/smoke.sh` = lint + typecheck + test | ✅ T1                       |
-| `pnpm dev`          | Start API + Web parallel                     | ✅ T2 (API) + T4 (Web)      |
-| `pnpm build`        | Build api + web prod                         | ✅ T2 (API) + T4 (Web)      |
-| `pnpm docker:up`    | Start postgres + redis                       | ✅ T2                       |
-| `pnpm docker:down`  | Stop containers                              | ✅ T2                       |
-| `pnpm docker:reset` | Stop + xoá data volumes                      | ✅ T2                       |
-| `pnpm docker:logs`  | Tail logs postgres + redis                   | ✅ T2                       |
-| `pnpm db:generate`  | Generate migration từ schema change          | ⚠️ T3 ✅ config / T5 schema |
-| `pnpm db:migrate`   | Drizzle migrate up                           | ⚠️ T3 ✅ config / T5 schema |
-| `pnpm db:check`     | Drizzle-kit consistency check                | ⚠️ T3 ✅ config / T5 schema |
-| `pnpm db:seed`      | Seed dev data                                | 🟡 T5                       |
-| `pnpm test:e2e`     | Playwright E2E                               | 🟡 T10                      |
+| Command             | Mục đích                                     | Status                   |
+| ------------------- | -------------------------------------------- | ------------------------ |
+| `pnpm install`      | Install workspace deps                       | ✅ T1                    |
+| `pnpm lint`         | ESLint cho toàn repo                         | ✅ T1                    |
+| `pnpm format`       | Prettier format                              | ✅ T1                    |
+| `pnpm typecheck`    | `tsc --noEmit` all workspaces                | ✅ T1                    |
+| `pnpm test`         | Vitest (passWithNoTests hiện tại)            | ✅ T1                    |
+| `pnpm smoke`        | `scripts/smoke.sh` = lint + typecheck + test | ✅ T1                    |
+| `pnpm dev`          | Start API + Web parallel                     | ✅ T2 (API) + T4 (Web)   |
+| `pnpm build`        | Build api + web prod                         | ✅ T2 (API) + T4 (Web)   |
+| `pnpm docker:up`    | Start postgres + redis                       | ✅ T2                    |
+| `pnpm docker:down`  | Stop containers                              | ✅ T2                    |
+| `pnpm docker:reset` | Stop + xoá data volumes                      | ✅ T2                    |
+| `pnpm docker:logs`  | Tail logs postgres + redis                   | ✅ T2                    |
+| `pnpm db:generate`  | Generate migration từ schema change          | ✅ T3 config + T5 schema |
+| `pnpm db:migrate`   | Drizzle migrate up                           | ✅ T5                    |
+| `pnpm db:check`     | Drizzle-kit consistency check                | ✅ T5                    |
+| `pnpm db:seed`      | Seed dev data (admin/author + demo project)  | ✅ T5                    |
+| `pnpm test:e2e`     | Playwright E2E                               | 🟡 T10                   |
 
 ---
 
