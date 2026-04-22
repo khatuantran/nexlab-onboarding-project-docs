@@ -17,6 +17,11 @@
     "test:watch": "vitest --passWithNoTests",
     "test:e2e": "echo 'E2E lands in T8' && exit 0",
     "smoke": "./scripts/smoke.sh",
+    "dev": "pnpm -r --parallel --filter=@onboarding/api run dev",
+    "docker:up": "docker compose -f infra/docker/docker-compose.yml up -d",
+    "docker:down": "docker compose -f infra/docker/docker-compose.yml down",
+    "docker:reset": "docker compose -f infra/docker/docker-compose.yml down -v",
+    "docker:logs": "docker compose -f infra/docker/docker-compose.yml logs -f",
     "prepare": "husky"
   },
   "lint-staged": {
