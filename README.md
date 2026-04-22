@@ -4,7 +4,7 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ## Trạng thái
 
-🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T3/10 done** — BE infra scaffold (middleware stack, drizzle config, test helpers, shared ErrorCode enum). Next: [T4 — Frontend infrastructure scaffold (senior FE)](.specs/stories/US-001/tasks.md#t4--frontend-infrastructure-scaffold-senior-fe).
+🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T4/10 done** — FE infra scaffold (Vite + Tailwind + shadcn primitives + React Router + TanStack Query + apiFetch wrapper + MSW test setup). Next: [T5 — DB schema + Drizzle migration + seed](.specs/stories/US-001/tasks.md#t5--db-schema--migration--seed).
 
 ## Vấn đề đang giải quyết
 
@@ -50,17 +50,18 @@ infra/           (implementation phase) Docker Compose, K8s manifests
 
 ## Chạy dự án
 
-Sau T1-T2, đã chạy được:
+Sau T1-T4, đã chạy được:
 
 ```bash
 nvm use                  # picks up .nvmrc → Node 20
 corepack enable          # one-time, activates pnpm 9.15
 pnpm install
-pnpm smoke               # lint + typecheck + 4 api tests
+pnpm smoke               # lint + typecheck + 14 tests (5 web + 9 api)
 
 pnpm docker:up           # start postgres:16 + redis:7 (T2)
-pnpm dev                 # start API on :3001 (T2); web dev wires in T6
-curl localhost:3001/api/v1/health  # → {status,db,redis,version}
+pnpm dev                 # API :3001 + Web :5173 parallel (T2 + T4)
+curl localhost:3001/api/v1/health       # → {status,db,redis,version}
+open http://localhost:5173              # → "Onboarding Portal" placeholder
 ```
 
 Full setup (DB migrate / seed / dev servers / E2E) ở [docs/SETUP.md](docs/SETUP.md) — các mục `🟡` sẽ chuyển `✅` khi task tương ứng xong.

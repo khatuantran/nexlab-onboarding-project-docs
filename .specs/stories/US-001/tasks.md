@@ -4,7 +4,7 @@
 
 _Story_: [US-001 — Dev reads và search feature catalog](../US-001.md)
 _Total estimate_: ~34h (solo, TDD pace; story-level estimate 10-14h là pair/ideal, tasks là pessimistic; T3 + T4 thêm vào cho senior-role infra scaffold)
-_Last updated_: 2026-04-23 (T3 landed `d778093`; T4 next)
+_Last updated_: 2026-04-23 (T4 landed `c286860`; T5 next)
 
 ---
 
@@ -28,8 +28,8 @@ _Last updated_: 2026-04-23 (T3 landed `d778093`; T4 next)
 | [T1](#t1--monorepo-bootstrap--tooling)                | Monorepo bootstrap + tooling                      | 3h     | — (foundation)            | —                              | ✅ `10b3a04` |
 | [T2](#t2--docker-compose--api-skeleton)               | Docker Compose + API skeleton + health            | 3h     | infra for all             | —                              | ✅ `829a51a` |
 | [T3](#t3--backend-infrastructure-scaffold-senior-be)  | **Backend infrastructure scaffold (senior BE)**   | 4h     | infra for all             | —                              | ✅ `d778093` |
-| [T4](#t4--frontend-infrastructure-scaffold-senior-fe) | **Frontend infrastructure scaffold (senior FE)**  | 4-5h   | infra for all             | —                              | 🟡 Next      |
-| [T5](#t5--db-schema--migration--seed)                 | DB schema + Drizzle migration + seed              | 4h     | AC-3, AC-5, AC-6 (data)   | FEAT-002                       | 🟡           |
+| [T4](#t4--frontend-infrastructure-scaffold-senior-fe) | **Frontend infrastructure scaffold (senior FE)**  | 4-5h   | infra for all             | —                              | ✅ `c286860` |
+| [T5](#t5--db-schema--migration--seed)                 | DB schema + Drizzle migration + seed              | 4h     | AC-3, AC-5, AC-6 (data)   | FEAT-002                       | 🟡 Next      |
 | [T6](#t6--auth-endpoints--session-middleware)         | Auth endpoints + session middleware               | 3h     | AC-1, AC-2, AC-10, AC-11  | AUTH-001                       | 🟡           |
 | [T7](#t7--read-api--search-api)                       | Feature read API + search API                     | 4h     | AC-3, AC-5, AC-7, AC-9    | FEAT-002, READ-001, SEARCH-001 | 🟡           |
 | [T8](#t8--login-page--auth-guard)                     | Login page + auth guard (FE)                      | 3h     | AC-1, AC-2, AC-10, AC-11  | AUTH-001                       | 🟡           |

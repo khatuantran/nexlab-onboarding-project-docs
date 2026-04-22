@@ -2,7 +2,7 @@
 
 > **Trạng thái**: Sống cùng implementation. Nhãn mỗi section: ✅ `works now` · 🟡 `pending (task T-N)` · ⏳ `v2`. Xem [roadmap.md](../.specs/roadmap.md).
 >
-> Progress hiện tại: **T1-T3 ✅ done** (monorepo + API skeleton + Docker Compose + BE infra scaffold). T4-T10 còn 🟡.
+> Progress hiện tại: **T1-T4 ✅ done** (monorepo + API skeleton + Docker Compose + BE infra scaffold + FE infra scaffold). T5-T10 còn 🟡.
 
 ---
 
@@ -173,19 +173,18 @@ pnpm db:reset
 
 ---
 
-## 7. Start dev servers ⚠️ API ✅ (T2) · Web 🟡 (pending T4 scaffold / T8 login)
-
-Hiện tại `pnpm dev` chỉ chạy API (Web shell sẽ wire ở T4, login ở T8):
+## 7. Start dev servers ✅ (T2 + T4; login lands T8)
 
 ```bash
 pnpm dev
-# → API on http://localhost:3001 (Express, tsx watch auto-reload)
 ```
 
-Sau T6 sẽ chạy 2 process parallel:
+Chạy song song cả 2 workspace:
 
-- **API**: http://localhost:3001 (Express, `tsx watch`)
-- **Web**: http://localhost:5173 (Vite HMR, proxy `/api/*` → API)
+- **API**: http://localhost:3001 (Express, `tsx watch` auto-reload)
+- **Web**: http://localhost:5173 (Vite HMR, proxy `/api/*` → API :3001)
+
+Hiện `/` render placeholder `<h1>Onboarding Portal</h1>`. Login + routes chính thức wire ở T8-T10.
 
 ---
 
@@ -260,8 +259,8 @@ Progress: ✅ = live sau T1 · 🟡 = pending task.
 | `pnpm typecheck`    | `tsc --noEmit` all workspaces                | ✅ T1                       |
 | `pnpm test`         | Vitest (passWithNoTests hiện tại)            | ✅ T1                       |
 | `pnpm smoke`        | `scripts/smoke.sh` = lint + typecheck + test | ✅ T1                       |
-| `pnpm dev`          | Start API (web added in T4 scaffold)         | ⚠️ API ✅ T2 / Web 🟡 T4    |
-| `pnpm build`        | Build api prod (web prod in T4)              | ⚠️ API ✅ T2 / Web 🟡 T4    |
+| `pnpm dev`          | Start API + Web parallel                     | ✅ T2 (API) + T4 (Web)      |
+| `pnpm build`        | Build api + web prod                         | ✅ T2 (API) + T4 (Web)      |
 | `pnpm docker:up`    | Start postgres + redis                       | ✅ T2                       |
 | `pnpm docker:down`  | Stop containers                              | ✅ T2                       |
 | `pnpm docker:reset` | Stop + xoá data volumes                      | ✅ T2                       |

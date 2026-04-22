@@ -41,8 +41,8 @@ Mục đích: khi đổi 1 FR biết ngay tác động tới story + task nào. 
 | [T1](stories/US-001/tasks.md#t1--monorepo-bootstrap--tooling)                | — (foundation)                 | —                             | ✅ `10b3a04` |
 | [T2](stories/US-001/tasks.md#t2--docker-compose--api-skeleton)               | infra (all FR)                 | infra                         | ✅ `829a51a` |
 | [T3](stories/US-001/tasks.md#t3--backend-infrastructure-scaffold-senior-be)  | infra (BE)                     | —                             | ✅ `d778093` |
-| [T4](stories/US-001/tasks.md#t4--frontend-infrastructure-scaffold-senior-fe) | infra (FE)                     | —                             | 🟡 Next      |
-| [T5](stories/US-001/tasks.md#t5--db-schema--migration--seed)                 | FEAT-002                       | AC-3, AC-5, AC-6 data         | 🟡           |
+| [T4](stories/US-001/tasks.md#t4--frontend-infrastructure-scaffold-senior-fe) | infra (FE)                     | —                             | ✅ `c286860` |
+| [T5](stories/US-001/tasks.md#t5--db-schema--migration--seed)                 | FEAT-002                       | AC-3, AC-5, AC-6 data         | 🟡 Next      |
 | [T6](stories/US-001/tasks.md#t6--auth-endpoints--session-middleware)         | AUTH-001                       | AC-1, AC-2, AC-10, AC-11      | 🟡           |
 | [T7](stories/US-001/tasks.md#t7--read-api--search-api)                       | FEAT-002, READ-001, SEARCH-001 | AC-3, AC-5, AC-7, AC-9        | 🟡           |
 | [T8](stories/US-001/tasks.md#t8--login-page--auth-guard)                     | AUTH-001                       | AC-1, AC-2, AC-10, AC-11      | 🟡           |
