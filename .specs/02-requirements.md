@@ -38,6 +38,7 @@ Mỗi FR có:
 | [FR-EMBED-001](#fr-embed-001--external-link-embed) | Embed | Paste Jira/Figma/GitHub URL → preview card | P0 | US-003 |
 | [FR-SEARCH-001](#fr-search-001--full-text-search) | Search | FTS feature theo title + section content | P0 | US-001 |
 | [FR-READ-001](#fr-read-001--project-landing--feature-index) | Read | Project landing page có feature index | P0 | US-001 |
+| [FR-UPLOAD-001](#fr-upload-001--image-upload-for-screenshots) | Upload | Upload image file → volume, trả stable URL | P0 | US-003 |
 
 Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 
@@ -49,8 +50,9 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 - When an authenticated user is not present and the user submits valid email and password to the login endpoint, the system shall create a server-side session in Redis and set an httpOnly cookie `sid`.
 - If the submitted credentials are invalid, then the system shall respond with HTTP 401 and error code `INVALID_CREDENTIALS` without revealing whether the email exists.
 - When the user invokes logout, the system shall destroy the session in Redis and clear the `sid` cookie.
+- When a user with role `admin` submits a user-creation request with a unique email, the system shall create the user with a temporary password and return the credential payload once (no email send in v1).
 
-**Rationale**: Auth là prerequisite cho mọi route còn lại. Session server-side (Redis) cho phép revoke tức thì, phù hợp internal portal.
+**Rationale**: Auth là prerequisite cho mọi route còn lại. Session server-side (Redis) cho phép revoke tức thì, phù hợp internal portal. V1 **không có self-register** — giảm attack surface cho internal portal; user đầu được seed (admin), admin invite user khác.
 
 **Maps to**: US-001 (Minh login → read), US-002 (Lan login → author), US-003 (Hùng login → author). Personas: P1, P2, P3.
 
@@ -60,6 +62,9 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 - Wrong email → 401 `INVALID_CREDENTIALS` (không 404, để tránh user enumeration).
 - Logout → 204 + cookie cleared.
 - Password hash dùng bcryptjs (cost factor ≥ 10).
+- **User creation**: `POST /api/v1/users` admin-only; body `{ email, displayName, role }`; response `{ data: { user, temporaryPassword } }` trả 1 lần (không store plain). Seed script tạo 1 admin (`admin@local` / `dev12345`).
+- **Không có endpoint self-register**: `POST /api/v1/auth/register` không tồn tại v1.
+- Session TTL default 7 ngày sliding; cookie `maxAge` refresh mỗi request authenticated.
 
 ---
 
@@ -67,9 +72,9 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 
 **Statement (Event-driven + Ubiquitous):**
 - When an authenticated user with role `admin` submits a project creation request with a unique slug and a human-readable name, the system shall persist the project and return its canonical URL.
-- The system shall expose a list endpoint that returns all projects the authenticated user can access, sorted by most-recently-updated first.
+- The system shall expose a list endpoint that returns all projects to any authenticated user, sorted by most-recently-updated first.
 
-**Rationale**: Project là container top-level. V1 chỉ cần create + list (không edit/archive); tất cả user đều read được mọi project (no fine-grained permissions v1 — xem glossary).
+**Rationale**: Project là container top-level. V1 chỉ cần create + list (không edit/archive). **Access model**: mọi authenticated user đọc/ghi feature + section trong mọi project; chỉ `admin` mới tạo project. Không có membership table v1 (xem Open Q1 resolved bên dưới).
 
 **Maps to**: US-002 (Lan cần project trước khi tạo feature). Persona: Admin (minimal, v1).
 
@@ -114,6 +119,7 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 - Section type ngoài 5 enum → 400 `INVALID_SECTION_TYPE`.
 - Body > 64 KiB → 413 `SECTION_TOO_LARGE`.
 - Empty section render placeholder ("Chưa có nội dung") thay vì hidden — để reader thấy rõ gaps.
+- `screenshots` section body là markdown chuẩn; image reference qua URL nội bộ `/uploads/:id` (xem FR-UPLOAD-001) hoặc external URL cũng được chấp nhận.
 
 ---
 
@@ -188,6 +194,27 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 
 ---
 
+## FR-UPLOAD-001 — Image upload for screenshots
+
+**Statement (Event-driven + Unwanted):**
+- When an authenticated user uploads an image file (MIME type `image/png`, `image/jpeg`, or `image/webp`, size ≤ 5 MiB) scoped to an existing feature, the system shall persist the file to the server-side upload volume, associate it with the feature, and respond with a stable URL of the form `/uploads/:id`.
+- If the upload exceeds 5 MiB, then the system shall respond with HTTP 413 and error code `FILE_TOO_LARGE` without persisting the partial payload.
+- If the upload MIME type is outside the allow-list, then the system shall respond with HTTP 415 and error code `UNSUPPORTED_MEDIA_TYPE`.
+
+**Rationale**: `screenshots` section cần upload được để không phụ thuộc CDN/Figma ngoài. V1 lưu Docker volume (đã chốt ADR-001 §2.4); v2 chuyển S3-compatible. Scope file-per-upload cho đơn giản; multi-file defer.
+
+**Maps to**: US-003 (Hùng upload screenshot vào feature của Lan). Persona: P3.
+
+**Acceptance hints**:
+- Endpoint: `POST /api/v1/features/:id/uploads`, multipart/form-data, field `file`.
+- Response: `{ data: { id, url, sizeBytes, mimeType, createdAt } }`.
+- File lưu tại `UPLOAD_DIR/:featureId/:uploadId.:ext` (env `UPLOAD_DIR`, default `./data/uploads`).
+- Static serve qua `GET /uploads/:id` — verify file thuộc feature authenticated user access được (luôn pass v1 vì all-access).
+- Filename sanitize: dùng uploadId, không giữ original filename trong URL (chỉ lưu DB metadata).
+- Không resize/optimize server-side v1 — client responsibility nếu cần.
+
+---
+
 ## Non-functional Requirements (baseline v1)
 
 ### NFR-PERF-001 — Response time
@@ -251,12 +278,20 @@ v1 không bắt buộc screen reader test, nhưng không được break (không 
 
 ---
 
-## Open questions (sẽ giải quyết ở US spec hoặc task)
+## Open questions
 
-1. **Project-level access** — v1 mọi authenticated user đọc/ghi mọi project, hay project có members? → **Decide in US-002**. Default v1: tất cả authenticated user full access.
-2. **Feature slug uniqueness** — unique per project (hiện tại) hay unique global? → Chốt per-project (FR-FEAT-001 đã nêu).
-3. **Screenshot upload** — client upload trực tiếp multipart hay paste image URL từ chỗ khác? → **Decide in US-003 or later task**. MVP khả năng chọn paste URL trước (đơn giản hơn).
-4. **Session TTL** — 7 ngày sliding, 30 ngày absolute, hay fixed? → Default 7d sliding, revisit sau pilot.
+### Resolved (ghi lại lịch sử quyết định)
+
+1. **Project-level access** — ✅ Resolved 2026-04-22: **Mọi authenticated user có full read/write mọi project.** Không có membership table v1. Chỉ role `admin` được tạo project mới. Xem FR-PROJ-001.
+2. **Feature slug uniqueness** — ✅ Resolved: unique per project (FR-FEAT-001).
+3. **Screenshot upload** — ✅ Resolved 2026-04-22: **Upload file multipart → Docker volume** (FR-UPLOAD-001). Paste external URL vẫn được chấp nhận (markdown chuẩn), nhưng primary flow là upload.
+4. **User creation flow** — ✅ Resolved 2026-04-22: Seed script tạo 1 admin (`admin@local` / `dev12345`). Admin invite user qua `POST /api/v1/users`. **Không có self-register endpoint** v1. Xem FR-AUTH-001.
+5. **US-001 scope** — ✅ Resolved 2026-04-22: US-001 cover landing + search + feature detail read (1 story lớn). Xem `.specs/stories/US-001.md`.
+
+### Still open (revisit sau pilot)
+
+- **Session TTL**: default 7d sliding; có thể chuyển fixed hoặc kéo dài sau khi đo real usage.
+- **Admin UI quản lý user**: v1 chỉ có endpoint `POST /api/v1/users` (cURL / seed). Admin UI list/disable user defer → US v2.
 
 ---
 
