@@ -3,8 +3,8 @@
 <!-- template: 03-task-template.md@0.2 (applied per-task block; doc-level sections Conventions/Summary/Deferred are additional_sections_allowed) -->
 
 _Story_: [US-001 — Dev reads và search feature catalog](../US-001.md)
-_Total estimate_: ~26h (solo, TDD pace; story-level estimate 10-14h dùng pair/ideal, tasks là pessimistic)
-_Last updated_: 2026-04-23 (T2 landed `829a51a`)
+_Total estimate_: ~34h (solo, TDD pace; story-level estimate 10-14h là pair/ideal, tasks là pessimistic; T3 + T4 thêm vào cho senior-role infra scaffold)
+_Last updated_: 2026-04-23 (T2 landed `829a51a`; +T3-BE, +T4-FE inserted, old T3-T8 renumbered → T5-T10)
 
 ---
 
@@ -23,19 +23,21 @@ _Last updated_: 2026-04-23 (T2 landed `829a51a`)
 
 ## Task Summary
 
-| #                                                   | Title                                             | Effort | AC covered                | FR touched                     | Status       |
-| --------------------------------------------------- | ------------------------------------------------- | ------ | ------------------------- | ------------------------------ | ------------ |
-| [T1](#t1--monorepo-bootstrap--tooling)              | Monorepo bootstrap + tooling                      | 3h     | — (foundation)            | —                              | ✅ `10b3a04` |
-| [T2](#t2--docker-compose--api-skeleton)             | Docker Compose + API skeleton + health            | 3h     | infra for all             | —                              | ✅ `829a51a` |
-| [T3](#t3--db-schema--migration--seed)               | DB schema + Drizzle migration + seed              | 4h     | AC-3, AC-5, AC-6 (data)   | FEAT-002                       | 🟡 Next      |
-| [T4](#t4--auth-endpoints--session-middleware)       | Auth endpoints + session middleware               | 3h     | AC-1, AC-2, AC-10, AC-11  | AUTH-001                       | 🟡           |
-| [T5](#t5--read-api--search-api)                     | Feature read API + search API                     | 4h     | AC-3, AC-5, AC-7, AC-9    | FEAT-002, READ-001, SEARCH-001 | 🟡           |
-| [T6](#t6--web-skeleton--auth-guard--login-page)     | Web skeleton + auth guard + login                 | 4h     | AC-1, AC-2, AC-10, AC-11  | AUTH-001                       | 🟡           |
-| [T7](#t7--landing--feature-detail-pages)            | Project landing + feature detail render           | 4h     | AC-3, AC-4, AC-5, AC-6    | READ-001, FEAT-002             | 🟡           |
-| [T8](#t8--search-page--e2e-smoke--setup-validation) | Search page + Playwright smoke + SETUP validation | 3h     | AC-7, AC-8, AC-9 + all AC | SEARCH-001                     | 🟡           |
+| #                                                     | Title                                             | Effort | AC covered                | FR touched                     | Status       |
+| ----------------------------------------------------- | ------------------------------------------------- | ------ | ------------------------- | ------------------------------ | ------------ |
+| [T1](#t1--monorepo-bootstrap--tooling)                | Monorepo bootstrap + tooling                      | 3h     | — (foundation)            | —                              | ✅ `10b3a04` |
+| [T2](#t2--docker-compose--api-skeleton)               | Docker Compose + API skeleton + health            | 3h     | infra for all             | —                              | ✅ `829a51a` |
+| [T3](#t3--backend-infrastructure-scaffold-senior-be)  | **Backend infrastructure scaffold (senior BE)**   | 4h     | infra for all             | —                              | 🟡 Next      |
+| [T4](#t4--frontend-infrastructure-scaffold-senior-fe) | **Frontend infrastructure scaffold (senior FE)**  | 4-5h   | infra for all             | —                              | 🟡           |
+| [T5](#t5--db-schema--migration--seed)                 | DB schema + Drizzle migration + seed              | 4h     | AC-3, AC-5, AC-6 (data)   | FEAT-002                       | 🟡           |
+| [T6](#t6--auth-endpoints--session-middleware)         | Auth endpoints + session middleware               | 3h     | AC-1, AC-2, AC-10, AC-11  | AUTH-001                       | 🟡           |
+| [T7](#t7--read-api--search-api)                       | Feature read API + search API                     | 4h     | AC-3, AC-5, AC-7, AC-9    | FEAT-002, READ-001, SEARCH-001 | 🟡           |
+| [T8](#t8--login-page--auth-guard)                     | Login page + auth guard (FE)                      | 3h     | AC-1, AC-2, AC-10, AC-11  | AUTH-001                       | 🟡           |
+| [T9](#t9--landing--feature-detail-pages)              | Project landing + feature detail render           | 4h     | AC-3, AC-4, AC-5, AC-6    | READ-001, FEAT-002             | 🟡           |
+| [T10](#t10--search-page--e2e-smoke--setup-validation) | Search page + Playwright smoke + SETUP validation | 3h     | AC-7, AC-8, AC-9 + all AC | SEARCH-001                     | 🟡           |
 
-**Critical path**: T1 → T2 → T3 → T4 → T5 → T6 → T7 → T8.
-**Parallel potential**: T6 có thể start sau T2 (không chờ T3/T4/T5) cho login UI shell, nhưng login functional cần T4.
+**Critical path**: T1 → T2 → T3 → T4 → T5 → T6 → T7 → T8 → T9 → T10.
+**Parallel potential**: T4 (FE infra) có thể chạy song song với T3 (BE infra). T8 (login UI) có thể chạy sau T4 nhưng login functional cần T6.
 
 ---
 
@@ -44,6 +46,7 @@ _Last updated_: 2026-04-23 (T2 landed `829a51a`)
 **Effort**: 3h
 **FR**: —
 **Deps**: —
+**Status**: ✅ Done (`10b3a04`, 2026-04-22)
 
 ### Goal
 
@@ -70,16 +73,16 @@ Task này ít test unit truyền thống; viết 1 **smoke script** làm contrac
 
 ### DoD
 
-- [ ] `pnpm install` clean (no warnings về workspace).
-- [ ] `pnpm lint` pass với 0 file.
-- [ ] `pnpm typecheck` pass.
-- [ ] `pnpm test --passWithNoTests` exit 0.
-- [ ] Husky pre-commit hook blocks commit khi lint fail.
-- [ ] `.gitignore` cover `node_modules`, `dist`, `.env.local`, `data/`.
+- [x] `pnpm install` clean (no warnings về workspace).
+- [x] `pnpm lint` pass với 0 file.
+- [x] `pnpm typecheck` pass.
+- [x] `pnpm test --passWithNoTests` exit 0.
+- [x] Husky pre-commit hook blocks commit khi lint fail.
+- [x] `.gitignore` cover `node_modules`, `dist`, `.env.local`, `data/`.
 
 ### Commit
 
-`chore(infra): bootstrap pnpm monorepo + tooling (US-001 / T1)`
+`chore(infra): bootstrap pnpm monorepo + tooling (US-001 / T1)` → `10b3a04`
 
 ---
 
@@ -88,6 +91,7 @@ Task này ít test unit truyền thống; viết 1 **smoke script** làm contrac
 **Effort**: 3h
 **FR**: infra (mọi FR phụ thuộc)
 **Deps**: T1
+**Status**: ✅ Done (`829a51a`, 2026-04-23)
 
 ### Goal
 
@@ -95,41 +99,215 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 
 ### TDD cycle
 
-1. **Red**: `apps/api/src/routes/health.test.ts`:
-   - `GET /api/v1/health` → 200, body `{ status: 'ok', db: 'ok', redis: 'ok' }`.
-     Chạy → fail (no route).
-2. **Green**:
-   - `apps/api/src/server.ts`: Express app + router mount `/api/v1`.
-   - `apps/api/src/routes/health.ts`: ping Postgres qua `drizzle` (chưa schema, chỉ `select 1`) + ping Redis qua `ioredis` / `connect-redis` client.
-   - Pino logger middleware với request-id (uuid).
-   - `apps/api/src/index.ts`: start server on `API_PORT`.
-   - `infra/docker/docker-compose.yml`: services `postgres` (16-alpine, healthcheck `pg_isready`), `redis` (7-alpine, healthcheck `redis-cli ping`), volumes, env từ `.env.local`.
-   - `.env.example` commit với placeholder.
-3. **Refactor**: tách config loader (`apps/api/src/config.ts`) dùng Zod parse env.
+1. **Red**: `apps/api/src/routes/health.test.ts` — health endpoint expected shape, chạy → fail (no route).
+2. **Green**: `app.ts` (DI factory) + `config.ts` (Zod env) + `logger.ts` (pino) + `db.ts`/`redis.ts` (checkers) + `errors.ts` + `routes/health.ts` + `infra/docker/docker-compose.yml`.
+3. **Refactor**: `createApp(deps)` pattern cho unit test + real bootstrap khác nhau.
 
 ### DoD
 
-- [ ] `docker compose up -d postgres redis` → cả 2 healthy trong 30s.
-- [ ] `pnpm --filter @onboarding/api dev` → listen 3001.
-- [ ] `curl /api/v1/health` returns `{status:"ok", db:"ok", redis:"ok"}`.
-- [ ] `pnpm --filter @onboarding/api test` green (health test dùng Supertest + testcontainer hoặc mock DB/Redis — **dùng real containers** để match NFR-OBS-001 intent; dev DB kết nối `.env.test` port khác nếu cần).
-- [ ] Error format `{ error: { code, message } }` middleware đã có (sẽ verify ở T5).
+- [x] `docker compose -f infra/docker/docker-compose.yml up -d` → cả 2 healthy (verify qua compose config + manual).
+- [x] `pnpm dev` → API listen 3001.
+- [x] `curl /api/v1/health` trả `{status, db, redis, version}` — "degraded" khi no containers.
+- [x] `pnpm --filter @onboarding/api test` green (4/4).
+- [x] Error format `{ error: { code, message } }` middleware có trong `errors.ts`.
 
 ### Commit
 
-`feat(api): health endpoint + docker compose infra (US-001 / T2)`
+`feat(api): health endpoint + docker compose infra (US-001 / T2)` → `829a51a`
 
 ---
 
-## T3 — DB schema + Drizzle migration + seed
+## T3 — Backend infrastructure scaffold (senior BE)
 
 **Effort**: 4h
-**FR**: FR-FEAT-002
+**FR**: infra (foundation cho T6/T7 và các US sau)
 **Deps**: T2
+**Status**: 🟡 Next
 
 ### Goal
 
-4 bảng: `users`, `projects`, `features`, `sections`. Migration generated + applied. Seed script tạo 1 admin + 1 author + 1 project + 1 feature 5-section filled. `tsvector` column cho FTS ready (dùng cho T5 search).
+Establish **BE architecture conventions** như senior BE sẽ làm ngày đầu của project. Sau T3, khi T5+ viết business logic, pattern đã sẵn sàng (không phải nghĩ lại mỗi task):
+
+1. **Folder structure**:
+
+   ```
+   apps/api/src/
+   ├── app.ts                  ✅ T2
+   ├── config.ts               ✅ T2
+   ├── logger.ts               ✅ T2
+   ├── errors.ts               ✅ T2 → extend ở T3
+   ├── db.ts                   ✅ T2 (pg Pool) → T3 wire drizzle
+   ├── redis.ts                ✅ T2
+   ├── index.ts                ✅ T2
+   ├── middleware/             🟡 T3 new
+   │   ├── session.ts          (connect-redis config; endpoint wired ở T6)
+   │   ├── requireAuth.ts      (stub: trả 401 UNAUTHENTICATED; logic hoàn chỉnh T6)
+   │   ├── rateLimit.ts        (Redis counter helper factory)
+   │   └── zodValidate.ts      (wrap Zod parse → 400 VALIDATION_ERROR)
+   ├── services/               🟡 T3 new (empty, README-only)
+   ├── repos/                  🟡 T3 new (empty, README-only)
+   ├── routes/
+   │   └── health.ts           ✅ T2
+   ├── db/
+   │   ├── schema.ts           🟡 T3 (empty export; T5 điền)
+   │   ├── client.ts           🟡 T3 (drizzle instance)
+   │   └── migrations/         🟡 T3 (empty dir, .gitkeep)
+   ├── lib/                    🟡 T3 new
+   │   └── http.ts             (response helpers: success, error thin wrappers)
+   └── test/                   🟡 T3 new
+       ├── factories.ts        (fixture factory stubs)
+       └── helpers.ts          (supertest wrapper, test app builder)
+   ```
+
+2. **Middleware stack** đầy đủ (some stub):
+   - Session middleware (`express-session` + `connect-redis` config; mount vào createApp).
+   - `requireAuth` middleware (stub: check `req.session?.userId`, trả 401 nếu thiếu).
+   - `rateLimit(keyFn, max, windowSec)` factory (Redis counter; T6 dùng cho `/auth/login`).
+   - `zodValidate` helper — parse body/query/params → next hoặc throw `HttpError(400, "VALIDATION_ERROR", ...)`.
+   - CORS config (`cors` package, allow `VITE_APP_ORIGIN`).
+
+3. **Drizzle config** ready:
+   - `apps/api/drizzle.config.ts` point vào `src/db/schema.ts` + `src/db/migrations/`.
+   - `apps/api/src/db/client.ts` export `db = drizzle(pool, { schema })`.
+   - Root `package.json` scripts: `db:generate`, `db:migrate`, `db:check` (filter `@onboarding/api`).
+
+4. **Error codes shared**:
+   - `packages/shared/src/errors.ts` export `ErrorCode` enum + `ApiErrorShape` type.
+   - BE import enum; FE reuse ở T4 cho mapping toast.
+
+5. **Test helpers**:
+   - `apps/api/src/test/helpers.ts`: `createTestApp(overrides)` wrap `createApp` với mock deps defaults.
+   - `apps/api/src/test/factories.ts`: factory function signatures (empty implementations until T5).
+
+### TDD cycle
+
+1. **Red**: `apps/api/src/middleware/__infra.test.ts` cover:
+   - Session cookie name = `sid`, httpOnly, sameSite=lax.
+   - `requireAuth` without session → 401 `UNAUTHENTICATED`.
+   - `zodValidate` với schema fail → 400 `VALIDATION_ERROR`, body có `details.issues`.
+   - `rateLimit(..., 2, 60)` — 3rd hit → 429 `RATE_LIMITED`.
+   - CORS `Access-Control-Allow-Origin` match config origin, khác thì block.
+2. **Green**: implement middleware + wire vào `createApp`. Install `express-session`, `connect-redis`, `bcryptjs`, `cors`, `drizzle-orm`, `drizzle-kit`.
+3. **Refactor**:
+   - Extract error code enum sang `@onboarding/shared`.
+   - `createApp(deps)` accept optional middleware overrides cho test.
+
+### DoD
+
+- [ ] Test `middleware/__infra.test.ts` green (all 5 cases).
+- [ ] `pnpm lint` + `pnpm typecheck` + `pnpm smoke` xanh.
+- [ ] Folder `services/`, `repos/`, `lib/`, `test/`, `middleware/`, `db/migrations/` đều có README hoặc `.gitkeep` + comment giải thích layer.
+- [ ] `packages/shared/src/errors.ts` export `ErrorCode` enum khớp list ở `.specs/error-codes.md`.
+- [ ] `drizzle.config.ts` + `db:generate`/`db:migrate`/`db:check` scripts chạy được (dù schema rỗng).
+- [ ] Deps added: `express-session`, `connect-redis`, `bcryptjs`, `cors`, `drizzle-orm`, `drizzle-kit`, `@types/express-session`, `@types/bcryptjs`, `@types/cors`.
+
+### Commit
+
+`chore(api): backend infra scaffold — middleware stack, drizzle config, test helpers (US-001 / T3)`
+
+---
+
+## T4 — Frontend infrastructure scaffold (senior FE)
+
+**Effort**: 4-5h
+**FR**: infra (foundation cho T8/T9/T10)
+**Deps**: T1 (web workspace tồn tại; **không** cần chờ T2/T3 — có thể chạy song song với T3)
+**Status**: 🟡
+
+### Goal
+
+Establish **FE architecture conventions** như senior FE sẽ làm ngày đầu. Sau T4, `pnpm --filter @onboarding/web dev` mở Vite + browser render placeholder page; khi T8+ viết page thật, pattern đã sẵn:
+
+1. **Folder structure**:
+
+   ```
+   apps/web/src/
+   ├── main.tsx               (Router + QueryClient + ErrorBoundary provider tree)
+   ├── App.tsx                (route tree shell)
+   ├── routes/                (route definitions — createBrowserRouter)
+   ├── pages/                 (page components — 1 placeholder HomePage ở T4)
+   ├── components/
+   │   ├── ui/                (shadcn copied components)
+   │   ├── layout/            (AppHeader, AppShell, ErrorBoundary)
+   │   └── features/          (feature-scoped components — empty)
+   ├── queries/               (TanStack Query hooks — empty, factory pattern doc)
+   ├── hooks/                 (custom hooks — empty)
+   ├── lib/
+   │   ├── api.ts             (fetch wrapper: credentials:"include", error mapping)
+   │   ├── errorMessages.ts   (ErrorCode → VI copy; import từ @onboarding/shared)
+   │   └── cn.ts              (tailwind class merger)
+   ├── styles/
+   │   └── index.css          (tailwind directives + shadcn theme)
+   └── test/
+       ├── setup.ts           (vitest jsdom setup + MSW server start)
+       ├── msw-handlers.ts    (default MSW handlers)
+       └── test-utils.tsx     (render-with-providers wrapper)
+   ```
+
+2. **Config**:
+   - `vite.config.ts`: React plugin, path alias `@/` → `src/`, proxy `/api` → `http://localhost:3001`, test config (vitest jsdom + setup file).
+   - `tailwind.config.js` + `postcss.config.js`: content paths cover `src/**/*.{ts,tsx}`.
+   - `components.json` (shadcn config) + CLI-generated `ui/button.tsx`, `ui/input.tsx`, `ui/label.tsx`.
+   - `index.html` ở root apps/web với `#root` div.
+   - `tsconfig.json`: add `jsx: react-jsx`, `paths` alias.
+
+3. **Provider tree** (`main.tsx` → `App.tsx`):
+   - `<QueryClientProvider>` (TanStack Query default client).
+   - `<RouterProvider>` (createBrowserRouter).
+   - `<ErrorBoundary>` (class component render fallback UI).
+
+4. **API client** (`lib/api.ts`):
+   - `apiFetch<T>(path, init?)`: base URL từ `import.meta.env.VITE_API_BASE_URL`, `credentials: "include"`, parse response, throw `ApiError` với `code`/`message`/`details` khớp BE shape.
+   - Hook `useApi()` chưa cần — query/mutation hooks trực tiếp ở T6/T8 dùng `apiFetch`.
+
+5. **Test setup**:
+   - Vitest với `environment: "jsdom"` + `setupFiles: ["./src/test/setup.ts"]`.
+   - MSW `setupServer()` default handler trả 200 healthz; test override khi cần.
+   - `test-utils.tsx` export `renderWithProviders(ui, { initialEntries? })` wrap Router+Query.
+
+6. **Placeholder page**: `HomePage.tsx` render `<h1>Onboarding Portal</h1>` + `"Implementation in progress — M1"` để verify wiring.
+
+### TDD cycle
+
+1. **Red**: `apps/web/src/__smoke__.test.tsx`:
+   - `renderWithProviders(<App />)` → tìm thấy text "Onboarding Portal".
+   - MSW mock `/api/v1/health` → `apiFetch("/health")` trả đúng shape `{status, db, redis, version}`.
+   - Error case: MSW trả 401 `UNAUTHENTICATED` → `apiFetch` throw `ApiError` có `code === "UNAUTHENTICATED"`.
+2. **Green**: install deps + scaffold các file trên. Chạy `pnpm --filter @onboarding/web dev` verify manual browser render.
+3. **Refactor**: pull `errorMessages.ts` copy từ `.specs/error-codes.md` §Client-side mapping.
+
+### DoD
+
+- [ ] `pnpm --filter @onboarding/web dev` serve Vite trên :5173; browser render `<h1>`.
+- [ ] `pnpm --filter @onboarding/web test` green (smoke + api.ts unit test).
+- [ ] `pnpm smoke` (root) vẫn pass.
+- [ ] Tailwind build output CSS (check via `pnpm --filter @onboarding/web build`).
+- [ ] shadcn `components.json` + ≥ 3 component stubs copied (button, input, label).
+- [ ] MSW setup hoạt động — 1 smoke test dùng MSW pass.
+- [ ] `lib/api.ts` unit test cover happy path + error mapping.
+
+### Deps added
+
+- **Runtime**: `react`, `react-dom`, `react-router-dom`, `@tanstack/react-query`, `clsx`, `tailwind-merge`, `class-variance-authority`, `lucide-react`.
+- **Forms (tiền cài cho T8/US-002)**: `react-hook-form`, `@hookform/resolvers`, `zod` (via shared).
+- **Dev**: `@vitejs/plugin-react`, `vite`, `tailwindcss`, `postcss`, `autoprefixer`, `@testing-library/react`, `@testing-library/jest-dom`, `@testing-library/user-event`, `jsdom`, `msw`, `@types/react`, `@types/react-dom`.
+
+### Commit
+
+`chore(web): frontend infra scaffold — vite + tailwind + shadcn + router + query client (US-001 / T4)`
+
+---
+
+## T5 — DB schema + migration + seed
+
+**Effort**: 4h
+**FR**: FR-FEAT-002
+**Deps**: T3 (drizzle config from infra scaffold)
+**Status**: 🟡
+
+### Goal
+
+4 bảng: `users`, `projects`, `features`, `sections`. Migration generated + applied. Seed script tạo 1 admin + 1 author + 1 project + 1 feature 5-section filled. `tsvector` column cho FTS ready (dùng cho T7 search).
 
 ### Schema (Drizzle)
 
@@ -148,9 +326,7 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 2. **Green**:
    - `apps/api/src/db/schema.ts` declare bảng với Drizzle.
    - `pnpm db:generate` → produce `apps/api/src/db/migrations/0001_init.sql`.
-   - `drizzle.config.ts` ở apps/api.
    - `apps/api/src/db/seed.ts`: bcrypt hash `dev12345`, insert admin + author + project "Demo Project" (slug `demo`) + feature "Login with email" (slug `login-with-email`) + 5 sections với markdown mẫu (business/user-flow/business-rules/tech-notes/screenshots).
-   - `pnpm db:migrate` + `pnpm db:seed` scripts trong root `package.json`.
 3. **Refactor**: nếu search_vector dùng trigger thay generated column, viết trigger SQL rõ ràng comment why.
 
 ### DoD
@@ -163,19 +339,20 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 
 ### Commit
 
-`feat(api): db schema + seed data for demo project (US-001 / T3 / FR-FEAT-002)`
+`feat(api): db schema + seed data for demo project (US-001 / T5 / FR-FEAT-002)`
 
 ---
 
-## T4 — Auth endpoints + session middleware
+## T6 — Auth endpoints + session middleware
 
 **Effort**: 3h
 **FR**: FR-AUTH-001
-**Deps**: T3
+**Deps**: T5 (users table) + T3 (session middleware config already present)
+**Status**: 🟡
 
 ### Goal
 
-`POST /auth/login`, `POST /auth/logout`, `GET /auth/me` hoạt động với session Redis. Middleware `requireAuth` attach `req.user` hoặc trả 401.
+`POST /auth/login`, `POST /auth/logout`, `GET /auth/me` hoạt động với session Redis. Middleware `requireAuth` (stub từ T3) nay query user thật + attach `req.user`.
 
 ### TDD cycle
 
@@ -188,32 +365,31 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
    - POST /auth/logout với cookie → 204, sau đó GET /auth/me → 401.
    - Rate limit: 11 login attempts từ 1 IP trong 1 phút → req thứ 11 trả 429 `RATE_LIMITED`.
 2. **Green**:
-   - Install `express-session`, `connect-redis`, `bcryptjs`.
-   - `apps/api/src/middleware/session.ts`: session config (cookie `sid`, httpOnly, sameSite=lax, secure=env, maxAge 7d).
    - `apps/api/src/routes/auth.ts`: login (bcrypt compare, set `req.session.userId`), logout (destroy), me (requireAuth).
-   - `apps/api/src/middleware/requireAuth.ts`: check `req.session.userId` → query user → attach `req.user`, else 401.
-   - Rate limit trên `/auth/login` dùng Redis counter (SET + EXPIRE) — helper đơn giản, không thêm lib.
-3. **Refactor**: error code constants ở `packages/shared/src/errors.ts`.
+   - Extend `apps/api/src/middleware/requireAuth.ts` (from T3 stub): query user by `req.session.userId`, attach `req.user`.
+   - `rateLimit(ipKey, 10, 60)` apply trên `/auth/login` (helper từ T3).
+3. **Refactor**: extract user repo (`apps/api/src/repos/userRepo.ts`) theo T3 pattern.
 
 ### DoD
 
 - [ ] Auth routes tests all green.
 - [ ] Password comparison constant-time (bcryptjs default OK).
 - [ ] Session persist sau server restart (nếu Redis persist — v1 accepted loss, document).
-- [ ] Error response schema `{ error: { code, message } }` consistent.
-- [ ] `packages/shared/src/errors.ts` export `ErrorCode` enum.
+- [ ] Error response schema consistent với `ErrorCode` enum từ T3.
+- [ ] `userRepo` dùng drizzle client từ T3.
 
 ### Commit
 
-`feat(api): auth login/logout + session middleware (US-001 / T4 / FR-AUTH-001)`
+`feat(api): auth login/logout + session middleware (US-001 / T6 / FR-AUTH-001)`
 
 ---
 
-## T5 — Read API + search API
+## T7 — Read API + search API
 
 **Effort**: 4h
 **FR**: FR-FEAT-002, FR-READ-001, FR-SEARCH-001
-**Deps**: T4
+**Deps**: T6
+**Status**: 🟡
 
 ### Goal
 
@@ -232,11 +408,9 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
    - GET /search?q= (empty) → 400 `SEARCH_QUERY_EMPTY`.
    - GET /search?q=zzzzz → 200 `{ data: [] }`.
 2. **Green**:
-   - `apps/api/src/repos/projectRepo.ts`: `getProjectBySlug`, `listFeaturesByProject` (JOIN với sections COUNT filled).
-   - `apps/api/src/repos/featureRepo.ts`: `getFeatureBySlug` với sections ordered by `CASE type WHEN 'business' THEN 1 ... END`.
-   - `apps/api/src/repos/searchRepo.ts`: query `SELECT ..., ts_rank(search_vector, plainto_tsquery(...)) as rank, ts_headline(...) as snippet FROM features WHERE search_vector @@ plainto_tsquery(...) ORDER BY rank DESC LIMIT 20`.
+   - `apps/api/src/repos/projectRepo.ts`, `featureRepo.ts`, `searchRepo.ts` (pattern từ T3).
    - `apps/api/src/services/*`: thin wrappers (validate slug format, error mapping).
-   - `apps/api/src/routes/{projects,features,search}.ts`: Zod validate params/query + call service.
+   - `apps/api/src/routes/{projects,features,search}.ts`: Zod validate params/query (dùng `zodValidate` middleware từ T3) + call service.
    - Shared Zod schemas ở `packages/shared/src/schemas/feature.ts`.
 3. **Refactor**: extract section ordering constant `SECTION_ORDER` dùng shared FE/BE.
 
@@ -250,57 +424,56 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 
 ### Commit
 
-`feat(api): project + feature + search read endpoints (US-001 / T5 / FR-READ-001,SEARCH-001)`
+`feat(api): project + feature + search read endpoints (US-001 / T7 / FR-READ-001,SEARCH-001)`
 
 ---
 
-## T6 — Web skeleton + auth guard + login page
+## T8 — Login page + auth guard
 
-**Effort**: 4h
+**Effort**: 3h (scope narrowed: FE shell đã có từ T4)
 **FR**: FR-AUTH-001
-**Deps**: T2 (có thể parallel với T3-T5 cho shell, nhưng login functional cần T4)
+**Deps**: T4 (FE shell) + T6 (auth API)
+**Status**: 🟡
 
 ### Goal
 
-`apps/web` Vite app chạy, Tailwind + shadcn setup, React Router, login page hoạt động end-to-end với API T4.
+LoginPage + RequireAuth wrapper + logout button. Scope hẹp vì T4 đã có Vite/Tailwind/shadcn/Router/Query client/api client/error boundary. Task này wire auth-specific UI vào shell.
 
 ### TDD cycle
 
 1. **Red**: `apps/web/src/pages/LoginPage.test.tsx`:
    - Render form với email + password input + submit button.
-   - Submit valid → mock API success → router push `/`.
-   - Submit invalid → inline error "Email hoặc mật khẩu không đúng".
+   - Submit valid → MSW mock API success → router push `/`.
+   - Submit invalid → MSW mock 401 → inline error "Email hoặc mật khẩu không đúng" (map qua `errorMessages.ts` từ T4).
    - Empty form + submit → Zod validation error hiển thị.
+   - Logout button click → mutation → redirect `/login`.
 2. **Green**:
-   - `apps/web/vite.config.ts`: proxy `/api` → `http://localhost:3001`.
-   - Tailwind config + shadcn init (`npx shadcn add button input label alert`).
-   - `apps/web/src/main.tsx`: React Router `createBrowserRouter`.
-   - `apps/web/src/lib/api.ts`: fetch wrapper với `credentials: 'include'` + error mapping.
-   - `apps/web/src/queries/auth.ts`: TanStack Query `useMe()`, `useLogin()`, `useLogout()`.
-   - `apps/web/src/pages/LoginPage.tsx`: form với react-hook-form + zodResolver + shared Zod schema.
-   - `apps/web/src/components/RequireAuth.tsx`: wrapper check `useMe()`; unauthenticated → `<Navigate to={`/login?next=${encodeURIComponent(location)}`} />`.
-   - `apps/web/src/components/AppHeader.tsx`: display user + Logout button (logout mutation).
-3. **Refactor**: error toast helper, isolate API error → UI message.
+   - `apps/web/src/queries/auth.ts`: `useMe()`, `useLogin()`, `useLogout()` (TanStack Query hooks dùng `apiFetch` từ T4).
+   - `apps/web/src/pages/LoginPage.tsx`: react-hook-form + zodResolver + shared Zod schema.
+   - `apps/web/src/components/layout/RequireAuth.tsx`: wrapper check `useMe()`; unauthenticated → `<Navigate to={`/login?next=${encodeURIComponent(location)}`} />`.
+   - `apps/web/src/components/layout/AppHeader.tsx`: display user + Logout button.
+   - Wire routes trong `routes/` (từ T4 scaffold).
+3. **Refactor**: error toast helper (dùng shadcn `sonner` hoặc custom).
 
 ### DoD
 
-- [ ] `pnpm --filter @onboarding/web dev` → Vite :5173 OK.
-- [ ] Login flow E2E manual: login admin@local/dev12345 → redirect `/` → refresh → vẫn authenticated.
-- [ ] LoginPage unit tests green.
-- [ ] shadcn components copied tới `apps/web/src/components/ui/`.
+- [ ] LoginPage + RequireAuth tests green.
+- [ ] Login flow E2E manual: admin@local/dev12345 → redirect `/` → refresh → vẫn authenticated.
 - [ ] Logout clears cookie + redirect `/login`.
+- [ ] Zod login schema share giữa BE (T6) và FE — 1 nguồn `packages/shared/src/schemas/auth.ts`.
 
 ### Commit
 
-`feat(web): vite app + login page + auth guard (US-001 / T6 / FR-AUTH-001)`
+`feat(web): login page + auth guard (US-001 / T8 / FR-AUTH-001)`
 
 ---
 
-## T7 — Landing + feature detail pages
+## T9 — Landing + feature detail pages
 
 **Effort**: 4h
 **FR**: FR-READ-001, FR-FEAT-002
-**Deps**: T5, T6
+**Deps**: T7 (API) + T8 (auth guard)
+**Status**: 🟡
 
 ### Goal
 
@@ -309,44 +482,42 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 ### TDD cycle
 
 1. **Red**: `apps/web/src/pages/{ProjectLandingPage,FeatureDetailPage}.test.tsx`:
-   - Landing: render feature list với filled count "3/5", relative time "2 giờ trước" (dùng seed data fixture).
+   - Landing: render feature list với filled count "3/5", relative time "2 giờ trước" (MSW fixture).
    - Landing empty: render "Chưa có feature nào trong project này".
-   - Feature detail: 5 section headings in đúng thứ tự (query by role/heading level).
+   - Feature detail: 5 section headings đúng thứ tự.
    - Feature detail empty section: render "Chưa có nội dung" placeholder.
-   - Markdown sanitize: inject script tag trong body → không execute, render text plain.
+   - Markdown sanitize: inject script tag trong body → không execute.
 2. **Green**:
    - `apps/web/src/queries/projects.ts`: `useProject(slug)`, `useFeature(slug, featureSlug)`.
-   - `apps/web/src/components/features/FeatureList.tsx`: render row + `SectionIndicator`.
-   - `apps/web/src/components/features/SectionIndicator.tsx`: 5 chấm + "N/5 filled".
-   - `apps/web/src/components/features/MarkdownView.tsx`: server markdown HTML đã sanitize — hoặc FE render với `markdown-it` + `DOMPurify`. **Chọn FE** (ít state server hơn).
-   - `apps/web/src/components/features/FeatureSections.tsx`: render 5 section card fixed order, import `SECTION_ORDER` từ shared.
-   - `apps/web/src/lib/relativeTime.ts`: wrapper `date-fns/formatDistance` locale `vi`.
-   - Route mapping trong `main.tsx` + RequireAuth wrap.
-3. **Refactor**: common `LoadingState` + `ErrorState` components.
+   - `apps/web/src/components/features/FeatureList.tsx`, `SectionIndicator.tsx`, `MarkdownView.tsx` (markdown-it + DOMPurify), `FeatureSections.tsx` (dùng `SECTION_ORDER` từ shared).
+   - `apps/web/src/lib/relativeTime.ts`: `date-fns/formatDistance` locale `vi`.
+   - Route mapping + RequireAuth wrap (từ T8).
+3. **Refactor**: common `LoadingState` + `ErrorState` components trong `components/layout/`.
 
 ### DoD
 
 - [ ] Landing + detail test green.
-- [ ] Markdown XSS test passes (script tag không execute).
+- [ ] Markdown XSS test passes.
 - [ ] `date-fns` locale `vi` config central.
-- [ ] Responsive check manual (mobile width 375px không break layout).
-- [ ] AC-3/4/5/6 manual verify trên browser với seed data.
+- [ ] Responsive check manual (mobile width 375px).
+- [ ] AC-3/4/5/6 manual verify browser với seed data.
 
 ### Commit
 
-`feat(web): project landing + feature detail pages (US-001 / T7 / FR-READ-001,FEAT-002)`
+`feat(web): project landing + feature detail pages (US-001 / T9 / FR-READ-001,FEAT-002)`
 
 ---
 
-## T8 — Search page + Playwright smoke + SETUP validation
+## T10 — Search page + Playwright smoke + SETUP validation
 
 **Effort**: 3h
 **FR**: FR-SEARCH-001
-**Deps**: T5, T7
+**Deps**: T7, T9
+**Status**: 🟡
 
 ### Goal
 
-Search bar trong header (T6 existing) + `/search?q=...` page. Playwright smoke E2E cover full US-001 flow. Chạy lại `docs/SETUP.md` từ đầu (fresh clone) để verify SETUP chính xác.
+Search bar trong `AppHeader` (từ T8) + `/search?q=...` page. Playwright smoke E2E cover full US-001 flow. Chạy lại `docs/SETUP.md` từ fresh clone để verify SETUP chính xác.
 
 ### TDD cycle
 
@@ -355,20 +526,16 @@ Search bar trong header (T6 existing) + `/search?q=...` page. Playwright smoke E
    - `e2e/us-001.spec.ts` (Playwright):
      ```
      test('US-001 happy path', async ({ page }) => {
-       // login
        await page.goto('/login');
        await page.fill('[name=email]', 'admin@local');
        await page.fill('[name=password]', 'dev12345');
        await page.click('button[type=submit]');
-       // landing
        await page.goto('/projects/demo');
        await expect(page.getByText('Login with email')).toBeVisible();
-       // feature detail
        await page.click('text=Login with email');
        for (const h of ['Business', 'User Flow', 'Business Rules', 'Tech Notes', 'Screenshots']) {
          await expect(page.getByRole('heading', { name: h })).toBeVisible();
        }
-       // search
        await page.fill('[role=search] input', 'login');
        await page.press('[role=search] input', 'Enter');
        await expect(page.getByRole('mark')).toBeVisible();
@@ -377,7 +544,7 @@ Search bar trong header (T6 existing) + `/search?q=...` page. Playwright smoke E
 2. **Green**:
    - `apps/web/src/pages/SearchPage.tsx`: query param parsing, `useSearch(q)` TanStack Query, render list + snippet với `dangerouslySetInnerHTML` sau DOMPurify (chỉ allow `<mark>`).
    - Search input trong `AppHeader` submit navigate `/search?q=...`.
-   - Empty query client-side guard (disable button + toast).
+   - Empty query client-side guard.
    - Playwright config + smoke spec trong repo root `e2e/`.
 3. **Refactor**: share sanitize config.
 
@@ -385,13 +552,13 @@ Search bar trong header (T6 existing) + `/search?q=...` page. Playwright smoke E
 
 - [ ] SearchPage unit test green.
 - [ ] `pnpm test:e2e` green (với `pnpm dev` + docker compose chạy).
-- [ ] SETUP.md walk-through fresh: `git clone → pnpm install → docker compose up → pnpm db:migrate → pnpm db:seed → pnpm dev → browser verify 3 checkpoints 8.1/8.2/8.3` tất cả pass.
-- [ ] SETUP.md labels update từ 🟡 → ✅ cho các section T1-T8 hoàn thành.
-- [ ] US-001 status trong `../US-001.md` đổi từ `Draft` → `Done` với ghi chú date + commit range.
+- [ ] SETUP.md walk-through fresh clone end-to-end pass 3 smoke checkpoints.
+- [ ] SETUP.md labels update 🟡 → ✅ cho các section T1-T10 hoàn thành.
+- [ ] US-001 status đổi từ `Draft` → `Done` với ghi chú date + commit range.
 
 ### Commit
 
-`feat(web): search page + playwright smoke for US-001 (US-001 / T8 / FR-SEARCH-001)`
+`feat(web): search page + playwright smoke for US-001 (US-001 / T10 / FR-SEARCH-001)`
 
 ---
 
@@ -401,14 +568,14 @@ Search bar trong header (T6 existing) + `/search?q=...` page. Playwright smoke E
 - Markdown editor: US-002 T\*.
 - Upload: US-003 T\*.
 - Role check `admin` cho create project: US-002 T\*.
-- Fine-grained a11y audit (axe): stretch trong T7 hoặc defer.
-- Load test NFR-PERF-001 target: manual script sau T8, không gate CI v1.
+- Fine-grained a11y audit (axe): stretch trong T9 hoặc defer.
+- Load test NFR-PERF-001 target: manual script sau T10, không gate CI v1.
 
 ---
 
-## Checklist trước khi start T1
+## Checklist trước khi start T3
 
 - [ ] Đọc lại [US-001.md](../US-001.md) full.
 - [ ] Xác nhận Docker Desktop running, Node 20 + pnpm 9 available.
-- [ ] Tạo branch `feat/us-001-reader-mvp` (nếu muốn trunk-based, commit thẳng `main` cũng chấp nhận v1).
-- [ ] Review [ADR-001](../../adr/ADR-001-tech-stack.md) §2.1-2.3 để align deps version trước khi add.
+- [ ] Review [ADR-001](../../adr/ADR-001-tech-stack.md) §2.1-2.3 để align deps version.
+- [ ] Đọc [TESTING.md](../../../docs/TESTING.md) §Mocking policy để biết test strategy mỗi layer.

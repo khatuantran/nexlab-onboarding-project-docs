@@ -18,18 +18,20 @@ Roadmap này mô tả milestone + target date. **Không phải kế hoạch chi 
 
 ### M1 — US-001 Read path 🟡 In Progress _(target 2026-05-31)_
 
-Implement US-001 qua 8 task (T1-T8). **Progress: 2/8 done.**
+Implement US-001 qua 10 task (T1-T10). **Progress: 2/10 done.**
 
-| Task                                                                                     | Status        | Commit    |
-| ---------------------------------------------------------------------------------------- | ------------- | --------- |
-| [T1 Monorepo bootstrap](stories/US-001/tasks.md#t1--monorepo-bootstrap--tooling)         | ✅ 2026-04-22 | `10b3a04` |
-| [T2 Docker + API skeleton](stories/US-001/tasks.md#t2--docker-compose--api-skeleton)     | ✅ 2026-04-23 | `829a51a` |
-| [T3 DB schema + seed](stories/US-001/tasks.md#t3--db-schema--migration--seed)            | 🟡 Next       | —         |
-| [T4 Auth endpoints](stories/US-001/tasks.md#t4--auth-endpoints--session-middleware)      | 🟡            | —         |
-| [T5 Read + search API](stories/US-001/tasks.md#t5--read-api--search-api)                 | 🟡            | —         |
-| [T6 Web + login](stories/US-001/tasks.md#t6--web-skeleton--auth-guard--login-page)       | 🟡            | —         |
-| [T7 Landing + feature detail](stories/US-001/tasks.md#t7--landing--feature-detail-pages) | 🟡            | —         |
-| [T8 Search + E2E](stories/US-001/tasks.md#t8--search-page--e2e-smoke--setup-validation)  | 🟡            | —         |
+| Task                                                                                                             | Status        | Commit    |
+| ---------------------------------------------------------------------------------------------------------------- | ------------- | --------- |
+| [T1 Monorepo bootstrap](stories/US-001/tasks.md#t1--monorepo-bootstrap--tooling)                                 | ✅ 2026-04-22 | `10b3a04` |
+| [T2 Docker + API skeleton](stories/US-001/tasks.md#t2--docker-compose--api-skeleton)                             | ✅ 2026-04-23 | `829a51a` |
+| [T3 Backend infra scaffold (senior BE)](stories/US-001/tasks.md#t3--backend-infrastructure-scaffold-senior-be)   | 🟡 Next       | —         |
+| [T4 Frontend infra scaffold (senior FE)](stories/US-001/tasks.md#t4--frontend-infrastructure-scaffold-senior-fe) | 🟡            | —         |
+| [T5 DB schema + seed](stories/US-001/tasks.md#t5--db-schema--migration--seed)                                    | 🟡            | —         |
+| [T6 Auth endpoints](stories/US-001/tasks.md#t6--auth-endpoints--session-middleware)                              | 🟡            | —         |
+| [T7 Read + search API](stories/US-001/tasks.md#t7--read-api--search-api)                                         | 🟡            | —         |
+| [T8 Login page + auth guard](stories/US-001/tasks.md#t8--login-page--auth-guard)                                 | 🟡            | —         |
+| [T9 Landing + feature detail](stories/US-001/tasks.md#t9--landing--feature-detail-pages)                         | 🟡            | —         |
+| [T10 Search + E2E](stories/US-001/tasks.md#t10--search-page--e2e-smoke--setup-validation)                        | 🟡            | —         |
 
 - **Deliverable**:
   - Docker Compose infra chạy (postgres + redis).
@@ -40,7 +42,7 @@ Implement US-001 qua 8 task (T1-T8). **Progress: 2/8 done.**
   - Web: login page, project landing, feature detail, search page.
   - Playwright smoke E2E cover toàn bộ AC.
 - **Exit criteria**: chạy lại [SETUP.md](../docs/SETUP.md) từ fresh clone end-to-end pass 3 smoke checkpoint; tất cả AC của [US-001](stories/US-001.md) có automated test.
-- **Effort**: ~26h (tasks estimate, solo + TDD).
+- **Effort**: ~34h (tasks estimate, solo + TDD; +8h so với 26h ban đầu vì thêm T3-BE + T4-FE infra scaffold).
 
 ### M2 — US-002 + US-003 Author path 🟡 _(target 2026-06-30)_
 

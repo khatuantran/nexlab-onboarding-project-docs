@@ -26,9 +26,9 @@ Ký hiệu **Auth**: ❌ không yêu cầu · 🔐 session required · 👑 admi
 
 | Method | Path           | Auth | Request               | Response                                    | Errors                                                                | FR                                                                | Task                                                                 |
 | ------ | -------------- | ---- | --------------------- | ------------------------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------- |
-| POST   | `/auth/login`  | ❌   | `{ email, password }` | 200 `{ data: { user } }` + Set-Cookie `sid` | 401 `INVALID_CREDENTIALS`; 429 `RATE_LIMITED`; 400 `VALIDATION_ERROR` | [FR-AUTH-001](02-requirements.md#fr-auth-001--emailpassword-auth) | [T4](stories/US-001/tasks.md#t4--auth-endpoints--session-middleware) |
-| POST   | `/auth/logout` | 🔐   | —                     | 204 + clear cookie                          | —                                                                     | FR-AUTH-001                                                       | T4                                                                   |
-| GET    | `/auth/me`     | 🔐   | —                     | 200 `{ data: { user } }`                    | 401 `UNAUTHENTICATED`                                                 | FR-AUTH-001                                                       | T4                                                                   |
+| POST   | `/auth/login`  | ❌   | `{ email, password }` | 200 `{ data: { user } }` + Set-Cookie `sid` | 401 `INVALID_CREDENTIALS`; 429 `RATE_LIMITED`; 400 `VALIDATION_ERROR` | [FR-AUTH-001](02-requirements.md#fr-auth-001--emailpassword-auth) | [T6](stories/US-001/tasks.md#t6--auth-endpoints--session-middleware) |
+| POST   | `/auth/logout` | 🔐   | —                     | 204 + clear cookie                          | —                                                                     | FR-AUTH-001                                                       | T6                                                                   |
+| GET    | `/auth/me`     | 🔐   | —                     | 200 `{ data: { user } }`                    | 401 `UNAUTHENTICATED`                                                 | FR-AUTH-001                                                       | T6                                                                   |
 
 ### Users (admin invite)
 
@@ -40,16 +40,16 @@ Ký hiệu **Auth**: ❌ không yêu cầu · 🔐 session required · 👑 admi
 
 | Method | Path              | Auth | Request                        | Response                                                 | Errors                             | FR                                                                            | Task                                                   |
 | ------ | ----------------- | ---- | ------------------------------ | -------------------------------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------ |
-| GET    | `/projects`       | 🔐   | —                              | 200 `{ data: Project[] }` (sorted updated-desc)          | —                                  | [FR-PROJ-001](02-requirements.md#fr-proj-001--project-crud-minimal)           | T5                                                     |
+| GET    | `/projects`       | 🔐   | —                              | 200 `{ data: Project[] }` (sorted updated-desc)          | —                                  | [FR-PROJ-001](02-requirements.md#fr-proj-001--project-crud-minimal)           | T7                                                     |
 | POST   | `/projects`       | 👑   | `{ slug, name, description? }` | 201 `{ data: Project }`                                  | 403; 409 `PROJECT_SLUG_TAKEN`; 400 | FR-PROJ-001                                                                   | US-002 task                                            |
-| GET    | `/projects/:slug` | 🔐   | —                              | 200 `{ data: { project, features: FeatureListItem[] } }` | 404 `PROJECT_NOT_FOUND`            | [FR-READ-001](02-requirements.md#fr-read-001--project-landing--feature-index) | [T5](stories/US-001/tasks.md#t5--read-api--search-api) |
+| GET    | `/projects/:slug` | 🔐   | —                              | 200 `{ data: { project, features: FeatureListItem[] } }` | 404 `PROJECT_NOT_FOUND`            | [FR-READ-001](02-requirements.md#fr-read-001--project-landing--feature-index) | [T7](stories/US-001/tasks.md#t7--read-api--search-api) |
 
 ### Features
 
 | Method | Path                                    | Auth | Request             | Response                                                    | Errors                                                 | FR                                                                         | Task        |
 | ------ | --------------------------------------- | ---- | ------------------- | ----------------------------------------------------------- | ------------------------------------------------------ | -------------------------------------------------------------------------- | ----------- |
 | POST   | `/projects/:slug/features`              | 🔐   | `{ slug, title }`   | 201 `{ data: Feature }` (5 sections auto-init empty)        | 404 `PROJECT_NOT_FOUND`; 409 `FEATURE_SLUG_TAKEN`; 400 | [FR-FEAT-001](02-requirements.md#fr-feat-001--feature-crud-within-project) | US-002 task |
-| GET    | `/projects/:slug/features/:featureSlug` | 🔐   | —                   | 200 `{ data: { feature, sections: Section[5] } }` (ordered) | 404 `FEATURE_NOT_FOUND`                                | [FR-FEAT-002](02-requirements.md#fr-feat-002--5-section-template)          | T5          |
+| GET    | `/projects/:slug/features/:featureSlug` | 🔐   | —                   | 200 `{ data: { feature, sections: Section[5] } }` (ordered) | 404 `FEATURE_NOT_FOUND`                                | [FR-FEAT-002](02-requirements.md#fr-feat-002--5-section-template)          | T7          |
 | PATCH  | `/features/:id`                         | 🔐   | `{ title?, slug? }` | 200 `{ data: Feature }`                                     | 404; 409; 400                                          | FR-FEAT-001                                                                | US-002 task |
 
 ### Sections
@@ -69,7 +69,7 @@ Ký hiệu **Auth**: ❌ không yêu cầu · 🔐 session required · 👑 admi
 
 | Method | Path                      | Auth | Request                                         | Response                             | Errors                                            | FR                                                                  | Task |
 | ------ | ------------------------- | ---- | ----------------------------------------------- | ------------------------------------ | ------------------------------------------------- | ------------------------------------------------------------------- | ---- |
-| GET    | `/search?q=&projectSlug=` | 🔐   | query `q` (1-200 chars), optional `projectSlug` | 200 `{ data: SearchHit[] }` (top 20) | 400 `SEARCH_QUERY_EMPTY`, `SEARCH_QUERY_TOO_LONG` | [FR-SEARCH-001](02-requirements.md#fr-search-001--full-text-search) | T5   |
+| GET    | `/search?q=&projectSlug=` | 🔐   | query `q` (1-200 chars), optional `projectSlug` | 200 `{ data: SearchHit[] }` (top 20) | 400 `SEARCH_QUERY_EMPTY`, `SEARCH_QUERY_TOO_LONG` | [FR-SEARCH-001](02-requirements.md#fr-search-001--full-text-search) | T7   |
 
 ---
 

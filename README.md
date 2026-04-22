@@ -4,7 +4,7 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ## Trạng thái
 
-🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T2/8 done** — API skeleton + `/api/v1/health` + Docker Compose wired. Next: [T3 — DB schema + Drizzle migration + seed](.specs/stories/US-001/tasks.md#t3--db-schema--migration--seed).
+🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T2/10 done** — API skeleton + `/api/v1/health` + Docker Compose wired. Next: [T3 — Backend infrastructure scaffold (senior BE)](.specs/stories/US-001/tasks.md#t3--backend-infrastructure-scaffold-senior-be).
 
 ## Vấn đề đang giải quyết
 
