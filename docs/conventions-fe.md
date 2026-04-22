@@ -97,6 +97,21 @@ src/
 - Form test: fill by label → submit → assert message / router navigate.
 - KHÔNG snapshot test cho component có data động.
 
+### 11.1 Test case naming
+
+- **`describe(...)`**: component / hook / util, match exact tên source. VD `describe("LoginPage")`, `describe("useMe")`, `describe("apiFetch")`.
+- **`it(...)`**: mô tả **user-observable behavior**, ngôi 3 hiện tại + điều kiện. Không dùng "should".
+  - ✅ `it("shows 'Email hoặc mật khẩu không đúng' on 401 response")`
+  - ✅ `it("disables submit button while mutation is pending")`
+  - ✅ `it("redirects to /login?next=... when user is unauthenticated")`
+  - ❌ `it("should render properly")` — vague
+  - ❌ `it("component works")` — không mô tả gì
+  - ❌ `it("useState called 2 times")` — implementation detail
+- **Vietnamese copy** trong assertion: dùng đúng text UI hoặc import constant (tránh drift khi đổi copy).
+- **AAA layout**: blank line tách Arrange / Act / Assert.
+- **Query theo role/label/text** (per §11) — không test-id / CSS class trừ khi bắt buộc.
+- **File name**: `<Component>.test.tsx` hoặc `<util>.test.ts` match source. VD `src/pages/LoginPage.tsx` → `tests/pages/LoginPage.test.tsx`.
+
 ## 12. Internationalization
 
 - UI copy **tiếng Việt**. Code/test/commit tiếng Anh.

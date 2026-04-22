@@ -67,6 +67,21 @@ lib/         → Utilities (response helpers, date, etc.)
 - Mọi endpoint trong [api-surface.md](../.specs/api-surface.md) cần ≥ 1 happy + 1 error test.
 - Assertion theo behavior, KHÔNG assertion implementation detail (VD "function called N times").
 
+### 8.1 Test case naming
+
+- **`describe(...)`**: tên subject (function/route/middleware), match exact tên code. VD `describe("zodValidate middleware")`, `describe("GET /api/v1/health")`, `describe("userRepo.findByEmail")`.
+- **`it(...)`**: mô tả **behavior observable**, bắt đầu bằng verb ngôi 3 hiện tại + điều kiện. Không dùng "should".
+  - ✅ `it("returns 200 with status=ok when db and redis are both ok")`
+  - ✅ `it("rejects 401 UNAUTHENTICATED when session.userId missing")`
+  - ✅ `it("throws HttpError(409, PROJECT_SLUG_TAKEN) on duplicate slug")`
+  - ❌ `it("should work")` — vague
+  - ❌ `it("test feature creation")` — không phải câu mô tả
+  - ❌ `it("calls service.createFeature once")` — implementation detail
+- **AAA layout**: blank line tách Arrange / Act / Assert trong body.
+- **Nested describe** chỉ khi subject có phương thức riêng, không dùng để group pre-condition.
+- **File name**: `<subject>.test.ts` match source. VD `src/services/userService.ts` → `tests/services/userService.test.ts`.
+- **Integration suffix** `.integration.test.ts` nếu tách vitest project (optional v1).
+
 ## 9. Naming
 
 | Kind                        | Convention           | Example                                       |
