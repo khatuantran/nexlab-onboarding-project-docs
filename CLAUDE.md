@@ -13,6 +13,7 @@ This project follows **Spec-Driven Development (SDD)**. All specs live in `.spec
 5. **Small commits.** One concern per commit. Conventional Commits style: `type(scope): subject`.
 6. **EARS requirements.** New functional requirements use EARS format (Ubiquitous / Event / State / Optional / Unwanted / Complex).
 7. **Glossary is law.** New domain term → add to `.specs/glossary.md` FIRST, then use it consistently.
+8. **Template is law.** Không viết file mới trong `.specs/` mà không clone từ template tương ứng ở `templates/`. Xem §Template Compliance Rules.
 
 ---
 
@@ -117,6 +118,46 @@ Full rationale: [.specs/adr/ADR-001-tech-stack.md](.specs/adr/ADR-001-tech-stack
 - **Env**: `.env.local` at repo root (gitignored). Template in `.env.example`.
 
 When in doubt about a tech choice, read ADR-001 first. If the question isn't covered and is architectural, propose **ADR-002** rather than silently deciding.
+
+---
+
+## Template Compliance Rules
+
+Mọi file trong `.specs/` phải clone từ template ở [`templates/`](templates/). Full registry + per-template required sections + versioning policy: [templates/README.md](templates/README.md).
+
+### Quick mapping (hay dùng)
+
+| Target file | Template |
+|---|---|
+| `.specs/stories/US-NNN.md` | `templates/01-user-story-template.md` |
+| `.specs/stories/US-NNN/tasks.md` (per-task) | `templates/03-task-template.md` |
+| `.specs/adr/ADR-NNN-*.md` | `templates/04-adr-template.md` |
+| `.specs/bugs/BUG-NNN.md` | `templates/05-bug-template.md` |
+| `.specs/changes/CR-NNN.md` | `templates/05-change-request-template.md` |
+
+Full 11-row table: [templates/README.md §1](templates/README.md#1-template-registry).
+
+### Pre-save validation (MUST chạy trước mỗi Write/Edit vào `.specs/`)
+
+1. Read template tương ứng từ `templates/`.
+2. Verify file mới có đủ mọi `## <heading>` trong template frontmatter `required_sections`, đúng thứ tự.
+3. Verify placeholder `<...>` / `TBD` còn lại là cố ý (có note lý do); không sót.
+4. Verify template-ref ở dòng 2: `<!-- template: XX-*.md@<version> -->` match template version.
+5. Fail bất kỳ bước → **KHÔNG Write**. Print diff vs template + hỏi user.
+
+VD: trước khi tạo `.specs/stories/US-004.md`, tôi Read `templates/01-user-story-template.md`, verify target có đủ heading `## Metadata / User perspective / Scope in / Scope out / Acceptance criteria / UX notes / Dependencies / Downstream consumers / Risks & open items / Test plan / Tasks`.
+
+### Khi template không fit
+
+- KHÔNG deviate im lặng. KHÔNG thêm/xóa required section tự chế.
+- Viết proposal: `Template change proposal: <diff> because <reason>` → chờ user confirm → bump template version + commit template trước → dùng sau.
+- User reject → refactor content để fit template hiện tại.
+
+### Versioning (tóm tắt)
+
+- Minor bump (`0.1` → `0.2`): thêm optional section, clarify hint. Không migrate file cũ.
+- Breaking bump (`0.1` → `1.0`): remove/rename required section. **Phải** migrate file đang dùng template cũ trong cùng PR.
+- Chi tiết: [templates/README.md §5](templates/README.md#5-versioning-policy).
 
 ---
 
