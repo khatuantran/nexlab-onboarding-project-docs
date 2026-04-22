@@ -80,6 +80,25 @@ Xem [stories/US-001/tasks.md §Conventions](.specs/stories/US-001/tasks.md). Min
 - [ ] Commit message format `type(scope): subject (spec-ref)`.
 - [ ] Liên quan spec update (API surface / error codes / traceability) cùng commit nếu áp dụng.
 
+## Post-task progress sync (mandatory)
+
+Sau khi commit task `T<N>` land (DoD pass), **trong cùng phiên làm việc** tạo 1 commit follow-up riêng với message `docs: sync progress markers after T<N> land (US-NNN / T<N> follow-up)` update các file sau nếu bị ảnh hưởng:
+
+- [README.md](README.md) — status line, "Next task" pointer, live-command list.
+- [docs/SETUP.md](docs/SETUP.md) — nhãn 🟡 → ✅ cho section task-covered; §Common commands cột Status.
+- [.specs/roadmap.md](.specs/roadmap.md) — milestone progress table (task row + commit hash + date).
+- [.specs/stories/US-NNN/tasks.md](.specs/stories/US-NNN/tasks.md) — Task Summary cột Status + Last updated line.
+- [.specs/traceability.md](.specs/traceability.md) — reverse-index 🟡 Planned → ✅ kèm commit hash.
+- File khác task chạm cụ thể (VD `api-surface.md` khi có endpoint mới, `error-codes.md` khi có code mới).
+
+**Rule**:
+
+- Không skip, không gom vào commit chính — luôn commit riêng để diff chỉ còn marker changes, dễ audit.
+- Không cần hỏi user permission (scope hẹp, chỉ progress markers).
+- Chạy `pnpm smoke` trước commit để catch markdown/format issue.
+- Chỉ hỏi user nếu task lộ ra **spec gap** (FR mới, AC mới, scope change) — đó là spec update, không phải progress sync.
+- Nếu task không ảnh hưởng file nào → skip commit, ghi rõ `(no progress sync needed)` trong response.
+
 ---
 
 ## Commit message convention
@@ -93,6 +112,7 @@ type(scope): subject (spec-ref)
 - `spec-ref`: optional but preferred, e.g. `(US-001)`, `(FR-FEAT-002)`, `(ADR-001)`
 
 Examples:
+
 - `feat(api): add feature section CRUD (US-002 / FR-FEAT-003)`
 - `test(web): cover feature page empty state (US-001)`
 - `docs(spec): expand glossary with 'section owner' (glossary)`
@@ -127,13 +147,13 @@ Mọi file trong `.specs/` phải clone từ template ở [`templates/`](templat
 
 ### Quick mapping (hay dùng)
 
-| Target file | Template |
-|---|---|
-| `.specs/stories/US-NNN.md` | `templates/01-user-story-template.md` |
-| `.specs/stories/US-NNN/tasks.md` (per-task) | `templates/03-task-template.md` |
-| `.specs/adr/ADR-NNN-*.md` | `templates/04-adr-template.md` |
-| `.specs/bugs/BUG-NNN.md` | `templates/05-bug-template.md` |
-| `.specs/changes/CR-NNN.md` | `templates/05-change-request-template.md` |
+| Target file                                 | Template                                  |
+| ------------------------------------------- | ----------------------------------------- |
+| `.specs/stories/US-NNN.md`                  | `templates/01-user-story-template.md`     |
+| `.specs/stories/US-NNN/tasks.md` (per-task) | `templates/03-task-template.md`           |
+| `.specs/adr/ADR-NNN-*.md`                   | `templates/04-adr-template.md`            |
+| `.specs/bugs/BUG-NNN.md`                    | `templates/05-bug-template.md`            |
+| `.specs/changes/CR-NNN.md`                  | `templates/05-change-request-template.md` |
 
 Full 11-row table: [templates/README.md §1](templates/README.md#1-template-registry).
 
