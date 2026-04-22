@@ -107,4 +107,4 @@ Xem [SETUP.md](SETUP.md).
 
 - Check existing spec + glossary first.
 - Nếu spec gap → raise PR propose FR/US thay vì tự code.
-- Nếu gap về quyết định architectural → viết ADR proposal (sao chép [../.specs/adr/_template.md](../.specs/adr/_template.md)).
+- Nếu gap về quyết định architectural → viết ADR proposal (sao chép [../templates/04-adr-template.md](../templates/04-adr-template.md)).
