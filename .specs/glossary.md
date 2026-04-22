@@ -9,17 +9,20 @@ Thuật ngữ nội bộ. Khi thêm term mới, **update ở đây đầu tiên*
 - **Project** — Một dự án phần mềm của công ty. Container cấp cao nhất của Feature Catalog.
 - **Feature** — Một tính năng end-user thuộc 1 Project. Đơn vị cơ bản của catalog. (VD: "Đăng nhập bằng email", "Xuất báo cáo Excel".)
 - **Feature Catalog** — Toàn bộ Feature của 1 Project, có cấu trúc, có search.
-- **Section** — Một trong 5 phần cố định của Feature:
-  1. `business` — mô tả nghiệp vụ
-  2. `user-flow` — luồng người dùng
-  3. `business-rules` — rule nghiệp vụ
-  4. `tech-notes` — ghi chú kỹ thuật
-  5. `screenshots` — hình ảnh minh họa
-- **Section owner** — Role được kỳ vọng chính là người viết section đó:
-  - BA/PM ⇒ `business`, `user-flow`, `business-rules`
-  - Dev ⇒ `tech-notes`
-  - Cả hai ⇒ `screenshots`
-- **Embed** — Link ngoài (Jira ticket, Figma frame, GitHub PR/commit) được render thành preview card trong section.
+- **Section** — Một trong 5 phần cố định của Feature. Thứ tự render cố định.
+- **Section type** — Enum ID, **5 giá trị**: `business`, `user-flow`, `business-rules`, `tech-notes`, `screenshots`. Dùng làm DB enum + API param + FE constant `SECTION_ORDER` (export từ `packages/shared`).
+
+  | ID | Tên hiển thị | Owner kỳ vọng |
+  |---|---|---|
+  | `business` | Business | BA/PM |
+  | `user-flow` | User Flow | BA/PM |
+  | `business-rules` | Business Rules | BA/PM |
+  | `tech-notes` | Tech Notes | Dev |
+  | `screenshots` | Screenshots | cả hai |
+
+- **Section owner** — Role *kỳ vọng* (khuyến nghị, không enforce v1) là người viết section. V1 mọi authenticated user đều edit được mọi section.
+- **Embed** — Link ngoài (Jira / Figma / GitHub) render thành preview card khi hostname khớp whitelist `*.atlassian.net` / `figma.com` / `github.com`. Xem [FR-EMBED-001](02-requirements.md#fr-embed-001--external-link-embed).
+- **Upload** — File ảnh (png/jpg/webp ≤ 5 MiB) gửi qua `POST /api/v1/features/:id/uploads`, lưu Docker volume, serve qua `GET /uploads/:id`. Xem [FR-UPLOAD-001](02-requirements.md#fr-upload-001--image-upload-for-screenshots).
 
 ---
 
@@ -29,7 +32,18 @@ Thuật ngữ nội bộ. Khi thêm term mới, **update ở đây đầu tiên*
 - **Author** — Người viết / cập nhật Feature.
   - **Business author** — BA / PM / PO.
   - **Tech author** — Senior Dev / Tech Lead.
-- **Admin** (v1 minimal) — Người tạo Project và quản lý thành viên cơ bản.
+- **Admin** (v1 minimal) — Người tạo Project và invite user khác.
+
+### Role enum (DB + API)
+
+Cột `users.role` là enum **2 giá trị**:
+
+| Value | Quyền thêm so với baseline |
+|---|---|
+| `author` | Baseline — đọc/ghi mọi project + feature + section. |
+| `admin` | `author` + tạo project (FR-PROJ-001) + invite user (FR-AUTH-001). |
+
+V1 không có role `reader`/`viewer`; "Reader" là hành vi, không phải role. Mọi authenticated user đều đọc được. "Business author" vs "Tech author" là *kỳ vọng*, không phải role DB.
 
 ---
 

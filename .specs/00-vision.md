@@ -80,27 +80,40 @@ Chi tiết xem [01-personas.md](01-personas.md).
 
 ---
 
-## 7. Success metric (placeholder — cần validate với pilot)
+## 7. Success metric (placeholder — sẽ chốt ở M3 pilot launch)
 
 - **Quantitative**: ≥ 80% dev mới thuộc project pilot hoàn thành "read catalog checklist" trong tuần đầu.
 - **Qualitative**: Khảo sát dev mới sau tuần 2 — câu "Tài liệu đủ để bắt đầu tự tin" đạt ≥ 4/5.
 - **Leading indicator** (trong khi build): 1 project pilot có ≥ 10 feature với đầy đủ 5 section được author bởi BA+Dev.
 
+> ⚠️ **Placeholder**: metric chính thức (baseline + measurement plan) chưa chốt. Sẽ validate + tinh chỉnh khi lên milestone **M3 Pilot** (xem [roadmap.md](roadmap.md)). Không gate release MVP v1 bằng metric này.
+
 ---
 
-## 8. Open questions (chưa chốt)
+## 8. Open questions
 
-- Định nghĩa chính xác "Feature" — 1 tính năng end-user (VD "Đăng nhập bằng email")? Hay có thể nhỏ hơn/lớn hơn? → Sẽ clarify ở [glossary.md](glossary.md) và acceptance criteria của US-002.
-- Ai là admin tạo project đầu tiên? Auth model chi tiết → FR-AUTH-001 ở Bước 4 sẽ xử lý.
-- Feature doc có cần draft/publish state không? → Defer tới sau feedback từ pilot.
-- Có cần role "viewer-only" (không được edit) không? → Defer; v1 mọi user login đều được edit.
+Lịch sử câu hỏi và trạng thái (chi tiết resolution xem [02-requirements.md §Open questions](02-requirements.md#open-questions)):
+
+| Q | Trạng thái | Pointer |
+|---|---|---|
+| Định nghĩa "Feature" (granularity) | ✅ Resolved | [glossary.md](glossary.md) |
+| Ai tạo user đầu tiên | ✅ Resolved 2026-04-22 | Seed admin → admin invite; xem FR-AUTH-001 |
+| Project access model | ✅ Resolved 2026-04-22 | All authenticated full access; xem FR-PROJ-001 |
+| Screenshot upload | ✅ Resolved 2026-04-22 | Multipart → Docker volume; xem FR-UPLOAD-001 |
+| US-001 scope | ✅ Resolved 2026-04-22 | Landing + search + read trong 1 story |
+| Draft/publish state | 🟡 Defer sau pilot feedback | — |
+| Role "viewer-only" | 🟡 Defer; v1 mọi authenticated user đọc/ghi | — |
+| Session TTL | 🟡 Default 7d sliding, revisit sau pilot | [02-requirements.md](02-requirements.md) |
 
 ---
 
 ## 9. Related docs
 
 - [Personas](01-personas.md)
-- [Requirements](02-requirements.md) *(Step 4 sẽ điền)*
-- [Architecture](03-architecture.md) *(Step 3 sẽ điền)*
-- [ADR-001 Tech Stack](adr/ADR-001-tech-stack.md) *(Step 3 sẽ tạo)*
+- [Requirements](02-requirements.md) — FRs (EARS) + NFRs
+- [Architecture](03-architecture.md)
+- [ADR-001 — Tech Stack](adr/ADR-001-tech-stack.md)
 - [Glossary](glossary.md)
+- [Roadmap](roadmap.md)
+- [Traceability matrix](traceability.md)
+- [User stories](stories/) — US-001, US-002, US-003

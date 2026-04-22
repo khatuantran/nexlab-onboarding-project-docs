@@ -2,7 +2,10 @@
 
 ---
 
-## P1 — "Minh" (New Developer) — Primary reader
+## P1 — Minh (New Developer)
+
+*Primary reader.*
+
 
 - **Role**: FE / BE / Fullstack Dev.
 - **Seniority**: 0-2 năm kinh nghiệm tổng, **0-4 tuần** tại công ty.
@@ -22,7 +25,10 @@
 
 ---
 
-## P2 — "Lan" (BA / PM) — Primary author (business)
+## P2 — Lan (BA/PM)
+
+*Primary author — business sections.*
+
 
 - **Role**: BA / PM / Product Owner của project.
 - **Goals**:
@@ -38,7 +44,10 @@
 
 ---
 
-## P3 — "Hùng" (Senior Dev / Tech Lead) — Author (tech)
+## P3 — Hùng (Senior Dev / Tech Lead)
+
+*Author — tech sections.*
+
 
 - **Role**: Tech Lead / Senior của project.
 - **Goals**:
