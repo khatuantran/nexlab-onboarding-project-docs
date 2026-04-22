@@ -2,7 +2,7 @@
 
 > **Trạng thái**: Sống cùng implementation. Nhãn mỗi section: ✅ `works now` · 🟡 `pending (task T-N)` · ⏳ `v2`. Xem [roadmap.md](../.specs/roadmap.md).
 >
-> Progress hiện tại: **T1-T5 ✅ done** (monorepo + API + Docker Compose + BE+FE infra scaffolds + DB schema/migration/seed với FTS triggers). T6-T10 còn 🟡.
+> Progress hiện tại: **T1-T6 ✅ done** (monorepo + API + Docker Compose + BE+FE infra scaffolds + DB schema/migration/seed với FTS triggers + auth endpoints `/auth/login|logout|me` với session Redis + rate limit). T7-T10 còn 🟡.
 
 ---
 

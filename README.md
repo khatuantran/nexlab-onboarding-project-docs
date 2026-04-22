@@ -4,7 +4,7 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ## Trạng thái
 
-🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T5/10 done** — DB schema (4 tables + 2 enums) + migration + FTS triggers + seed (admin + author + demo project + 5-section feature). Next: [T6 — Auth endpoints + session middleware](.specs/stories/US-001/tasks.md#t6--auth-endpoints--session-middleware).
+🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T6/10 done** — Auth endpoints (`/auth/login` `/auth/logout` `/auth/me`) with session Redis + anti-enumeration + 10/min/IP rate limit on login. Next: [T7 — Read API + search API](.specs/stories/US-001/tasks.md#t7--read-api--search-api).
 
 ## Vấn đề đang giải quyết
 
