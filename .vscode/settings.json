@@ -20,14 +20,12 @@
 
   // TypeScript — always use the workspace version so versions align
   // across contributors (avoids "TS version mismatch" bug reports).
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "typescript.preferences.importModuleSpecifier": "relative",
-  "typescript.updateImportsOnFileMove.enabled": "always",
+  // Other TS ergonomics (import specifier, prompt-workspace, update-on-move)
+  // are opinionated per-user — set at User settings hoặc VS Code Profile.
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
 
-  // ESLint
+  // ESLint (languages auto-detected since extension v2.2; no eslint.validate needed)
   "eslint.workingDirectories": [{ "pattern": "apps/*" }, { "pattern": "packages/*" }, "."],
-  "eslint.validate": ["javascript", "typescript", "typescriptreact"],
 
   // Prettier formatter per language
   "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
@@ -80,7 +78,6 @@
     "zod"
   ],
 
-  // Testing
-  "vitest.enable": true,
+  // Testing (Vitest Explorer auto-detects presence of vitest via package.json)
   "vitest.commandLine": "pnpm exec vitest"
 }
