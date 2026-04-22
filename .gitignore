@@ -39,7 +39,7 @@ Desktop.ini
 # Editor
 .vscode/*
 !.vscode/extensions.json
-!.vscode/settings.example.json
+!.vscode/settings.json
 .idea/
 *.swp
 *.swo

@@ -22,11 +22,7 @@ Khuyến nghị (optional):
 
 - **nvm** để quản lý Node version.
 - **direnv** để auto-load `.env.local` (không bắt buộc).
-- **VS Code**: mở workspace → accept prompt "Install recommended extensions" ([.vscode/extensions.json](../.vscode/extensions.json)). Copy template:
-  ```bash
-  cp .vscode/settings.example.json .vscode/settings.json   # gitignored, personal overrides OK
-  ```
-  Gồm: format-on-save (Prettier), ESLint auto-fix, workspace TS version, Tailwind IntelliSense, Vitest explorer, spellcheck VI.
+- **VS Code**: mở workspace → accept prompt "Install recommended extensions" ([.vscode/extensions.json](../.vscode/extensions.json)). [.vscode/settings.json](../.vscode/settings.json) đã commit trong repo — team dùng **cùng** config (format-on-save Prettier, ESLint auto-fix, workspace TS version, Tailwind hints, Vitest explorer, spellcheck EN+VI). Personal tweaks: VS Code Profiles hoặc `*.code-workspace` ngoài repo.
 
 ---
 

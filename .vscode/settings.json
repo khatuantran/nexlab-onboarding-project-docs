@@ -1,6 +1,8 @@
 {
-  // Copy this file to `.vscode/settings.json` (gitignored) to get the
-  // recommended workspace config. Edit your personal overrides locally.
+  // Team workspace settings — committed to repo. Everyone gets the same
+  // editor behavior (format-on-save, ESLint fix, workspace TS version,
+  // Tailwind hints, spellcheck dictionary). Personal tweaks: use VS Code
+  // Profiles hoặc một `*.code-workspace` file ngoài repo này.
 
   // Editor
   "editor.formatOnSave": true,
