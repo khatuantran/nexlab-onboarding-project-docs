@@ -6,8 +6,13 @@ module.exports = {
     ecmaVersion: 2022,
     sourceType: "module",
   },
-  plugins: ["@typescript-eslint"],
-  extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
+  plugins: ["@typescript-eslint", "react-hooks"],
+  extends: [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react-hooks/recommended",
+    "prettier",
+  ],
   env: {
     node: true,
     es2022: true,
