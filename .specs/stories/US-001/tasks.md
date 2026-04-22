@@ -2,9 +2,9 @@
 
 <!-- template: 03-task-template.md@0.2 (applied per-task block; doc-level sections Conventions/Summary/Deferred are additional_sections_allowed) -->
 
-*Story*: [US-001 — Dev reads và search feature catalog](../US-001.md)
-*Total estimate*: ~26h (solo, TDD pace; story-level estimate 10-14h dùng pair/ideal, tasks là pessimistic)
-*Last updated*: 2026-04-22
+_Story_: [US-001 — Dev reads và search feature catalog](../US-001.md)
+_Total estimate_: ~26h (solo, TDD pace; story-level estimate 10-14h dùng pair/ideal, tasks là pessimistic)
+_Last updated_: 2026-04-23 (T1 landed `10b3a04`)
 
 ---
 
@@ -23,16 +23,16 @@
 
 ## Task Summary
 
-| # | Title | Effort | AC covered | FR touched |
-|---|---|---|---|---|
-| [T1](#t1--monorepo-bootstrap--tooling) | Monorepo bootstrap + tooling | 3h | — (foundation) | — |
-| [T2](#t2--docker-compose--api-skeleton) | Docker Compose + API skeleton + health | 3h | infra for all | — |
-| [T3](#t3--db-schema--migration--seed) | DB schema + Drizzle migration + seed | 4h | AC-3, AC-5, AC-6 (data) | FEAT-002 |
-| [T4](#t4--auth-endpoints--session-middleware) | Auth endpoints + session middleware | 3h | AC-1, AC-2, AC-10, AC-11 | AUTH-001 |
-| [T5](#t5--read-api--search-api) | Feature read API + search API | 4h | AC-3, AC-5, AC-7, AC-9 | FEAT-002, READ-001, SEARCH-001 |
-| [T6](#t6--web-skeleton--auth-guard--login-page) | Web skeleton + auth guard + login | 4h | AC-1, AC-2, AC-10, AC-11 | AUTH-001 |
-| [T7](#t7--landing--feature-detail-pages) | Project landing + feature detail render | 4h | AC-3, AC-4, AC-5, AC-6 | READ-001, FEAT-002 |
-| [T8](#t8--search-page--e2e-smoke--setup-validation) | Search page + Playwright smoke + SETUP validation | 3h | AC-7, AC-8, AC-9 + all AC | SEARCH-001 |
+| #                                                   | Title                                             | Effort | AC covered                | FR touched                     | Status       |
+| --------------------------------------------------- | ------------------------------------------------- | ------ | ------------------------- | ------------------------------ | ------------ |
+| [T1](#t1--monorepo-bootstrap--tooling)              | Monorepo bootstrap + tooling                      | 3h     | — (foundation)            | —                              | ✅ `10b3a04` |
+| [T2](#t2--docker-compose--api-skeleton)             | Docker Compose + API skeleton + health            | 3h     | infra for all             | —                              | 🟡 Next      |
+| [T3](#t3--db-schema--migration--seed)               | DB schema + Drizzle migration + seed              | 4h     | AC-3, AC-5, AC-6 (data)   | FEAT-002                       | 🟡           |
+| [T4](#t4--auth-endpoints--session-middleware)       | Auth endpoints + session middleware               | 3h     | AC-1, AC-2, AC-10, AC-11  | AUTH-001                       | 🟡           |
+| [T5](#t5--read-api--search-api)                     | Feature read API + search API                     | 4h     | AC-3, AC-5, AC-7, AC-9    | FEAT-002, READ-001, SEARCH-001 | 🟡           |
+| [T6](#t6--web-skeleton--auth-guard--login-page)     | Web skeleton + auth guard + login                 | 4h     | AC-1, AC-2, AC-10, AC-11  | AUTH-001                       | 🟡           |
+| [T7](#t7--landing--feature-detail-pages)            | Project landing + feature detail render           | 4h     | AC-3, AC-4, AC-5, AC-6    | READ-001, FEAT-002             | 🟡           |
+| [T8](#t8--search-page--e2e-smoke--setup-validation) | Search page + Playwright smoke + SETUP validation | 3h     | AC-7, AC-8, AC-9 + all AC | SEARCH-001                     | 🟡           |
 
 **Critical path**: T1 → T2 → T3 → T4 → T5 → T6 → T7 → T8.
 **Parallel potential**: T6 có thể start sau T2 (không chờ T3/T4/T5) cho login UI shell, nhưng login functional cần T4.
@@ -46,16 +46,18 @@
 **Deps**: —
 
 ### Goal
+
 Repo có `apps/web`, `apps/api`, `packages/shared` (empty), pnpm workspace hoạt động, lint/format/typecheck/test runner configured. Sau T1, `pnpm install` + `pnpm lint` + `pnpm test` chạy được (test 0 vì chưa có file).
 
 ### TDD cycle
+
 Task này ít test unit truyền thống; viết 1 **smoke script** làm contract:
 
 1. **Red**: tạo `scripts/smoke.sh` check:
    - `pnpm -w run lint` exit 0
    - `pnpm -w run typecheck` exit 0
    - `pnpm -r run test --passWithNoTests` exit 0
-   Chạy → fail vì chưa có config.
+     Chạy → fail vì chưa có config.
 2. **Green**: thiết lập:
    - `package.json` root với `workspaces: ["apps/*", "packages/*"]` (pnpm).
    - `pnpm-workspace.yaml`.
@@ -67,6 +69,7 @@ Task này ít test unit truyền thống; viết 1 **smoke script** làm contrac
 3. **Refactor**: move shared TS config vào `tsconfig.base.json`, child projects extend.
 
 ### DoD
+
 - [ ] `pnpm install` clean (no warnings về workspace).
 - [ ] `pnpm lint` pass với 0 file.
 - [ ] `pnpm typecheck` pass.
@@ -75,6 +78,7 @@ Task này ít test unit truyền thống; viết 1 **smoke script** làm contrac
 - [ ] `.gitignore` cover `node_modules`, `dist`, `.env.local`, `data/`.
 
 ### Commit
+
 `chore(infra): bootstrap pnpm monorepo + tooling (US-001 / T1)`
 
 ---
@@ -86,12 +90,14 @@ Task này ít test unit truyền thống; viết 1 **smoke script** làm contrac
 **Deps**: T1
 
 ### Goal
+
 Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db, redis, version }`. Docker Compose start postgres + redis. Test unit chạy với Vitest + Supertest.
 
 ### TDD cycle
+
 1. **Red**: `apps/api/src/routes/health.test.ts`:
    - `GET /api/v1/health` → 200, body `{ status: 'ok', db: 'ok', redis: 'ok' }`.
-   Chạy → fail (no route).
+     Chạy → fail (no route).
 2. **Green**:
    - `apps/api/src/server.ts`: Express app + router mount `/api/v1`.
    - `apps/api/src/routes/health.ts`: ping Postgres qua `drizzle` (chưa schema, chỉ `select 1`) + ping Redis qua `ioredis` / `connect-redis` client.
@@ -102,6 +108,7 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 3. **Refactor**: tách config loader (`apps/api/src/config.ts`) dùng Zod parse env.
 
 ### DoD
+
 - [ ] `docker compose up -d postgres redis` → cả 2 healthy trong 30s.
 - [ ] `pnpm --filter @onboarding/api dev` → listen 3001.
 - [ ] `curl /api/v1/health` returns `{status:"ok", db:"ok", redis:"ok"}`.
@@ -109,6 +116,7 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 - [ ] Error format `{ error: { code, message } }` middleware đã có (sẽ verify ở T5).
 
 ### Commit
+
 `feat(api): health endpoint + docker compose infra (US-001 / T2)`
 
 ---
@@ -120,9 +128,11 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 **Deps**: T2
 
 ### Goal
+
 4 bảng: `users`, `projects`, `features`, `sections`. Migration generated + applied. Seed script tạo 1 admin + 1 author + 1 project + 1 feature 5-section filled. `tsvector` column cho FTS ready (dùng cho T5 search).
 
 ### Schema (Drizzle)
+
 - `users`: `id uuid pk`, `email text unique`, `password_hash text`, `display_name text`, `role text check in ('admin','author')`, `created_at timestamptz`.
 - `projects`: `id uuid pk`, `slug text unique`, `name text`, `description text nullable`, `created_by uuid fk users`, `created_at`, `updated_at`.
 - `features`: `id uuid pk`, `project_id uuid fk projects`, `slug text`, `title text`, `created_at`, `updated_at`, unique `(project_id, slug)`.
@@ -130,10 +140,11 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 - `features.search_vector` generated column `tsvector` từ `title` + latest sections bodies (hoặc dùng trigger update).
 
 ### TDD cycle
+
 1. **Red**: `apps/api/src/db/schema.test.ts`:
    - After migration + seed, query `select count(*) from sections where feature_id = <seed>` → 5.
    - `select role from users where email='admin@local'` → `admin`.
-   Chạy → fail (no migration).
+     Chạy → fail (no migration).
 2. **Green**:
    - `apps/api/src/db/schema.ts` declare bảng với Drizzle.
    - `pnpm db:generate` → produce `apps/api/src/db/migrations/0001_init.sql`.
@@ -143,6 +154,7 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 3. **Refactor**: nếu search_vector dùng trigger thay generated column, viết trigger SQL rõ ràng comment why.
 
 ### DoD
+
 - [ ] `pnpm db:migrate` run clean từ empty DB.
 - [ ] `pnpm db:seed` → console log "Seeded 1 project, 1 feature (5 sections), 2 users".
 - [ ] Seed idempotent (re-run không duplicate hoặc error — dùng `on conflict do nothing`).
@@ -150,6 +162,7 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 - [ ] `pnpm db:check` (drizzle-kit) consistent.
 
 ### Commit
+
 `feat(api): db schema + seed data for demo project (US-001 / T3 / FR-FEAT-002)`
 
 ---
@@ -161,9 +174,11 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 **Deps**: T3
 
 ### Goal
+
 `POST /auth/login`, `POST /auth/logout`, `GET /auth/me` hoạt động với session Redis. Middleware `requireAuth` attach `req.user` hoặc trả 401.
 
 ### TDD cycle
+
 1. **Red**: `apps/api/src/routes/auth.test.ts`:
    - POST /auth/login valid → 200, Set-Cookie `sid=...`, body `{ data: { user: { id, email, displayName, role } } }`.
    - POST /auth/login wrong password → 401 `INVALID_CREDENTIALS`.
@@ -181,6 +196,7 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 3. **Refactor**: error code constants ở `packages/shared/src/errors.ts`.
 
 ### DoD
+
 - [ ] Auth routes tests all green.
 - [ ] Password comparison constant-time (bcryptjs default OK).
 - [ ] Session persist sau server restart (nếu Redis persist — v1 accepted loss, document).
@@ -188,6 +204,7 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 - [ ] `packages/shared/src/errors.ts` export `ErrorCode` enum.
 
 ### Commit
+
 `feat(api): auth login/logout + session middleware (US-001 / T4 / FR-AUTH-001)`
 
 ---
@@ -199,11 +216,13 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 **Deps**: T4
 
 ### Goal
+
 - `GET /api/v1/projects/:slug` — project meta + feature list sorted updated-desc + section-filled count.
 - `GET /api/v1/projects/:slug/features/:featureSlug` — feature + 5 sections in fixed order.
 - `GET /api/v1/search?q=...` — FTS qua Postgres `tsvector` + `ts_rank` + `ts_headline` snippet.
 
 ### TDD cycle
+
 1. **Red**: `apps/api/src/routes/{projects,features,search}.test.ts`:
    - GET /projects/demo (authenticated) → 200 với feature list, `filledCount` = 5 cho seeded feature.
    - GET /projects/does-not-exist → 404 `PROJECT_NOT_FOUND`.
@@ -222,6 +241,7 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 3. **Refactor**: extract section ordering constant `SECTION_ORDER` dùng shared FE/BE.
 
 ### DoD
+
 - [ ] Tất cả test route green.
 - [ ] p95 < 300ms đo qua console (không strict gate).
 - [ ] Search trả `snippet` escaped HTML ngoại trừ `<mark>` tag.
@@ -229,6 +249,7 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 - [ ] Error codes thêm: `PROJECT_NOT_FOUND`, `FEATURE_NOT_FOUND`, `SEARCH_QUERY_EMPTY`, `SEARCH_QUERY_TOO_LONG`.
 
 ### Commit
+
 `feat(api): project + feature + search read endpoints (US-001 / T5 / FR-READ-001,SEARCH-001)`
 
 ---
@@ -240,9 +261,11 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 **Deps**: T2 (có thể parallel với T3-T5 cho shell, nhưng login functional cần T4)
 
 ### Goal
+
 `apps/web` Vite app chạy, Tailwind + shadcn setup, React Router, login page hoạt động end-to-end với API T4.
 
 ### TDD cycle
+
 1. **Red**: `apps/web/src/pages/LoginPage.test.tsx`:
    - Render form với email + password input + submit button.
    - Submit valid → mock API success → router push `/`.
@@ -260,6 +283,7 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 3. **Refactor**: error toast helper, isolate API error → UI message.
 
 ### DoD
+
 - [ ] `pnpm --filter @onboarding/web dev` → Vite :5173 OK.
 - [ ] Login flow E2E manual: login admin@local/dev12345 → redirect `/` → refresh → vẫn authenticated.
 - [ ] LoginPage unit tests green.
@@ -267,6 +291,7 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 - [ ] Logout clears cookie + redirect `/login`.
 
 ### Commit
+
 `feat(web): vite app + login page + auth guard (US-001 / T6 / FR-AUTH-001)`
 
 ---
@@ -278,9 +303,11 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 **Deps**: T5, T6
 
 ### Goal
+
 `/projects/:slug` và `/projects/:slug/features/:featureSlug` render đúng US-001 AC-3, AC-5, AC-6. Markdown sanitize + render. Empty state (AC-4).
 
 ### TDD cycle
+
 1. **Red**: `apps/web/src/pages/{ProjectLandingPage,FeatureDetailPage}.test.tsx`:
    - Landing: render feature list với filled count "3/5", relative time "2 giờ trước" (dùng seed data fixture).
    - Landing empty: render "Chưa có feature nào trong project này".
@@ -298,6 +325,7 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 3. **Refactor**: common `LoadingState` + `ErrorState` components.
 
 ### DoD
+
 - [ ] Landing + detail test green.
 - [ ] Markdown XSS test passes (script tag không execute).
 - [ ] `date-fns` locale `vi` config central.
@@ -305,6 +333,7 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 - [ ] AC-3/4/5/6 manual verify trên browser với seed data.
 
 ### Commit
+
 `feat(web): project landing + feature detail pages (US-001 / T7 / FR-READ-001,FEAT-002)`
 
 ---
@@ -316,9 +345,11 @@ Express server chạy `tsx watch`, `/api/v1/health` endpoint trả `{ status, db
 **Deps**: T5, T7
 
 ### Goal
+
 Search bar trong header (T6 existing) + `/search?q=...` page. Playwright smoke E2E cover full US-001 flow. Chạy lại `docs/SETUP.md` từ đầu (fresh clone) để verify SETUP chính xác.
 
 ### TDD cycle
+
 1. **Red**:
    - `apps/web/src/pages/SearchPage.test.tsx`: render result list, empty result "Không tìm thấy feature nào khớp", highlight `<mark>` trong snippet.
    - `e2e/us-001.spec.ts` (Playwright):
@@ -351,6 +382,7 @@ Search bar trong header (T6 existing) + `/search?q=...` page. Playwright smoke E
 3. **Refactor**: share sanitize config.
 
 ### DoD
+
 - [ ] SearchPage unit test green.
 - [ ] `pnpm test:e2e` green (với `pnpm dev` + docker compose chạy).
 - [ ] SETUP.md walk-through fresh: `git clone → pnpm install → docker compose up → pnpm db:migrate → pnpm db:seed → pnpm dev → browser verify 3 checkpoints 8.1/8.2/8.3` tất cả pass.
@@ -358,6 +390,7 @@ Search bar trong header (T6 existing) + `/search?q=...` page. Playwright smoke E
 - [ ] US-001 status trong `../US-001.md` đổi từ `Draft` → `Done` với ghi chú date + commit range.
 
 ### Commit
+
 `feat(web): search page + playwright smoke for US-001 (US-001 / T8 / FR-SEARCH-001)`
 
 ---
@@ -365,9 +398,9 @@ Search bar trong header (T6 existing) + `/search?q=...` page. Playwright smoke E
 ## Deferred to later tasks / stories
 
 - Multi-user test (Hùng reads Lan's feature): verify ở US-003.
-- Markdown editor: US-002 T*.
-- Upload: US-003 T*.
-- Role check `admin` cho create project: US-002 T*.
+- Markdown editor: US-002 T\*.
+- Upload: US-003 T\*.
+- Role check `admin` cho create project: US-002 T\*.
 - Fine-grained a11y audit (axe): stretch trong T7 hoặc defer.
 - Load test NFR-PERF-001 target: manual script sau T8, không gate CI v1.
 

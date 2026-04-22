@@ -1,8 +1,8 @@
 # Local Setup Guide
 
-> **Trạng thái**: 🎯 **Target setup** — đây là state cuối cùng sau khi các task của US-001 hoàn thành (Bước 6). Hiện tại chưa có code chạy được. Dùng tài liệu này làm "hợp đồng" giữa SDD spec và implementation.
+> **Trạng thái**: Sống cùng implementation. Nhãn mỗi section: ✅ `works now` · 🟡 `pending (task T-N)` · ⏳ `v2`. Xem [roadmap.md](../.specs/roadmap.md).
 >
-> Mỗi mục có nhãn: ✅ `works now` · 🟡 `pending (task T-N)` · ⏳ `v2`. Hiện tại tất cả đều 🟡 vì chưa có code.
+> Progress hiện tại: **T1 ✅ done** (monorepo + tooling). T2-T8 còn 🟡.
 
 ---
 
@@ -10,41 +10,50 @@
 
 Cài các tool sau trên máy dev (kiểm version sau dấu `|`):
 
-| Tool | Version tối thiểu | Verify |
-|---|---|---|
-| Node.js | 20.x LTS | `node -v` |
-| pnpm | 9.x | `pnpm -v` |
-| Docker Desktop (hoặc Docker Engine) | 24+ | `docker -v` |
-| Docker Compose v2 | 2.20+ | `docker compose version` |
-| Git | 2.40+ | `git -v` |
+| Tool                                | Version tối thiểu | Verify                   |
+| ----------------------------------- | ----------------- | ------------------------ |
+| Node.js                             | 20.x LTS          | `node -v`                |
+| pnpm                                | 9.x               | `pnpm -v`                |
+| Docker Desktop (hoặc Docker Engine) | 24+               | `docker -v`              |
+| Docker Compose v2                   | 2.20+             | `docker compose version` |
+| Git                                 | 2.40+             | `git -v`                 |
 
 Khuyến nghị (optional):
+
 - **nvm** để quản lý Node version.
 - **direnv** để auto-load `.env.local` (không bắt buộc).
 
 ---
 
-## 2. Clone & install 🟡 (pending T1)
+## 2. Clone & install ✅ (T1 done)
 
 ```bash
 git clone <repo-url> nexlab-onboarding-project-docs
 cd nexlab-onboarding-project-docs
-pnpm install
+nvm use                       # reads .nvmrc → Node 20
+corepack enable               # one-time per machine, activates pnpm shim
+pnpm install                  # installs workspace deps (214 pkgs ~30s first time)
+```
+
+Verify:
+
+```bash
+pnpm smoke                    # runs lint + typecheck + test (passWithNoTests)
 ```
 
 Sau `pnpm install`, cấu trúc workspace:
 
 ```
 apps/
-  web/         # React + Vite
-  api/         # Express
+  web/         # TS stub, React+Vite wires in T6
+  api/         # TS stub, Express wires in T2
 packages/
-  shared/      # TS types, Zod schemas
+  shared/      # TS stub, Zod schemas land with T3/T4
 ```
 
 ---
 
-## 3. Environment variables 🟡 (pending T1)
+## 3. Environment variables ✅ (template shipped; API reads .env.local in T2)
 
 Copy template rồi điền:
 
@@ -220,35 +229,42 @@ pnpm test:e2e
 
 ---
 
-## 10. Common commands ✅
+## 10. Common commands
 
-| Command | Mục đích |
-|---|---|
-| `pnpm dev` | Start web + api (parallel) |
-| `pnpm build` | Build web + api cho production |
-| `pnpm lint` | ESLint cho toàn repo |
-| `pnpm format` | Prettier format |
-| `pnpm typecheck` | `tsc --noEmit` toàn repo |
-| `pnpm test` | Vitest chạy 1 lần |
-| `pnpm db:migrate` | Drizzle migrate up |
-| `pnpm db:generate` | Generate migration từ schema change |
-| `pnpm db:seed` | Seed dev data |
-| `docker compose up -d` | Start postgres + redis |
-| `docker compose down` | Stop + remove containers |
-| `docker compose down -v` | Stop + xoá data volumes (reset DB) |
+Progress: ✅ = live sau T1 · 🟡 = pending task.
+
+| Command                  | Mục đích                                     | Status   |
+| ------------------------ | -------------------------------------------- | -------- |
+| `pnpm install`           | Install workspace deps                       | ✅ T1    |
+| `pnpm lint`              | ESLint cho toàn repo                         | ✅ T1    |
+| `pnpm format`            | Prettier format                              | ✅ T1    |
+| `pnpm typecheck`         | `tsc --noEmit` all workspaces                | ✅ T1    |
+| `pnpm test`              | Vitest (passWithNoTests hiện tại)            | ✅ T1    |
+| `pnpm smoke`             | `scripts/smoke.sh` = lint + typecheck + test | ✅ T1    |
+| `pnpm dev`               | Start web + api parallel                     | 🟡 T2/T6 |
+| `pnpm build`             | Build web + api prod                         | 🟡 T6/T8 |
+| `pnpm db:migrate`        | Drizzle migrate up                           | 🟡 T3    |
+| `pnpm db:generate`       | Generate migration từ schema change          | 🟡 T3    |
+| `pnpm db:seed`           | Seed dev data                                | 🟡 T4    |
+| `pnpm test:e2e`          | Playwright E2E                               | 🟡 T8    |
+| `docker compose up -d`   | Start postgres + redis                       | 🟡 T2    |
+| `docker compose down -v` | Stop + xoá data volumes                      | 🟡 T2    |
 
 ---
 
 ## 11. Troubleshooting
 
 **Port đã bị chiếm (3001 / 5173 / 5432 / 6379)**
+
 ```bash
 lsof -iTCP:3001 -sTCP:LISTEN
 kill <PID>
 ```
+
 Hoặc đổi port trong `.env.local` + `docker-compose.yml`.
 
 **`pnpm install` lỗi peer deps**
+
 ```bash
 pnpm install --prefer-offline
 # hoặc
@@ -257,16 +273,19 @@ pnpm install
 ```
 
 **DB connection refused**
+
 1. `docker compose ps` — kiểm postgres có healthy không.
 2. `docker compose logs postgres` — xem có error.
 3. `.env.local` DATABASE_URL port có khớp với `docker-compose.yml` không.
 
 **Session không persist khi login**
+
 1. `COOKIE_SECURE=false` cho local (cookie secure yêu cầu HTTPS).
 2. Redis có running không: `docker compose exec redis redis-cli ping`.
 
 **Drizzle migration lỗi "relation already exists"**
 DB đang có schema cũ xung đột. Reset:
+
 ```bash
 docker compose down -v && docker compose up -d postgres redis
 pnpm db:migrate && pnpm db:seed

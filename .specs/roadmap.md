@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-*Last updated: 2026-04-22 · Owner: @khatuantran11*
+_Last updated: 2026-04-23 · Owner: @khatuantran11_
 
 Roadmap này mô tả milestone + target date. **Không phải kế hoạch chi tiết** (đó là story/task). Khi estimate lệch > 1 tuần → update, không âm thầm trượt.
 
@@ -10,15 +10,26 @@ Roadmap này mô tả milestone + target date. **Không phải kế hoạch chi 
 
 ## Milestones
 
-### M0 — SDD Scaffold ✅ *(2026-04-22, done)*
+### M0 — SDD Scaffold ✅ _(2026-04-22, done)_
 
 - Vision, personas, requirements (9 FRs + 5 NFRs), architecture, ADR-001, glossary, 3 user stories (US-001/002/003), US-001 task breakdown, team docs, traceability, error codes, API surface, risks, roadmap, testing strategy.
 - Commit range: `4fb4d27`..(current).
 - **Exit criteria**: repo đầy đủ spec artifact, 0 blocker cho start T1, SETUP.md document hoàn chỉnh.
 
-### M1 — US-001 Read path ✅/🟡 *(target 2026-05-31)*
+### M1 — US-001 Read path 🟡 In Progress _(target 2026-05-31)_
 
-Implement US-001 qua 8 task (T1-T8).
+Implement US-001 qua 8 task (T1-T8). **Progress: 1/8 done.**
+
+| Task                                                                                     | Status        | Commit    |
+| ---------------------------------------------------------------------------------------- | ------------- | --------- |
+| [T1 Monorepo bootstrap](stories/US-001/tasks.md#t1--monorepo-bootstrap--tooling)         | ✅ 2026-04-22 | `10b3a04` |
+| [T2 Docker + API skeleton](stories/US-001/tasks.md#t2--docker-compose--api-skeleton)     | 🟡 Next       | —         |
+| [T3 DB schema + seed](stories/US-001/tasks.md#t3--db-schema--migration--seed)            | 🟡            | —         |
+| [T4 Auth endpoints](stories/US-001/tasks.md#t4--auth-endpoints--session-middleware)      | 🟡            | —         |
+| [T5 Read + search API](stories/US-001/tasks.md#t5--read-api--search-api)                 | 🟡            | —         |
+| [T6 Web + login](stories/US-001/tasks.md#t6--web-skeleton--auth-guard--login-page)       | 🟡            | —         |
+| [T7 Landing + feature detail](stories/US-001/tasks.md#t7--landing--feature-detail-pages) | 🟡            | —         |
+| [T8 Search + E2E](stories/US-001/tasks.md#t8--search-page--e2e-smoke--setup-validation)  | 🟡            | —         |
 
 - **Deliverable**:
   - Docker Compose infra chạy (postgres + redis).
@@ -31,7 +42,7 @@ Implement US-001 qua 8 task (T1-T8).
 - **Exit criteria**: chạy lại [SETUP.md](../docs/SETUP.md) từ fresh clone end-to-end pass 3 smoke checkpoint; tất cả AC của [US-001](stories/US-001.md) có automated test.
 - **Effort**: ~26h (tasks estimate, solo + TDD).
 
-### M2 — US-002 + US-003 Author path 🟡 *(target 2026-06-30)*
+### M2 — US-002 + US-003 Author path 🟡 _(target 2026-06-30)_
 
 Implement US-002 rồi US-003.
 
@@ -45,7 +56,7 @@ Implement US-002 rồi US-003.
 - **Exit criteria**: 1 project pilot có ≥ 3 feature do BA+Dev author end-to-end (không cần dev mới đọc vội — đó là M3).
 - **Effort**: ~20h story-level, ~40h task-level expected.
 
-### M3 — Pilot launch 🟡 *(target 2026-07-31)*
+### M3 — Pilot launch 🟡 _(target 2026-07-31)_
 
 Deploy lên VPS + pilot với 1 project thật.
 
@@ -59,11 +70,12 @@ Deploy lên VPS + pilot với 1 project thật.
 - **Exit criteria**: success metric trong [Vision §7](00-vision.md#7-success-metric-placeholder--sẽ-chốt-ở-m3-pilot-launch) được đo + chốt.
 - **Blocker nếu**: bugs P0 từ M1/M2 → fix trước launch.
 
-### M4 — Post-pilot iteration 🟡 *(target 2026-09-30+)*
+### M4 — Post-pilot iteration 🟡 _(target 2026-09-30+)_
 
 Dựa feedback pilot, ưu tiên fix pain points cao nhất. Không commit scope sớm — sẽ viết US mới sau pilot retro.
 
 Candidate items (có thể):
+
 - Admin UI quản lý user (list, disable, reset password).
 - Role-based permissions cứng (nếu pilot thấy cần).
 - Search filter per-project / per-section.

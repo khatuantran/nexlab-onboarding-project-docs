@@ -4,7 +4,7 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ## Trạng thái
 
-🚧 **Pre-MVP — SDD scaffold hoàn thành (6/6 bước).** Chưa có code chạy; sẵn sàng bắt đầu implement [US-001 Task T1](.specs/stories/US-001/tasks.md#t1--monorepo-bootstrap--tooling).
+🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T1/8 done** — monorepo bootstrap landed. Next: [T2 — Docker Compose + API skeleton](.specs/stories/US-001/tasks.md#t2--docker-compose--api-skeleton).
 
 ## Vấn đề đang giải quyết
 
@@ -50,11 +50,21 @@ infra/           (implementation phase) Docker Compose, K8s manifests
 
 ## Chạy dự án
 
-⚠️ Chưa có code chạy được (pre-implementation). Setup guide ở [docs/SETUP.md](docs/SETUP.md) mô tả **target state** sau khi T1-T8 hoàn thành.
+Sau T1, workspace bootstrap đã chạy được:
+
+```bash
+nvm use          # picks up .nvmrc → Node 20
+corepack enable  # one-time, activates pnpm 9.15
+pnpm install
+pnpm smoke       # lint + typecheck + test (passWithNoTests until T2)
+```
+
+Full setup (Docker / DB migrate / dev servers) ở [docs/SETUP.md](docs/SETUP.md) — các mục `🟡` sẽ chuyển `✅` khi task tương ứng xong.
 
 ## Tài liệu chính
 
 **Specs (source of truth)**:
+
 - [Vision](.specs/00-vision.md) — tại sao xây, phục vụ ai, goals/non-goals
 - [Personas](.specs/01-personas.md) — user profile chi tiết (Minh / Lan / Hùng)
 - [Requirements](.specs/02-requirements.md) — 9 FRs (EARS) + 5 NFRs
@@ -68,11 +78,13 @@ infra/           (implementation phase) Docker Compose, K8s manifests
 - [Risks](.specs/risks.md) — register
 
 **Stories**:
+
 - [US-001 — Dev reads & search feature catalog](.specs/stories/US-001.md) + [tasks](.specs/stories/US-001/tasks.md)
 - [US-002 — BA creates project + feature with business sections](.specs/stories/US-002.md)
 - [US-003 — Dev adds tech-notes + screenshots](.specs/stories/US-003.md)
 
 **Operational**:
+
 - [SETUP](docs/SETUP.md) — local setup (target state)
 - [CONTRIBUTING](docs/CONTRIBUTING.md) — branch, commit, PR flow
 - [TESTING](docs/TESTING.md) — test strategy
