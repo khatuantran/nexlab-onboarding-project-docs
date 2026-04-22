@@ -217,47 +217,69 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 
 ## Non-functional Requirements (baseline v1)
 
+Format theo [templates/01-non-functional-requirements-template.md](../templates/01-non-functional-requirements-template.md)@0.1 — mỗi NFR 5 field: Metric / Scope / Measurement / Rationale / Verification.
+
 ### NFR-PERF-001 — Response time
 
-- Read endpoints (feature detail, project landing) ≤ **300ms p95** server-side cho corpus v1 scale (≤ 10k feature, ≤ 100 project).
-- Search ≤ **500ms p95** (xem FR-SEARCH-001).
-- Write endpoints ≤ **500ms p95**.
-
-Đo: pino log kèm `duration_ms`; target check bằng load test nhỏ cuối Bước 6 (không CI gate v1).
+- **Category**: `PERF`
+- **Metric / threshold**:
+  - Read endpoints (`GET /projects/:slug`, `GET /projects/:slug/features/:slug`) ≤ **300ms p95** server-side.
+  - Search (`GET /search`) ≤ **500ms p95**.
+  - Write endpoints (PUT/POST) ≤ **500ms p95**.
+- **Scope**: `/api/v1/*` under dev load; target corpus ≤ 10k feature, ≤ 100 project.
+- **Measurement method**: pino log kèm `duration_ms` aggregated; adhoc load test (VD `autocannon`) sau [M1](roadmap.md). Không CI gate v1.
+- **Rationale**: Catalog read là hot path cho onboarding; user perception "instant" < 300ms; search 500ms chấp nhận được vì có loading state.
+- **Verification**: [T5](stories/US-001/tasks.md#t5--read-api--search-api) (route timing), [T8](stories/US-001/tasks.md#t8--search-page--e2e-smoke--setup-validation) (manual adhoc check).
 
 ### NFR-A11Y-001 — Accessibility baseline
 
-- WCAG 2.1 **Level A** cho mọi page read (feature detail + project landing). AA là stretch goal.
-- Keyboard navigation cho toàn bộ link + form (không trap focus).
-- Form có label liên kết `for`/`id`; error message có `aria-live="polite"`.
-- Color contrast text ≥ 4.5:1 (kiểm qua shadcn/ui defaults — đã đạt).
-
-v1 không bắt buộc screen reader test, nhưng không được break (không dùng `div` thay vì `button`, etc.).
+- **Category**: `A11Y`
+- **Metric / threshold**: WCAG 2.1 **Level A** trên feature detail + project landing; Level AA là stretch goal.
+- **Scope**: Web read pages (`/projects/*`). Không enforce trên admin/author pages v1.
+- **Measurement method**: Manual audit checklist khi review PR; axe-core smoke test trong [T7](stories/US-001/tasks.md#t7--landing--feature-detail-pages) unit test. Không required screen-reader test v1.
+- **Rationale**: Baseline usability cho keyboard user + min legal duty of care; shadcn/ui defaults đã đạt phần lớn tiêu chí (contrast, focus).
+- **Verification**: T7 unit test axe + PR review checklist. Full audit pre-[M3 launch](roadmap.md).
 
 ### NFR-SEC-001 — Security baseline
 
-- Password hash: bcryptjs cost ≥ 10.
-- Session cookie: `httpOnly`, `sameSite=lax`, `secure=true` trong prod.
-- Input validation: Zod ở mọi route boundary (body, query, params) — reject unknown fields (strict mode).
-- SQL injection: chỉ dùng Drizzle parameterized queries — **không** string interpolation.
-- Secrets: không commit `.env*`; production qua platform env vars / K8s Secret.
-- Rate limit: **deferred** v1 (xem open questions) nhưng endpoint `/auth/login` có basic rate limit 10 req/min/IP qua Redis để chặn credential stuffing.
-- CORS: chỉ cho phép origin `VITE_APP_ORIGIN` (1 origin cho v1).
+- **Category**: `SEC`
+- **Metric / threshold**:
+  - Password hash: bcryptjs cost ≥ 10.
+  - Session cookie `sid`: `httpOnly`, `sameSite=lax`, `secure=true` trong prod.
+  - Zod strict parse ở mọi route boundary (body/query/params), reject unknown fields.
+  - DB access 100% qua Drizzle parameterized queries — zero raw string interpolation.
+  - Rate limit 10 req/min/IP trên `POST /auth/login` (Redis counter).
+  - CORS chỉ allow 1 origin `VITE_APP_ORIGIN`.
+  - Secrets không commit `.env*`; prod qua platform env vars.
+- **Scope**: API server + Express middleware + DB layer.
+- **Measurement method**: Code review + unit test (bcrypt cost, cookie attrs, Zod strict); manual security audit trước [M3](roadmap.md).
+- **Rationale**: Internal portal low-risk nhưng cần bảo vệ credential stuffing + trivial XSS/SQLi; baseline phù hợp với solo maintainer.
+- **Verification**: [T4](stories/US-001/tasks.md#t4--auth-endpoints--session-middleware) (auth + session + rate limit), [T2](stories/US-001/tasks.md#t2--docker-compose--api-skeleton) (env config), pre-M3 audit pass.
 
 ### NFR-DATA-001 — Backup & retention
 
-- Dev: không backup. `docker compose down -v` acceptable.
-- Prod v1: **manual `pg_dump` weekly**, lưu off-host (document trong SETUP). User accountable.
-- Retention: không xoá data tự động v1 (không có "archive" flow). Admin xoá manual qua SQL nếu cần.
-- File uploads (screenshots): lưu Docker volume v1, back up cùng pg_dump step.
+- **Category**: `DATA`
+- **Metric / threshold**:
+  - Prod v1: manual `pg_dump` **weekly**, lưu off-host.
+  - Retention: không auto-delete data (không có "archive" flow).
+  - Upload volume backed up cùng pg_dump step.
+  - Dev env: không backup; `docker compose down -v` acceptable.
+- **Scope**: Prod v1 deployment only.
+- **Measurement method**: Document procedure trong [SETUP.md](../docs/SETUP.md); cron log successful `pg_dump` exit code; admin manual delete qua SQL khi cần.
+- **Rationale**: RTO/RPO tuần lễ chấp nhận được cho internal tool ở pilot scale; solo maintainer không có capacity automation; auto-backup defer v2.
+- **Verification**: Runbook trong SETUP + cron log review (M3).
 
 ### NFR-OBS-001 — Logging & observability baseline
 
-- pino JSON → stdout cho API.
-- Mỗi request log: `request_id`, `user_id` (nếu có), `method`, `path`, `status`, `duration_ms`.
-- Error log include stack trace + Zod issues khi có.
-- Không log password, cookie value, full email (chỉ domain part khi cần debug).
-- v2: structured metrics + dashboard (deferred).
+- **Category**: `OBS`
+- **Metric / threshold**:
+  - Every request log JSON có: `request_id`, `user_id` (nếu có), `method`, `path`, `status`, `duration_ms`.
+  - Error log include stack trace + Zod `issues[]` khi có.
+  - **Không** log password, cookie value, full email (chỉ domain khi cần debug).
+- **Scope**: `apps/api` server only. Frontend: `console.*` chỉ dev mode, strip production build.
+- **Measurement method**: pino JSON → stdout; unit test assert log line có required key; grep random sample log line trước release.
+- **Rationale**: Debuggability cho solo maintainer; structured log ready cho metrics v2; PII minimization.
+- **Verification**: [T2](stories/US-001/tasks.md#t2--docker-compose--api-skeleton) pino wiring + unit test assert log shape.
 
 ---
 
