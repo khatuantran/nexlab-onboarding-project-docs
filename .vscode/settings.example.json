@@ -1,0 +1,84 @@
+{
+  // Copy this file to `.vscode/settings.json` (gitignored) to get the
+  // recommended workspace config. Edit your personal overrides locally.
+
+  // Editor
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.rulers": [100],
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "files.trimFinalNewlines": true,
+  "files.eol": "\n",
+
+  // TypeScript — always use the workspace version so versions align
+  // across contributors (avoids "TS version mismatch" bug reports).
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+
+  // ESLint
+  "eslint.workingDirectories": [{ "pattern": "apps/*" }, { "pattern": "packages/*" }, "."],
+  "eslint.validate": ["javascript", "typescript", "typescriptreact"],
+
+  // Prettier formatter per language
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescriptreact]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[markdown]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[yaml]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+
+  // Tailwind CSS IntelliSense — recognize cn()/clsx helpers
+  "tailwindCSS.experimental.classRegex": [
+    ["cn\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["clsx\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+  ],
+
+  // Search + files
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/coverage": true,
+    "**/pnpm-lock.yaml": true,
+    "**/playwright-report": true
+  },
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.turbo": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true
+  },
+
+  // Spell checker — accept Vietnamese + repo-specific tokens
+  "cSpell.language": "en,vi",
+  "cSpell.words": [
+    "drizzle",
+    "ioredis",
+    "jsdom",
+    "onboarding",
+    "pino",
+    "pnpm",
+    "shadcn",
+    "supertest",
+    "tsconfig",
+    "tsvector",
+    "vitest",
+    "zod"
+  ],
+
+  // Testing
+  "vitest.enable": true,
+  "vitest.commandLine": "pnpm exec vitest"
+}
