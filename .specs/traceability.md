@@ -39,7 +39,7 @@ Mục đích: khi đổi 1 FR biết ngay tác động tới story + task nào. 
 | Task                                                                       | Primary FR                     | AC covered (US-001)           |
 | -------------------------------------------------------------------------- | ------------------------------ | ----------------------------- |
 | [T1](stories/US-001/tasks.md#t1--monorepo-bootstrap--tooling)              | — (foundation)                 | ✅ Done                       |
-| [T2](stories/US-001/tasks.md#t2--docker-compose--api-skeleton)             | infra (all FR)                 | infra                         |
+| [T2](stories/US-001/tasks.md#t2--docker-compose--api-skeleton)             | infra (all FR)                 | ✅ Done `829a51a`             |
 | [T3](stories/US-001/tasks.md#t3--db-schema--migration--seed)               | FEAT-002                       | AC-3, AC-5, AC-6 data         |
 | [T4](stories/US-001/tasks.md#t4--auth-endpoints--session-middleware)       | AUTH-001                       | AC-1, AC-2, AC-10, AC-11      |
 | [T5](stories/US-001/tasks.md#t5--read-api--search-api)                     | FEAT-002, READ-001, SEARCH-001 | AC-3, AC-5, AC-7, AC-9        |

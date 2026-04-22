@@ -4,7 +4,7 @@
 
 _Story_: [US-001 — Dev reads và search feature catalog](../US-001.md)
 _Total estimate_: ~26h (solo, TDD pace; story-level estimate 10-14h dùng pair/ideal, tasks là pessimistic)
-_Last updated_: 2026-04-23 (T1 landed `10b3a04`)
+_Last updated_: 2026-04-23 (T2 landed `829a51a`)
 
 ---
 
@@ -26,8 +26,8 @@ _Last updated_: 2026-04-23 (T1 landed `10b3a04`)
 | #                                                   | Title                                             | Effort | AC covered                | FR touched                     | Status       |
 | --------------------------------------------------- | ------------------------------------------------- | ------ | ------------------------- | ------------------------------ | ------------ |
 | [T1](#t1--monorepo-bootstrap--tooling)              | Monorepo bootstrap + tooling                      | 3h     | — (foundation)            | —                              | ✅ `10b3a04` |
-| [T2](#t2--docker-compose--api-skeleton)             | Docker Compose + API skeleton + health            | 3h     | infra for all             | —                              | 🟡 Next      |
-| [T3](#t3--db-schema--migration--seed)               | DB schema + Drizzle migration + seed              | 4h     | AC-3, AC-5, AC-6 (data)   | FEAT-002                       | 🟡           |
+| [T2](#t2--docker-compose--api-skeleton)             | Docker Compose + API skeleton + health            | 3h     | infra for all             | —                              | ✅ `829a51a` |
+| [T3](#t3--db-schema--migration--seed)               | DB schema + Drizzle migration + seed              | 4h     | AC-3, AC-5, AC-6 (data)   | FEAT-002                       | 🟡 Next      |
 | [T4](#t4--auth-endpoints--session-middleware)       | Auth endpoints + session middleware               | 3h     | AC-1, AC-2, AC-10, AC-11  | AUTH-001                       | 🟡           |
 | [T5](#t5--read-api--search-api)                     | Feature read API + search API                     | 4h     | AC-3, AC-5, AC-7, AC-9    | FEAT-002, READ-001, SEARCH-001 | 🟡           |
 | [T6](#t6--web-skeleton--auth-guard--login-page)     | Web skeleton + auth guard + login                 | 4h     | AC-1, AC-2, AC-10, AC-11  | AUTH-001                       | 🟡           |

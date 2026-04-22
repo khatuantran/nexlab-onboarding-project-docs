@@ -2,7 +2,7 @@
 
 > **Trạng thái**: Sống cùng implementation. Nhãn mỗi section: ✅ `works now` · 🟡 `pending (task T-N)` · ⏳ `v2`. Xem [roadmap.md](../.specs/roadmap.md).
 >
-> Progress hiện tại: **T1 ✅ done** (monorepo + tooling). T2-T8 còn 🟡.
+> Progress hiện tại: **T1-T2 ✅ done** (monorepo + API skeleton + Docker Compose). T3-T8 còn 🟡.
 
 ---
 
@@ -82,18 +82,31 @@ LOG_LEVEL=debug
 
 ---
 
-## 4. Start infrastructure 🟡 (pending T8)
+## 4. Start infrastructure ✅ (T2 done)
+
+Từ root:
 
 ```bash
-docker compose up -d postgres redis
+pnpm docker:up
 ```
+
+(Tương đương `docker compose -f infra/docker/docker-compose.yml up -d`.)
 
 Verify:
 
 ```bash
-docker compose ps
+docker compose -f infra/docker/docker-compose.yml ps
 # postgres   Up (healthy)
 # redis      Up (healthy)
+```
+
+Nếu port 5432 hoặc 6379 đã bị chiếm, override qua `.env.local`:
+
+```dotenv
+POSTGRES_PORT=5433
+REDIS_PORT=6380
+DATABASE_URL=postgresql://dev:dev@localhost:5433/onboardingdb
+REDIS_URL=redis://localhost:6380
 ```
 
 Smoke test Postgres:
@@ -159,37 +172,42 @@ pnpm db:reset
 
 ---
 
-## 7. Start dev servers 🟡 (pending T2, T6)
+## 7. Start dev servers ⚠️ API ✅ (T2) · Web 🟡 (pending T6)
 
-2 process, chạy song song. Cách đơn giản nhất:
+Hiện tại `pnpm dev` chỉ chạy API (Web sẽ wire vào T6):
 
 ```bash
 pnpm dev
+# → API on http://localhost:3001 (Express, tsx watch auto-reload)
 ```
 
-Dưới capo dùng `pnpm -r --parallel dev` chạy cả 2 workspace:
+Sau T6 sẽ chạy 2 process parallel:
 
-- **API**: http://localhost:3001 (Express, auto-reload qua `tsx watch`)
-- **Web**: http://localhost:5173 (Vite dev server, HMR)
-
-Vite đã proxy `/api/*` → API backend trong `vite.config.ts`.
+- **API**: http://localhost:3001 (Express, `tsx watch`)
+- **Web**: http://localhost:5173 (Vite HMR, proxy `/api/*` → API)
 
 ---
 
-## 8. Smoke-test checklist 🟡 (pending T5, T7)
+## 8. Smoke-test checklist ⚠️ 8.1 ✅ (T2) · 8.2 + 8.3 🟡 (pending T5, T7)
 
 Sau khi start thành công, verify theo thứ tự:
 
-### 8.1 API health
+### 8.1 API health ✅ (T2)
 
 ```bash
 curl -s http://localhost:3001/api/v1/health | jq
 ```
 
-Expect:
+Expect (với docker containers chạy):
 
 ```json
 { "status": "ok", "db": "ok", "redis": "ok", "version": "0.1.0" }
+```
+
+Không có docker? API vẫn chạy, nhưng trả degraded:
+
+```json
+{ "status": "degraded", "db": "error", "redis": "error", "version": "0.1.0" }
 ```
 
 ### 8.2 Read seeded feature via API
@@ -233,22 +251,24 @@ pnpm test:e2e
 
 Progress: ✅ = live sau T1 · 🟡 = pending task.
 
-| Command                  | Mục đích                                     | Status   |
-| ------------------------ | -------------------------------------------- | -------- |
-| `pnpm install`           | Install workspace deps                       | ✅ T1    |
-| `pnpm lint`              | ESLint cho toàn repo                         | ✅ T1    |
-| `pnpm format`            | Prettier format                              | ✅ T1    |
-| `pnpm typecheck`         | `tsc --noEmit` all workspaces                | ✅ T1    |
-| `pnpm test`              | Vitest (passWithNoTests hiện tại)            | ✅ T1    |
-| `pnpm smoke`             | `scripts/smoke.sh` = lint + typecheck + test | ✅ T1    |
-| `pnpm dev`               | Start web + api parallel                     | 🟡 T2/T6 |
-| `pnpm build`             | Build web + api prod                         | 🟡 T6/T8 |
-| `pnpm db:migrate`        | Drizzle migrate up                           | 🟡 T3    |
-| `pnpm db:generate`       | Generate migration từ schema change          | 🟡 T3    |
-| `pnpm db:seed`           | Seed dev data                                | 🟡 T4    |
-| `pnpm test:e2e`          | Playwright E2E                               | 🟡 T8    |
-| `docker compose up -d`   | Start postgres + redis                       | 🟡 T2    |
-| `docker compose down -v` | Stop + xoá data volumes                      | 🟡 T2    |
+| Command             | Mục đích                                     | Status                   |
+| ------------------- | -------------------------------------------- | ------------------------ |
+| `pnpm install`      | Install workspace deps                       | ✅ T1                    |
+| `pnpm lint`         | ESLint cho toàn repo                         | ✅ T1                    |
+| `pnpm format`       | Prettier format                              | ✅ T1                    |
+| `pnpm typecheck`    | `tsc --noEmit` all workspaces                | ✅ T1                    |
+| `pnpm test`         | Vitest (passWithNoTests hiện tại)            | ✅ T1                    |
+| `pnpm smoke`        | `scripts/smoke.sh` = lint + typecheck + test | ✅ T1                    |
+| `pnpm dev`          | Start API (web added in T6)                  | ⚠️ API ✅ T2 / Web 🟡 T6 |
+| `pnpm build`        | Build api prod (web prod in T6)              | ⚠️ API ✅ T2 / Web 🟡 T6 |
+| `pnpm docker:up`    | Start postgres + redis                       | ✅ T2                    |
+| `pnpm docker:down`  | Stop containers                              | ✅ T2                    |
+| `pnpm docker:reset` | Stop + xoá data volumes                      | ✅ T2                    |
+| `pnpm docker:logs`  | Tail logs postgres + redis                   | ✅ T2                    |
+| `pnpm db:migrate`   | Drizzle migrate up                           | 🟡 T3                    |
+| `pnpm db:generate`  | Generate migration từ schema change          | 🟡 T3                    |
+| `pnpm db:seed`      | Seed dev data                                | 🟡 T4                    |
+| `pnpm test:e2e`     | Playwright E2E                               | 🟡 T8                    |
 
 ---
 

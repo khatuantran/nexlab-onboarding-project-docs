@@ -18,13 +18,13 @@ Roadmap này mô tả milestone + target date. **Không phải kế hoạch chi 
 
 ### M1 — US-001 Read path 🟡 In Progress _(target 2026-05-31)_
 
-Implement US-001 qua 8 task (T1-T8). **Progress: 1/8 done.**
+Implement US-001 qua 8 task (T1-T8). **Progress: 2/8 done.**
 
 | Task                                                                                     | Status        | Commit    |
 | ---------------------------------------------------------------------------------------- | ------------- | --------- |
 | [T1 Monorepo bootstrap](stories/US-001/tasks.md#t1--monorepo-bootstrap--tooling)         | ✅ 2026-04-22 | `10b3a04` |
-| [T2 Docker + API skeleton](stories/US-001/tasks.md#t2--docker-compose--api-skeleton)     | 🟡 Next       | —         |
-| [T3 DB schema + seed](stories/US-001/tasks.md#t3--db-schema--migration--seed)            | 🟡            | —         |
+| [T2 Docker + API skeleton](stories/US-001/tasks.md#t2--docker-compose--api-skeleton)     | ✅ 2026-04-23 | `829a51a` |
+| [T3 DB schema + seed](stories/US-001/tasks.md#t3--db-schema--migration--seed)            | 🟡 Next       | —         |
 | [T4 Auth endpoints](stories/US-001/tasks.md#t4--auth-endpoints--session-middleware)      | 🟡            | —         |
 | [T5 Read + search API](stories/US-001/tasks.md#t5--read-api--search-api)                 | 🟡            | —         |
 | [T6 Web + login](stories/US-001/tasks.md#t6--web-skeleton--auth-guard--login-page)       | 🟡            | —         |

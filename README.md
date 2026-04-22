@@ -4,7 +4,7 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ## Trạng thái
 
-🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T1/8 done** — monorepo bootstrap landed. Next: [T2 — Docker Compose + API skeleton](.specs/stories/US-001/tasks.md#t2--docker-compose--api-skeleton).
+🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T2/8 done** — API skeleton + `/api/v1/health` + Docker Compose wired. Next: [T3 — DB schema + Drizzle migration + seed](.specs/stories/US-001/tasks.md#t3--db-schema--migration--seed).
 
 ## Vấn đề đang giải quyết
 
@@ -50,16 +50,20 @@ infra/           (implementation phase) Docker Compose, K8s manifests
 
 ## Chạy dự án
 
-Sau T1, workspace bootstrap đã chạy được:
+Sau T1-T2, đã chạy được:
 
 ```bash
-nvm use          # picks up .nvmrc → Node 20
-corepack enable  # one-time, activates pnpm 9.15
+nvm use                  # picks up .nvmrc → Node 20
+corepack enable          # one-time, activates pnpm 9.15
 pnpm install
-pnpm smoke       # lint + typecheck + test (passWithNoTests until T2)
+pnpm smoke               # lint + typecheck + 4 api tests
+
+pnpm docker:up           # start postgres:16 + redis:7 (T2)
+pnpm dev                 # start API on :3001 (T2); web dev wires in T6
+curl localhost:3001/api/v1/health  # → {status,db,redis,version}
 ```
 
-Full setup (Docker / DB migrate / dev servers) ở [docs/SETUP.md](docs/SETUP.md) — các mục `🟡` sẽ chuyển `✅` khi task tương ứng xong.
+Full setup (DB migrate / seed / dev servers / E2E) ở [docs/SETUP.md](docs/SETUP.md) — các mục `🟡` sẽ chuyển `✅` khi task tương ứng xong.
 
 ## Tài liệu chính
 
