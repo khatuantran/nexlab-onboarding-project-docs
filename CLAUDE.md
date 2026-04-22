@@ -52,6 +52,35 @@ This project follows **Spec-Driven Development (SDD)**. All specs live in `.spec
 
 ---
 
+## Definition of Ready (DoR) — story-level
+
+Một user story chỉ được start task breakdown / implementation khi đạt **tất cả** checklist:
+
+- [ ] **User perspective** rõ: "As a <role>, I want <capability>, so that <benefit>."
+- [ ] **Acceptance criteria** đầy đủ Given/When/Then, không có "TBD".
+- [ ] **FR mapping**: mỗi AC trace về ≥ 1 FR trong [02-requirements.md](.specs/02-requirements.md).
+- [ ] **Persona mapping**: story link về persona cụ thể trong [01-personas.md](.specs/01-personas.md).
+- [ ] **Dependencies** declared: US/task prerequisite, infra, seed data. Nếu chưa resolve → note rõ.
+- [ ] **Scope in/out** explicit: dễ spot scope creep.
+- [ ] **Effort estimate**: range hours (solo TDD pace).
+- [ ] **Test plan**: outline unit/integration/E2E coverage.
+- [ ] **Known risks**: ≥ bullet ở §Risks (có thể refer về [risks.md](.specs/risks.md)).
+- [ ] **Traceability matrix** cập nhật: [traceability.md](.specs/traceability.md) có row cho story.
+
+Không đạt DoR → **không viết tasks.md**; hỏi user clarify hoặc viết thêm spec trước.
+
+## Definition of Done (DoD) — task-level
+
+Xem [stories/US-001/tasks.md §Conventions](.specs/stories/US-001/tasks.md). Minimal DoD:
+
+- [ ] Tests passing (`pnpm test`).
+- [ ] `pnpm lint` + `pnpm typecheck` green.
+- [ ] Linked AC có automated test coverage.
+- [ ] Commit message format `type(scope): subject (spec-ref)`.
+- [ ] Liên quan spec update (API surface / error codes / traceability) cùng commit nếu áp dụng.
+
+---
+
 ## Commit message convention
 
 ```
