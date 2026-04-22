@@ -1,0 +1,93 @@
+# Roadmap
+
+*Last updated: 2026-04-22 · Owner: @khatuantran11*
+
+Roadmap này mô tả milestone + target date. **Không phải kế hoạch chi tiết** (đó là story/task). Khi estimate lệch > 1 tuần → update, không âm thầm trượt.
+
+---
+
+## Milestones
+
+### M0 — SDD Scaffold ✅ *(2026-04-22, done)*
+
+- Vision, personas, requirements (9 FRs + 5 NFRs), architecture, ADR-001, glossary, 3 user stories (US-001/002/003), US-001 task breakdown, team docs, traceability, error codes, API surface, risks, roadmap, testing strategy.
+- Commit range: `4fb4d27`..(current).
+- **Exit criteria**: repo đầy đủ spec artifact, 0 blocker cho start T1, SETUP.md document hoàn chỉnh.
+
+### M1 — US-001 Read path ✅/🟡 *(target 2026-05-31)*
+
+Implement US-001 qua 8 task (T1-T8).
+
+- **Deliverable**:
+  - Docker Compose infra chạy (postgres + redis).
+  - Monorepo + lint/test/typecheck gates xanh.
+  - Auth login/logout, session Redis.
+  - DB schema + migration + seed (1 admin, 1 author, 1 project, 1 feature 5-section).
+  - API: `/health`, `/auth/*`, `/projects`, `/projects/:slug`, `/projects/:slug/features/:slug`, `/search`.
+  - Web: login page, project landing, feature detail, search page.
+  - Playwright smoke E2E cover toàn bộ AC.
+- **Exit criteria**: chạy lại [SETUP.md](../docs/SETUP.md) từ fresh clone end-to-end pass 3 smoke checkpoint; tất cả AC của [US-001](stories/US-001.md) có automated test.
+- **Effort**: ~26h (tasks estimate, solo + TDD).
+
+### M2 — US-002 + US-003 Author path 🟡 *(target 2026-06-30)*
+
+Implement US-002 rồi US-003.
+
+- **Deliverable**:
+  - Admin tạo project qua UI (US-002).
+  - BA tạo feature + edit 3 business sections (US-002).
+  - Admin invite user qua `POST /users` (endpoint thôi, UI defer).
+  - Tech author edit `tech-notes` + embed card Jira/Figma/GitHub (US-003).
+  - Upload ảnh multipart + render inline (US-003).
+  - Feature edit page reuse cho cả 2 story.
+- **Exit criteria**: 1 project pilot có ≥ 3 feature do BA+Dev author end-to-end (không cần dev mới đọc vội — đó là M3).
+- **Effort**: ~20h story-level, ~40h task-level expected.
+
+### M3 — Pilot launch 🟡 *(target 2026-07-31)*
+
+Deploy lên VPS + pilot với 1 project thật.
+
+- **Deliverable**:
+  - VPS (DO Droplet / Hetzner) chạy Docker Compose prod config.
+  - Nginx reverse proxy + Let's Encrypt cert.
+  - Managed Postgres + Redis (hoặc self-host).
+  - Manual `pg_dump` cron weekly (NFR-DATA-001).
+  - Pilot project có ≥ 10 feature với 5 section filled bởi BA+Dev thật.
+  - ≥ 3 dev mới onboard qua portal, survey feedback week 2.
+- **Exit criteria**: success metric trong [Vision §7](00-vision.md#7-success-metric-placeholder--sẽ-chốt-ở-m3-pilot-launch) được đo + chốt.
+- **Blocker nếu**: bugs P0 từ M1/M2 → fix trước launch.
+
+### M4 — Post-pilot iteration 🟡 *(target 2026-09-30+)*
+
+Dựa feedback pilot, ưu tiên fix pain points cao nhất. Không commit scope sớm — sẽ viết US mới sau pilot retro.
+
+Candidate items (có thể):
+- Admin UI quản lý user (list, disable, reset password).
+- Role-based permissions cứng (nếu pilot thấy cần).
+- Search filter per-project / per-section.
+- Markdown editor upgrade (WYSIWYG, image drag-drop).
+- Draft/publish state cho section.
+
+---
+
+## v2 backlog (deferred — không trong MVP)
+
+Xem tổng hợp trong [02-requirements.md §Deferred](02-requirements.md#deferred--out-of-scope-v1-documented-to-avoid-churn). Key items:
+
+- AI Q&A / RAG trên catalog.
+- Real-time collab editing.
+- Versioning / diff / comment / approval workflow.
+- SSO (Google/Azure AD).
+- 2-way sync Jira / Figma / GitHub.
+- Native mobile app.
+- K8s production deploy (xem [ADR-001 §2.6](adr/ADR-001-tech-stack.md#26-infrastructure)).
+- Advanced search (Meilisearch / Elasticsearch) nếu corpus > 10k feature.
+- S3-compatible file storage (nếu upload volume > pilot scale).
+
+---
+
+## Update cadence
+
+- **Weekly** (solo, self-check): review milestone progress, flag slip > 3 ngày.
+- **End of milestone**: update status ✅/❌, write lessons-learned 1 đoạn ở cuối milestone section.
+- **Mỗi PR lớn**: nếu đổi scope milestone, update roadmap trong cùng commit.
