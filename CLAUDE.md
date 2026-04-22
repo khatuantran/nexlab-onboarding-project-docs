@@ -99,6 +99,37 @@ Sau khi commit task `T<N>` land (DoD pass), **trong cùng phiên làm việc** t
 - Chỉ hỏi user nếu task lộ ra **spec gap** (FR mới, AC mới, scope change) — đó là spec update, không phải progress sync.
 - Nếu task không ảnh hưởng file nào → skip commit, ghi rõ `(no progress sync needed)` trong response.
 
+## SDD guardrail — flag khi user đi lệch quy trình
+
+Nếu user prompt đụng action không khớp SDD flow, **KHÔNG** im lặng làm theo. Dừng lại, flag rõ, đề xuất quy trình đúng, chờ user confirm.
+
+### Common violations + response
+
+| Trigger từ user                                   | Rule bị vi phạm                               | Đề xuất                                                                                         |
+| ------------------------------------------------- | --------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| "Thêm endpoint / feature X" chưa có FR + US       | SDD Contract #3 (No spec-less code)           | "FR/US nào cover? Nếu chưa, viết FR + US trước, clone từ `templates/01-*.md`."                  |
+| "Fix bug Y" không có regression test              | #4 (TDD)                                      | "Viết failing test reproduce trước, commit riêng. Sau đó fix + commit."                         |
+| Start T\<N+1\> khi T\<N\> chưa DoD pass           | §tasks.md Conventions "Order"                 | "T\<N\> chưa ✅ trong traceability/roadmap. Finish DoD + progress-sync trước."                  |
+| Viết file `.specs/` không clone template          | #8 (Template is law)                          | "Clone từ `templates/XX-*.md`. Template không fit → propose update + bump version."             |
+| Gom spec change + code change vào 1 commit        | #5 (Small commits) + §Post-task progress sync | "Tách: spec commit riêng → code commit riêng → progress-sync commit riêng. Mỗi diff 1 concern." |
+| "Skip test đi" / `--no-verify` / bypass husky     | #4 + §Hard DO NOTs                            | Flag + ask explicit lý do. Không tự bypass.                                                     |
+| Scope creep: "làm task hiện tại + feature X luôn" | §Default mode of working                      | "Feature X ngoài scope task hiện tại. Viết US/task riêng, hoặc split sau khi task N xong."      |
+| Commit secrets / `.env*` / key file               | §Hard DO NOTs                                 | **Block thẳng**, không override.                                                                |
+
+### Response format khi flag
+
+```
+⚠️ SDD check: <1 câu mô tả chỗ lệch>
+Rule: <link §... CLAUDE.md hoặc templates/>
+Đề xuất: <1-3 step đúng quy trình>
+Override? Confirm "override: <reason>" và tôi làm (sẽ ghi rõ trong commit/response).
+```
+
+### Override policy
+
+- User có thể explicit override (`"proceed anyway"` / `"override: <reason>"`). AI làm theo nhưng **ghi rõ** trong commit body hoặc response rằng đã override rule nào.
+- **Không override** cho Hard DO NOTs liên quan security (commit secret, push force `main`, skip signing).
+
 ---
 
 ## Commit message convention
