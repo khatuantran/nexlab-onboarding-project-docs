@@ -1,6 +1,6 @@
 # Testing Strategy
 
-*Last updated: 2026-04-22 · Source of truth for test approach trong repo này.*
+_Last updated: 2026-04-22 · Source of truth for test approach trong repo này._
 
 Nguyên tắc: **spec → test → code** (TDD). Mỗi task start với failing test (xem [US-001 tasks](../.specs/stories/US-001/tasks.md) §Conventions).
 
@@ -24,10 +24,27 @@ Nguyên tắc: **spec → test → code** (TDD). Mỗi task start với failing 
 
 ## 1. Unit tests
 
+### Folder convention (áp dụng cả BE + FE, từ T3)
+
+Tests **tách hoàn toàn** khỏi `src/` — mirror structure trong `tests/`:
+
+```
+apps/<app>/
+  src/
+    middleware/requireAuth.ts
+    routes/health.ts
+  tests/
+    middleware/requireAuth.test.ts     ← mirror src/
+    routes/health.test.ts              ← mirror src/
+    lib/                               ← test helpers, factories
+```
+
+Lý do: giữ `src/` sạch (build + ship), test code không leak vào bundle. Tsconfig split: `tsconfig.json` (IDE/typecheck, noEmit, include src+tests) vs `tsconfig.build.json` (composite, emit, chỉ src).
+
 ### 1.1 Frontend (`apps/web`)
 
 - **Runner**: Vitest + `@testing-library/react` + `jsdom`.
-- **Where**: `*.test.tsx` cạnh source file.
+- **Where**: `apps/web/tests/<mirror>/*.test.tsx`.
 - **What to cover**:
   - Component render theo prop (happy + edge).
   - Form validation logic (Zod resolver).
@@ -39,7 +56,7 @@ Nguyên tắc: **spec → test → code** (TDD). Mỗi task start với failing 
 ### 1.2 Backend (`apps/api`)
 
 - **Runner**: Vitest + Supertest.
-- **Where**: `*.test.ts` cạnh source (routes/services/repos).
+- **Where**: `apps/api/tests/<mirror>/*.test.ts`.
 - **What to cover**:
   - Route handlers với real Express app + in-memory session store cho unit, hoặc real Redis cho integration.
   - Service layer logic (validation, error mapping).
@@ -93,16 +110,16 @@ Nguyên tắc: **spec → test → code** (TDD). Mỗi task start với failing 
 
 ## 4. Mocking policy
 
-| Layer | Mock OK | Real required |
-|---|---|---|
-| External services (Jira/Figma/GitHub API) | ✅ (v1 client-side card không fetch anyway) | — |
-| Postgres | ❌ | ✅ container |
-| Redis | ❌ (cho integration) | ✅ container |
-| Session store | mock OK cho route unit test | real Redis cho integration |
-| File system (uploads) | `tmpdir()` per test | — |
-| Time (`Date.now()`) | `vi.useFakeTimers()` cho test cần deterministic | — |
-| bcrypt | ❌ (slow but verify real behavior) | ✅ real |
-| Network fetch từ FE | MSW handler | — |
+| Layer                                     | Mock OK                                         | Real required              |
+| ----------------------------------------- | ----------------------------------------------- | -------------------------- |
+| External services (Jira/Figma/GitHub API) | ✅ (v1 client-side card không fetch anyway)     | —                          |
+| Postgres                                  | ❌                                              | ✅ container               |
+| Redis                                     | ❌ (cho integration)                            | ✅ container               |
+| Session store                             | mock OK cho route unit test                     | real Redis cho integration |
+| File system (uploads)                     | `tmpdir()` per test                             | —                          |
+| Time (`Date.now()`)                       | `vi.useFakeTimers()` cho test cần deterministic | —                          |
+| bcrypt                                    | ❌ (slow but verify real behavior)              | ✅ real                    |
+| Network fetch từ FE                       | MSW handler                                     | —                          |
 
 ---
 
@@ -133,14 +150,14 @@ Nguyên tắc: **spec → test → code** (TDD). Mỗi task start với failing 
 
 ## 7. Running tests
 
-| Command | Scope |
-|---|---|
-| `pnpm test` | All unit + integration, 1 lần |
-| `pnpm test:watch` | Watch mode (TDD) |
-| `pnpm --filter @onboarding/web test` | FE only |
-| `pnpm --filter @onboarding/api test` | API only |
-| `pnpm test:e2e` | Playwright (requires `pnpm dev` + docker compose up) |
-| `pnpm test --coverage` | Coverage report |
+| Command                              | Scope                                                |
+| ------------------------------------ | ---------------------------------------------------- |
+| `pnpm test`                          | All unit + integration, 1 lần                        |
+| `pnpm test:watch`                    | Watch mode (TDD)                                     |
+| `pnpm --filter @onboarding/web test` | FE only                                              |
+| `pnpm --filter @onboarding/api test` | API only                                             |
+| `pnpm test:e2e`                      | Playwright (requires `pnpm dev` + docker compose up) |
+| `pnpm test --coverage`               | Coverage report                                      |
 
 Chi tiết command xem [SETUP.md §9](SETUP.md#9-run-tests--pending--test-sẽ-thêm-cùng-từng-task-tdd).
 
