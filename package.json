@@ -1,0 +1,43 @@
+{
+  "name": "nexlab-onboarding-project-docs",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Onboarding Doc Portal — internal feature-catalog for dev onboarding",
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20.9.0 <21",
+    "pnpm": ">=9"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm -r run typecheck",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest --passWithNoTests",
+    "test:e2e": "echo 'E2E lands in T8' && exit 0",
+    "smoke": "./scripts/smoke.sh",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,cjs,mjs}": [
+      "eslint --fix --max-warnings 0",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.9"
+  }
+}

@@ -58,6 +58,12 @@ docker-compose.override.yml
 .tmp/
 .turbo/
 
+# Husky (auto-generated internals)
+.husky/_/
+
+# Upload volume (FR-UPLOAD-001; not committed)
+data/
+
 # Generated (to be added when tooling lands)
 # drizzle/migrations/meta/_journal.json  ← keep in git, do not ignore
 # apps/*/dist/
