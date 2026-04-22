@@ -573,9 +573,10 @@ Search bar trong `AppHeader` (từ T8) + `/search?q=...` page. Playwright smoke 
 
 ---
 
-## Checklist trước khi start T3
+## Checklist trước khi start task
 
 - [ ] Đọc lại [US-001.md](../US-001.md) full.
 - [ ] Xác nhận Docker Desktop running, Node 20 + pnpm 9 available.
 - [ ] Review [ADR-001](../../adr/ADR-001-tech-stack.md) §2.1-2.3 để align deps version.
 - [ ] Đọc [TESTING.md](../../../docs/TESTING.md) §Mocking policy để biết test strategy mỗi layer.
+- [ ] **Đọc convention tương ứng**: [conventions-be.md](../../../docs/conventions-be.md) nếu task BE, [conventions-fe.md](../../../docs/conventions-fe.md) nếu task FE. **Bắt buộc tuân thủ** khi code.

@@ -167,6 +167,7 @@ Full rationale: [.specs/adr/ADR-001-tech-stack.md](.specs/adr/ADR-001-tech-stack
   - Auth: session cookie `sid` (httpOnly). Session store = Redis via `connect-redis`.
 - **DB**: Drizzle ORM. Schema in `apps/api/src/db/schema.ts`. Migrations in `apps/api/src/db/migrations/` — **never hand-edit committed migration files**; run `pnpm db:generate` to produce new migration after schema change.
 - **Env**: `.env.local` at repo root (gitignored). Template in `.env.example`.
+- **Coding conventions (mandatory, apply every PR/commit)**: [docs/conventions-be.md](docs/conventions-be.md) cho `apps/api/`; [docs/conventions-fe.md](docs/conventions-fe.md) cho `apps/web/`. Đọc trước khi start task tương ứng.
 
 When in doubt about a tech choice, read ADR-001 first. If the question isn't covered and is architectural, propose **ADR-002** rather than silently deciding.
 
