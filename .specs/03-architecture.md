@@ -93,6 +93,78 @@ Chi tiết: [ADR-001 §2.6](adr/ADR-001-tech-stack.md#26-infrastructure). Setup 
 
 ---
 
+## 4.1 Domain model (ERD)
+
+```
+┌─────────────────┐
+│ users           │
+│─────────────────│
+│ id uuid PK      │──┐ created_by, updated_by, uploaded_by
+│ email unique    │  │
+│ password_hash   │  │
+│ display_name    │  │
+│ role            │  │    enum: admin | author
+│ created_at      │  │
+└─────────────────┘  │
+                      │
+         ┌────────────┘
+         │
+         ▼ created_by
+┌─────────────────┐
+│ projects        │
+│─────────────────│
+│ id uuid PK      │
+│ slug unique     │
+│ name            │
+│ description     │
+│ created_by FK   │
+│ created_at      │
+│ updated_at      │
+└─────────┬───────┘
+          │ 1:N
+          ▼
+┌──────────────────────────┐
+│ features                 │
+│──────────────────────────│
+│ id uuid PK               │
+│ project_id FK            │
+│ slug                     │
+│ title                    │
+│ search_vector tsvector   │   ← computed: title + sections.body (trigger)
+│ created_at               │
+│ updated_at               │
+│ UNIQUE(project_id, slug) │
+└──────────┬───────────────┘
+           │ 1:5 (exactly)         ┌─ uploaded_by → users
+           ▼                       │
+┌─────────────────────────┐   ┌────┴──────────────────┐
+│ sections                │   │ uploads               │
+│─────────────────────────│   │───────────────────────│
+│ id uuid PK              │   │ id uuid PK            │
+│ feature_id FK           │   │ feature_id FK         │
+│ type                    │   │ uploaded_by FK        │
+│ body text ≤ 64 KiB      │   │ mime_type             │
+│ updated_by FK (null OK) │   │ size_bytes            │
+│ updated_at              │   │ created_at            │
+│ UNIQUE(feature_id, type)│   └───────────────────────┘
+└─────────────────────────┘          (binary lives on
+   (5 rows per feature)               UPLOAD_DIR volume,
+                                      not in DB)
+
+sections.type enum: business | user-flow | business-rules | tech-notes | screenshots
+```
+
+**Invariants**:
+- Mỗi `feature` luôn có đúng 5 `sections` — enforce ở service layer + seed (không DB-level CHECK để migration đơn giản).
+- `sections.type` enum cố định 5 giá trị, ref [glossary.md §Section type](glossary.md).
+- `features.search_vector` update qua trigger khi `features.title` hoặc `sections.body` đổi. Chi tiết SQL trigger chốt ở [US-001 T3](stories/US-001/tasks.md#t3--db-schema--migration--seed).
+- `uploads` row là metadata; file nhị phân nằm ở `UPLOAD_DIR/:featureId/:uploadId.:ext` (mount Docker volume).
+- Cascade delete: xoá `feature` → cascade `sections` + `uploads`. Xoá `project` → cascade `features`. Users không cascade (khi xoá user, set `updated_by`/`uploaded_by` = NULL hoặc reject). Decide cụ thể ở T3.
+
+Migrations ở `apps/api/src/db/migrations/` — sinh bằng `drizzle-kit generate` (never hand-edit).
+
+---
+
 ## 5. Boundaries (what lives where)
 
 | Concern | Lives in |
