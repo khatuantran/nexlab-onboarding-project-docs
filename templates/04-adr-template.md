@@ -1,7 +1,9 @@
 ---
-version: 0.1
+version: 0.2
 last-updated: 2026-04-22
 target: .specs/adr/ADR-NNN-<slug>.md
+metadata_format: bullet-top | heading
+additional_sections_allowed: false
 required_sections:
   - Metadata
   - Context
@@ -15,7 +17,9 @@ required_sections:
 
 # ADR-<NNN> — <Decision title>
 
-<!-- template: 04-adr-template.md@0.1 -->
+<!-- template: 04-adr-template.md@0.2 -->
+
+> Metadata có thể là bullet-top (ngay sau title) HOẶC `## Metadata` heading. Cả 2 hợp lệ từ v0.2.
 
 ## Metadata
 

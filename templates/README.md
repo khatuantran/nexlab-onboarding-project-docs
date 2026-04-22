@@ -13,16 +13,37 @@ Mọi file trong `.specs/` **must** được clone từ template ở folder này
 | [00-vision-template.md](00-vision-template.md) | 0.1 | `.specs/00-vision.md` | Problem · Solution · Users · Goals · Non-goals · Constraints · Success metric · Open questions · Related docs |
 | [01-functional-requirements-template.md](01-functional-requirements-template.md) | 0.1 | `.specs/02-requirements.md` §FRs | Format (EARS) · FR summary table · Per-FR block |
 | [01-non-functional-requirements-template.md](01-non-functional-requirements-template.md) | 0.1 | `.specs/02-requirements.md` §NFRs | Per-NFR block (ID · Metric/threshold · Measurement · Rationale · Verification) |
-| [01-user-story-template.md](01-user-story-template.md) | 0.1 | `.specs/stories/US-NNN.md` | Metadata · User perspective · Scope in · Scope out · Acceptance criteria · UX notes · Dependencies · Downstream consumers · Risks & open items · Test plan · Tasks |
+| [01-user-story-template.md](01-user-story-template.md) | 0.2 | `.specs/stories/US-NNN.md` | Metadata · User perspective · Scope in · Scope out · Acceptance criteria · UX notes · Dependencies · Downstream consumers · Risks & open items · Test plan · Tasks |
 | [02-api-contract-template.md](02-api-contract-template.md) | 0.1 | `.specs/api-surface.md` per-endpoint | Metadata (Method/Path/Auth) · Request schema · Response (success) · Response (errors) · Error codes · Maps FR |
 | [02-data-model-template.md](02-data-model-template.md) | 0.1 | `.specs/03-architecture.md` §Domain model (per-entity) | Entity · Fields · Relationships · Invariants · Indexes · Migration notes |
 | [02-ui-spec-template.md](02-ui-spec-template.md) | 0.1 | `.specs/ui/<screen>.md` | Screen · Route · State machine · Interactions · A11y · Wire-level · Error/empty/loading · Maps US |
-| [03-task-template.md](03-task-template.md) | 0.1 | `.specs/stories/US-NNN/tasks.md` per-task | ID · Title · Effort · FR · Deps · Goal · TDD cycle · DoD checklist · Commit example |
-| [04-adr-template.md](04-adr-template.md) | 0.1 | `.specs/adr/ADR-NNN-*.md` | Status/Date/Deciders/Supersedes/Related · Context · Decision · Alternatives · Consequences · Risks & mitigations · Validation criteria · References |
+| [03-task-template.md](03-task-template.md) | 0.2 | `.specs/stories/US-NNN/tasks.md` per-task | ID · Title · Effort · FR · Deps · Goal · TDD cycle · DoD checklist · Commit example |
+| [04-adr-template.md](04-adr-template.md) | 0.2 | `.specs/adr/ADR-NNN-*.md` | Status/Date/Deciders/Supersedes/Related · Context · Decision · Alternatives · Consequences · Risks & mitigations · Validation criteria · References |
 | [05-bug-template.md](05-bug-template.md) | 0.1 | `.specs/bugs/BUG-NNN.md` | Metadata · Reproduction · Expected vs Actual · Scope · Root cause · Fix approach · Regression test · Related FR/US |
 | [05-change-request-template.md](05-change-request-template.md) | 0.1 | `.specs/changes/CR-NNN.md` | Metadata · Summary · Motivation · Proposed change · Impact · Alternatives · Decision · Linked ADR |
 
 Không có template = không tạo file. Khi nhu cầu xuất hiện cho file type mới → tạo template mới trong PR cùng với spec file đầu tiên dùng nó.
+
+### 1.1 Exempt files (registry / index / cross-cutting, không cần template)
+
+Các file dưới đây **không** bắt buộc clone từ template — chúng là **registry/index** aggregate thông tin từ các file khác, cấu trúc tuỳ nội dung. Mark bằng comment `<!-- exempt: registry (no template required) -->` ở dòng 2.
+
+| File | Purpose |
+|---|---|
+| `.specs/01-personas.md` | Persona registry (free-form narrative, mỗi persona 1 sub-section) |
+| `.specs/03-architecture.md` | Architecture overview (tổng hợp ADR + topology + ERD + boundaries) |
+| `.specs/glossary.md` | Domain term registry |
+| `.specs/risks.md` | Risk & assumption register |
+| `.specs/roadmap.md` | Milestone plan |
+| `.specs/traceability.md` | FR↔US↔Task matrix |
+| `.specs/error-codes.md` | Canonical error code registry |
+| `.specs/api-surface.md` | API endpoint catalog (tabular, aggregate) |
+
+Rule với exempt files:
+- Phải có comment exempt marker ở dòng 2.
+- Phải có `*Last updated: YYYY-MM-DD*` ngay dưới title.
+- Không áp dụng pre-save validation (§3) vì không có required_sections để verify.
+- Khi structure ổn định + tái sử dụng → cân nhắc promote thành template.
 
 ---
 
@@ -106,5 +127,7 @@ Pre-save check verify version match (newer-compatible OK).
 | Date | Template | Version | Change |
 |---|---|---|---|
 | 2026-04-22 | all | 0.1 | Initial scaffold (11 templates + registry). |
+| 2026-04-22 | 01-user-story, 03-task, 04-adr | 0.2 | Loosen metadata format: accept bullet-top/bullet-inline HOẶC `## Metadata` heading. Add `additional_sections_allowed` frontmatter flag. Non-breaking. |
+| 2026-04-22 | registry §1.1 | — | Add exempt-file list (8 registry/index file không cần template). |
 
 Thêm row khi bump version template.

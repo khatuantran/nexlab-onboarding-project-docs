@@ -1,7 +1,9 @@
 ---
-version: 0.1
+version: 0.2
 last-updated: 2026-04-22
 target: .specs/stories/US-NNN/tasks.md (per-task block)
+metadata_format: bullet-inline | heading
+additional_sections_allowed: true
 required_sections:
   - Metadata
   - Goal
@@ -12,7 +14,9 @@ required_sections:
 
 # T<N> — <Title>
 
-<!-- template: 03-task-template.md@0.1 -->
+<!-- template: 03-task-template.md@0.2 -->
+
+> Metadata có thể là bullet-inline ngay sau title (Effort, FR, Deps, AC) hoặc `## Metadata` heading. Cả 2 hợp lệ từ v0.2.
 
 ## Metadata
 

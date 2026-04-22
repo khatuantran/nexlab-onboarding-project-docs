@@ -1,7 +1,9 @@
 ---
-version: 0.1
+version: 0.2
 last-updated: 2026-04-22
 target: .specs/stories/US-NNN.md
+metadata_format: bullet-top | heading
+additional_sections_allowed: true
 required_sections:
   - Metadata
   - User perspective
@@ -18,9 +20,11 @@ required_sections:
 
 # US-<NNN> — <short title>
 
-<!-- template: 01-user-story-template.md@0.1 -->
+<!-- template: 01-user-story-template.md@0.2 -->
 
 ## Metadata
+
+Metadata có thể dạng **bullet-top** (ngay sau title, không có heading) HOẶC **`## Metadata` heading**. Chọn 1, consistent trong file. Cả 2 đều hợp lệ từ v0.2.
 
 - **Status**: Draft | Ready | In Progress | Done
 - **Priority**: P0 | P1 | P2
@@ -28,6 +32,8 @@ required_sections:
 - **Maps to FRs**: [FR-XXX-NNN](../02-requirements.md#fr-xxx-nnn), ...
 - **Estimated effort**: <X-Y> hours (solo, TDD pace)
 - **Last updated**: <YYYY-MM-DD>
+
+> **Additional sections**: cho phép thêm section tuỳ ý (VD "Why this story first?", "Justification") giữa required sections, miễn required sections xuất hiện đủ và đúng thứ tự tương đối.
 
 ---
 
