@@ -25,6 +25,7 @@
     "db:generate": "pnpm --filter @onboarding/api db:generate",
     "db:migrate": "pnpm --filter @onboarding/api db:migrate",
     "db:check": "pnpm --filter @onboarding/api db:check",
+    "db:seed": "pnpm --filter @onboarding/api db:seed",
     "prepare": "husky"
   },
   "lint-staged": {

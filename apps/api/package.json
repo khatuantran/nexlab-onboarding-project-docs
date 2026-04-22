@@ -12,7 +12,8 @@
     "test:watch": "vitest --passWithNoTests",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:check": "drizzle-kit check"
+    "db:check": "drizzle-kit check",
+    "db:seed": "tsx src/db/seed.ts"
   },
   "dependencies": {
     "@onboarding/shared": "workspace:*",
