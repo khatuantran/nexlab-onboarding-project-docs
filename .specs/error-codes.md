@@ -1,5 +1,7 @@
 # Error Code Registry
 
+<!-- exempt: registry (no template required) -->
+
 *Last updated: 2026-04-22 · Source of truth for all API error codes.*
 
 Mọi error response tuân theo format:

@@ -1,5 +1,9 @@
 # Personas
 
+<!-- exempt: registry (no template required) -->
+
+*Last updated: 2026-04-22*
+
 ---
 
 ## P1 — Minh (New Developer)

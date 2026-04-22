@@ -1,5 +1,7 @@
 # API Surface — MVP v1
 
+<!-- exempt: registry (no template required) · per-endpoint blocks follow templates/02-api-contract-template.md shape in aggregate form -->
+
 *Last updated: 2026-04-22 · Source of truth for all HTTP endpoints của `apps/api`.*
 
 Base URL dev: `http://localhost:3001/api/v1`

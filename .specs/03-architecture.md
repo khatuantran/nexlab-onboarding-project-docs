@@ -1,5 +1,7 @@
 # Architecture Summary
 
+<!-- exempt: registry (no template required) · §4.1 Domain model follows templates/02-data-model-template.md pattern in aggregate form -->
+
 *Last updated: 2026-04-22 · Source of truth for decisions: [ADR-001](adr/ADR-001-tech-stack.md)*
 
 ---

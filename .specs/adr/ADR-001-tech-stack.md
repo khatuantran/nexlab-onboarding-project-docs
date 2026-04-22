@@ -1,5 +1,7 @@
 # ADR-001 — Tech Stack Decision (MVP v1)
 
+<!-- template: 04-adr-template.md@0.2 -->
+
 - **Status**: Accepted
 - **Date**: 2026-04-22
 - **Deciders**: @khatuantran11 (solo owner)

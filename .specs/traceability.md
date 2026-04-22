@@ -1,5 +1,7 @@
 # Traceability Matrix
 
+<!-- exempt: registry (no template required) -->
+
 *Last updated: 2026-04-22 · Source of truth for cross-references between vision → FR → user story → task.*
 
 Mục đích: khi đổi 1 FR biết ngay tác động tới story + task nào. Khi implement 1 task biết test cần cover AC + FR nào. Audit SDD compliance ở 1 bảng duy nhất.

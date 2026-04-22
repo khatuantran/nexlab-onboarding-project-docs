@@ -1,5 +1,9 @@
 # Glossary
 
+<!-- exempt: registry (no template required) -->
+
+*Last updated: 2026-04-22*
+
 Thuật ngữ nội bộ. Khi thêm term mới, **update ở đây đầu tiên** — các doc khác link về.
 
 ---

@@ -1,5 +1,7 @@
 # Roadmap
 
+<!-- exempt: registry (no template required) -->
+
 *Last updated: 2026-04-22 · Owner: @khatuantran11*
 
 Roadmap này mô tả milestone + target date. **Không phải kế hoạch chi tiết** (đó là story/task). Khi estimate lệch > 1 tuần → update, không âm thầm trượt.

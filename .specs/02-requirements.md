@@ -1,5 +1,7 @@
 # Functional & Non-functional Requirements
 
+<!-- templates: 01-functional-requirements-template.md@0.1, 01-non-functional-requirements-template.md@0.1 -->
+
 *Last updated: 2026-04-22 · Source of truth for MVP v1 scope. FRs drive user stories & task breakdowns.*
 
 ---

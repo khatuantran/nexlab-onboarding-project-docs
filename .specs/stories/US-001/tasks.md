@@ -1,5 +1,7 @@
 # US-001 — Task Breakdown
 
+<!-- template: 03-task-template.md@0.2 (applied per-task block; doc-level sections Conventions/Summary/Deferred are additional_sections_allowed) -->
+
 *Story*: [US-001 — Dev reads và search feature catalog](../US-001.md)
 *Total estimate*: ~26h (solo, TDD pace; story-level estimate 10-14h dùng pair/ideal, tasks là pessimistic)
 *Last updated*: 2026-04-22

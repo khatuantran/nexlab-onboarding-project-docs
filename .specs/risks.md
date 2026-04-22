@@ -1,5 +1,7 @@
 # Risk & Assumption Register
 
+<!-- exempt: registry (no template required) -->
+
 *Last updated: 2026-04-22 · Owner: @khatuantran11*
 
 Consolidate risks + assumption rải rác trong ADR, vision, stories vào 1 file. Mỗi entry có trạng thái + mitigation status + review cadence.

@@ -1,5 +1,7 @@
 # Vision — Onboarding Doc Portal (MVP v1)
 
+<!-- template: 00-vision-template.md@0.1 -->
+
 *Last updated: 2026-04-22 · Author: @khatuantran11*
 
 ---
