@@ -14,6 +14,12 @@ export type AppDeps = HealthDeps & {
    * connect attempt during unit tests).
    */
   sessionMiddleware?: express.RequestHandler;
+  /**
+   * Optional auth router (mounted at `/api/v1/auth`). Injected so
+   * the router can carry its own deps (user repo + rate limiter)
+   * without `createApp` reaching into storage.
+   */
+  authRouter?: express.Router;
 };
 
 export function createApp(deps: AppDeps): Express {
@@ -51,6 +57,9 @@ export function createApp(deps: AppDeps): Express {
 
   const v1 = express.Router();
   v1.use("/health", createHealthRouter(deps));
+  if (deps.authRouter) {
+    v1.use("/auth", deps.authRouter);
+  }
 
   app.use("/api/v1", v1);
 

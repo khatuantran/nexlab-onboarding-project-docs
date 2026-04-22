@@ -1,13 +1,21 @@
 import type { Request, RequestHandler } from "express";
 import { HttpError } from "../errors.js";
-import { ErrorCode } from "@onboarding/shared";
+import { ErrorCode, type AuthUser } from "@onboarding/shared";
+import type { UserRepo } from "../repos/userRepo.js";
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Express {
+    interface Request {
+      user?: AuthUser;
+    }
+  }
+}
 
 /**
- * Stub requireAuth — rejects 401 UNAUTHENTICATED if no session.userId.
- *
- * T3 provides the session-check contract only; T6 extends this by
- * also querying the users table and attaching `req.user` after a
- * successful login flow lands.
+ * Session-only gate. Rejects 401 if `req.session.userId` is missing.
+ * Does NOT hit the DB — use `createRequireAuth(userRepo)` when the
+ * handler needs the full user record on `req.user`.
  */
 export const requireAuth: RequestHandler = (req, _res, next) => {
   const session = (req as Request & { session?: { userId?: string } }).session;
@@ -17,3 +25,35 @@ export const requireAuth: RequestHandler = (req, _res, next) => {
   }
   next();
 };
+
+/**
+ * Full auth gate: verify session + load user via repo + attach on
+ * `req.user`. If the session points to a deleted user, destroy the
+ * session and 401 (same code — the caller doesn't need to distinguish).
+ */
+export function createRequireAuth(userRepo: UserRepo): RequestHandler {
+  return async (req, _res, next) => {
+    try {
+      const userId = req.session.userId;
+      if (!userId) {
+        next(new HttpError(401, ErrorCode.UNAUTHENTICATED, "Bạn cần đăng nhập"));
+        return;
+      }
+      const user = await userRepo.findById(userId);
+      if (!user) {
+        req.session.destroy(() => undefined);
+        next(new HttpError(401, ErrorCode.UNAUTHENTICATED, "Bạn cần đăng nhập"));
+        return;
+      }
+      req.user = {
+        id: user.id,
+        email: user.email,
+        displayName: user.displayName,
+        role: user.role,
+      };
+      next();
+    } catch (err) {
+      next(err);
+    }
+  };
+}

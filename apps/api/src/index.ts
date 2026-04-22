@@ -4,14 +4,27 @@ import { dbCheck, pool } from "./db.js";
 import { redis, redisCheck } from "./redis.js";
 import { logger } from "./logger.js";
 import { createSessionMiddleware } from "./middleware/session.js";
+import { createAuthRouter } from "./routes/auth.js";
+import { createUserRepo } from "./repos/userRepo.js";
+import { createRateLimit } from "./middleware/rateLimit.js";
+import { db } from "./db/client.js";
 
 const VERSION = "0.1.0";
+
+const userRepo = createUserRepo(db);
+const loginRateLimit = createRateLimit({
+  redis,
+  keyFn: (req) => `login:${req.ip}`,
+  max: 10,
+  windowSec: 60,
+});
 
 const app = createApp({
   dbCheck,
   redisCheck,
   version: VERSION,
   sessionMiddleware: createSessionMiddleware(),
+  authRouter: createAuthRouter({ userRepo, loginRateLimit }),
 });
 
 const server = app.listen(config.API_PORT, () => {
