@@ -1,5 +1,12 @@
-import { useQuery, type UseQueryResult } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  type UseMutationResult,
+  type UseQueryResult,
+} from "@tanstack/react-query";
 import type {
+  CreateProjectRequest,
   FeatureListItem,
   FeatureResponse,
   ProjectResponse,
@@ -28,6 +35,24 @@ export function useProject(slug: string): UseQueryResult<ProjectWithFeatures, Er
 export interface FeatureWithSections {
   feature: FeatureResponse;
   sections: SectionResponse[];
+}
+
+export function useCreateProject(): UseMutationResult<
+  ProjectResponse,
+  Error,
+  CreateProjectRequest
+> {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body) =>
+      apiFetch<ProjectResponse>("/projects", {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+    onSuccess: (_data, vars) => {
+      qc.invalidateQueries({ queryKey: projectKeys.byId(vars.slug) });
+    },
+  });
 }
 
 export function useFeature(

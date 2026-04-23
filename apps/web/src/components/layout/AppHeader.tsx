@@ -1,6 +1,8 @@
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { AdminGate } from "@/components/common/AdminGate";
+import { CreateProjectDialog } from "@/components/projects/CreateProjectDialog";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { SearchInput } from "@/components/search/SearchInput";
 import { useLogout, useMe } from "@/queries/auth";
@@ -26,6 +28,9 @@ export function AppHeader(): JSX.Element | null {
           <SearchInput />
         </div>
         <div className="flex items-center gap-3 text-sm">
+          <AdminGate>
+            <CreateProjectDialog />
+          </AdminGate>
           <span className="text-muted-foreground" data-testid="current-user">
             {data.user.displayName}
           </span>
