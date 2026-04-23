@@ -258,25 +258,26 @@ pnpm test:e2e
 
 Progress: ✅ = live sau T1 · 🟡 = pending task.
 
-| Command             | Mục đích                                     | Status                   |
-| ------------------- | -------------------------------------------- | ------------------------ |
-| `pnpm install`      | Install workspace deps                       | ✅ T1                    |
-| `pnpm lint`         | ESLint cho toàn repo                         | ✅ T1                    |
-| `pnpm format`       | Prettier format                              | ✅ T1                    |
-| `pnpm typecheck`    | `tsc --noEmit` all workspaces                | ✅ T1                    |
-| `pnpm test`         | Vitest (passWithNoTests hiện tại)            | ✅ T1                    |
-| `pnpm smoke`        | `scripts/smoke.sh` = lint + typecheck + test | ✅ T1                    |
-| `pnpm dev`          | Start API + Web parallel                     | ✅ T2 (API) + T4 (Web)   |
-| `pnpm build`        | Build api + web prod                         | ✅ T2 (API) + T4 (Web)   |
-| `pnpm docker:up`    | Start postgres + redis                       | ✅ T2                    |
-| `pnpm docker:down`  | Stop containers                              | ✅ T2                    |
-| `pnpm docker:reset` | Stop + xoá data volumes                      | ✅ T2                    |
-| `pnpm docker:logs`  | Tail logs postgres + redis                   | ✅ T2                    |
-| `pnpm db:generate`  | Generate migration từ schema change          | ✅ T3 config + T5 schema |
-| `pnpm db:migrate`   | Drizzle migrate up                           | ✅ T5                    |
-| `pnpm db:check`     | Drizzle-kit consistency check                | ✅ T5                    |
-| `pnpm db:seed`      | Seed dev data (admin/author + demo project)  | ✅ T5                    |
-| `pnpm test:e2e`     | Playwright E2E smoke (US-001 happy path)     | ✅ T10                   |
+| Command             | Mục đích                                       | Status                   |
+| ------------------- | ---------------------------------------------- | ------------------------ |
+| `pnpm install`      | Install workspace deps                         | ✅ T1                    |
+| `pnpm lint`         | ESLint cho toàn repo                           | ✅ T1                    |
+| `pnpm format`       | Prettier format                                | ✅ T1                    |
+| `pnpm typecheck`    | `tsc --noEmit` all workspaces                  | ✅ T1                    |
+| `pnpm test`         | Vitest (passWithNoTests hiện tại)              | ✅ T1                    |
+| `pnpm smoke`        | `scripts/smoke.sh` = lint + typecheck + test   | ✅ T1                    |
+| `pnpm dev`          | Start API + Web parallel (auto-free port 3001) | ✅ T2 (API) + T4 (Web)   |
+| `pnpm stop`         | Stop API + Web (SIGTERM port 3001 + 5173)      | ✅ infra chore           |
+| `pnpm build`        | Build api + web prod                           | ✅ T2 (API) + T4 (Web)   |
+| `pnpm docker:up`    | Start postgres + redis                         | ✅ T2                    |
+| `pnpm docker:down`  | Stop containers                                | ✅ T2                    |
+| `pnpm docker:reset` | Stop + xoá data volumes                        | ✅ T2                    |
+| `pnpm docker:logs`  | Tail logs postgres + redis                     | ✅ T2                    |
+| `pnpm db:generate`  | Generate migration từ schema change            | ✅ T3 config + T5 schema |
+| `pnpm db:migrate`   | Drizzle migrate up                             | ✅ T5                    |
+| `pnpm db:check`     | Drizzle-kit consistency check                  | ✅ T5                    |
+| `pnpm db:seed`      | Seed dev data (admin/author + demo project)    | ✅ T5                    |
+| `pnpm test:e2e`     | Playwright E2E smoke (US-001 happy path)       | ✅ T10                   |
 
 ---
 
@@ -284,12 +285,14 @@ Progress: ✅ = live sau T1 · 🟡 = pending task.
 
 **Port đã bị chiếm (3001 / 5173 / 5432 / 6379)**
 
+Port 3001 (API) được auto-free mỗi lần `pnpm dev` (pre-flight SIGTERM). Nếu muốn stop chủ động cả 3001 + 5173: `pnpm stop`. Manual fallback:
+
 ```bash
 lsof -iTCP:3001 -sTCP:LISTEN
 kill <PID>
 ```
 
-Hoặc đổi port trong `infra/docker/.env` (override `POSTGRES_PORT` / `REDIS_PORT`) và đồng bộ `DATABASE_URL` / `REDIS_URL` trong `apps/api/.env`.
+5432 / 6379 nằm trong Docker containers — đổi port qua `infra/docker/.env` (override `POSTGRES_PORT` / `REDIS_PORT`) và đồng bộ `DATABASE_URL` / `REDIS_URL` trong `apps/api/.env`.
 
 **Override `POSTGRES_PORT` / `REDIS_PORT` trong `infra/docker/.env` không hiệu lực**
 

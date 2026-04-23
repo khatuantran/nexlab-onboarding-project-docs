@@ -37,7 +37,7 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 
 ### Fixed
 
-- (none)
+- `pnpm dev` tự động kill process zombie giữ port 3001 trước khi start (SIGTERM pre-flight) — EADDRINUSE hết xuất hiện giữa sessions. Thêm `pnpm stop` để stop chủ động cả API + Web.
 
 ### Security
 

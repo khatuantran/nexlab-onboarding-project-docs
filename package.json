@@ -20,6 +20,7 @@
     "migrate:env": "./scripts/migrate-env.sh",
     "smoke": "./scripts/smoke.sh",
     "dev": "pnpm -r --parallel run dev",
+    "stop": "(lsof -ti:3001,5173 | xargs kill -TERM 2>/dev/null || true) && echo 'stopped dev servers'",
     "docker:up": "docker compose -f infra/docker/docker-compose.yml up -d",
     "docker:down": "docker compose -f infra/docker/docker-compose.yml down",
     "docker:reset": "docker compose -f infra/docker/docker-compose.yml down -v",
