@@ -16,7 +16,7 @@ Roadmap này mô tả milestone + target date. **Không phải kế hoạch chi 
 - Commit range: `4fb4d27`..(current).
 - **Exit criteria**: repo đầy đủ spec artifact, 0 blocker cho start T1, SETUP.md document hoàn chỉnh.
 
-### M1 — US-001 Read path 🟡 In Progress _(target 2026-05-31)_
+### M1 — US-001 Read path ✅ _(closed 2026-04-23, ahead of 2026-05-31 target)_
 
 Implement US-001 qua 10 task (T1-T10 + T8.5). **Progress: 10/10 done.**
 
