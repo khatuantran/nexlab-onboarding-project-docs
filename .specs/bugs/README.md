@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-_Last updated: 2026-04-23 · Index of reported faults._
+_Last updated: 2026-04-23 · Index of reported faults. BUG-001 opened._
 
 Mỗi file `BUG-NNN.md` clone từ [templates/05-bug-template.md](../../templates/05-bug-template.md). TDD rule: failing regression test commit trước fix.
 
@@ -12,9 +12,9 @@ Related: [CLAUDE.md §When a request comes in](../../CLAUDE.md#when-a-request-co
 
 ## Items
 
-| ID        | Title | Severity | Status | Fixed at | File |
-| --------- | ----- | -------- | ------ | -------- | ---- |
-| _(empty)_ | —     | —        | —      | —        | —    |
+| ID      | Title                                           | Severity  | Status | Fixed at | File                     |
+| ------- | ----------------------------------------------- | --------- | ------ | -------- | ------------------------ |
+| BUG-001 | `pnpm docker:*` scripts không load `.env.local` | 🟡 Medium | Open   | —        | [BUG-001.md](BUG-001.md) |
 
 ---
 
