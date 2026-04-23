@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-_Last updated: 2026-04-23 · Index of mid-milestone scope / spec / tech changes._
+_Last updated: 2026-04-23 · Index of mid-milestone scope / spec / tech changes. CR-001 proposed._
 
 Mỗi file `CR-NNN.md` clone từ [templates/05-change-request-template.md](../../templates/05-change-request-template.md). Bắt buộc cho mọi thay đổi **scope, spec, tech choice** sau khi milestone đã bắt đầu (không phải cho fresh US hoặc bug fix).
 
@@ -12,9 +12,9 @@ Related: [CLAUDE.md §When a request comes in](../../CLAUDE.md#when-a-request-co
 
 ## Items
 
-| ID        | Title | Scope | Status | Decided at | File |
-| --------- | ----- | ----- | ------ | ---------- | ---- |
-| _(empty)_ | —     | —     | —      | —          | —    |
+| ID     | Title                                                  | Scope       | Status   | Decided at | File                   |
+| ------ | ------------------------------------------------------ | ----------- | -------- | ---------- | ---------------------- |
+| CR-001 | Split monolithic `.env.local` into per-layer env files | tech-change | Proposed | —          | [CR-001.md](CR-001.md) |
 
 ---
 
