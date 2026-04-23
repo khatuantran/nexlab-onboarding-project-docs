@@ -24,6 +24,7 @@ export default {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
+        highlight: "hsl(var(--highlight))",
       },
       borderRadius: {
         lg: "var(--radius)",

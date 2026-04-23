@@ -16,20 +16,21 @@ Light + dark theme qua Tailwind `darkMode: "class"` + CSS vars trên `:root` và
 
 ### 1.1 Token map
 
-| Token                      | Light HSL     | Dark HSL      | Dùng ở                                         |
-| -------------------------- | ------------- | ------------- | ---------------------------------------------- |
-| `--background`             | `0 0% 100%`   | `222 47% 11%` | Page background, card background               |
-| `--foreground`             | `222 47% 11%` | `210 40% 98%` | Primary text                                   |
-| `--muted`                  | `210 40% 96%` | `217 33% 17%` | Subtle surfaces (hover, secondary bg)          |
-| `--muted-foreground`       | `215 16% 47%` | `215 20% 65%` | Sub-copy, placeholder, disabled text           |
-| `--border`                 | `214 32% 91%` | `217 33% 17%` | Input border, card divider                     |
-| `--input`                  | `214 32% 91%` | `217 33% 17%` | Input border (alias of `--border` hiện tại)    |
-| `--ring`                   | `222 47% 11%` | `210 40% 98%` | Focus ring (`focus-visible:ring-2`)            |
-| `--primary`                | `222 47% 11%` | `210 40% 98%` | Button primary bg, link, focus-visible outline |
-| `--primary-foreground`     | `210 40% 98%` | `222 47% 11%` | Text on primary bg                             |
-| `--destructive`            | `0 84% 60%`   | `0 75% 60%`   | Error text, destructive action bg              |
-| `--destructive-foreground` | `210 40% 98%` | `210 40% 98%` | Text on destructive bg                         |
-| `--radius`                 | `0.5rem`      | `0.5rem`      | Border radius base (Button/Input/Card)         |
+| Token                      | Light HSL     | Dark HSL      | Dùng ở                                          |
+| -------------------------- | ------------- | ------------- | ----------------------------------------------- |
+| `--background`             | `0 0% 100%`   | `222 47% 11%` | Page background, card background                |
+| `--foreground`             | `222 47% 11%` | `210 40% 98%` | Primary text                                    |
+| `--muted`                  | `210 40% 96%` | `217 33% 17%` | Subtle surfaces (hover, secondary bg)           |
+| `--muted-foreground`       | `215 16% 47%` | `215 20% 65%` | Sub-copy, placeholder, disabled text            |
+| `--border`                 | `214 32% 91%` | `217 33% 17%` | Input border, card divider                      |
+| `--input`                  | `214 32% 91%` | `217 33% 17%` | Input border (alias of `--border` hiện tại)     |
+| `--ring`                   | `222 47% 11%` | `210 40% 98%` | Focus ring (`focus-visible:ring-2`)             |
+| `--primary`                | `222 47% 11%` | `210 40% 98%` | Button primary bg, link, focus-visible outline  |
+| `--primary-foreground`     | `210 40% 98%` | `222 47% 11%` | Text on primary bg                              |
+| `--destructive`            | `0 84% 60%`   | `0 75% 60%`   | Error text, destructive action bg               |
+| `--destructive-foreground` | `210 40% 98%` | `210 40% 98%` | Text on destructive bg                          |
+| `--highlight`              | `48 96% 89%`  | `48 60% 35%`  | `<mark>` bg (search snippet, future highlights) |
+| `--radius`                 | `0.5rem`      | `0.5rem`      | Border radius base (Button/Input/Card)          |
 
 **Contrast**: mọi cặp fg/bg ≥ 4.5:1 (WCAG AA) trong cả 2 mode. Verify bằng eyeball + Chrome DevTools contrast checker.
 
@@ -104,7 +105,8 @@ Library: [`lucide-react`](https://lucide.dev/). Đã trong `apps/web/package.jso
 | `Moon`         | ThemeToggle (state = dark)            | "Đang dùng chế độ tối"           |
 | `Monitor`      | ThemeToggle (state = system)          | "Theo chế độ hệ thống"           |
 | `LogOut`       | AppHeader logout button               | "Đăng xuất" (kèm text, decor-ok) |
-| `Search`       | SearchPage input affordance           | "Tìm kiếm" (T10)                 |
+| `Search`       | SearchPage input affordance + header  | "Tìm kiếm" (T10)                 |
+| `X`            | FilterChip remove button (T10)        | "Bỏ lọc"                         |
 | `ChevronRight` | Card CTA, breadcrumb separator (T9)   | decor (aria-hidden)              |
 | `FileText`     | Feature card leading icon (T9)        | decor (aria-hidden)              |
 | `Clock`        | Relative-time indicator (T9)          | decor (aria-hidden)              |
@@ -146,10 +148,14 @@ Thêm variant / component mới:
 | `MarkdownView`  | Render markdown (markdown-it) + sanitize (DOMPurify), chỉ allow whitelisted tags | T9 (planned)           |
 | `SectionToc`    | Sticky left sidebar (desktop) / top dropdown (mobile) với 5 anchor link          | T9 (planned)           |
 | `EmptyState`    | Icon + copy + optional CTA cho trường hợp empty (no features, empty section)     | T9 (planned)           |
+| `SearchInput`   | AppHeader persistent search field; Enter submit → `/search?q=...&projectSlug=?`  | T10 (planned)          |
+| `FilterChip`    | Pill "× Trong Demo" cho scope filter remove                                      | T10 (planned)          |
 
 ### 5.3 Feature components ([apps/web/src/components/features/](../../apps/web/src/components/features/))
 
 Empty cho đến T9. Expect: `FeatureList`, `SectionIndicator`, `MarkdownView`, `FeatureSections`.
+
+T10 adds: `SearchResultRow` — `<Link>` wrap breadcrumb (`projectSlug › featureSlug`) + title + sanitized snippet với `<mark>` highlight. Used in [SearchPage](../../apps/web/src/pages/SearchPage.tsx).
 
 ---
 
@@ -191,6 +197,7 @@ Thêm row khi đổi token, icon registry, component inventory. Breaking change 
 | 2026-04-23 | Dark `--destructive` 31% → 60% lightness — original was too dark for `text-destructive` on dark bg (fails 4.5:1).                                                                                                                                 | T8.5 Gate 2  |
 | 2026-04-23 | T9 scaffold: add 4 icons (ChevronRight, FileText, Clock, AlertCircle) + Card primitive + 7 layout components (Breadcrumb, FeatureCard, SectionBadge, RelativeTime, MarkdownView, SectionToc, EmptyState). Status `(planned)` cho tới khi T9 ship. | T9 Gate 1    |
 | 2026-04-23 | T9 components implemented + shipped. Status flip `(planned)` → live.                                                                                                                                                                              | T9 `879b15b` |
+| 2026-04-23 | T10 scaffold: add `--highlight` token (light `48 96% 89%` / dark `48 60% 35%`), `Search` + `X` icons, `SearchInput` + `SearchResultRow` + `FilterChip` components. Status `(planned)` tới khi T10 ship.                                           | T10 Gate 1   |
 
 ---
 
