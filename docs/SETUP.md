@@ -85,13 +85,15 @@ LOG_LEVEL=debug
 
 ## 4. Start infrastructure ✅ (T2 done)
 
-Từ root:
+Từ root (yêu cầu `.env.local` đã tồn tại — xem §3):
 
 ```bash
 pnpm docker:up
 ```
 
-(Tương đương `docker compose -f infra/docker/docker-compose.yml up -d`.)
+(Tương đương `docker compose --project-directory . --env-file .env.local -f infra/docker/docker-compose.yml up -d`.)
+
+> `--env-file .env.local` bắt buộc compose đọc biến từ repo-root. Nếu `.env.local` chưa tồn tại, compose sẽ fail với message "env file … not found" — copy trước: `cp .env.example .env.local`.
 
 Verify:
 
@@ -282,7 +284,25 @@ lsof -iTCP:3001 -sTCP:LISTEN
 kill <PID>
 ```
 
-Hoặc đổi port trong `.env.local` + `docker-compose.yml`.
+Hoặc đổi port trong `.env.local` (override `POSTGRES_PORT` / `REDIS_PORT`). Xem `.env.example` khối **Docker Compose infra**.
+
+**`pnpm docker:up` báo "env file .env.local not found"**
+
+`.env.local` chưa tồn tại. Copy template trước:
+
+```bash
+cp .env.example .env.local
+pnpm docker:up
+```
+
+**Override `POSTGRES_PORT` / `REDIS_PORT` / `POSTGRES_USER` trong `.env.local` không hiệu lực**
+
+Kiểm bạn đang dùng `pnpm docker:up` (không phải `docker compose up` thô). Script này pass `--env-file .env.local`; gọi `docker compose` thô thì compose nhìn vào `infra/docker/.env` (không tồn tại) và fallback default. Verify:
+
+```bash
+cat .env.local | grep POSTGRES_PORT
+docker compose --project-directory . --env-file .env.local -f infra/docker/docker-compose.yml config | grep -A2 postgres
+```
 
 **`pnpm install` lỗi peer deps**
 
