@@ -88,10 +88,10 @@ it("createFeatureRequestSchema rejects empty title", () => {
 
 ### DoD
 
-- [ ] Shared schema tests passing.
-- [ ] `users.role` confirmed `admin|author` enum.
-- [ ] Schemas exported, FE/BE import path hoạt động.
-- [ ] `pnpm lint` + `pnpm typecheck` green.
+- [x] Shared schema tests passing.
+- [x] `users.role` confirmed `admin|author` enum.
+- [x] Schemas exported, FE/BE import path hoạt động.
+- [x] `pnpm lint` + `pnpm typecheck` green.
 
 ### Commit example
 
@@ -140,9 +140,9 @@ it("POST /projects returns 400 for invalid slug", async () => { ... });
 
 ### DoD
 
-- [ ] 4 test cases green.
-- [ ] api-surface.md + error-codes.md updated.
-- [ ] `pnpm test`/`lint`/`typecheck` green.
+- [x] 4 test cases green.
+- [x] api-surface.md + error-codes.md updated.
+- [x] `pnpm test`/`lint`/`typecheck` green.
 
 ### Commit example
 
@@ -197,9 +197,9 @@ it("returns 404 when project slug not found", async () => { ... });
 
 ### DoD
 
-- [ ] 4 test cases green, atomic transaction verified.
-- [ ] api-surface.md + error-codes.md updated.
-- [ ] `pnpm test`/`lint`/`typecheck` green.
+- [x] 4 test cases green, atomic transaction verified.
+- [x] api-surface.md + error-codes.md updated.
+- [x] `pnpm test`/`lint`/`typecheck` green.
 
 ### Commit example
 
@@ -250,10 +250,10 @@ it("shows inline error on 409", async () => { ... });
 
 ### DoD
 
-- [ ] 5 test cases green (MSW mock 201/409/403).
-- [ ] Admin gate hides button for non-admin.
-- [ ] Navigate behavior verified via `MemoryRouter`.
-- [ ] `pnpm test`/`lint`/`typecheck` green.
+- [x] 5 test cases green (MSW mock 201/409/403).
+- [x] Admin gate hides button for non-admin.
+- [x] Navigate behavior verified via `MemoryRouter`.
+- [x] `pnpm test`/`lint`/`typecheck` green.
 
 ### Commit example
 
@@ -303,9 +303,9 @@ it("returns 403 for viewer role", async () => { ... });
 
 ### DoD
 
-- [ ] 5 test cases green.
-- [ ] api-surface.md + error-codes.md updated (`SECTION_TOO_LARGE` nếu new).
-- [ ] `pnpm test`/`lint`/`typecheck` green.
+- [x] 5 test cases green.
+- [x] api-surface.md + error-codes.md updated (`SECTION_TOO_LARGE` nếu new).
+- [x] `pnpm test`/`lint`/`typecheck` green.
 
 ### Commit example
 
@@ -351,8 +351,8 @@ it("shows inline error on 409 FEATURE_SLUG_TAKEN", async () => { ... });
 
 ### DoD
 
-- [ ] 5 test cases green (MSW mock).
-- [ ] `pnpm test`/`lint`/`typecheck` green.
+- [x] 5 test cases green (MSW mock).
+- [x] `pnpm test`/`lint`/`typecheck` green.
 
 ### Commit example
 
@@ -403,10 +403,10 @@ it("saving section A does not collapse section B being edited", async () => { ..
 
 ### DoD
 
-- [ ] 7 test cases green.
-- [ ] Per-section independent state verified (2 sections edit đồng thời).
-- [ ] Sonner toast mounted.
-- [ ] `pnpm test`/`lint`/`typecheck` green.
+- [x] 7 test cases green.
+- [x] Per-section independent state verified (2 sections edit đồng thời).
+- [x] Sonner toast mounted.
+- [x] `pnpm test`/`lint`/`typecheck` green.
 
 ### Commit example
 

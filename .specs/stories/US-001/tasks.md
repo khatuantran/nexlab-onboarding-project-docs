@@ -195,12 +195,12 @@ Establish **BE architecture conventions** như senior BE sẽ làm ngày đầu 
 
 ### DoD
 
-- [ ] Test `middleware/__infra.test.ts` green (all 5 cases).
-- [ ] `pnpm lint` + `pnpm typecheck` + `pnpm smoke` xanh.
-- [ ] Folder `services/`, `repos/`, `lib/`, `test/`, `middleware/`, `db/migrations/` đều có README hoặc `.gitkeep` + comment giải thích layer.
-- [ ] `packages/shared/src/errors.ts` export `ErrorCode` enum khớp list ở `.specs/error-codes.md`.
-- [ ] `drizzle.config.ts` + `db:generate`/`db:migrate`/`db:check` scripts chạy được (dù schema rỗng).
-- [ ] Deps added: `express-session`, `connect-redis`, `bcryptjs`, `cors`, `drizzle-orm`, `drizzle-kit`, `@types/express-session`, `@types/bcryptjs`, `@types/cors`.
+- [x] Test `middleware/__infra.test.ts` green (all 5 cases).
+- [x] `pnpm lint` + `pnpm typecheck` + `pnpm smoke` xanh.
+- [x] Folder `services/`, `repos/`, `lib/`, `test/`, `middleware/`, `db/migrations/` đều có README hoặc `.gitkeep` + comment giải thích layer.
+- [x] `packages/shared/src/errors.ts` export `ErrorCode` enum khớp list ở `.specs/error-codes.md`.
+- [x] `drizzle.config.ts` + `db:generate`/`db:migrate`/`db:check` scripts chạy được (dù schema rỗng).
+- [x] Deps added: `express-session`, `connect-redis`, `bcryptjs`, `cors`, `drizzle-orm`, `drizzle-kit`, `@types/express-session`, `@types/bcryptjs`, `@types/cors`.
 
 ### Commit
 
@@ -279,13 +279,13 @@ Establish **FE architecture conventions** như senior FE sẽ làm ngày đầu.
 
 ### DoD
 
-- [ ] `pnpm --filter @onboarding/web dev` serve Vite trên :5173; browser render `<h1>`.
-- [ ] `pnpm --filter @onboarding/web test` green (smoke + api.ts unit test).
-- [ ] `pnpm smoke` (root) vẫn pass.
-- [ ] Tailwind build output CSS (check via `pnpm --filter @onboarding/web build`).
-- [ ] shadcn `components.json` + ≥ 3 component stubs copied (button, input, label).
-- [ ] MSW setup hoạt động — 1 smoke test dùng MSW pass.
-- [ ] `lib/api.ts` unit test cover happy path + error mapping.
+- [x] `pnpm --filter @onboarding/web dev` serve Vite trên :5173; browser render `<h1>`.
+- [x] `pnpm --filter @onboarding/web test` green (smoke + api.ts unit test).
+- [x] `pnpm smoke` (root) vẫn pass.
+- [x] Tailwind build output CSS (check via `pnpm --filter @onboarding/web build`).
+- [x] shadcn `components.json` + ≥ 3 component stubs copied (button, input, label).
+- [x] MSW setup hoạt động — 1 smoke test dùng MSW pass.
+- [x] `lib/api.ts` unit test cover happy path + error mapping.
 
 ### Deps added
 
@@ -332,11 +332,11 @@ Establish **FE architecture conventions** như senior FE sẽ làm ngày đầu.
 
 ### DoD
 
-- [ ] `pnpm db:migrate` run clean từ empty DB.
-- [ ] `pnpm db:seed` → console log "Seeded 1 project, 1 feature (5 sections), 2 users".
-- [ ] Seed idempotent (re-run không duplicate hoặc error — dùng `on conflict do nothing`).
-- [ ] Schema test green.
-- [ ] `pnpm db:check` (drizzle-kit) consistent.
+- [x] `pnpm db:migrate` run clean từ empty DB.
+- [x] `pnpm db:seed` → console log "Seeded 1 project, 1 feature (5 sections), 2 users".
+- [x] Seed idempotent (re-run không duplicate hoặc error — dùng `on conflict do nothing`).
+- [x] Schema test green.
+- [x] `pnpm db:check` (drizzle-kit) consistent.
 
 ### Commit
 
@@ -373,11 +373,11 @@ Establish **FE architecture conventions** như senior FE sẽ làm ngày đầu.
 
 ### DoD
 
-- [ ] Auth routes tests all green.
-- [ ] Password comparison constant-time (bcryptjs default OK).
-- [ ] Session persist sau server restart (nếu Redis persist — v1 accepted loss, document).
-- [ ] Error response schema consistent với `ErrorCode` enum từ T3.
-- [ ] `userRepo` dùng drizzle client từ T3.
+- [x] Auth routes tests all green.
+- [x] Password comparison constant-time (bcryptjs default OK).
+- [x] Session persist sau server restart (nếu Redis persist — v1 accepted loss, document).
+- [x] Error response schema consistent với `ErrorCode` enum từ T3.
+- [x] `userRepo` dùng drizzle client từ T3.
 
 ### Commit
 
@@ -417,11 +417,11 @@ Establish **FE architecture conventions** như senior FE sẽ làm ngày đầu.
 
 ### DoD
 
-- [ ] Tất cả test route green.
-- [ ] p95 < 300ms đo qua console (không strict gate).
-- [ ] Search trả `snippet` escaped HTML ngoại trừ `<mark>` tag.
-- [ ] `SECTION_ORDER` export từ `packages/shared`.
-- [ ] Error codes thêm: `PROJECT_NOT_FOUND`, `FEATURE_NOT_FOUND`, `SEARCH_QUERY_EMPTY`, `SEARCH_QUERY_TOO_LONG`.
+- [x] Tất cả test route green.
+- [x] p95 < 300ms đo qua console (không strict gate).
+- [x] Search trả `snippet` escaped HTML ngoại trừ `<mark>` tag.
+- [x] `SECTION_ORDER` export từ `packages/shared`.
+- [x] Error codes thêm: `PROJECT_NOT_FOUND`, `FEATURE_NOT_FOUND`, `SEARCH_QUERY_EMPTY`, `SEARCH_QUERY_TOO_LONG`.
 
 ### Commit
 
@@ -458,10 +458,10 @@ LoginPage + RequireAuth wrapper + logout button. Scope hẹp vì T4 đã có Vit
 
 ### DoD
 
-- [ ] LoginPage + RequireAuth tests green.
-- [ ] Login flow E2E manual: admin@local/dev12345 → redirect `/` → refresh → vẫn authenticated.
-- [ ] Logout clears cookie + redirect `/login`.
-- [ ] Zod login schema share giữa BE (T6) và FE — 1 nguồn `packages/shared/src/schemas/auth.ts`.
+- [x] LoginPage + RequireAuth tests green.
+- [x] Login flow E2E manual: admin@local/dev12345 → redirect `/` → refresh → vẫn authenticated.
+- [x] Logout clears cookie + redirect `/login`.
+- [x] Zod login schema share giữa BE (T6) và FE — 1 nguồn `packages/shared/src/schemas/auth.ts`.
 
 ### Commit
 
@@ -547,11 +547,11 @@ Ship lớp design system còn thiếu + light/dark theme từ MVP:
 
 ### DoD
 
-- [ ] Landing + detail test green.
-- [ ] Markdown XSS test passes.
-- [ ] `date-fns` locale `vi` config central.
-- [ ] Responsive check manual (mobile width 375px).
-- [ ] AC-3/4/5/6 manual verify browser với seed data.
+- [x] Landing + detail test green.
+- [x] Markdown XSS test passes.
+- [x] `date-fns` locale `vi` config central.
+- [x] Responsive check manual (mobile width 375px).
+- [x] AC-3/4/5/6 manual verify browser với seed data.
 
 ### Commit
 
@@ -601,11 +601,11 @@ Search bar trong `AppHeader` (từ T8) + `/search?q=...` page. Playwright smoke 
 
 ### DoD
 
-- [ ] SearchPage unit test green.
-- [ ] `pnpm test:e2e` green (với `pnpm dev` + docker compose chạy).
-- [ ] SETUP.md walk-through fresh clone end-to-end pass 3 smoke checkpoints.
-- [ ] SETUP.md labels update 🟡 → ✅ cho các section T1-T10 hoàn thành.
-- [ ] US-001 status đổi từ `Draft` → `Done` với ghi chú date + commit range.
+- [x] SearchPage unit test green.
+- [x] `pnpm test:e2e` green (với `pnpm dev` + docker compose chạy).
+- [x] SETUP.md walk-through fresh clone end-to-end pass 3 smoke checkpoints.
+- [x] SETUP.md labels update 🟡 → ✅ cho các section T1-T10 hoàn thành.
+- [x] US-001 status đổi từ `Draft` → `Done` với ghi chú date + commit range.
 
 ### Commit
 
