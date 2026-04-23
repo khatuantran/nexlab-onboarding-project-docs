@@ -33,10 +33,11 @@ _Last updated_: 2026-04-23 (T8 + T8.5 theme infra landed `5e90753` / `51802c0`; 
 | [T6](#t6--auth-endpoints--session-middleware)         | Auth endpoints + session middleware               | 3h     | AC-1, AC-2, AC-10, AC-11  | AUTH-001                       | ✅ `0b7cd7a` |
 | [T7](#t7--read-api--search-api)                       | Feature read API + search API                     | 4h     | AC-3, AC-5, AC-7, AC-9    | FEAT-002, READ-001, SEARCH-001 | ✅ `9af2fe1` |
 | [T8](#t8--login-page--auth-guard)                     | Login page + auth guard (FE)                      | 3h     | AC-1, AC-2, AC-10, AC-11  | AUTH-001                       | ✅ `5e90753` |
+| [T8.5](#t85--design-system--lightdark-theme-infra)    | **Design system + light/dark theme (mid-M1)**     | ~3h    | infra (cross-screen)      | ADR-002                        | ✅ `51802c0` |
 | [T9](#t9--landing--feature-detail-pages)              | Project landing + feature detail render           | 4h     | AC-3, AC-4, AC-5, AC-6    | READ-001, FEAT-002             | 🟡 Next      |
 | [T10](#t10--search-page--e2e-smoke--setup-validation) | Search page + Playwright smoke + SETUP validation | 3h     | AC-7, AC-8, AC-9 + all AC | SEARCH-001                     | 🟡           |
 
-**Critical path**: T1 → T2 → T3 → T4 → T5 → T6 → T7 → T8 → T9 → T10.
+**Critical path**: T1 → T2 → T3 → T4 → T5 → T6 → T7 → T8 → T8.5 → T9 → T10.
 **Parallel potential**: T4 (FE infra) có thể chạy song song với T3 (BE infra). T8 (login UI) có thể chạy sau T4 nhưng login functional cần T6.
 
 ---
@@ -465,6 +466,56 @@ LoginPage + RequireAuth wrapper + logout button. Scope hẹp vì T4 đã có Vit
 ### Commit
 
 `feat(web): login page + auth guard (US-001 / T8 / FR-AUTH-001)`
+
+---
+
+## T8.5 — Design system + light/dark theme infra
+
+**Effort**: ~3h (actual)
+**FR**: infra (cross-cutting, no US AC)
+**ADR**: [ADR-002](../../adr/ADR-002-light-dark-theme.md)
+**Deps**: T8 (AppHeader + RequireAuth shell)
+**Status**: ✅ `51802c0`
+
+### Goal
+
+Ship lớp design system còn thiếu + light/dark theme từ MVP:
+
+- Registry `.specs/ui/design-system.md`: 12 theme tokens (light + dark HSL), typography scale, spacing, icon rules (lucide-react), component inventory, A11y floor, CHANGELOG.
+- `ThemeProvider` + `ThemeToggle` tri-state (`light` / `dark` / `system`), persist localStorage, listen `matchMedia("(prefers-color-scheme: dark)")`.
+- CSS vars: thêm `.dark` block, `--ring`, `--input` vào `apps/web/src/styles/index.css`.
+- Tailwind: `darkMode: "class"` + `input`/`ring` colors.
+- `AppHeader`: mount `ThemeToggle` + `LogOut` icon.
+- `LoginPage`: rhf `shouldFocusError: false` (user feedback không muốn focus jump về email).
+
+**Mid-M1 justification**: xuất hiện ngoài kế hoạch gốc vì plan "UX spec gate" (xem [CLAUDE.md §DoR](../../../CLAUDE.md#definition-of-ready-dor--story-level)) phát lộ thiếu design system layer + user chốt light+dark từ MVP. ADR-002 capture quyết định; T8.5 thực thi.
+
+### TDD cycle
+
+1. **Red**: `apps/web/tests/components/ThemeToggle.test.tsx` — 5 cases (default=`system|light`, cycle light→dark→system, persist localStorage, hydrate từ localStorage, system-dark via matchMedia).
+2. **Green**:
+   - `apps/web/src/lib/theme.tsx` — Provider + hook.
+   - `apps/web/src/components/layout/ThemeToggle.tsx` — cycle button with Sun/Moon/Monitor.
+   - Wire vào `App.tsx`, `AppHeader.tsx`; update CSS vars + tailwind config; add `shouldFocusError: false` ở LoginPage.
+   - `tests/lib/test-utils.tsx` wrap `ThemeProvider`; `tests/setup.ts` reset localStorage + `<html>` class mỗi test.
+3. **Refactor**: không cần (scope hẹp).
+
+### DoD
+
+- [x] 5 ThemeToggle tests green (17 web total, 32 api = 49 suite-wide).
+- [x] Gate 2 browser demo user-approved cả 2 mode (dark destructive contrast fixed 31% → 60% per feedback).
+- [x] `design-system.md` + `login.md` + ADR-002 spec commits ship trước code commit.
+- [x] Progress sync commit riêng.
+
+### Commits
+
+- `55c5568` — `docs(spec): add UI spec + design-system gate to SDD workflow`
+- `6e1f414` — `docs(spec): ADR-002 light+dark theme decision`
+- `e576715` — `docs(spec): design system registry (tokens + icons + components)`
+- `7b36577` — `docs(spec): UI spec for login page (US-001 / T8 retroactive)`
+- `713019e` — `docs(spec): tweak design-system + login spec per T8.5 Gate 2 review`
+- `51802c0` — `feat(web): T8.5 light+dark theme infra + ThemeToggle (US-001 / ADR-002)`
+- `187a13e` — `docs: sync progress markers after T8.5 land`
 
 ---
 
