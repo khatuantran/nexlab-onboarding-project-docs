@@ -38,11 +38,11 @@ Ký hiệu **Auth**: ❌ không yêu cầu · 🔐 session required · 👑 admi
 
 ### Projects
 
-| Method | Path              | Auth | Request                        | Response                                                 | Errors                             | FR                                                                            | Task                                                                  |
-| ------ | ----------------- | ---- | ------------------------------ | -------------------------------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| GET    | `/projects`       | 🔐   | —                              | 200 `{ data: Project[] }` (sorted updated-desc)          | —                                  | [FR-PROJ-001](02-requirements.md#fr-proj-001--project-crud-minimal)           | T7                                                                    |
-| POST   | `/projects`       | 👑   | `{ slug, name, description? }` | 201 `{ data: Project }`                                  | 403; 409 `PROJECT_SLUG_TAKEN`; 400 | FR-PROJ-001                                                                   | US-002 task                                                           |
-| GET    | `/projects/:slug` | 🔐   | —                              | 200 `{ data: { project, features: FeatureListItem[] } }` | 404 `PROJECT_NOT_FOUND`            | [FR-READ-001](02-requirements.md#fr-read-001--project-landing--feature-index) | [T7 ✅ `<pending>`](stories/US-001/tasks.md#t7--read-api--search-api) |
+| Method | Path              | Auth | Request                        | Response                                                 | Errors                             | FR                                                                            | Task                                                                |
+| ------ | ----------------- | ---- | ------------------------------ | -------------------------------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| GET    | `/projects`       | 🔐   | —                              | 200 `{ data: Project[] }` (sorted updated-desc)          | —                                  | [FR-PROJ-001](02-requirements.md#fr-proj-001--project-crud-minimal)           | T7                                                                  |
+| POST   | `/projects`       | 👑   | `{ slug, name, description? }` | 201 `{ data: Project }`                                  | 403; 409 `PROJECT_SLUG_TAKEN`; 400 | FR-PROJ-001                                                                   | US-002 task                                                         |
+| GET    | `/projects/:slug` | 🔐   | —                              | 200 `{ data: { project, features: FeatureListItem[] } }` | 404 `PROJECT_NOT_FOUND`            | [FR-READ-001](02-requirements.md#fr-read-001--project-landing--feature-index) | [T7 ✅ `9af2fe1`](stories/US-001/tasks.md#t7--read-api--search-api) |
 
 ### Features
 

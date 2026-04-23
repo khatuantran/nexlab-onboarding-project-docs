@@ -4,7 +4,7 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ## Trạng thái
 
-🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T6/10 done** — Auth endpoints (`/auth/login` `/auth/logout` `/auth/me`) with session Redis + anti-enumeration + 10/min/IP rate limit on login. Next: [T7 — Read API + search API](.specs/stories/US-001/tasks.md#t7--read-api--search-api).
+🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T7/10 done** — Read + search API live (`GET /projects/:slug`, `GET /projects/:slug/features/:featureSlug`, `GET /search?q=` with tsvector + `<mark>` snippets). Next: [T8 — Login page + auth guard](.specs/stories/US-001/tasks.md#t8--login-page--auth-guard).
 
 ## Vấn đề đang giải quyết
 
