@@ -1,0 +1,112 @@
+import { describe, it, expect } from "vitest";
+import { screen, within } from "@testing-library/react";
+import { Routes, Route } from "react-router-dom";
+import { ProjectLandingPage } from "@/pages/ProjectLandingPage";
+import { renderWithRouter } from "../lib/test-utils";
+import { server, http, HttpResponse, BASE } from "../lib/msw";
+
+function renderLanding(slug = "demo") {
+  return renderWithRouter(
+    <Routes>
+      <Route path="/projects/:slug" element={<ProjectLandingPage />} />
+      <Route path="/" element={<div data-testid="home-marker">Home</div>} />
+    </Routes>,
+    [`/projects/${slug}`],
+  );
+}
+
+describe("ProjectLandingPage", () => {
+  it("renders project name + feature cards with filledCount", async () => {
+    server.use(
+      http.get(`${BASE}/projects/demo`, () =>
+        HttpResponse.json(
+          {
+            data: {
+              project: {
+                id: "p-1",
+                slug: "demo",
+                name: "Demo Project",
+                description: "Onboarding demo",
+                createdAt: "2026-04-20T10:00:00Z",
+                updatedAt: "2026-04-23T10:00:00Z",
+              },
+              features: [
+                {
+                  id: "f-1",
+                  slug: "login-with-email",
+                  title: "Đăng nhập bằng email",
+                  filledCount: 5,
+                  updatedAt: "2026-04-23T09:00:00Z",
+                },
+                {
+                  id: "f-2",
+                  slug: "export-report",
+                  title: "Xuất báo cáo",
+                  filledCount: 2,
+                  updatedAt: "2026-04-22T09:00:00Z",
+                },
+              ],
+            },
+          },
+          { status: 200 },
+        ),
+      ),
+    );
+
+    renderLanding();
+
+    expect(await screen.findByRole("heading", { name: /demo project/i })).toBeInTheDocument();
+
+    const loginCard = screen.getByRole("link", {
+      name: /xem chi tiết feature đăng nhập bằng email/i,
+    });
+    expect(within(loginCard).getByText("5/5")).toBeInTheDocument();
+    expect(loginCard.querySelector("time")).not.toBeNull();
+
+    const exportCard = screen.getByRole("link", { name: /xem chi tiết feature xuất báo cáo/i });
+    expect(within(exportCard).getByText("2/5")).toBeInTheDocument();
+  });
+
+  it("renders empty state when features is empty (AC-4)", async () => {
+    server.use(
+      http.get(`${BASE}/projects/demo`, () =>
+        HttpResponse.json(
+          {
+            data: {
+              project: {
+                id: "p-1",
+                slug: "demo",
+                name: "Demo Project",
+                description: null,
+                createdAt: "2026-04-20T10:00:00Z",
+                updatedAt: "2026-04-20T10:00:00Z",
+              },
+              features: [],
+            },
+          },
+          { status: 200 },
+        ),
+      ),
+    );
+
+    renderLanding();
+
+    expect(await screen.findByText(/chưa có feature nào trong project này/i)).toBeInTheDocument();
+  });
+
+  it("renders 404 panel when project slug is unknown", async () => {
+    server.use(
+      http.get(`${BASE}/projects/nope`, () =>
+        HttpResponse.json(
+          { error: { code: "PROJECT_NOT_FOUND", message: "Project không tồn tại" } },
+          { status: 404 },
+        ),
+      ),
+    );
+
+    renderLanding("nope");
+
+    expect(await screen.findByText(/không tìm thấy project "nope"/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /về trang chủ/i })).toBeInTheDocument();
+  });
+});
