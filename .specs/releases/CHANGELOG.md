@@ -16,6 +16,7 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 
 - Shared Zod schemas for US-002 create flows: `createProjectRequestSchema`, `createFeatureRequestSchema`, `updateSectionRequestSchema` (US-002 / T1).
 - `POST /api/v1/projects` endpoint: admin-only create với 201/409 `PROJECT_SLUG_TAKEN`/400/403 branches (US-002 / T2).
+- `POST /api/v1/projects/:slug/features` endpoint: author+ create feature + 5-section atomic init; 201/404/409/401/400 branches (US-002 / T3).
 
 ### Changed
 

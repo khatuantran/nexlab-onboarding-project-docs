@@ -56,7 +56,7 @@ Mục đích: khi đổi 1 FR biết ngay tác động tới story + task nào. 
 | ----------------------------------------------------------------------------- | --------------------------- | ------------------- | ------------ |
 | [T1](stories/US-002/tasks.md#t1--db-role-column--shared-schemas)              | AUTH-001, FEAT-001 (shared) | AC-1 (role prereq)  | ✅ `e218c8e` |
 | [T2](stories/US-002/tasks.md#t2--project-create-api--admin-gate)              | PROJ-001                    | AC-1, AC-2, AC-3    | ✅ `23f6c91` |
-| [T3](stories/US-002/tasks.md#t3--feature-create-api--5-section-init)          | FEAT-001, FEAT-002          | AC-4                | 🟡 Planned   |
+| [T3](stories/US-002/tasks.md#t3--feature-create-api--5-section-init)          | FEAT-001, FEAT-002          | AC-4                | ✅ `4869a68` |
 | [T4](stories/US-002/tasks.md#t4--createprojectdialog-fe)                      | PROJ-001                    | AC-1, AC-2, AC-3    | 🟡 Planned   |
 | [T5](stories/US-002/tasks.md#t5--section-put-api--413-validation)             | FEAT-003                    | AC-5, AC-6, AC-7    | 🟡 Planned   |
 | [T6](stories/US-002/tasks.md#t6--createfeaturedialog-fe)                      | FEAT-001                    | AC-4                | 🟡 Planned   |

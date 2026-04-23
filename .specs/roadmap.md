@@ -61,6 +61,7 @@ Implement US-002 rồi US-003.
 - **Progress** (US-002, 8 tasks):
   - [T1](stories/US-002/tasks.md#t1--db-role-column--shared-schemas) shared schemas + role column verify — ✅ `e218c8e` (2026-04-23).
   - [T2](stories/US-002/tasks.md#t2--project-create-api--admin-gate) POST /projects API + admin gate — ✅ `23f6c91` (2026-04-23).
+  - [T3](stories/US-002/tasks.md#t3--feature-create-api--5-section-init) POST /projects/:slug/features + 5-section atomic init — ✅ `4869a68` (2026-04-23).
 
 ### M3 — Pilot launch 🟡 _(target 2026-07-31)_
 
