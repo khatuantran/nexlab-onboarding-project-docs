@@ -112,14 +112,16 @@ Sau khi commit task `T<N>` land (DoD pass), **trong cùng phiên làm việc** t
 - [README.md](README.md) — status line, "Next task" pointer, live-command list.
 - [docs/SETUP.md](docs/SETUP.md) — nhãn 🟡 → ✅ cho section task-covered; §Common commands cột Status.
 - [.specs/roadmap.md](.specs/roadmap.md) — milestone progress table (task row + commit hash + date).
-- [.specs/stories/US-NNN/tasks.md](.specs/stories/US-NNN/tasks.md) — Task Summary cột Status + Last updated line.
+- [.specs/stories/US-NNN/tasks.md](.specs/stories/US-NNN/tasks.md) — Task Summary cột Status + Last updated line. **Bắt buộc flip DoD checkbox `[ ]` → `[x]` cho mọi item trong khối `### T<N>` vừa ship** — cùng commit sync này. Không để drift giữa Summary (✅) và DoD (`[ ]`).
 - [.specs/traceability.md](.specs/traceability.md) — reverse-index 🟡 Planned → ✅ kèm commit hash.
+- [.specs/api-surface.md](.specs/api-surface.md) — nếu task BE ship endpoint mới hoặc đổi request/response shape/errors: cập nhật row tương ứng + link commit hash trong cột Task. Không bỏ sót dù endpoint là "US-NNN task" stub.
+- [.specs/error-codes.md](.specs/error-codes.md) — nếu task introduce error code mới hoặc đổi HTTP status mapping: cập nhật row + cột "Where raised".
 - [.specs/ui/\<screen\>.md](.specs/ui/) — nếu task chạm FE screen: Status `Draft`/`Ready` → `Implemented`.
 - [.specs/ui/design-system.md](.specs/ui/design-system.md) — thêm row CHANGELOG nếu task add/đổi token/icon/component/variant.
 - [.specs/bugs/BUG-NNN.md](.specs/bugs/) + [.specs/bugs/README.md](.specs/bugs/README.md) — nếu task fix bug: BUG status `Open`/`In Progress` → `Fixed` + commit hash; row index cập nhật.
 - [.specs/changes/CR-NNN.md](.specs/changes/) + [.specs/changes/README.md](.specs/changes/README.md) — nếu task thực thi CR approved: row index cập nhật Status + implementation link.
 - [.specs/releases/CHANGELOG.md](.specs/releases/CHANGELOG.md) — thêm row dưới `[Unreleased]` nếu commit ship user-facing change (Added/Changed/Fixed/...).
-- File khác task chạm cụ thể (VD `api-surface.md` khi có endpoint mới, `error-codes.md` khi có code mới).
+- File khác task chạm cụ thể mà chưa có bullet trên (safety net — ưu tiên thêm bullet mới nếu pattern lặp).
 
 **Rule**:
 
