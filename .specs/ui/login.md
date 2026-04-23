@@ -53,6 +53,7 @@ idle
 ## A11y
 
 - **Keyboard**: tab order = Email → Mật khẩu → Đăng nhập button. Enter submit.
+- **No auto-focus on error**: rhf `shouldFocusError: false`. Validation failures render inline alerts dưới field nhưng KHÔNG auto-focus về email — focus stays on submit button để user không bị "nhảy" bất ngờ.
 - **Labels**: `<Label htmlFor="email">Email</Label>`, `<Label htmlFor="password">Mật khẩu</Label>`. Input có `autoComplete="username"` + `"current-password"` để password manager bắt đúng.
 - **Validation signal**: `aria-invalid="true"` khi field lỗi. Message lỗi `<p role="alert">` ngay dưới field.
 - **Server error**: banner `<p role="alert">` kiểu destructive-foreground trên destructive bg, ở giữa form và button.

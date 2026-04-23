@@ -27,7 +27,7 @@ Light + dark theme qua Tailwind `darkMode: "class"` + CSS vars trên `:root` và
 | `--ring`                   | `222 47% 11%` | `210 40% 98%` | Focus ring (`focus-visible:ring-2`)            |
 | `--primary`                | `222 47% 11%` | `210 40% 98%` | Button primary bg, link, focus-visible outline |
 | `--primary-foreground`     | `210 40% 98%` | `222 47% 11%` | Text on primary bg                             |
-| `--destructive`            | `0 84% 60%`   | `0 63% 31%`   | Error text, destructive action bg              |
+| `--destructive`            | `0 84% 60%`   | `0 75% 60%`   | Error text, destructive action bg              |
 | `--destructive-foreground` | `210 40% 98%` | `210 40% 98%` | Text on destructive bg                         |
 | `--radius`                 | `0.5rem`      | `0.5rem`      | Border radius base (Button/Input/Card)         |
 
@@ -156,9 +156,10 @@ Empty cho đến T9. Expect: `FeatureList`, `SectionIndicator`, `MarkdownView`, 
 
 Thêm row khi đổi token, icon registry, component inventory. Breaking change (rename/remove token) → bump minor version của file này + migrate per-screen specs cùng PR.
 
-| Date       | Change                                                                                 | PR / commit |
-| ---------- | -------------------------------------------------------------------------------------- | ----------- |
-| 2026-04-23 | Initial scaffold: 10 tokens + lucide-react icon rules + 3 primitives + 4 layout comps. | (this)      |
+| Date       | Change                                                                                                            | PR / commit |
+| ---------- | ----------------------------------------------------------------------------------------------------------------- | ----------- |
+| 2026-04-23 | Initial scaffold: 10 tokens + lucide-react icon rules + 3 primitives + 4 layout comps.                            | (this)      |
+| 2026-04-23 | Dark `--destructive` 31% → 60% lightness — original was too dark for `text-destructive` on dark bg (fails 4.5:1). | T8.5 Gate 2 |
 
 ---
 
