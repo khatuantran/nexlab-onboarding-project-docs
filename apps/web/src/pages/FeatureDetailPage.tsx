@@ -88,7 +88,12 @@ export function FeatureDetailPage(): JSX.Element {
       <div className="lg:grid lg:grid-cols-[180px_1fr] lg:gap-8">
         <SectionToc />
         <article className="min-w-0">
-          <FeatureSections sections={sections} />
+          <FeatureSections
+            projectSlug={slug}
+            featureSlug={featureSlug}
+            featureId={feature.id}
+            sections={sections}
+          />
         </article>
       </div>
     </main>
