@@ -21,7 +21,7 @@ Cài các tool sau trên máy dev (kiểm version sau dấu `|`):
 Khuyến nghị (optional):
 
 - **nvm** để quản lý Node version.
-- **direnv** để auto-load `.env.local` (không bắt buộc).
+- **direnv** để auto-load env files (không bắt buộc — API đã dùng `dotenv/config`, Web dùng Vite, Infra dùng Compose auto-load).
 - **VS Code**: mở workspace → accept prompt "Install recommended extensions" ([.vscode/extensions.json](../.vscode/extensions.json)). [.vscode/settings.json](../.vscode/settings.json) đã commit trong repo — team dùng **cùng** config (format-on-save Prettier, ESLint auto-fix, workspace TS version, Tailwind hints, Vitest explorer, spellcheck EN+VI). Personal tweaks: VS Code Profiles hoặc `*.code-workspace` ngoài repo.
 
 ---
@@ -54,46 +54,44 @@ packages/
 
 ---
 
-## 3. Environment variables ✅ (template shipped; API reads .env.local in T2)
+## 3. Environment variables ✅ (per-layer files — CR-001)
 
-Copy template rồi điền:
+Env được chia theo layer, mỗi file self-contained:
+
+| Layer | Template                                                  | Runtime file          | Loaded by                     |
+| ----- | --------------------------------------------------------- | --------------------- | ----------------------------- |
+| Infra | [infra/docker/.env.example](../infra/docker/.env.example) | `infra/docker/.env`   | Docker Compose (auto)         |
+| API   | [apps/api/.env.example](../apps/api/.env.example)         | `apps/api/.env.local` | `dotenv/config` ở entrypoints |
+| Web   | [apps/web/.env.example](../apps/web/.env.example)         | `apps/web/.env.local` | Vite (auto)                   |
+
+Copy cả 3 template (one-time setup):
 
 ```bash
-cp .env.example .env.local
+cp infra/docker/.env.example infra/docker/.env
+cp apps/api/.env.example     apps/api/.env.local
+cp apps/web/.env.example     apps/web/.env.local
 ```
 
-Biến môi trường tối thiểu:
+Đang có legacy root `.env.local` từ trước CR-001? Chạy helper để tự split:
 
-```dotenv
-# Web
-VITE_API_BASE_URL=http://localhost:3001/api/v1
-
-# API
-API_PORT=3001
-NODE_ENV=development
-DATABASE_URL=postgresql://dev:dev@localhost:5432/onboardingdb
-REDIS_URL=redis://localhost:6379
-SESSION_SECRET=change-me-to-random-long-string
-SESSION_COOKIE_NAME=sid
-COOKIE_SECURE=false
-LOG_LEVEL=debug
+```bash
+pnpm migrate:env
+# Review 3 file mới, rồi xoá root: rm .env.local
 ```
 
-**Không commit `.env.local`** — đã có trong `.gitignore`.
+**Rule**: tất cả runtime env file đều gitignored (pattern `.env`, `.env.local`, `.env.*.local`). Chỉ commit `*.example`.
 
 ---
 
 ## 4. Start infrastructure ✅ (T2 done)
 
-Từ root (yêu cầu `.env.local` đã tồn tại — xem §3):
+Từ root (yêu cầu `infra/docker/.env` đã tồn tại — xem §3):
 
 ```bash
 pnpm docker:up
 ```
 
-(Tương đương `docker compose --project-directory . --env-file .env.local -f infra/docker/docker-compose.yml up -d`.)
-
-> `--env-file .env.local` bắt buộc compose đọc biến từ repo-root. Nếu `.env.local` chưa tồn tại, compose sẽ fail với message "env file … not found" — copy trước: `cp .env.example .env.local`.
+(Tương đương `docker compose -f infra/docker/docker-compose.yml up -d`. Compose auto-load `infra/docker/.env` vì project-directory mặc định = thư mục chứa compose file.)
 
 Verify:
 
@@ -103,11 +101,16 @@ docker compose -f infra/docker/docker-compose.yml ps
 # redis      Up (healthy)
 ```
 
-Nếu port 5432 hoặc 6379 đã bị chiếm, override qua `.env.local`:
+Nếu port 5432 hoặc 6379 đã bị chiếm, override cả 2 file:
 
 ```dotenv
+# infra/docker/.env
 POSTGRES_PORT=5433
 REDIS_PORT=6380
+```
+
+```dotenv
+# apps/api/.env.local (URL phải khớp port override)
 DATABASE_URL=postgresql://dev:dev@localhost:5433/onboardingdb
 REDIS_URL=redis://localhost:6380
 ```
@@ -141,7 +144,7 @@ Hoặc từ root:
 pnpm db:migrate
 ```
 
-Lệnh này chạy `drizzle-kit migrate` với `DATABASE_URL` từ `.env.local`.
+Lệnh này chạy `drizzle-kit migrate`; `dotenv/config` trong `drizzle.config.ts` tự load `apps/api/.env.local` để lấy `DATABASE_URL`.
 
 Xem schema snapshot hiện tại:
 
@@ -284,24 +287,27 @@ lsof -iTCP:3001 -sTCP:LISTEN
 kill <PID>
 ```
 
-Hoặc đổi port trong `.env.local` (override `POSTGRES_PORT` / `REDIS_PORT`). Xem `.env.example` khối **Docker Compose infra**.
+Hoặc đổi port trong `infra/docker/.env` (override `POSTGRES_PORT` / `REDIS_PORT`) và đồng bộ `DATABASE_URL` / `REDIS_URL` trong `apps/api/.env.local`.
 
-**`pnpm docker:up` báo "env file .env.local not found"**
+**Override `POSTGRES_PORT` / `REDIS_PORT` trong `infra/docker/.env` không hiệu lực**
 
-`.env.local` chưa tồn tại. Copy template trước:
+Verify đã tạo file (không phải `.env.local` ở root):
 
 ```bash
-cp .env.example .env.local
-pnpm docker:up
+cat infra/docker/.env | grep POSTGRES_PORT
+docker compose -f infra/docker/docker-compose.yml config | grep -A2 postgres
 ```
 
-**Override `POSTGRES_PORT` / `REDIS_PORT` / `POSTGRES_USER` trong `.env.local` không hiệu lực**
+Nếu đang có legacy root `.env.local` từ trước CR-001, chạy `pnpm migrate:env` để split.
 
-Kiểm bạn đang dùng `pnpm docker:up` (không phải `docker compose up` thô). Script này pass `--env-file .env.local`; gọi `docker compose` thô thì compose nhìn vào `infra/docker/.env` (không tồn tại) và fallback default. Verify:
+**API start fail `DATABASE_URL undefined` hay connect refused**
+
+`apps/api/.env.local` chưa tồn tại hoặc thiếu biến. Copy template + check port khớp `infra/docker/.env`:
 
 ```bash
-cat .env.local | grep POSTGRES_PORT
-docker compose --project-directory . --env-file .env.local -f infra/docker/docker-compose.yml config | grep -A2 postgres
+cp apps/api/.env.example apps/api/.env.local  # nếu chưa có
+cat apps/api/.env.local | grep DATABASE_URL
+cat infra/docker/.env    | grep POSTGRES_PORT
 ```
 
 **`pnpm install` lỗi peer deps**
@@ -317,7 +323,7 @@ pnpm install
 
 1. `docker compose ps` — kiểm postgres có healthy không.
 2. `docker compose logs postgres` — xem có error.
-3. `.env.local` DATABASE_URL port có khớp với `docker-compose.yml` không.
+3. `apps/api/.env.local` `DATABASE_URL` port có khớp `POSTGRES_PORT` trong `infra/docker/.env` không.
 
 **Session không persist khi login**
 

@@ -30,6 +30,7 @@ Format: `type(scope): subject (spec-ref)` — xem [CLAUDE.md](../CLAUDE.md#commi
 - `spec-ref` (preferred): `(US-001 / T3)`, `(FR-FEAT-002)`, `(ADR-001)`
 
 Examples:
+
 - `feat(api): session middleware with connect-redis (US-001 / T4 / FR-AUTH-001)`
 - `fix(web): empty search query should not call API (US-001 / AC-8)`
 - `docs(spec): ADR-002 switch to Meilisearch (ADR-002)`
@@ -44,12 +45,13 @@ Examples:
 - [ ] Nếu đổi schema → `pnpm db:generate` tạo migration, không hand-edit migration file.
 - [ ] Nếu thêm FR / error code / endpoint → cập nhật [../.specs/02-requirements.md](../.specs/02-requirements.md), [../.specs/error-codes.md](../.specs/error-codes.md), [../.specs/api-surface.md](../.specs/api-surface.md) trong **cùng PR**.
 - [ ] Nếu đổi spec → update [../.specs/traceability.md](../.specs/traceability.md).
-- [ ] Không commit `.env.local`, secret, generated artifact.
+- [ ] Không commit env runtime files (`infra/docker/.env`, `apps/*/.env.local`) hay secret / generated artifact.
 - [ ] Không `.skip`/`.only` trong test committed.
 
 ### 5. Definition of Done (task-level)
 
 Xem [../.specs/stories/US-001/tasks.md §Conventions](../.specs/stories/US-001/tasks.md). Mỗi task DoD:
+
 1. Tests passing (`pnpm test`).
 2. `pnpm lint` + `pnpm typecheck` xanh.
 3. AC liên quan có automated test.
@@ -58,6 +60,7 @@ Xem [../.specs/stories/US-001/tasks.md §Conventions](../.specs/stories/US-001/t
 ### 6. Definition of Ready (story-level)
 
 Xem [../CLAUDE.md §Definition of Ready](../CLAUDE.md#definition-of-ready-dor--story-level). Story DoR:
+
 1. User perspective rõ (role + goal + benefit).
 2. AC đầy đủ Given/When/Then.
 3. FR mapped → có trong [../.specs/02-requirements.md](../.specs/02-requirements.md).
@@ -76,7 +79,7 @@ Xem [SETUP.md](SETUP.md).
 
 - Pre-commit hook (husky + lint-staged) chạy ESLint + Prettier trên staged files. Nếu fail, fix rồi re-stage — **không** skip bằng `--no-verify`.
 - Docker Compose local: `docker compose down -v` xoá volumes (reset DB). Dùng khi migration conflict.
-- Env secrets: mỗi dev có `.env.local` của riêng. Template: [../.env.example](../.env.example).
+- Env secrets: per-layer files (gitignored) — `infra/docker/.env`, `apps/api/.env.local`, `apps/web/.env.local`. Templates kèm mỗi file (`.env.example`). Chi tiết: [SETUP.md §3](SETUP.md#3-environment-variables).
 
 ---
 

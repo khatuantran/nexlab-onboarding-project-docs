@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) · §4.1 Domain model follows templates/02-data-model-template.md pattern in aggregate form -->
 
-*Last updated: 2026-04-22 · Source of truth for decisions: [ADR-001](adr/ADR-001-tech-stack.md)*
+_Last updated: 2026-04-22 · Source of truth for decisions: [ADR-001](adr/ADR-001-tech-stack.md)_
 
 ---
 
@@ -83,13 +83,13 @@ Monorepo tool: **pnpm workspaces**. Lý do xem [ADR-001 §2.1](adr/ADR-001-tech-
 
 ## 4. Environments
 
-| Env | Dev | Prod (v1) | Prod (v2) |
-|---|---|---|---|
-| Web | Vite dev server :5173 | Static build served qua Nginx | Ingress + static bucket |
-| API | `tsx watch` :3001 | Node 20 container + PM2 (hoặc systemd) | Node container trong K8s |
-| DB | Docker Compose `postgres:16-alpine` | Managed Postgres (Neon/DO) | Managed hoặc in-cluster |
-| Redis | Docker Compose `redis:7-alpine` | Managed Redis hoặc container | In-cluster |
-| Secrets | `.env.local` (gitignored) | Platform env vars | K8s Secret (sealed/SOPS) |
+| Env     | Dev                                                                                                                  | Prod (v1)                              | Prod (v2)                |
+| ------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------- | ------------------------ |
+| Web     | Vite dev server :5173                                                                                                | Static build served qua Nginx          | Ingress + static bucket  |
+| API     | `tsx watch` :3001                                                                                                    | Node 20 container + PM2 (hoặc systemd) | Node container trong K8s |
+| DB      | Docker Compose `postgres:16-alpine`                                                                                  | Managed Postgres (Neon/DO)             | Managed hoặc in-cluster  |
+| Redis   | Docker Compose `redis:7-alpine`                                                                                      | Managed Redis hoặc container           | In-cluster               |
+| Secrets | Per-layer `.env*` files — `infra/docker/.env`, `apps/api/.env.local`, `apps/web/.env.local` (all gitignored; CR-001) | Platform env vars                      | K8s Secret (sealed/SOPS) |
 
 Chi tiết: [ADR-001 §2.6](adr/ADR-001-tech-stack.md#26-infrastructure). Setup cục bộ: [docs/SETUP.md](../docs/SETUP.md).
 
@@ -157,6 +157,7 @@ sections.type enum: business | user-flow | business-rules | tech-notes | screens
 ```
 
 **Invariants**:
+
 - Mỗi `feature` luôn có đúng 5 `sections` — enforce ở service layer + seed (không DB-level CHECK để migration đơn giản).
 - `sections.type` enum cố định 5 giá trị, ref [glossary.md §Section type](glossary.md).
 - `features.search_vector` update qua trigger khi `features.title` hoặc `sections.body` đổi. Chi tiết SQL trigger chốt ở [US-001 T3](stories/US-001/tasks.md#t3--db-schema--migration--seed).
@@ -169,19 +170,19 @@ Migrations ở `apps/api/src/db/migrations/` — sinh bằng `drizzle-kit genera
 
 ## 5. Boundaries (what lives where)
 
-| Concern | Lives in |
-|---|---|
-| Routing (URL → page) | `apps/web/src/routes/` |
-| Data fetching | `apps/web/src/queries/` (TanStack Query hooks) |
-| UI primitives | `apps/web/src/components/ui/` (shadcn) |
-| Feature UI | `apps/web/src/features/<area>/` |
-| Express routes | `apps/api/src/routes/` |
-| Business logic | `apps/api/src/services/` |
-| DB access | `apps/api/src/repos/` (Drizzle queries) |
-| Schema | `apps/api/src/db/schema.ts` |
-| Migrations | `apps/api/src/db/migrations/` |
-| Zod schemas shared | `packages/shared/src/schemas/` |
-| TS types shared | `packages/shared/src/types/` |
+| Concern              | Lives in                                       |
+| -------------------- | ---------------------------------------------- |
+| Routing (URL → page) | `apps/web/src/routes/`                         |
+| Data fetching        | `apps/web/src/queries/` (TanStack Query hooks) |
+| UI primitives        | `apps/web/src/components/ui/` (shadcn)         |
+| Feature UI           | `apps/web/src/features/<area>/`                |
+| Express routes       | `apps/api/src/routes/`                         |
+| Business logic       | `apps/api/src/services/`                       |
+| DB access            | `apps/api/src/repos/` (Drizzle queries)        |
+| Schema               | `apps/api/src/db/schema.ts`                    |
+| Migrations           | `apps/api/src/db/migrations/`                  |
+| Zod schemas shared   | `packages/shared/src/schemas/`                 |
+| TS types shared      | `packages/shared/src/types/`                   |
 
 ---
 
@@ -197,11 +198,11 @@ Migrations ở `apps/api/src/db/migrations/` — sinh bằng `drizzle-kit genera
 
 ## 7. ADR Index
 
-| # | Title | Status |
-|---|---|---|
+| #                                    | Title                        | Status   |
+| ------------------------------------ | ---------------------------- | -------- |
 | [ADR-001](adr/ADR-001-tech-stack.md) | Tech Stack Decision (MVP v1) | Accepted |
 
-*(Thêm ADR mới → thêm dòng mới + link.)*
+_(Thêm ADR mới → thêm dòng mới + link.)_
 
 ---
 
