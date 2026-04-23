@@ -40,6 +40,10 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 - BUG-001 — `pnpm docker:*` scripts now load repo-root `.env.local` via `--env-file`; port / credential overrides take effect (`908c37e`). Later superseded by CR-001 layout change.
 - CR-001 loader — replace no-op `import "dotenv/config"` with `apps/api/src/env.ts` that resolves `.env.local` via `import.meta.url`. Previous wiring silently fell back to shell env / config defaults; now genuinely reads the file (`cbe56ba`, test `3601fb8`).
 
+### Changed (post-CR-001 amendment)
+
+- CR-001 amendment — rename `apps/api/.env.local` → `apps/api/.env` (prod-style, matches Node/dotenv default). `apps/web` stays on `.env.local` (Vite convention). Code + docs + migrate script updated (`c40b763`, `271dcb8`).
+
 ### Security
 
 - (none)
