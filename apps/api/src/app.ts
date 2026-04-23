@@ -20,6 +20,13 @@ export type AppDeps = HealthDeps & {
    * without `createApp` reaching into storage.
    */
   authRouter?: express.Router;
+  /**
+   * Read-side routers. Mounted at `/projects`, `/projects/:slug/features`,
+   * `/search`. Each carries its own repo + auth guard via factory.
+   */
+  projectsRouter?: express.Router;
+  featuresRouter?: express.Router;
+  searchRouter?: express.Router;
 };
 
 export function createApp(deps: AppDeps): Express {
@@ -59,6 +66,15 @@ export function createApp(deps: AppDeps): Express {
   v1.use("/health", createHealthRouter(deps));
   if (deps.authRouter) {
     v1.use("/auth", deps.authRouter);
+  }
+  if (deps.projectsRouter) {
+    v1.use("/projects", deps.projectsRouter);
+  }
+  if (deps.featuresRouter) {
+    v1.use("/projects/:slug/features", deps.featuresRouter);
+  }
+  if (deps.searchRouter) {
+    v1.use("/search", deps.searchRouter);
   }
 
   app.use("/api/v1", v1);

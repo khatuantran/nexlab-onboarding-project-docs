@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) · per-endpoint blocks follow templates/02-api-contract-template.md shape in aggregate form -->
 
-_Last updated: 2026-04-22 · Source of truth for all HTTP endpoints của `apps/api`._
+_Last updated: 2026-04-23 · Source of truth for all HTTP endpoints của `apps/api`._
 
 Base URL dev: `http://localhost:3001/api/v1`
 Cookie: `sid` (httpOnly, sameSite=lax, secure trong prod).
@@ -38,11 +38,11 @@ Ký hiệu **Auth**: ❌ không yêu cầu · 🔐 session required · 👑 admi
 
 ### Projects
 
-| Method | Path              | Auth | Request                        | Response                                                 | Errors                             | FR                                                                            | Task                                                   |
-| ------ | ----------------- | ---- | ------------------------------ | -------------------------------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------ |
-| GET    | `/projects`       | 🔐   | —                              | 200 `{ data: Project[] }` (sorted updated-desc)          | —                                  | [FR-PROJ-001](02-requirements.md#fr-proj-001--project-crud-minimal)           | T7                                                     |
-| POST   | `/projects`       | 👑   | `{ slug, name, description? }` | 201 `{ data: Project }`                                  | 403; 409 `PROJECT_SLUG_TAKEN`; 400 | FR-PROJ-001                                                                   | US-002 task                                            |
-| GET    | `/projects/:slug` | 🔐   | —                              | 200 `{ data: { project, features: FeatureListItem[] } }` | 404 `PROJECT_NOT_FOUND`            | [FR-READ-001](02-requirements.md#fr-read-001--project-landing--feature-index) | [T7](stories/US-001/tasks.md#t7--read-api--search-api) |
+| Method | Path              | Auth | Request                        | Response                                                 | Errors                             | FR                                                                            | Task                                                                  |
+| ------ | ----------------- | ---- | ------------------------------ | -------------------------------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| GET    | `/projects`       | 🔐   | —                              | 200 `{ data: Project[] }` (sorted updated-desc)          | —                                  | [FR-PROJ-001](02-requirements.md#fr-proj-001--project-crud-minimal)           | T7                                                                    |
+| POST   | `/projects`       | 👑   | `{ slug, name, description? }` | 201 `{ data: Project }`                                  | 403; 409 `PROJECT_SLUG_TAKEN`; 400 | FR-PROJ-001                                                                   | US-002 task                                                           |
+| GET    | `/projects/:slug` | 🔐   | —                              | 200 `{ data: { project, features: FeatureListItem[] } }` | 404 `PROJECT_NOT_FOUND`            | [FR-READ-001](02-requirements.md#fr-read-001--project-landing--feature-index) | [T7 ✅ `<pending>`](stories/US-001/tasks.md#t7--read-api--search-api) |
 
 ### Features
 
