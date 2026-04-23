@@ -67,6 +67,7 @@ Một user story chỉ được start task breakdown / implementation khi đạt
 - [ ] **Test plan**: outline unit/integration/E2E coverage.
 - [ ] **Known risks**: ≥ bullet ở §Risks (có thể refer về [risks.md](.specs/risks.md)).
 - [ ] **Traceability matrix** cập nhật: [traceability.md](.specs/traceability.md) có row cho story.
+- [ ] **UI spec per authenticated screen** trong story: mỗi screen có file `.specs/ui/<screen>.md` clone từ [templates/02-ui-spec-template.md](templates/02-ui-spec-template.md), user-approved (Status = `Ready` hoặc `Implemented`). Token/icon/component mới đã update [.specs/ui/design-system.md](.specs/ui/design-system.md) (nếu có).
 
 Không đạt DoR → **không viết tasks.md**; hỏi user clarify hoặc viết thêm spec trước.
 
@@ -89,6 +90,8 @@ Sau khi commit task `T<N>` land (DoD pass), **trong cùng phiên làm việc** t
 - [.specs/roadmap.md](.specs/roadmap.md) — milestone progress table (task row + commit hash + date).
 - [.specs/stories/US-NNN/tasks.md](.specs/stories/US-NNN/tasks.md) — Task Summary cột Status + Last updated line.
 - [.specs/traceability.md](.specs/traceability.md) — reverse-index 🟡 Planned → ✅ kèm commit hash.
+- [.specs/ui/\<screen\>.md](.specs/ui/) — nếu task chạm FE screen: Status `Draft`/`Ready` → `Implemented`.
+- [.specs/ui/design-system.md](.specs/ui/design-system.md) — thêm row CHANGELOG nếu task add/đổi token/icon/component/variant.
 - File khác task chạm cụ thể (VD `api-surface.md` khi có endpoint mới, `error-codes.md` khi có code mới).
 
 **Rule**:
@@ -105,16 +108,18 @@ Nếu user prompt đụng action không khớp SDD flow, **KHÔNG** im lặng l�
 
 ### Common violations + response
 
-| Trigger từ user                                   | Rule bị vi phạm                               | Đề xuất                                                                                         |
-| ------------------------------------------------- | --------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| "Thêm endpoint / feature X" chưa có FR + US       | SDD Contract #3 (No spec-less code)           | "FR/US nào cover? Nếu chưa, viết FR + US trước, clone từ `templates/01-*.md`."                  |
-| "Fix bug Y" không có regression test              | #4 (TDD)                                      | "Viết failing test reproduce trước, commit riêng. Sau đó fix + commit."                         |
-| Start T\<N+1\> khi T\<N\> chưa DoD pass           | §tasks.md Conventions "Order"                 | "T\<N\> chưa ✅ trong traceability/roadmap. Finish DoD + progress-sync trước."                  |
-| Viết file `.specs/` không clone template          | #8 (Template is law)                          | "Clone từ `templates/XX-*.md`. Template không fit → propose update + bump version."             |
-| Gom spec change + code change vào 1 commit        | #5 (Small commits) + §Post-task progress sync | "Tách: spec commit riêng → code commit riêng → progress-sync commit riêng. Mỗi diff 1 concern." |
-| "Skip test đi" / `--no-verify` / bypass husky     | #4 + §Hard DO NOTs                            | Flag + ask explicit lý do. Không tự bypass.                                                     |
-| Scope creep: "làm task hiện tại + feature X luôn" | §Default mode of working                      | "Feature X ngoài scope task hiện tại. Viết US/task riêng, hoặc split sau khi task N xong."      |
-| Commit secrets / `.env*` / key file               | §Hard DO NOTs                                 | **Block thẳng**, không override.                                                                |
+| Trigger từ user                                                           | Rule bị vi phạm                               | Đề xuất                                                                                                    |
+| ------------------------------------------------------------------------- | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| "Thêm endpoint / feature X" chưa có FR + US                               | SDD Contract #3 (No spec-less code)           | "FR/US nào cover? Nếu chưa, viết FR + US trước, clone từ `templates/01-*.md`."                             |
+| "Fix bug Y" không có regression test                                      | #4 (TDD)                                      | "Viết failing test reproduce trước, commit riêng. Sau đó fix + commit."                                    |
+| Start T\<N+1\> khi T\<N\> chưa DoD pass                                   | §tasks.md Conventions "Order"                 | "T\<N\> chưa ✅ trong traceability/roadmap. Finish DoD + progress-sync trước."                             |
+| Viết file `.specs/` không clone template                                  | #8 (Template is law)                          | "Clone từ `templates/XX-*.md`. Template không fit → propose update + bump version."                        |
+| Gom spec change + code change vào 1 commit                                | #5 (Small commits) + §Post-task progress sync | "Tách: spec commit riêng → code commit riêng → progress-sync commit riêng. Mỗi diff 1 concern."            |
+| "Skip test đi" / `--no-verify` / bypass husky                             | #4 + §Hard DO NOTs                            | Flag + ask explicit lý do. Không tự bypass.                                                                |
+| Scope creep: "làm task hiện tại + feature X luôn"                         | §Default mode of working                      | "Feature X ngoài scope task hiện tại. Viết US/task riêng, hoặc split sau khi task N xong."                 |
+| Commit secrets / `.env*` / key file                                       | §Hard DO NOTs                                 | **Block thẳng**, không override.                                                                           |
+| "Start T\<FE-task\>" khi chưa có `.specs/ui/<screen>.md` approved         | SDD #3 (No spec-less code) + §DoR             | "Màn hình \<X> chưa có UI spec. Clone `templates/02-ui-spec-template.md` → draft → user review → mới TDD." |
+| FE code add token/variant/icon chưa có trong `.specs/ui/design-system.md` | SDD #3 + §DoR                                 | "Token/variant/icon mới chưa trong design-system.md. Update registry trước (commit riêng) → rồi code."     |
 
 ### Response format khi flag
 
