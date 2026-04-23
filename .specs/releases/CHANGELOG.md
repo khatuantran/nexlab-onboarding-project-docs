@@ -31,9 +31,13 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 
 - (none)
 
+### Changed
+
+- CR-001 — env layout split into per-layer files: `infra/docker/.env` (compose auto-load), `apps/api/.env.local` (via `dotenv/config`), `apps/web/.env.local` (Vite auto-load). Root `.env.example` removed; `pnpm migrate:env` helper splits legacy setups (`5b186e2`, `518bbfc`, `99a9772`, `42aee6c`, `5b1ec9d`, `bcf8512`).
+
 ### Fixed
 
-- BUG-001 — `pnpm docker:*` scripts now load repo-root `.env.local` via `--env-file`; port / credential overrides take effect (`908c37e`).
+- BUG-001 — `pnpm docker:*` scripts now load repo-root `.env.local` via `--env-file`; port / credential overrides take effect (`908c37e`). Later superseded by CR-001 layout change.
 
 ### Security
 
