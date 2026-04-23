@@ -1,7 +1,9 @@
 import { Link, useParams } from "react-router-dom";
 import { ApiError } from "@/lib/api";
 import { Card } from "@/components/ui/card";
+import { AuthorGate } from "@/components/common/AuthorGate";
 import { EmptyState } from "@/components/common/EmptyState";
+import { CreateFeatureDialog } from "@/components/features/CreateFeatureDialog";
 import { FeatureCard } from "@/components/features/FeatureCard";
 import { useProject } from "@/queries/projects";
 
@@ -60,12 +62,17 @@ export function ProjectLandingPage(): JSX.Element {
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-8">
-      <header className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">{project.name}</h1>
-        {project.description ? (
-          <p className="mt-1 text-sm text-muted-foreground">{project.description}</p>
-        ) : null}
-        <p className="mt-1 text-sm text-muted-foreground">Catalog {features.length} feature</p>
+      <header className="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">{project.name}</h1>
+          {project.description ? (
+            <p className="mt-1 text-sm text-muted-foreground">{project.description}</p>
+          ) : null}
+          <p className="mt-1 text-sm text-muted-foreground">Catalog {features.length} feature</p>
+        </div>
+        <AuthorGate>
+          <CreateFeatureDialog projectSlug={project.slug} projectName={project.name} />
+        </AuthorGate>
       </header>
 
       {features.length === 0 ? (
