@@ -53,6 +53,9 @@ importers:
       cors:
         specifier: ^2.8.5
         version: 2.8.6
+      dotenv:
+        specifier: ^17.4.2
+        version: 17.4.2
       drizzle-orm:
         specifier: ^0.36.4
         version: 0.36.4(@types/pg@8.20.0)(@types/react@18.3.28)(pg@8.20.0)(react@18.3.1)
@@ -1792,6 +1795,10 @@ packages:
 
   dompurify@3.4.1:
     resolution: {integrity: sha512-JahakDAIg1gyOm7dlgWSDjV4n7Ip2PKR55NIT6jrMfIgLFgWo81vdr1/QGqWtFNRqXP9UV71oVePtjqS2ebnPw==}
+
+  dotenv@17.4.2:
+    resolution: {integrity: sha512-nI4U3TottKAcAD9LLud4Cb7b2QztQMUEfHbvhTH09bqXTxnSie8WnjPALV/WMCrJZ6UV/qHJ6L03OqO3LcdYZw==}
+    engines: {node: '>=12'}
 
   drizzle-kit@0.30.6:
     resolution: {integrity: sha512-U4wWit0fyZuGuP7iNmRleQyK2V8wCuv57vf5l3MnG4z4fzNTjY/U13M8owyQ5RavqvqxBifWORaR3wIUzlN64g==}
@@ -4738,6 +4745,8 @@ snapshots:
   dompurify@3.4.1:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
+
+  dotenv@17.4.2: {}
 
   drizzle-kit@0.30.6:
     dependencies:

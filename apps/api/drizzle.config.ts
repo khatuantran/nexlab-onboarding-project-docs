@@ -1,8 +1,9 @@
+import "dotenv/config";
 import type { Config } from "drizzle-kit";
 
 /**
  * Drizzle-kit config — used by `pnpm db:generate` + `pnpm db:migrate`.
- * Reads DATABASE_URL from env (loaded via shell or .env.local).
+ * `dotenv/config` loads apps/api/.env.local (CR-001).
  */
 export default {
   schema: "./src/db/schema.ts",
