@@ -7,7 +7,7 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `project-landing`
-- **Status**: Draft (awaiting user approval — Gate 1)
+- **Status**: Ready (user-approved 2026-04-23 — Gate 1 passed)
 - **Last updated**: 2026-04-23
 
 ## Route
