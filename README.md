@@ -4,7 +4,7 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ## Trạng thái
 
-🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T10/10 done** — Search page + AppHeader search input + Playwright E2E smoke (US-001 happy path) live. 78 tests green (46 web + 32 api). US-001 complete; pending M1 exit review.
+🚧 **M2 in progress — US-002 Author path.** M1 complete (US-001 ✅). Progress: **T1/8 done** — shared schemas for US-002 (project/feature/section create) + role column verified. 93 tests green (46 web + 32 api + 15 shared).
 
 ## Vấn đề đang giải quyết
 
@@ -85,7 +85,7 @@ Full setup (DB migrate / seed / dev servers / E2E) ở [docs/SETUP.md](docs/SETU
 **Stories**:
 
 - [US-001 — Dev reads & search feature catalog](.specs/stories/US-001.md) + [tasks](.specs/stories/US-001/tasks.md)
-- [US-002 — BA creates project + feature with business sections](.specs/stories/US-002.md)
+- [US-002 — BA creates project + feature with business sections](.specs/stories/US-002.md) + [tasks](.specs/stories/US-002/tasks.md) — in progress (T1/8 ✅)
 - [US-003 — Dev adds tech-notes + screenshots](.specs/stories/US-003.md)
 
 **Operational**:

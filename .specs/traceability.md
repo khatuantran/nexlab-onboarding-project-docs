@@ -50,6 +50,19 @@ Mục đích: khi đổi 1 FR biết ngay tác động tới story + task nào. 
 | [T9](stories/US-001/tasks.md#t9--landing--feature-detail-pages)              | READ-001, FEAT-002             | AC-3, AC-4, AC-5, AC-6        | ✅ `879b15b` |
 | [T10](stories/US-001/tasks.md#t10--search-page--e2e-smoke--setup-validation) | SEARCH-001                     | AC-7, AC-8, AC-9 + E2E all AC | ✅ `5ca8e49` |
 
+### US-002 tasks
+
+| Task                                                                          | Primary FR                  | AC covered (US-002) | Status       |
+| ----------------------------------------------------------------------------- | --------------------------- | ------------------- | ------------ |
+| [T1](stories/US-002/tasks.md#t1--db-role-column--shared-schemas)              | AUTH-001, FEAT-001 (shared) | AC-1 (role prereq)  | ✅ `e218c8e` |
+| [T2](stories/US-002/tasks.md#t2--project-create-api--admin-gate)              | PROJ-001                    | AC-1, AC-2, AC-3    | 🟡 Planned   |
+| [T3](stories/US-002/tasks.md#t3--feature-create-api--5-section-init)          | FEAT-001, FEAT-002          | AC-4                | 🟡 Planned   |
+| [T4](stories/US-002/tasks.md#t4--createprojectdialog-fe)                      | PROJ-001                    | AC-1, AC-2, AC-3    | 🟡 Planned   |
+| [T5](stories/US-002/tasks.md#t5--section-put-api--413-validation)             | FEAT-003                    | AC-5, AC-6, AC-7    | 🟡 Planned   |
+| [T6](stories/US-002/tasks.md#t6--createfeaturedialog-fe)                      | FEAT-001                    | AC-4                | 🟡 Planned   |
+| [T7](stories/US-002/tasks.md#t7--sectioneditor-fe--edit-in-place-integration) | FEAT-003                    | AC-5, AC-6, AC-7    | 🟡 Planned   |
+| [T8](stories/US-002/tasks.md#t8--e2e-smoke--progress-sync-release-tag)        | all                         | AC-2, AC-4, AC-5    | 🟡 Planned   |
+
 ---
 
 ## NFR coverage

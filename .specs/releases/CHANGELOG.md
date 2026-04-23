@@ -14,7 +14,7 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 
 ### Added
 
-- (none)
+- Shared Zod schemas for US-002 create flows: `createProjectRequestSchema`, `createFeatureRequestSchema`, `updateSectionRequestSchema` (US-002 / T1).
 
 ### Changed
 
