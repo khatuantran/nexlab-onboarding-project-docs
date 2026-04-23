@@ -83,13 +83,13 @@ Monorepo tool: **pnpm workspaces**. Lý do xem [ADR-001 §2.1](adr/ADR-001-tech-
 
 ## 4. Environments
 
-| Env     | Dev                                                                                                                  | Prod (v1)                              | Prod (v2)                |
-| ------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------- | ------------------------ |
-| Web     | Vite dev server :5173                                                                                                | Static build served qua Nginx          | Ingress + static bucket  |
-| API     | `tsx watch` :3001                                                                                                    | Node 20 container + PM2 (hoặc systemd) | Node container trong K8s |
-| DB      | Docker Compose `postgres:16-alpine`                                                                                  | Managed Postgres (Neon/DO)             | Managed hoặc in-cluster  |
-| Redis   | Docker Compose `redis:7-alpine`                                                                                      | Managed Redis hoặc container           | In-cluster               |
-| Secrets | Per-layer `.env*` files — `infra/docker/.env`, `apps/api/.env.local`, `apps/web/.env.local` (all gitignored; CR-001) | Platform env vars                      | K8s Secret (sealed/SOPS) |
+| Env     | Dev                                                                                                            | Prod (v1)                              | Prod (v2)                |
+| ------- | -------------------------------------------------------------------------------------------------------------- | -------------------------------------- | ------------------------ |
+| Web     | Vite dev server :5173                                                                                          | Static build served qua Nginx          | Ingress + static bucket  |
+| API     | `tsx watch` :3001                                                                                              | Node 20 container + PM2 (hoặc systemd) | Node container trong K8s |
+| DB      | Docker Compose `postgres:16-alpine`                                                                            | Managed Postgres (Neon/DO)             | Managed hoặc in-cluster  |
+| Redis   | Docker Compose `redis:7-alpine`                                                                                | Managed Redis hoặc container           | In-cluster               |
+| Secrets | Per-layer `.env*` files — `infra/docker/.env`, `apps/api/.env`, `apps/web/.env.local` (all gitignored; CR-001) | Platform env vars                      | K8s Secret (sealed/SOPS) |
 
 Chi tiết: [ADR-001 §2.6](adr/ADR-001-tech-stack.md#26-infrastructure). Setup cục bộ: [docs/SETUP.md](../docs/SETUP.md).
 

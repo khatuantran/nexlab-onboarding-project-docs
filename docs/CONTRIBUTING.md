@@ -45,7 +45,7 @@ Examples:
 - [ ] Nếu đổi schema → `pnpm db:generate` tạo migration, không hand-edit migration file.
 - [ ] Nếu thêm FR / error code / endpoint → cập nhật [../.specs/02-requirements.md](../.specs/02-requirements.md), [../.specs/error-codes.md](../.specs/error-codes.md), [../.specs/api-surface.md](../.specs/api-surface.md) trong **cùng PR**.
 - [ ] Nếu đổi spec → update [../.specs/traceability.md](../.specs/traceability.md).
-- [ ] Không commit env runtime files (`infra/docker/.env`, `apps/*/.env.local`) hay secret / generated artifact.
+- [ ] Không commit env runtime files (`infra/docker/.env`, `apps/api/.env`, `apps/web/.env.local`) hay secret / generated artifact.
 - [ ] Không `.skip`/`.only` trong test committed.
 
 ### 5. Definition of Done (task-level)
@@ -79,7 +79,7 @@ Xem [SETUP.md](SETUP.md).
 
 - Pre-commit hook (husky + lint-staged) chạy ESLint + Prettier trên staged files. Nếu fail, fix rồi re-stage — **không** skip bằng `--no-verify`.
 - Docker Compose local: `docker compose down -v` xoá volumes (reset DB). Dùng khi migration conflict.
-- Env secrets: per-layer files (gitignored) — `infra/docker/.env`, `apps/api/.env.local`, `apps/web/.env.local`. Templates kèm mỗi file (`.env.example`). Chi tiết: [SETUP.md §3](SETUP.md#3-environment-variables).
+- Env secrets: per-layer files (gitignored) — `infra/docker/.env`, `apps/api/.env`, `apps/web/.env.local`. Templates kèm mỗi file (`.env.example`). Chi tiết: [SETUP.md §3](SETUP.md#3-environment-variables).
 
 ---
 

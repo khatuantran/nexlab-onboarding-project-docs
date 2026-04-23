@@ -61,14 +61,14 @@ Env được chia theo layer, mỗi file self-contained:
 | Layer | Template                                                  | Runtime file          | Loaded by                     |
 | ----- | --------------------------------------------------------- | --------------------- | ----------------------------- |
 | Infra | [infra/docker/.env.example](../infra/docker/.env.example) | `infra/docker/.env`   | Docker Compose (auto)         |
-| API   | [apps/api/.env.example](../apps/api/.env.example)         | `apps/api/.env.local` | `dotenv/config` ở entrypoints |
+| API   | [apps/api/.env.example](../apps/api/.env.example)         | `apps/api/.env`       | `dotenv/config` ở entrypoints |
 | Web   | [apps/web/.env.example](../apps/web/.env.example)         | `apps/web/.env.local` | Vite (auto)                   |
 
 Copy cả 3 template (one-time setup):
 
 ```bash
 cp infra/docker/.env.example infra/docker/.env
-cp apps/api/.env.example     apps/api/.env.local
+cp apps/api/.env.example     apps/api/.env
 cp apps/web/.env.example     apps/web/.env.local
 ```
 
@@ -110,7 +110,7 @@ REDIS_PORT=6380
 ```
 
 ```dotenv
-# apps/api/.env.local (URL phải khớp port override)
+# apps/api/.env (URL phải khớp port override)
 DATABASE_URL=postgresql://dev:dev@localhost:5433/onboardingdb
 REDIS_URL=redis://localhost:6380
 ```
@@ -144,7 +144,7 @@ Hoặc từ root:
 pnpm db:migrate
 ```
 
-Lệnh này chạy `drizzle-kit migrate`; `dotenv/config` trong `drizzle.config.ts` tự load `apps/api/.env.local` để lấy `DATABASE_URL`.
+Lệnh này chạy `drizzle-kit migrate`; `dotenv/config` trong `drizzle.config.ts` tự load `apps/api/.env` để lấy `DATABASE_URL`.
 
 Xem schema snapshot hiện tại:
 
@@ -287,7 +287,7 @@ lsof -iTCP:3001 -sTCP:LISTEN
 kill <PID>
 ```
 
-Hoặc đổi port trong `infra/docker/.env` (override `POSTGRES_PORT` / `REDIS_PORT`) và đồng bộ `DATABASE_URL` / `REDIS_URL` trong `apps/api/.env.local`.
+Hoặc đổi port trong `infra/docker/.env` (override `POSTGRES_PORT` / `REDIS_PORT`) và đồng bộ `DATABASE_URL` / `REDIS_URL` trong `apps/api/.env`.
 
 **Override `POSTGRES_PORT` / `REDIS_PORT` trong `infra/docker/.env` không hiệu lực**
 
@@ -302,11 +302,11 @@ Nếu đang có legacy root `.env.local` từ trước CR-001, chạy `pnpm migr
 
 **API start fail `DATABASE_URL undefined` hay connect refused**
 
-`apps/api/.env.local` chưa tồn tại hoặc thiếu biến. Copy template + check port khớp `infra/docker/.env`:
+`apps/api/.env` chưa tồn tại hoặc thiếu biến. Copy template + check port khớp `infra/docker/.env`:
 
 ```bash
-cp apps/api/.env.example apps/api/.env.local  # nếu chưa có
-cat apps/api/.env.local | grep DATABASE_URL
+cp apps/api/.env.example apps/api/.env  # nếu chưa có
+cat apps/api/.env | grep DATABASE_URL
 cat infra/docker/.env    | grep POSTGRES_PORT
 ```
 
@@ -323,7 +323,7 @@ pnpm install
 
 1. `docker compose ps` — kiểm postgres có healthy không.
 2. `docker compose logs postgres` — xem có error.
-3. `apps/api/.env.local` `DATABASE_URL` port có khớp `POSTGRES_PORT` trong `infra/docker/.env` không.
+3. `apps/api/.env` `DATABASE_URL` port có khớp `POSTGRES_PORT` trong `infra/docker/.env` không.
 
 **Session không persist khi login**
 

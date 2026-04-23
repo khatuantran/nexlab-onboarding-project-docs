@@ -97,7 +97,7 @@ lib/         → Utilities (response helpers, date, etc.)
 ## 10. Config & secrets
 
 - **Chỉ** truy cập env qua `config.ts` (Zod-parsed). KHÔNG `process.env.*` rải rác.
-- KHÔNG commit `.env*` (runtime), `*.pem`, credential. Template ở `apps/api/.env.example`. API entrypoints tự `import "dotenv/config"` để load `apps/api/.env.local` (CR-001).
+- KHÔNG commit `.env*` (runtime), `*.pem`, credential. Template ở `apps/api/.env.example`. API entrypoints tự `import "dotenv/config"` để load `apps/api/.env` (CR-001).
 
 ## 11. Comments
 
