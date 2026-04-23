@@ -2,6 +2,7 @@ import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { SearchInput } from "@/components/search/SearchInput";
 import { useLogout, useMe } from "@/queries/auth";
 
 export function AppHeader(): JSX.Element | null {
@@ -19,8 +20,11 @@ export function AppHeader(): JSX.Element | null {
 
   return (
     <header className="border-b border-border">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
+      <div className="mx-auto flex max-w-5xl items-center gap-4 px-6 py-3">
         <span className="text-sm font-medium">Onboarding Portal</span>
+        <div className="flex-1">
+          <SearchInput />
+        </div>
         <div className="flex items-center gap-3 text-sm">
           <span className="text-muted-foreground" data-testid="current-user">
             {data.user.displayName}

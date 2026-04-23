@@ -69,7 +69,7 @@ describe("SearchPage", () => {
     expect(
       await screen.findByRole("heading", { name: /kết quả cho "login"/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText("2 feature")).toBeInTheDocument();
+    expect(await screen.findByText("2 feature")).toBeInTheDocument();
 
     const firstRow = screen.getByRole("link", { name: /đăng nhập bằng email/i });
     expect(within(firstRow).getByText(/demo/i)).toBeInTheDocument();
@@ -136,7 +136,7 @@ describe("SearchPage", () => {
     // Chip present
     const chip = await screen.findByRole("button", { name: /bỏ lọc/i });
     expect(chip).toBeInTheDocument();
-    expect(screen.getByText("1 feature")).toBeInTheDocument();
+    expect(await screen.findByText("1 feature")).toBeInTheDocument();
 
     // Click X → projectSlug gone, count updates to 2
     await user.click(chip);
