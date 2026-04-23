@@ -18,6 +18,7 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 - T8 — LoginPage + RequireAuth + AppHeader (`5e90753`).
 - T8.5 — Design system registry + light/dark theme infra + ThemeToggle (`51802c0`).
 - T9 — ProjectLandingPage (card grid) + FeatureDetailPage (sticky TOC + markdown sanitized render) (`879b15b`).
+- T10 — SearchPage (`/search?q=&projectSlug=`) + AppHeader persistent SearchInput + FilterChip scope remove + sanitized `<mark>` snippet render + Playwright E2E smoke (US-001 happy path) (`5ca8e49`).
 
 ### Changed
 

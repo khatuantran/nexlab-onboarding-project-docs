@@ -4,7 +4,7 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ## Trạng thái
 
-🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T9/10 done** — Project landing (card grid) + Feature detail (sticky TOC + markdown render + sanitize) live. 64 tests green (32 web + 32 api). Next: [T10 — Search + Playwright E2E + SETUP validation](.specs/stories/US-001/tasks.md#t10--search-page--e2e-smoke--setup-validation).
+🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T10/10 done** — Search page + AppHeader search input + Playwright E2E smoke (US-001 happy path) live. 78 tests green (46 web + 32 api). US-001 complete; pending M1 exit review.
 
 ## Vấn đề đang giải quyết
 

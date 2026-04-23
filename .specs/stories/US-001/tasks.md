@@ -4,7 +4,7 @@
 
 _Story_: [US-001 — Dev reads và search feature catalog](../US-001.md)
 _Total estimate_: ~34h (solo, TDD pace; story-level estimate 10-14h là pair/ideal, tasks là pessimistic; T3 + T4 thêm vào cho senior-role infra scaffold)
-_Last updated_: 2026-04-23 (T9 landed `879b15b`; T10 next)
+_Last updated_: 2026-04-23 (T10 landed `5ca8e49`; US-001 complete — pending M1 exit review)
 
 ---
 
@@ -35,7 +35,7 @@ _Last updated_: 2026-04-23 (T9 landed `879b15b`; T10 next)
 | [T8](#t8--login-page--auth-guard)                     | Login page + auth guard (FE)                      | 3h     | AC-1, AC-2, AC-10, AC-11  | AUTH-001                       | ✅ `5e90753` |
 | [T8.5](#t85--design-system--lightdark-theme-infra)    | **Design system + light/dark theme (mid-M1)**     | ~3h    | infra (cross-screen)      | ADR-002                        | ✅ `51802c0` |
 | [T9](#t9--landing--feature-detail-pages)              | Project landing + feature detail render           | 4h     | AC-3, AC-4, AC-5, AC-6    | READ-001, FEAT-002             | ✅ `879b15b` |
-| [T10](#t10--search-page--e2e-smoke--setup-validation) | Search page + Playwright smoke + SETUP validation | 3h     | AC-7, AC-8, AC-9 + all AC | SEARCH-001                     | 🟡 Next      |
+| [T10](#t10--search-page--e2e-smoke--setup-validation) | Search page + Playwright smoke + SETUP validation | 3h     | AC-7, AC-8, AC-9 + all AC | SEARCH-001                     | ✅ `5ca8e49` |
 
 **Critical path**: T1 → T2 → T3 → T4 → T5 → T6 → T7 → T8 → T8.5 → T9 → T10.
 **Parallel potential**: T4 (FE infra) có thể chạy song song với T3 (BE infra). T8 (login UI) có thể chạy sau T4 nhưng login functional cần T6.

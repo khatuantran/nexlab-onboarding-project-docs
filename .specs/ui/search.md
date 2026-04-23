@@ -7,7 +7,7 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `search`
-- **Status**: Ready
+- **Status**: Implemented (T10 `5ca8e49`)
 - **Last updated**: 2026-04-23
 
 ## Route

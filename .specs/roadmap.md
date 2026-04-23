@@ -18,7 +18,7 @@ Roadmap này mô tả milestone + target date. **Không phải kế hoạch chi 
 
 ### M1 — US-001 Read path 🟡 In Progress _(target 2026-05-31)_
 
-Implement US-001 qua 10 task (T1-T10 + T8.5). **Progress: 9/10 done.**
+Implement US-001 qua 10 task (T1-T10 + T8.5). **Progress: 10/10 done.**
 
 | Task                                                                                                             | Status        | Commit    |
 | ---------------------------------------------------------------------------------------------------------------- | ------------- | --------- |
@@ -32,7 +32,7 @@ Implement US-001 qua 10 task (T1-T10 + T8.5). **Progress: 9/10 done.**
 | [T8 Login page + auth guard](stories/US-001/tasks.md#t8--login-page--auth-guard)                                 | ✅ 2026-04-23 | `5e90753` |
 | T8.5 Design system + light/dark theme infra (added mid-M1)                                                       | ✅ 2026-04-23 | `51802c0` |
 | [T9 Landing + feature detail](stories/US-001/tasks.md#t9--landing--feature-detail-pages)                         | ✅ 2026-04-23 | `879b15b` |
-| [T10 Search + E2E](stories/US-001/tasks.md#t10--search-page--e2e-smoke--setup-validation)                        | 🟡            | —         |
+| [T10 Search + E2E](stories/US-001/tasks.md#t10--search-page--e2e-smoke--setup-validation)                        | ✅ 2026-04-23 | `5ca8e49` |
 
 - **Deliverable**:
   - Docker Compose infra chạy (postgres + redis).

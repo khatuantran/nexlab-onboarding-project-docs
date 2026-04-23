@@ -2,7 +2,7 @@
 
 > **Trạng thái**: Sống cùng implementation. Nhãn mỗi section: ✅ `works now` · 🟡 `pending (task T-N)` · ⏳ `v2`. Xem [roadmap.md](../.specs/roadmap.md).
 >
-> Progress hiện tại: **T1-T9 + T8.5 ✅ done** (monorepo + API + Docker Compose + BE+FE infra + DB schema/migration/seed/FTS + auth endpoints + read/search endpoints + FE LoginPage + RequireAuth + AppHeader + light/dark theme infra + **ProjectLanding + FeatureDetail pages**). T10 còn 🟡.
+> Progress hiện tại: **T1-T10 + T8.5 ✅ done** (monorepo + API + Docker Compose + BE+FE infra + DB schema/migration/seed/FTS + auth endpoints + read/search endpoints + FE LoginPage + RequireAuth + AppHeader + light/dark theme infra + ProjectLanding + FeatureDetail pages + **SearchPage + Playwright E2E smoke**). US-001 complete.
 
 ---
 
@@ -193,7 +193,7 @@ Hiện `/` render placeholder `<h1>Onboarding Portal</h1>`. Login + routes chín
 
 ---
 
-## 8. Smoke-test checklist ⚠️ 8.1 ✅ (T2) · 8.2 + 8.3 🟡 (pending T7, T9)
+## 8. Smoke-test checklist ✅ (T2, T7, T9, T10)
 
 Sau khi start thành công, verify theo thứ tự:
 
@@ -231,7 +231,9 @@ Expect: trang hiển thị tên feature + 5 section headers (Business, User Flow
 
 ---
 
-## 9. Run tests 🟡 (pending — test sẽ thêm cùng từng task TDD)
+## 9. Run tests ✅
+
+Unit tests (Vitest) xanh theo từng task; E2E (Playwright) smoke cover US-001 happy path.
 
 ```bash
 # Tất cả unit tests
@@ -274,7 +276,7 @@ Progress: ✅ = live sau T1 · 🟡 = pending task.
 | `pnpm db:migrate`   | Drizzle migrate up                           | ✅ T5                    |
 | `pnpm db:check`     | Drizzle-kit consistency check                | ✅ T5                    |
 | `pnpm db:seed`      | Seed dev data (admin/author + demo project)  | ✅ T5                    |
-| `pnpm test:e2e`     | Playwright E2E                               | 🟡 T10                   |
+| `pnpm test:e2e`     | Playwright E2E smoke (US-001 happy path)     | ✅ T10                   |
 
 ---
 
