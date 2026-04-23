@@ -17,6 +17,7 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 - T7 — Project + feature read endpoints + FTS search (`9af2fe1`).
 - T8 — LoginPage + RequireAuth + AppHeader (`5e90753`).
 - T8.5 — Design system registry + light/dark theme infra + ThemeToggle (`51802c0`).
+- T9 — ProjectLandingPage (card grid) + FeatureDetailPage (sticky TOC + markdown sanitized render) (`879b15b`).
 
 ### Changed
 

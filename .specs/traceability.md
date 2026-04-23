@@ -47,7 +47,7 @@ Mục đích: khi đổi 1 FR biết ngay tác động tới story + task nào. 
 | [T7](stories/US-001/tasks.md#t7--read-api--search-api)                       | FEAT-002, READ-001, SEARCH-001 | AC-3, AC-5, AC-7, AC-9        | ✅ `9af2fe1` |
 | [T8](stories/US-001/tasks.md#t8--login-page--auth-guard)                     | AUTH-001                       | AC-1, AC-2, AC-10, AC-11      | ✅ `5e90753` |
 | [T8.5](stories/US-001/tasks.md#t85--design-system--lightdark-theme-infra)    | ADR-002 (infra, cross-screen)  | — (infra for all FE AC)       | ✅ `51802c0` |
-| [T9](stories/US-001/tasks.md#t9--landing--feature-detail-pages)              | READ-001, FEAT-002             | AC-3, AC-4, AC-5, AC-6        | 🟡           |
+| [T9](stories/US-001/tasks.md#t9--landing--feature-detail-pages)              | READ-001, FEAT-002             | AC-3, AC-4, AC-5, AC-6        | ✅ `879b15b` |
 | [T10](stories/US-001/tasks.md#t10--search-page--e2e-smoke--setup-validation) | SEARCH-001                     | AC-7, AC-8, AC-9 + E2E all AC | 🟡           |
 
 ---

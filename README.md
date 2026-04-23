@@ -4,7 +4,7 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ## Trạng thái
 
-🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T8.5/10 done** — LoginPage + RequireAuth + AppHeader + **light/dark theme infra** (ThemeToggle, CSS var tokens, system listener). UX spec gate + design-system registry added to SDD workflow. Next: [T9 — Project landing + feature detail pages](.specs/stories/US-001/tasks.md#t9--landing--feature-detail-pages).
+🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T9/10 done** — Project landing (card grid) + Feature detail (sticky TOC + markdown render + sanitize) live. 64 tests green (32 web + 32 api). Next: [T10 — Search + Playwright E2E + SETUP validation](.specs/stories/US-001/tasks.md#t10--search-page--e2e-smoke--setup-validation).
 
 ## Vấn đề đang giải quyết
 

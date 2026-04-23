@@ -7,7 +7,7 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `feature-detail`
-- **Status**: Ready (user-approved 2026-04-23 — Gate 1 passed)
+- **Status**: Implemented (T9 `879b15b`)
 - **Last updated**: 2026-04-23
 
 ## Route
