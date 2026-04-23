@@ -3,27 +3,76 @@ import { z } from "zod";
 import {
   ErrorCode,
   SECTION_ORDER,
+  createFeatureRequestSchema,
   slugSchema,
+  type CreateFeatureRequest,
   type FeatureResponse,
   type SectionResponse,
 } from "@onboarding/shared";
 import { HttpError } from "../errors.js";
+import { requireAuthor } from "../middleware/requireAuthor.js";
 import { zodValidate } from "../middleware/zodValidate.js";
-import type { FeatureRepo } from "../repos/featureRepo.js";
+import { FeatureSlugConflictError, type FeatureRepo } from "../repos/featureRepo.js";
+import type { ProjectRepo } from "../repos/projectRepo.js";
+import type { Feature } from "../db/schema.js";
 
 export interface FeaturesRouterDeps {
   featureRepo: FeatureRepo;
+  projectRepo: ProjectRepo;
   requireAuth: RequestHandler;
 }
 
+function toFeatureResponse(row: Feature): FeatureResponse {
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    createdAt: row.createdAt.toISOString(),
+    updatedAt: row.updatedAt.toISOString(),
+  };
+}
+
 export function createFeaturesRouter(deps: FeaturesRouterDeps): ExpressRouter {
-  const { featureRepo, requireAuth } = deps;
+  const { featureRepo, projectRepo, requireAuth } = deps;
   const router = Router({ mergeParams: true });
 
-  const params = z.object({
+  const getParams = z.object({
     slug: slugSchema,
     featureSlug: slugSchema,
   });
+  const postParams = z.object({ slug: slugSchema });
+
+  const create: RequestHandler = async (req, res, next) => {
+    try {
+      const { slug: projectSlug } = req.params as { slug: string };
+      const body = req.body as CreateFeatureRequest;
+
+      const project = await projectRepo.findBySlug(projectSlug);
+      if (!project) {
+        next(new HttpError(404, ErrorCode.PROJECT_NOT_FOUND, "Project không tồn tại"));
+        return;
+      }
+
+      const feature = await featureRepo.create({
+        projectId: project.id,
+        slug: body.slug,
+        title: body.title,
+      });
+      res.status(201).json({ data: toFeatureResponse(feature) });
+    } catch (err) {
+      if (err instanceof FeatureSlugConflictError) {
+        next(
+          new HttpError(
+            409,
+            ErrorCode.FEATURE_SLUG_TAKEN,
+            "Feature slug đã tồn tại trong project này",
+          ),
+        );
+        return;
+      }
+      next(err);
+    }
+  };
 
   const get: RequestHandler = async (req, res, next) => {
     try {
@@ -56,6 +105,13 @@ export function createFeaturesRouter(deps: FeaturesRouterDeps): ExpressRouter {
     }
   };
 
-  router.get("/:featureSlug", requireAuth, zodValidate({ params }), get);
+  router.post(
+    "/",
+    requireAuth,
+    requireAuthor,
+    zodValidate({ params: postParams, body: createFeatureRequestSchema }),
+    create,
+  );
+  router.get("/:featureSlug", requireAuth, zodValidate({ params: getParams }), get);
   return router;
 }

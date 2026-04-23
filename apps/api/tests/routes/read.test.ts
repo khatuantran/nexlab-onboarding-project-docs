@@ -55,7 +55,7 @@ function buildApp() {
     sessionMiddleware,
     authRouter: createAuthRouter({ userRepo, loginRateLimit }),
     projectsRouter: createProjectsRouter({ projectRepo, requireAuth }),
-    featuresRouter: createFeaturesRouter({ featureRepo, requireAuth }),
+    featuresRouter: createFeaturesRouter({ featureRepo, projectRepo, requireAuth }),
     searchRouter: createSearchRouter({ searchRepo, requireAuth }),
   });
 }
