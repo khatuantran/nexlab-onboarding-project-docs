@@ -7,7 +7,7 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `feature-detail`
-- **Status**: Implemented (T9 `879b15b`)
+- **Status**: Implemented (read path, T9 `879b15b`) + Ready (edit-in-place, US-002)
 - **Last updated**: 2026-04-23
 
 ## Route
@@ -177,10 +177,6 @@ Each **section content state** (trong success):
 - DOMPurify sau markdown-it output, whitelist theo design-system §6.1.
 - Test case (T9 red test): set section body = `<script>alert(1)</script>hello` → rendered HTML không chứa `<script>`, chỉ chứa text hoặc literal-escaped `&lt;script&gt;`.
 
-## Maps US
-
-- [US-001](../stories/US-001.md) — AC-3 (feature + sections), AC-5 (5 section ordered), AC-6 (markdown render), AC-4 (empty section variant).
-
 ## Implementation
 
 - **Task**: [T9](../stories/US-001/tasks.md#t9--landing--feature-detail-pages)
@@ -194,12 +190,129 @@ Each **section content state** (trong success):
 - **Shared helpers**: `apps/web/src/lib/markdown.ts` — markdown-it instance + DOMPurify.sanitize wrapper.
 - **Response type**: `FeatureResponse + SectionResponse[]` từ [@onboarding/shared/schemas/feature.ts](../../packages/shared/src/schemas/feature.ts).
 
-## Open items (for user review — Gate 1)
+## Edit-in-place mode (US-002)
 
-- [ ] Breadcrumb "Demo / Login with email" — OK? (tách bằng `ChevronRight` nhỏ) Hay muốn "Demo Project > Login with email" (caret ASCII)?
-- [ ] TOC desktop sticky — OK vị trí 96px top (dưới AppHeader) hay cao hơn/thấp hơn?
-- [ ] Mobile TOC = `<details>` dropdown — OK hay muốn tab strip horizontal scrollable?
-- [ ] Empty section placeholder bg dashed border — OK hay muốn solid subtle bg?
-- [ ] Relative time meta "cập nhật 2 giờ trước · bởi @admin" — muốn show author không? (API hiện chưa return authorDisplay riêng; cần thêm nếu muốn)
-- [ ] Section heading: để số "1. Business / 2. User flow…" hay plain "Business"?
-- [ ] Section separator: chỉ whitespace + H2 mt-10, hay muốn `<hr>` visible giữa sections?
+Thêm capability edit section trong cùng route (không tách `/edit`). Admin/author toggle per-section via "Sửa" button; multiple section có thể edit song song (independent state).
+
+### Scope edit-in-place
+
+- **Editable sections**: `business`, `user-flow`, `business-rules` (3 business sections). `tech-notes` + `screenshots` defer US-003.
+- **Not editable v1**: title feature, slug, project metadata, section order, delete section.
+
+### Per-section state machine
+
+```text
+read (default)
+  ↓ click "Sửa" (admin/author)
+editing:
+  idle-draft (textarea bằng server body) →
+  typing (debounced 200ms preview) →
+    ├── click "Lưu" → saving
+    └── click "Hủy" → (confirm nếu dirty) → read
+  saving:
+    ├── 200 → toast "Đã lưu" → refresh meta → read
+    ├── 413 SECTION_TOO_LARGE → sonner destructive "Nội dung section quá lớn (>64 KiB)" → editing (keep draft)
+    ├── 400 VALIDATION_ERROR → inline error dưới textarea → editing
+    ├── 401 → redirect `/login?next=<current>`
+    ├── 403 → sonner destructive "Bạn không có quyền sửa" → read
+    └── 5xx / network → sonner destructive "Có lỗi xảy ra, thử lại" → editing (retry enabled)
+```
+
+Mỗi section slot độc lập (3 section cùng lúc ở editing cũng OK).
+
+### Per-section interactions (edit)
+
+| Trigger                                   | Action                                                                                                         | Next state                | Side effect                                              |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------- | -------------------------------------------------------- |
+| Click "Sửa" icon (pencil, top-right card) | Toggle section slot → editing; load `body` server vào textarea draft                                           | read → editing idle-draft | Textarea auto-focus; body scroll giữ nguyên              |
+| Gõ textarea                               | Update draft; debounce 200ms → update preview pane                                                             | typing                    | Preview render qua cùng `MarkdownView` sanitize pipeline |
+| Click "Lưu"                               | `PUT /api/v1/features/:featureId/sections/:type` với `{ body }`                                                | editing → saving          | Disable save button + spinner                            |
+| 200                                       | Sonner "Đã lưu" 2s; refresh `updated_at` + `updated_by` meta; section collapse về read mode với mới saved body | saving → read             | Invalidate `["feature", slug, featureSlug]` query        |
+| 413                                       | Sonner destructive (copy trên); draft giữ nguyên                                                               | saving → editing          | —                                                        |
+| Click "Hủy"                               | Confirm `window.confirm("Hủy chỉnh sửa?")` nếu dirty (draft != server body) → revert                           | editing → read            | Textarea reset; preview clear                            |
+| ESC trong textarea                        | Không trigger cancel (ESC = native textarea behavior, no-op)                                                   | —                         | —                                                        |
+
+### Per-section wire-level (edit)
+
+**Read mode (existing)**:
+
+```text
+┌─ Section card ─────────────────────────────────────┐
+│  ## Business                              [✏️ Sửa] │   ← Pencil icon top-right, admin/author only
+│  cập nhật 2 giờ trước · bởi @lan                   │
+│  <MarkdownView sanitized body>                     │
+└────────────────────────────────────────────────────┘
+```
+
+**Editing mode (new — 2-col split desktop)**:
+
+```text
+┌─ Section card (editing) ────────────────────────────────────────┐
+│  ## Business                                                     │
+│  ┌──────────────────────────┬──────────────────────────────────┐│
+│  │ Markdown source          │ Preview (realtime 200ms debounce)││
+│  │ ┌──────────────────────┐ │ ┌──────────────────────────────┐ ││
+│  │ │ # Tổng quan          │ │ │ <h1>Tổng quan</h1>           │ ││
+│  │ │ Lorem ipsum...       │ │ │ <p>Lorem ipsum...</p>        │ ││
+│  │ │ - bullet             │ │ │ <ul><li>bullet</li></ul>     │ ││
+│  │ │                      │ │ │                              │ ││
+│  │ └──────────────────────┘ │ └──────────────────────────────┘ ││
+│  │ 12,340 / 64 KiB          │                                  ││
+│  └──────────────────────────┴──────────────────────────────────┘│
+│  ─────────────────────────────────────────────────────────────── │
+│                                         [Hủy]  [ 💾 Lưu ]       │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Editing mode mobile (stack dọc)**:
+
+```text
+┌──────────────────────┐
+│ ## Business          │
+│ [Source] [Preview]  ◁│   ← Tab switch (default Source)
+│ ┌──────────────────┐ │
+│ │ # Tổng quan      │ │
+│ │ ...              │ │
+│ └──────────────────┘ │
+│ 12,340 / 64 KiB      │
+├──────────────────────┤
+│      [Hủy] [💾 Lưu]  │
+└──────────────────────┘
+```
+
+### Edit mode components
+
+- **SectionCard** (existing, extend): thêm prop `editable?: boolean` → render pencil button top-right. Track `mode: "read" | "editing"` local state.
+- **SectionEditor** (new): wraps textarea (trái) + preview pane (phải) với `useDeferredValue` + 200ms debounce. Char count + byte count bottom-left.
+- **AuthorGate** (new, shared với create-feature-dialog): render children nếu `user.role === "admin" | "author"`, else null.
+- **Icon**: `Pencil` (design-system §4 — đã add ở Gate 0 scaffold).
+- **Toast**: `Toaster` (sonner) already mounted ở AppShell sau US-002 T1.
+
+### Edit validation
+
+- **Client**: textarea `maxLength` guard ~70000 chars (soft limit cho UX; real limit byte-level ở server).
+- **Server**: Zod `body: z.string().max(65536)` (64 KiB) + middleware check `Buffer.byteLength(body, "utf8") <= 65536` → 413 `SECTION_TOO_LARGE` nếu vượt.
+- **Empty save**: cho phép save `body === ""` (clear section back về empty state).
+
+### Edit A11y additions
+
+- Pencil button `aria-label="Sửa section <type>"`.
+- Edit mode wrap trong `<section aria-label="Đang chỉnh sửa <type>">`.
+- Save button `aria-busy="true"` khi saving; textarea `aria-describedby="<type>-byte-count"` linkto char counter.
+- Live region `aria-live="polite"` cho toast + success meta update.
+- Keyboard: Tab order trong edit card = textarea → preview (readonly, tabIndex=-1) → "Hủy" → "Lưu". Ctrl+Enter không bind (explicit save only).
+
+### Edit-related Gate 1 decisions (approved 2026-04-23 — inherit US-002 Gate 0)
+
+- [x] Layout 2-col (textarea | preview) desktop, stack + tab switch mobile.
+- [x] Preview debounce = **200ms** (match Gate 0).
+- [x] Per-section toggle độc lập (không force 1 section edit tại 1 thời điểm).
+- [x] Cancel confirm = **native `window.confirm`** (consistent với dialog patterns).
+- [x] Save button icon = **`Save` / `Check`** — TBD: dùng `Check` (design-system §4 chưa add `Save`). **Decision: dùng `Check` icon + text "Lưu"** (avoid new icon, minimal scope).
+- [x] Section separator edit vs read = border card `border-primary/20` + bg `bg-muted/30` để visually distinguish editing card.
+- [x] Byte counter reuse util `Buffer.byteLength` server-side; client ước tính bằng `new Blob([text]).size`.
+
+## Maps US
+
+- [US-001](../stories/US-001.md) — AC-3 (feature + sections), AC-5 (5 section ordered), AC-6 (markdown render), AC-4 (empty section variant).
+- [US-002](../stories/US-002.md) — AC-5 (edit business section), AC-6 (save 2 section độc lập), AC-7 (413 section too large), AC-8 (401 redirect).
