@@ -16,6 +16,7 @@
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest --passWithNoTests",
     "test:e2e": "echo 'E2E lands in T8' && exit 0",
+    "test:infra": "node scripts/test-infra-env.mjs",
     "smoke": "./scripts/smoke.sh",
     "dev": "pnpm -r --parallel run dev",
     "docker:up": "docker compose -f infra/docker/docker-compose.yml up -d",
