@@ -25,13 +25,34 @@ This project follows **Spec-Driven Development (SDD)**. All specs live in `.spec
 ├── 01-personas.md          # user personas
 ├── 02-requirements.md      # FRs (EARS) + NFRs
 ├── 03-architecture.md      # architecture summary (links to ADRs)
+├── api-surface.md          # endpoint catalog
+├── error-codes.md          # canonical error code registry
 ├── glossary.md             # domain terminology
+├── risks.md                # risk + assumption register
+├── roadmap.md              # milestone plan
+├── traceability.md         # FR ↔ US ↔ Task matrix
 ├── adr/
-│   └── ADR-XXX-*.md        # architecture decision records
-└── stories/
-    ├── US-XXX.md           # user story (Given/When/Then)
-    └── US-XXX/
-        └── tasks.md        # 2-4h task breakdown
+│   └── ADR-NNN-*.md        # architecture decision records
+├── stories/
+│   ├── US-NNN.md           # user story (Given/When/Then)
+│   └── US-NNN/tasks.md     # 2-4h task breakdown
+├── ui/                     # per-screen UI specs (gate before FE TDD)
+│   ├── design-system.md    # tokens + icons + components (registry)
+│   └── <screen>.md         # 02-ui-spec-template clones
+├── backlog/                # deferred ideas tracked as BL-NNN
+│   ├── README.md           # index (exempt registry)
+│   └── BL-NNN.md           # 06-backlog-item-template clones
+├── bugs/                   # reported faults (TDD: test before fix)
+│   ├── README.md
+│   └── BUG-NNN.md          # 05-bug-template clones
+├── changes/                # mid-milestone scope/spec/tech changes
+│   ├── README.md
+│   └── CR-NNN.md           # 05-change-request-template clones
+├── incidents/              # prod post-mortems (48h SLA)
+│   ├── README.md
+│   └── INC-NNN.md          # 06-incident-template clones
+└── releases/
+    └── CHANGELOG.md        # Keep-a-Changelog format
 ```
 
 ---
@@ -39,8 +60,11 @@ This project follows **Spec-Driven Development (SDD)**. All specs live in `.spec
 ## When a request comes in
 
 - **"Add feature X"** → check if an FR exists in `02-requirements.md` and a US exists in `stories/`. If not, propose the FR/US first.
-- **"Fix bug Y"** → check if the behavior is covered by any spec/story. Bug may be in code OR in spec. Add a regression test before fixing.
+- **"Fix bug Y"** → check `.specs/bugs/` for existing BUG-NNN. If not, clone [05-bug-template.md](templates/05-bug-template.md) → `.specs/bugs/BUG-NNN.md`, write failing regression test (commit test alone), then fix commit (`fix(<scope>): ... (BUG-NNN)`). Update `.specs/bugs/README.md` index.
 - **"Refactor Z"** → must preserve spec-guaranteed behavior. Add tests if missing before touching code.
+- **"Đổi scope / spec mid-milestone"** → clone [05-change-request-template.md](templates/05-change-request-template.md) → `.specs/changes/CR-NNN.md`. Capture Impact + Alternatives + Decision. User approves before code touches. If architectural → spawn ADR-NNN.
+- **"Idea Z chưa fit sprint"** → clone [06-backlog-item-template.md](templates/06-backlog-item-template.md) → `.specs/backlog/BL-NNN.md` với Priority P0-P3. Không đẩy vào `02-requirements.md` / `stories/` cho tới khi đạt promotion criteria.
+- **"Sự cố prod xảy ra"** → within 48h của resolution, clone [06-incident-template.md](templates/06-incident-template.md) → `.specs/incidents/INC-NNN.md`. 5-whys root cause + action items với owner/due/tracking.
 
 ## Default mode of working
 
@@ -92,6 +116,9 @@ Sau khi commit task `T<N>` land (DoD pass), **trong cùng phiên làm việc** t
 - [.specs/traceability.md](.specs/traceability.md) — reverse-index 🟡 Planned → ✅ kèm commit hash.
 - [.specs/ui/\<screen\>.md](.specs/ui/) — nếu task chạm FE screen: Status `Draft`/`Ready` → `Implemented`.
 - [.specs/ui/design-system.md](.specs/ui/design-system.md) — thêm row CHANGELOG nếu task add/đổi token/icon/component/variant.
+- [.specs/bugs/BUG-NNN.md](.specs/bugs/) + [.specs/bugs/README.md](.specs/bugs/README.md) — nếu task fix bug: BUG status `Open`/`In Progress` → `Fixed` + commit hash; row index cập nhật.
+- [.specs/changes/CR-NNN.md](.specs/changes/) + [.specs/changes/README.md](.specs/changes/README.md) — nếu task thực thi CR approved: row index cập nhật Status + implementation link.
+- [.specs/releases/CHANGELOG.md](.specs/releases/CHANGELOG.md) — thêm row dưới `[Unreleased]` nếu commit ship user-facing change (Added/Changed/Fixed/...).
 - File khác task chạm cụ thể (VD `api-surface.md` khi có endpoint mới, `error-codes.md` khi có code mới).
 
 **Rule**:
@@ -108,18 +135,22 @@ Nếu user prompt đụng action không khớp SDD flow, **KHÔNG** im lặng l�
 
 ### Common violations + response
 
-| Trigger từ user                                                           | Rule bị vi phạm                               | Đề xuất                                                                                                    |
-| ------------------------------------------------------------------------- | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| "Thêm endpoint / feature X" chưa có FR + US                               | SDD Contract #3 (No spec-less code)           | "FR/US nào cover? Nếu chưa, viết FR + US trước, clone từ `templates/01-*.md`."                             |
-| "Fix bug Y" không có regression test                                      | #4 (TDD)                                      | "Viết failing test reproduce trước, commit riêng. Sau đó fix + commit."                                    |
-| Start T\<N+1\> khi T\<N\> chưa DoD pass                                   | §tasks.md Conventions "Order"                 | "T\<N\> chưa ✅ trong traceability/roadmap. Finish DoD + progress-sync trước."                             |
-| Viết file `.specs/` không clone template                                  | #8 (Template is law)                          | "Clone từ `templates/XX-*.md`. Template không fit → propose update + bump version."                        |
-| Gom spec change + code change vào 1 commit                                | #5 (Small commits) + §Post-task progress sync | "Tách: spec commit riêng → code commit riêng → progress-sync commit riêng. Mỗi diff 1 concern."            |
-| "Skip test đi" / `--no-verify` / bypass husky                             | #4 + §Hard DO NOTs                            | Flag + ask explicit lý do. Không tự bypass.                                                                |
-| Scope creep: "làm task hiện tại + feature X luôn"                         | §Default mode of working                      | "Feature X ngoài scope task hiện tại. Viết US/task riêng, hoặc split sau khi task N xong."                 |
-| Commit secrets / `.env*` / key file                                       | §Hard DO NOTs                                 | **Block thẳng**, không override.                                                                           |
-| "Start T\<FE-task\>" khi chưa có `.specs/ui/<screen>.md` approved         | SDD #3 (No spec-less code) + §DoR             | "Màn hình \<X> chưa có UI spec. Clone `templates/02-ui-spec-template.md` → draft → user review → mới TDD." |
-| FE code add token/variant/icon chưa có trong `.specs/ui/design-system.md` | SDD #3 + §DoR                                 | "Token/variant/icon mới chưa trong design-system.md. Update registry trước (commit riêng) → rồi code."     |
+| Trigger từ user                                                           | Rule bị vi phạm                               | Đề xuất                                                                                                                                             |
+| ------------------------------------------------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Thêm endpoint / feature X" chưa có FR + US                               | SDD Contract #3 (No spec-less code)           | "FR/US nào cover? Nếu chưa, viết FR + US trước, clone từ `templates/01-*.md`."                                                                      |
+| "Fix bug Y" không có regression test                                      | #4 (TDD)                                      | "Viết failing test reproduce trước, commit riêng. Sau đó fix + commit."                                                                             |
+| Start T\<N+1\> khi T\<N\> chưa DoD pass                                   | §tasks.md Conventions "Order"                 | "T\<N\> chưa ✅ trong traceability/roadmap. Finish DoD + progress-sync trước."                                                                      |
+| Viết file `.specs/` không clone template                                  | #8 (Template is law)                          | "Clone từ `templates/XX-*.md`. Template không fit → propose update + bump version."                                                                 |
+| Gom spec change + code change vào 1 commit                                | #5 (Small commits) + §Post-task progress sync | "Tách: spec commit riêng → code commit riêng → progress-sync commit riêng. Mỗi diff 1 concern."                                                     |
+| "Skip test đi" / `--no-verify` / bypass husky                             | #4 + §Hard DO NOTs                            | Flag + ask explicit lý do. Không tự bypass.                                                                                                         |
+| Scope creep: "làm task hiện tại + feature X luôn"                         | §Default mode of working                      | "Feature X ngoài scope task hiện tại. Viết US/task riêng, hoặc split sau khi task N xong."                                                          |
+| Commit secrets / `.env*` / key file                                       | §Hard DO NOTs                                 | **Block thẳng**, không override.                                                                                                                    |
+| "Start T\<FE-task\>" khi chưa có `.specs/ui/<screen>.md` approved         | SDD #3 (No spec-less code) + §DoR             | "Màn hình \<X> chưa có UI spec. Clone `templates/02-ui-spec-template.md` → draft → user review → mới TDD."                                          |
+| FE code add token/variant/icon chưa có trong `.specs/ui/design-system.md` | SDD #3 + §DoR                                 | "Token/variant/icon mới chưa trong design-system.md. Update registry trước (commit riêng) → rồi code."                                              |
+| "Fix bug Y" không có `.specs/bugs/BUG-NNN.md`                             | SDD #3 + #4 (TDD)                             | "Bug chưa có BUG-NNN. Clone `templates/05-bug-template.md`, viết repro + failing regression test trước (commit test riêng) → rồi fix."              |
+| Scope/spec/tech change mid-milestone không có `.specs/changes/CR-NNN.md`  | SDD #3 + Roadmap integrity                    | "Scope change cần CR-NNN capture Impact + Alternatives + Decision. Clone `templates/05-change-request-template.md` → user approve → rồi đụng code." |
+| "Thêm FR/US mới" cho idea loose chưa ready                                | SDD #3 + Backlog discipline                   | "Idea chưa có US đầy đủ → viết `.specs/backlog/BL-NNN.md` trước (P0-P3), triage sau. Không đẩy thẳng vào `02-requirements.md` / `stories/`."        |
+| Post-mortem prod không có INC-NNN sau 48h                                 | §Incident SLA                                 | "Sự cố đã mitigate nhưng chưa có INC-NNN. Clone `templates/06-incident-template.md` trong 48h kể từ resolved."                                      |
 
 ### Response format khi flag
 
