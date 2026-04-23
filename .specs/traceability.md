@@ -45,7 +45,7 @@ Mục đích: khi đổi 1 FR biết ngay tác động tới story + task nào. 
 | [T5](stories/US-001/tasks.md#t5--db-schema--migration--seed)                 | FEAT-002                       | AC-3, AC-5, AC-6 data         | ✅ `e94af92` |
 | [T6](stories/US-001/tasks.md#t6--auth-endpoints--session-middleware)         | AUTH-001                       | AC-1, AC-2, AC-10, AC-11      | ✅ `0b7cd7a` |
 | [T7](stories/US-001/tasks.md#t7--read-api--search-api)                       | FEAT-002, READ-001, SEARCH-001 | AC-3, AC-5, AC-7, AC-9        | ✅ `9af2fe1` |
-| [T8](stories/US-001/tasks.md#t8--login-page--auth-guard)                     | AUTH-001                       | AC-1, AC-2, AC-10, AC-11      | 🟡           |
+| [T8](stories/US-001/tasks.md#t8--login-page--auth-guard)                     | AUTH-001                       | AC-1, AC-2, AC-10, AC-11      | ✅ `5e90753` |
 | [T9](stories/US-001/tasks.md#t9--landing--feature-detail-pages)              | READ-001, FEAT-002             | AC-3, AC-4, AC-5, AC-6        | 🟡           |
 | [T10](stories/US-001/tasks.md#t10--search-page--e2e-smoke--setup-validation) | SEARCH-001                     | AC-7, AC-8, AC-9 + E2E all AC | 🟡           |
 
