@@ -33,7 +33,7 @@ Light + dark theme qua Tailwind `darkMode: "class"` + CSS vars trên `:root` và
 
 **Contrast**: mọi cặp fg/bg ≥ 4.5:1 (WCAG AA) trong cả 2 mode. Verify bằng eyeball + Chrome DevTools contrast checker.
 
-**Hiện trạng code (T4 ship)**: `:root` block đã có light tokens; `--ring` + `--input` + `.dark` block **chưa có** — sẽ thêm trong T8.5.
+**Hiện trạng code**: `:root` + `.dark` + `--ring` + `--input` landed T8.5 (`51802c0`).
 
 ### 1.2 Theme toggle behavior
 
@@ -43,7 +43,7 @@ Light + dark theme qua Tailwind `darkMode: "class"` + CSS vars trên `:root` và
 - **Cycle order**: Light → Dark → System → Light (1 button trong AppHeader).
 - **System listener**: `matchMedia` change event → re-resolve khi state = `"system"`.
 - **Fallback**: localStorage disabled → default `"system"`, không throw.
-- **Impl**: [apps/web/src/lib/theme.tsx](../../apps/web/src/lib/theme.tsx) (land T8.5).
+- **Impl**: [apps/web/src/lib/theme.tsx](../../apps/web/src/lib/theme.tsx) (T8.5 `51802c0`).
 
 ---
 
@@ -128,12 +128,12 @@ Thêm variant / component mới:
 
 ### 5.2 Layout components ([apps/web/src/components/layout/](../../apps/web/src/components/layout/))
 
-| Component       | Purpose                                          | Land ở    |
-| --------------- | ------------------------------------------------ | --------- |
-| `ErrorBoundary` | Catch render errors → fallback UI                | T4        |
-| `RequireAuth`   | Gate route subtree behind `useMe()` session      | T8        |
-| `AppHeader`     | App chrome: logo, user name, logout, ThemeToggle | T8 + T8.5 |
-| `ThemeToggle`   | Tri-state button cycle light/dark/system (§1.2)  | T8.5      |
+| Component       | Purpose                                          | Land ở                 |
+| --------------- | ------------------------------------------------ | ---------------------- |
+| `ErrorBoundary` | Catch render errors → fallback UI                | T4                     |
+| `RequireAuth`   | Gate route subtree behind `useMe()` session      | T8                     |
+| `AppHeader`     | App chrome: logo, user name, logout, ThemeToggle | T8 + T8.5 ✅ `51802c0` |
+| `ThemeToggle`   | Tri-state button cycle light/dark/system (§1.2)  | T8.5 ✅ `51802c0`      |
 
 ### 5.3 Feature components ([apps/web/src/components/features/](../../apps/web/src/components/features/))
 

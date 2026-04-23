@@ -30,6 +30,7 @@ Implement US-001 qua 10 task (T1-T10). **Progress: 8/10 done.**
 | [T6 Auth endpoints](stories/US-001/tasks.md#t6--auth-endpoints--session-middleware)                              | ✅ 2026-04-23 | `0b7cd7a` |
 | [T7 Read + search API](stories/US-001/tasks.md#t7--read-api--search-api)                                         | ✅ 2026-04-23 | `9af2fe1` |
 | [T8 Login page + auth guard](stories/US-001/tasks.md#t8--login-page--auth-guard)                                 | ✅ 2026-04-23 | `5e90753` |
+| T8.5 Design system + light/dark theme infra (added mid-M1)                                                       | ✅ 2026-04-23 | `51802c0` |
 | [T9 Landing + feature detail](stories/US-001/tasks.md#t9--landing--feature-detail-pages)                         | 🟡 Next       | —         |
 | [T10 Search + E2E](stories/US-001/tasks.md#t10--search-page--e2e-smoke--setup-validation)                        | 🟡            | —         |
 

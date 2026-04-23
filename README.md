@@ -4,7 +4,7 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ## Trạng thái
 
-🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T8/10 done** — LoginPage + RequireAuth guard + AppHeader logout wired (react-hook-form + zodResolver, shared login schema with BE). Next: [T9 — Project landing + feature detail pages](.specs/stories/US-001/tasks.md#t9--landing--feature-detail-pages).
+🚧 **Pre-MVP — Implementation phase (M1).** Progress: **T8.5/10 done** — LoginPage + RequireAuth + AppHeader + **light/dark theme infra** (ThemeToggle, CSS var tokens, system listener). UX spec gate + design-system registry added to SDD workflow. Next: [T9 — Project landing + feature detail pages](.specs/stories/US-001/tasks.md#t9--landing--feature-detail-pages).
 
 ## Vấn đề đang giải quyết
 

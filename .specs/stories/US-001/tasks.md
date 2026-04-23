@@ -4,7 +4,7 @@
 
 _Story_: [US-001 — Dev reads và search feature catalog](../US-001.md)
 _Total estimate_: ~34h (solo, TDD pace; story-level estimate 10-14h là pair/ideal, tasks là pessimistic; T3 + T4 thêm vào cho senior-role infra scaffold)
-_Last updated_: 2026-04-23 (T8 landed `5e90753`; T9 next)
+_Last updated_: 2026-04-23 (T8 + T8.5 theme infra landed `5e90753` / `51802c0`; T9 next)
 
 ---
 
