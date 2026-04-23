@@ -3,10 +3,10 @@ import path from "node:path";
 import dotenv from "dotenv";
 import type { Config } from "drizzle-kit";
 
-// Load apps/api/.env.local anchored to this file (CR-001). dotenv/config
-// sidecar only reads `.env` from cwd; we need explicit path + `.env.local`.
+// Load apps/api/.env anchored via import.meta.url (CR-001, amended).
+// Drizzle CLI may run with any cwd; explicit path keeps it deterministic.
 dotenv.config({
-  path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".env.local"),
+  path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".env"),
 });
 
 /**

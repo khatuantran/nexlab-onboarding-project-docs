@@ -4,8 +4,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const apiRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
-const envFile = path.join(apiRoot, ".env.local");
-const backup = path.join(apiRoot, ".env.local.cr001-backup");
+const envFile = path.join(apiRoot, ".env");
+const backup = path.join(apiRoot, ".env.cr001-backup");
 const SENTINEL_KEY = "CR001_ENV_LOADER_SENTINEL";
 
 describe("apps/api env loader (CR-001)", () => {
@@ -21,7 +21,7 @@ describe("apps/api env loader (CR-001)", () => {
     delete process.env[SENTINEL_KEY];
   });
 
-  it("env.ts side-effect populates process.env from apps/api/.env.local", async () => {
+  it("env.ts side-effect populates process.env from apps/api/.env", async () => {
     // Cache-bust dynamic import so side effect re-runs across test runs.
     const url = new URL(`../../src/env.ts?t=${Date.now()}`, import.meta.url).href;
     await import(/* @vite-ignore */ url);

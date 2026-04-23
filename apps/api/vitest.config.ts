@@ -3,12 +3,12 @@ import path from "node:path";
 import { defineConfig } from "vitest/config";
 
 /**
- * API test config: load `apps/api/.env.local` (CR-001) into `process.env`
+ * API test config: load `apps/api/.env` (CR-001, amended) into `process.env`
  * so integration tests can reach Postgres + Redis on their overridden
  * ports. Plain-text parser to avoid pulling dotenv into vitest config.
  */
 function loadEnvLocal(): Record<string, string> {
-  const envPath = path.resolve(__dirname, ".env.local");
+  const envPath = path.resolve(__dirname, ".env");
   const out: Record<string, string> = {};
   try {
     const content = readFileSync(envPath, "utf8");
@@ -22,7 +22,7 @@ function loadEnvLocal(): Record<string, string> {
       if (key) out[key] = value;
     }
   } catch {
-    // .env.local optional — devs without it run via CI env.
+    // .env optional — devs without it run via CI env.
   }
   return out;
 }

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Migrate legacy root .env.local → per-layer files (CR-001).
+# Migrate legacy root .env.local → per-layer files (CR-001, amended).
 #
 # Reads the old flat .env.local at repo root and distributes each variable
 # into the correct layer file:
 #   - POSTGRES_* / REDIS_PORT        → infra/docker/.env
 #   - VITE_*                         → apps/web/.env.local
 #   - everything else (API_*, DB, REDIS_URL, SESSION_*, UPLOAD_*, NODE_ENV,
-#     LOG_LEVEL)                     → apps/api/.env.local
+#     LOG_LEVEL)                     → apps/api/.env
 #
 # Idempotent: skips variables already present in the target file.
 # Safe: never deletes the source .env.local; you remove it manually once happy.
@@ -19,13 +19,13 @@ SRC="$ROOT/.env.local"
 if [[ ! -f "$SRC" ]]; then
   echo "No $SRC found — nothing to migrate. Copy per-layer templates directly:"
   echo "  cp infra/docker/.env.example infra/docker/.env"
-  echo "  cp apps/api/.env.example     apps/api/.env.local"
+  echo "  cp apps/api/.env.example     apps/api/.env"
   echo "  cp apps/web/.env.example     apps/web/.env.local"
   exit 0
 fi
 
 INFRA="$ROOT/infra/docker/.env"
-API="$ROOT/apps/api/.env.local"
+API="$ROOT/apps/api/.env"
 WEB="$ROOT/apps/web/.env.local"
 
 touch "$INFRA" "$API" "$WEB"
