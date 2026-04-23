@@ -98,13 +98,17 @@ Library: [`lucide-react`](https://lucide.dev/). Đã trong `apps/web/package.jso
 
 **Icon registry** (icons đã hoặc sẽ dùng — thêm row khi dùng icon mới):
 
-| Icon      | Dùng ở                       | Label                            |
-| --------- | ---------------------------- | -------------------------------- |
-| `Sun`     | ThemeToggle (state = light)  | "Đang dùng chế độ sáng"          |
-| `Moon`    | ThemeToggle (state = dark)   | "Đang dùng chế độ tối"           |
-| `Monitor` | ThemeToggle (state = system) | "Theo chế độ hệ thống"           |
-| `LogOut`  | AppHeader logout button      | "Đăng xuất" (kèm text, decor-ok) |
-| `Search`  | SearchPage input affordance  | "Tìm kiếm" (T10)                 |
+| Icon           | Dùng ở                                | Label                            |
+| -------------- | ------------------------------------- | -------------------------------- |
+| `Sun`          | ThemeToggle (state = light)           | "Đang dùng chế độ sáng"          |
+| `Moon`         | ThemeToggle (state = dark)            | "Đang dùng chế độ tối"           |
+| `Monitor`      | ThemeToggle (state = system)          | "Theo chế độ hệ thống"           |
+| `LogOut`       | AppHeader logout button               | "Đăng xuất" (kèm text, decor-ok) |
+| `Search`       | SearchPage input affordance           | "Tìm kiếm" (T10)                 |
+| `ChevronRight` | Card CTA, breadcrumb separator (T9)   | decor (aria-hidden)              |
+| `FileText`     | Feature card leading icon (T9)        | decor (aria-hidden)              |
+| `Clock`        | Relative-time indicator (T9)          | decor (aria-hidden)              |
+| `AlertCircle`  | Empty-section / error state (T9, T10) | decor (aria-hidden)              |
 
 ---
 
@@ -114,11 +118,12 @@ Mọi component dùng lại phải listed ở đây. Không variant mới / copy
 
 ### 5.1 Primitives — shadcn-style ([apps/web/src/components/ui/](../../apps/web/src/components/ui/))
 
-| Component | Variants                                        | Sizes                            | File         |
-| --------- | ----------------------------------------------- | -------------------------------- | ------------ |
-| `Button`  | `default` / `destructive` / `outline` / `ghost` | `default` / `sm` / `lg` / `icon` | `button.tsx` |
-| `Input`   | —                                               | default height `h-10`            | `input.tsx`  |
-| `Label`   | —                                               | —                                | `label.tsx`  |
+| Component | Variants                                        | Sizes                               | File         |
+| --------- | ----------------------------------------------- | ----------------------------------- | ------------ |
+| `Button`  | `default` / `destructive` / `outline` / `ghost` | `default` / `sm` / `lg` / `icon`    | `button.tsx` |
+| `Input`   | —                                               | default height `h-10`               | `input.tsx`  |
+| `Label`   | —                                               | —                                   | `label.tsx`  |
+| `Card`    | `default` (land T9)                             | padding `p-5`, rounded `rounded-lg` | `card.tsx`   |
 
 Thêm variant / component mới:
 
@@ -128,12 +133,19 @@ Thêm variant / component mới:
 
 ### 5.2 Layout components ([apps/web/src/components/layout/](../../apps/web/src/components/layout/))
 
-| Component       | Purpose                                          | Land ở                 |
-| --------------- | ------------------------------------------------ | ---------------------- |
-| `ErrorBoundary` | Catch render errors → fallback UI                | T4                     |
-| `RequireAuth`   | Gate route subtree behind `useMe()` session      | T8                     |
-| `AppHeader`     | App chrome: logo, user name, logout, ThemeToggle | T8 + T8.5 ✅ `51802c0` |
-| `ThemeToggle`   | Tri-state button cycle light/dark/system (§1.2)  | T8.5 ✅ `51802c0`      |
+| Component       | Purpose                                                                          | Land ở                 |
+| --------------- | -------------------------------------------------------------------------------- | ---------------------- |
+| `ErrorBoundary` | Catch render errors → fallback UI                                                | T4                     |
+| `RequireAuth`   | Gate route subtree behind `useMe()` session                                      | T8                     |
+| `AppHeader`     | App chrome: logo, user name, logout, ThemeToggle                                 | T8 + T8.5 ✅ `51802c0` |
+| `ThemeToggle`   | Tri-state button cycle light/dark/system (§1.2)                                  | T8.5 ✅ `51802c0`      |
+| `Breadcrumb`    | "Demo / Login" link trail cho feature detail                                     | T9 (planned)           |
+| `FeatureCard`   | Card grid item: title + filledCount badge + relative time (ProjectLanding)       | T9 (planned)           |
+| `SectionBadge`  | "3/5" pill hiển thị filledCount                                                  | T9 (planned)           |
+| `RelativeTime`  | `<time>` với `title=ISO`, text "2 giờ trước" (date-fns vi locale)                | T9 (planned)           |
+| `MarkdownView`  | Render markdown (markdown-it) + sanitize (DOMPurify), chỉ allow whitelisted tags | T9 (planned)           |
+| `SectionToc`    | Sticky left sidebar (desktop) / top dropdown (mobile) với 5 anchor link          | T9 (planned)           |
+| `EmptyState`    | Icon + copy + optional CTA cho trường hợp empty (no features, empty section)     | T9 (planned)           |
 
 ### 5.3 Feature components ([apps/web/src/components/features/](../../apps/web/src/components/features/))
 
@@ -152,14 +164,32 @@ Empty cho đến T9. Expect: `FeatureList`, `SectionIndicator`, `MarkdownView`, 
 
 ---
 
+## 6.1 Markdown + content rendering
+
+- **Parser**: [`markdown-it`](https://github.com/markdown-it/markdown-it) — CommonMark + GFM-ish (tables, fenced code). No HTML passthrough (disable `html: false`).
+- **Sanitizer**: [`DOMPurify`](https://github.com/cure53/DOMPurify) áp dụng trên output HTML trước khi render. Whitelist tag: `p, h1-h4, ul, ol, li, strong, em, code, pre, blockquote, a, img, table, thead, tbody, tr, th, td, hr, br, mark`.
+- **Links**: `a[href]` rewrite — thêm `target="_blank" rel="noopener noreferrer"` cho external; internal `/projects/...` giữ SPA (intercept trong `MarkdownView`).
+- **Images**: chỉ cho từ `/uploads/<id>` (FR-UPLOAD-001) + https:// whitelist. Reject `data:` / `javascript:`.
+- **Code block**: không highlight v1 (deferred post-MVP); chỉ `<pre><code>` với `text-sm font-mono` + `bg-muted`.
+- **Prose tokens**: áp dụng Tailwind typography-like rule qua class `prose prose-sm` (nếu cần thì install `@tailwindcss/typography` trong T9).
+
+## 6.2 Relative time
+
+- Helper `RelativeTime` dùng [`date-fns`](https://date-fns.org/) `formatDistanceToNow` với locale `vi`.
+- Output examples: "2 giờ trước", "3 ngày trước", "30 phút trước".
+- Render trong `<time datetime="<ISO>" title="<full date>">` để screen reader + hover tooltip có full timestamp.
+
+---
+
 ## 7. CHANGELOG
 
 Thêm row khi đổi token, icon registry, component inventory. Breaking change (rename/remove token) → bump minor version của file này + migrate per-screen specs cùng PR.
 
-| Date       | Change                                                                                                            | PR / commit |
-| ---------- | ----------------------------------------------------------------------------------------------------------------- | ----------- |
-| 2026-04-23 | Initial scaffold: 10 tokens + lucide-react icon rules + 3 primitives + 4 layout comps.                            | (this)      |
-| 2026-04-23 | Dark `--destructive` 31% → 60% lightness — original was too dark for `text-destructive` on dark bg (fails 4.5:1). | T8.5 Gate 2 |
+| Date       | Change                                                                                                                                                                                                                                            | PR / commit |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| 2026-04-23 | Initial scaffold: 10 tokens + lucide-react icon rules + 3 primitives + 4 layout comps.                                                                                                                                                            | (this)      |
+| 2026-04-23 | Dark `--destructive` 31% → 60% lightness — original was too dark for `text-destructive` on dark bg (fails 4.5:1).                                                                                                                                 | T8.5 Gate 2 |
+| 2026-04-23 | T9 scaffold: add 4 icons (ChevronRight, FileText, Clock, AlertCircle) + Card primitive + 7 layout components (Breadcrumb, FeatureCard, SectionBadge, RelativeTime, MarkdownView, SectionToc, EmptyState). Status `(planned)` cho tới khi T9 ship. | T9 Gate 1   |
 
 ---
 
