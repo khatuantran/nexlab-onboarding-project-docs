@@ -27,6 +27,13 @@ export const slugSchema = z
   .max(60)
   .regex(/^[a-z0-9][a-z0-9-]{1,58}[a-z0-9]$/u, "Slug không hợp lệ");
 
+export const createFeatureRequestSchema = z.object({
+  slug: slugSchema,
+  title: z.string().min(1, "Tiêu đề bắt buộc").max(160, "Tiêu đề tối đa 160 ký tự"),
+});
+
+export type CreateFeatureRequest = z.infer<typeof createFeatureRequestSchema>;
+
 export const searchQuerySchema = z.object({
   q: z.string().min(1, "q is required").max(200, "q quá dài"),
   projectSlug: slugSchema.optional(),
