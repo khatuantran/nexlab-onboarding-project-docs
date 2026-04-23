@@ -9,10 +9,12 @@ import { createSessionMiddleware } from "./middleware/session.js";
 import { createAuthRouter } from "./routes/auth.js";
 import { createProjectsRouter } from "./routes/projects.js";
 import { createFeaturesRouter } from "./routes/features.js";
+import { createSectionsRouter } from "./routes/sections.js";
 import { createSearchRouter } from "./routes/search.js";
 import { createUserRepo } from "./repos/userRepo.js";
 import { createProjectRepo } from "./repos/projectRepo.js";
 import { createFeatureRepo } from "./repos/featureRepo.js";
+import { createSectionRepo } from "./repos/sectionRepo.js";
 import { createSearchRepo } from "./repos/searchRepo.js";
 import { createRateLimit } from "./middleware/rateLimit.js";
 import { createRequireAuth } from "./middleware/requireAuth.js";
@@ -23,6 +25,7 @@ const VERSION = "0.1.0";
 const userRepo = createUserRepo(db);
 const projectRepo = createProjectRepo(db);
 const featureRepo = createFeatureRepo(db);
+const sectionRepo = createSectionRepo(db);
 const searchRepo = createSearchRepo(db);
 const loginRateLimit = createRateLimit({
   redis,
@@ -40,6 +43,7 @@ const app = createApp({
   authRouter: createAuthRouter({ userRepo, loginRateLimit }),
   projectsRouter: createProjectsRouter({ projectRepo, requireAuth }),
   featuresRouter: createFeaturesRouter({ featureRepo, projectRepo, requireAuth }),
+  sectionsRouter: createSectionsRouter({ sectionRepo, requireAuth }),
   searchRouter: createSearchRouter({ searchRepo, requireAuth }),
 });
 

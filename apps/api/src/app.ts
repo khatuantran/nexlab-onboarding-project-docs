@@ -26,6 +26,7 @@ export type AppDeps = HealthDeps & {
    */
   projectsRouter?: express.Router;
   featuresRouter?: express.Router;
+  sectionsRouter?: express.Router;
   searchRouter?: express.Router;
 };
 
@@ -72,6 +73,9 @@ export function createApp(deps: AppDeps): Express {
   }
   if (deps.featuresRouter) {
     v1.use("/projects/:slug/features", deps.featuresRouter);
+  }
+  if (deps.sectionsRouter) {
+    v1.use("/features", deps.sectionsRouter);
   }
   if (deps.searchRouter) {
     v1.use("/search", deps.searchRouter);
