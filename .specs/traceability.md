@@ -60,7 +60,7 @@ Mục đích: khi đổi 1 FR biết ngay tác động tới story + task nào. 
 | [T4](stories/US-002/tasks.md#t4--createprojectdialog-fe)                      | PROJ-001                    | AC-1, AC-2, AC-3    | ✅ `956b959` |
 | [T5](stories/US-002/tasks.md#t5--section-put-api--413-validation)             | FEAT-003                    | AC-5, AC-6, AC-7    | ✅ `ddfb9ab` |
 | [T6](stories/US-002/tasks.md#t6--createfeaturedialog-fe)                      | FEAT-001                    | AC-4                | ✅ `522889c` |
-| [T7](stories/US-002/tasks.md#t7--sectioneditor-fe--edit-in-place-integration) | FEAT-003                    | AC-5, AC-6, AC-7    | 🟡 Planned   |
+| [T7](stories/US-002/tasks.md#t7--sectioneditor-fe--edit-in-place-integration) | FEAT-003                    | AC-5, AC-6, AC-7    | ✅ `03c83ba` |
 | [T8](stories/US-002/tasks.md#t8--e2e-smoke--progress-sync-release-tag)        | all                         | AC-2, AC-4, AC-5    | 🟡 Planned   |
 
 ---

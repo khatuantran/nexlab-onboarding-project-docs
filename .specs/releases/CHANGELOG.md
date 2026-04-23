@@ -20,6 +20,8 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 - `CreateProjectDialog` FE: admin-gated dialog trong AppHeader, Radix Dialog + RHF + Zod, auto-derive slug với diacritic strip, 409 inline error, navigate sau 201 (US-002 / T4).
 - `PUT /api/v1/features/:featureId/sections/:type` endpoint: 64 KiB byte limit → 413 `SECTION_TOO_LARGE`, feature.updated_at bump, sibling sections stable (US-002 / T5).
 - `CreateFeatureDialog` FE: author-gated trigger trên ProjectLandingPage, Radix Dialog + RHF + Zod, slug auto-derive từ tiêu đề, 409 inline error, navigate sau 201 (US-002 / T6).
+- `SectionEditor` FE edit-in-place: per-section pencil toggle (business/user-flow/business-rules), 2-col markdown source + preview (200ms debounce), byte counter, sonner toasts (success + 413), native confirm on dirty cancel. Per-section state độc lập. (US-002 / T7).
+- sonner `<Toaster>` mounted globally trong App.tsx.
 
 ### Changed
 

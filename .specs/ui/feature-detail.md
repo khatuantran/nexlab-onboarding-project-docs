@@ -7,7 +7,7 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `feature-detail`
-- **Status**: Implemented (read path, T9 `879b15b`) + Ready (edit-in-place, US-002)
+- **Status**: Implemented (read path T9 `879b15b` + edit-in-place T7 `03c83ba`)
 - **Last updated**: 2026-04-23
 
 ## Route
