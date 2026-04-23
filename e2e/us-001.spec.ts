@@ -16,22 +16,21 @@ test("US-001 happy path: login → project → feature → search", async ({ pag
   // 2. Go to demo project
   await page.goto("/projects/demo");
   await expect(page.getByRole("heading", { name: /demo/i }).first()).toBeVisible();
-  const featureLink = page.getByRole("link", { name: /login with email/i });
+  const featureLink = page.getByRole("link", { name: /đăng nhập bằng email/i });
   await expect(featureLink).toBeVisible();
   await featureLink.click();
 
-  // 3. Feature detail — 5 sections in order
-  const sectionHeadings = ["Business", "User Flow", "Business Rules", "Tech Notes", "Screenshots"];
+  // 3. Feature detail — 5 sections in order (Vietnamese labels per FeatureSections)
+  const sectionHeadings = ["Nghiệp vụ", "User flow", "Business rules", "Tech notes", "Screenshots"];
   for (const name of sectionHeadings) {
     await expect(page.getByRole("heading", { name, level: 2 })).toBeVisible();
   }
 
-  // 4. Search via header
+  // 4. Search via header — seed feature title = "Đăng nhập bằng email"
   const searchbox = page.getByRole("searchbox", { name: /tìm feature/i });
-  await searchbox.fill("login");
+  await searchbox.fill("đăng nhập");
   await searchbox.press("Enter");
 
-  // Either hits render with <mark>, or (in some data states) empty-result copy.
-  // US-001 seed has "Login with email" → expect at least one <mark>.
+  // Expect at least one <mark> highlight from FTS snippet.
   await expect(page.locator("mark").first()).toBeVisible({ timeout: 5_000 });
 });
