@@ -24,6 +24,7 @@ export function LoginPage(): JSX.Element {
   } = useForm<LoginRequest>({
     resolver: zodResolver(loginRequestSchema),
     defaultValues: { email: "", password: "" },
+    shouldFocusError: false,
   });
 
   useEffect(() => {

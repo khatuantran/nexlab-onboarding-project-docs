@@ -1,5 +1,7 @@
+import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { useLogout, useMe } from "@/queries/auth";
 
 export function AppHeader(): JSX.Element | null {
@@ -23,7 +25,9 @@ export function AppHeader(): JSX.Element | null {
           <span className="text-muted-foreground" data-testid="current-user">
             {data.user.displayName}
           </span>
+          <ThemeToggle />
           <Button variant="outline" size="sm" onClick={handleLogout} disabled={logout.isPending}>
+            <LogOut className="mr-2 size-4" aria-hidden="true" />
             Đăng xuất
           </Button>
         </div>

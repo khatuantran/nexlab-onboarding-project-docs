@@ -7,5 +7,8 @@ beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
 afterEach(() => {
   cleanup();
   server.resetHandlers();
+  // Reset ThemeProvider side effects so tests don't leak theme state.
+  localStorage.clear();
+  document.documentElement.classList.remove("dark");
 });
 afterAll(() => server.close());
