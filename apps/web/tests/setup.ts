@@ -1,9 +1,11 @@
 import "@testing-library/jest-dom/vitest";
-import { afterEach } from "vitest";
+import { afterAll, afterEach, beforeAll } from "vitest";
 import { cleanup } from "@testing-library/react";
+import { server } from "./lib/msw";
 
-// React Testing Library cleanup runs automatically with globals:true +
-// the auto-cleanup import, but we enforce it explicitly for clarity.
+beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
 afterEach(() => {
   cleanup();
+  server.resetHandlers();
 });
+afterAll(() => server.close());

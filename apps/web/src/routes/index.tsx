@@ -1,14 +1,23 @@
-import { createBrowserRouter, type RouteObject } from "react-router-dom";
+import { createBrowserRouter, Outlet, type RouteObject } from "react-router-dom";
 import { HomePage } from "@/pages/HomePage";
+import { LoginPage } from "@/pages/LoginPage";
+import { AppHeader } from "@/components/layout/AppHeader";
+import { RequireAuth } from "@/components/layout/RequireAuth";
 
-/**
- * Route definitions — kept flat in T4 scaffold. Login + protected
- * routes (RequireAuth wrap) land in T8.
- */
+function ProtectedLayout(): JSX.Element {
+  return (
+    <RequireAuth>
+      <AppHeader />
+      <Outlet />
+    </RequireAuth>
+  );
+}
+
 export const routes: RouteObject[] = [
+  { path: "/login", element: <LoginPage /> },
   {
-    path: "/",
-    element: <HomePage />,
+    element: <ProtectedLayout />,
+    children: [{ path: "/", element: <HomePage /> }],
   },
 ];
 

@@ -3,14 +3,10 @@ import { screen } from "@testing-library/react";
 import { renderWithProviders } from "./lib/test-utils";
 import { App } from "../src/App";
 
-describe("App smoke", () => {
-  it("renders 'Onboarding Portal' heading", () => {
+describe("App smoke (unauthenticated)", () => {
+  it("redirects to /login and renders the login form", async () => {
     renderWithProviders(<App />);
-    expect(screen.getByRole("heading", { name: /onboarding portal/i })).toBeInTheDocument();
-  });
-
-  it("renders placeholder copy for M1", () => {
-    renderWithProviders(<App />);
-    expect(screen.getByText(/implementation in progress/i)).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /đăng nhập/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
   });
 });
