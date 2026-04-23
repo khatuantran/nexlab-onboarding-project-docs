@@ -7,7 +7,7 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `create-project-dialog`
-- **Status**: Ready
+- **Status**: Implemented (T4 `956b959`)
 - **Last updated**: 2026-04-23
 - **Kind**: overlay dialog (Radix portal) — không có URL riêng.
 

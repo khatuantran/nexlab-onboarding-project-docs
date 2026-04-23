@@ -64,6 +64,7 @@ Implement US-002 rồi US-003.
   - [T3](stories/US-002/tasks.md#t3--feature-create-api--5-section-init) POST /projects/:slug/features + 5-section atomic init — ✅ `4869a68` (2026-04-23).
   - [T4](stories/US-002/tasks.md#t4--createprojectdialog-fe) CreateProjectDialog FE với admin gate — ✅ `956b959` (2026-04-23).
   - [T5](stories/US-002/tasks.md#t5--section-put-api--413-validation) PUT /features/:id/sections/:type + 64 KiB byte limit — ✅ `ddfb9ab` (2026-04-23).
+  - [T6](stories/US-002/tasks.md#t6--createfeaturedialog-fe) CreateFeatureDialog FE với author gate — ✅ `522889c` (2026-04-23).
 
 ### M3 — Pilot launch 🟡 _(target 2026-07-31)_
 

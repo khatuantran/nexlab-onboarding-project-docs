@@ -4,7 +4,7 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ## Trạng thái
 
-🚧 **M2 in progress — US-002 Author path.** M1 complete (US-001 ✅). Progress: **T5/8 done** — full BE write path (projects / features / sections) + FE CreateProjectDialog (admin gate, RHF+Zod+Radix). 125 tests green (57 web + 53 api + 15 shared).
+🚧 **M2 in progress — US-002 Author path.** M1 complete (US-001 ✅). Progress: **T6/8 done** — BE write path + FE create dialogs (project admin-gated, feature author-gated). 131 tests green (63 web + 53 api + 15 shared).
 
 ## Vấn đề đang giải quyết
 
@@ -85,7 +85,7 @@ Full setup (DB migrate / seed / dev servers / E2E) ở [docs/SETUP.md](docs/SETU
 **Stories**:
 
 - [US-001 — Dev reads & search feature catalog](.specs/stories/US-001.md) + [tasks](.specs/stories/US-001/tasks.md)
-- [US-002 — BA creates project + feature with business sections](.specs/stories/US-002.md) + [tasks](.specs/stories/US-002/tasks.md) — in progress (T5/8 ✅)
+- [US-002 — BA creates project + feature with business sections](.specs/stories/US-002.md) + [tasks](.specs/stories/US-002/tasks.md) — in progress (T6/8 ✅)
 - [US-003 — Dev adds tech-notes + screenshots](.specs/stories/US-003.md)
 
 **Operational**:

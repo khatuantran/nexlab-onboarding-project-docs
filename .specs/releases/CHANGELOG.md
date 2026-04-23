@@ -19,6 +19,7 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 - `POST /api/v1/projects/:slug/features` endpoint: author+ create feature + 5-section atomic init; 201/404/409/401/400 branches (US-002 / T3).
 - `CreateProjectDialog` FE: admin-gated dialog trong AppHeader, Radix Dialog + RHF + Zod, auto-derive slug với diacritic strip, 409 inline error, navigate sau 201 (US-002 / T4).
 - `PUT /api/v1/features/:featureId/sections/:type` endpoint: 64 KiB byte limit → 413 `SECTION_TOO_LARGE`, feature.updated_at bump, sibling sections stable (US-002 / T5).
+- `CreateFeatureDialog` FE: author-gated trigger trên ProjectLandingPage, Radix Dialog + RHF + Zod, slug auto-derive từ tiêu đề, 409 inline error, navigate sau 201 (US-002 / T6).
 
 ### Changed
 

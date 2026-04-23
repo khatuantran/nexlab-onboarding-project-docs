@@ -4,7 +4,7 @@
 
 _Story_: [US-002 — BA tạo project + feature với business sections](../US-002.md)
 _Total estimate_: ~18h (solo, TDD pace)
-_Last updated_: 2026-04-23 (T4 + T5 landed in parallel)
+_Last updated_: 2026-04-23 (T6 landed `522889c`)
 
 ---
 
@@ -31,7 +31,7 @@ _Last updated_: 2026-04-23 (T4 + T5 landed in parallel)
 | [T3](#t3--feature-create-api--5-section-init)           | `POST /projects/:slug/features` API + section init   | 3h     | AC-4             | FEAT-001, FEAT-002 | —                                                                   | ✅ `4869a68` |
 | [T4](#t4--create-project-dialog-fe)                     | CreateProjectDialog FE (Radix + RHF + Zod)           | 3h     | AC-1, AC-2, AC-3 | PROJ-001           | [create-project-dialog.md](../../ui/create-project-dialog.md)       | ✅ `956b959` |
 | [T5](#t5--section-put-api--413-validation)              | `PUT /features/:id/sections/:type` API + 413         | 2h     | AC-5, AC-6, AC-7 | FEAT-003           | —                                                                   | ✅ `ddfb9ab` |
-| [T6](#t6--create-feature-dialog-fe)                     | CreateFeatureDialog FE + project-landing trigger     | 2h     | AC-4             | FEAT-001           | [create-feature-dialog.md](../../ui/create-feature-dialog.md)       | 🟡 Planned   |
+| [T6](#t6--create-feature-dialog-fe)                     | CreateFeatureDialog FE + project-landing trigger     | 2h     | AC-4             | FEAT-001           | [create-feature-dialog.md](../../ui/create-feature-dialog.md)       | ✅ `522889c` |
 | [T7](#t7--section-editor-fe--edit-in-place-integration) | SectionEditor FE + feature-detail edit-in-place wire | 3h     | AC-5, AC-6, AC-7 | FEAT-003           | [feature-detail.md §Edit-in-place mode](../../ui/feature-detail.md) | 🟡 Planned   |
 | [T8](#t8--e2e-smoke--progress-sync-release-tag)         | Playwright E2E + progress sync + M2 release tag      | 2h     | AC-2, AC-4, AC-5 | all                | —                                                                   | 🟡 Planned   |
 
