@@ -99,18 +99,20 @@ Library: [`lucide-react`](https://lucide.dev/). Đã trong `apps/web/package.jso
 
 **Icon registry** (icons đã hoặc sẽ dùng — thêm row khi dùng icon mới):
 
-| Icon           | Dùng ở                                | Label                            |
-| -------------- | ------------------------------------- | -------------------------------- |
-| `Sun`          | ThemeToggle (state = light)           | "Đang dùng chế độ sáng"          |
-| `Moon`         | ThemeToggle (state = dark)            | "Đang dùng chế độ tối"           |
-| `Monitor`      | ThemeToggle (state = system)          | "Theo chế độ hệ thống"           |
-| `LogOut`       | AppHeader logout button               | "Đăng xuất" (kèm text, decor-ok) |
-| `Search`       | SearchPage input affordance + header  | "Tìm kiếm" (T10)                 |
-| `X`            | FilterChip remove button (T10)        | "Bỏ lọc"                         |
-| `ChevronRight` | Card CTA, breadcrumb separator (T9)   | decor (aria-hidden)              |
-| `FileText`     | Feature card leading icon (T9)        | decor (aria-hidden)              |
-| `Clock`        | Relative-time indicator (T9)          | decor (aria-hidden)              |
-| `AlertCircle`  | Empty-section / error state (T9, T10) | decor (aria-hidden)              |
+| Icon           | Dùng ở                                                 | Label                            |
+| -------------- | ------------------------------------------------------ | -------------------------------- |
+| `Sun`          | ThemeToggle (state = light)                            | "Đang dùng chế độ sáng"          |
+| `Moon`         | ThemeToggle (state = dark)                             | "Đang dùng chế độ tối"           |
+| `Monitor`      | ThemeToggle (state = system)                           | "Theo chế độ hệ thống"           |
+| `LogOut`       | AppHeader logout button                                | "Đăng xuất" (kèm text, decor-ok) |
+| `Search`       | SearchPage input affordance + header                   | "Tìm kiếm" (T10)                 |
+| `X`            | FilterChip remove button (T10) + Dialog close (US-002) | "Bỏ lọc" / "Đóng"                |
+| `Plus`         | "Tạo project" + "Thêm feature" buttons (US-002)        | decor (kèm text, aria-hidden)    |
+| `Pencil`       | Section "Sửa" toggle (US-002)                          | "Sửa nội dung section"           |
+| `ChevronRight` | Card CTA, breadcrumb separator (T9)                    | decor (aria-hidden)              |
+| `FileText`     | Feature card leading icon (T9)                         | decor (aria-hidden)              |
+| `Clock`        | Relative-time indicator (T9)                           | decor (aria-hidden)              |
+| `AlertCircle`  | Empty-section / error state (T9, T10)                  | decor (aria-hidden)              |
 
 ---
 
@@ -120,12 +122,15 @@ Mọi component dùng lại phải listed ở đây. Không variant mới / copy
 
 ### 5.1 Primitives — shadcn-style ([apps/web/src/components/ui/](../../apps/web/src/components/ui/))
 
-| Component | Variants                                        | Sizes                               | File         |
-| --------- | ----------------------------------------------- | ----------------------------------- | ------------ |
-| `Button`  | `default` / `destructive` / `outline` / `ghost` | `default` / `sm` / `lg` / `icon`    | `button.tsx` |
-| `Input`   | —                                               | default height `h-10`               | `input.tsx`  |
-| `Label`   | —                                               | —                                   | `label.tsx`  |
-| `Card`    | `default` (land T9)                             | padding `p-5`, rounded `rounded-lg` | `card.tsx`   |
+| Component  | Variants                                                                                                                 | Sizes                                               | File                    |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------- | ----------------------- |
+| `Button`   | `default` / `destructive` / `outline` / `ghost`                                                                          | `default` / `sm` / `lg` / `icon`                    | `button.tsx`            |
+| `Input`    | —                                                                                                                        | default height `h-10`                               | `input.tsx`             |
+| `Label`    | —                                                                                                                        | —                                                   | `label.tsx`             |
+| `Card`     | `default` (land T9)                                                                                                      | padding `p-5`, rounded `rounded-lg`                 | `card.tsx`              |
+| `Dialog`   | shadcn wrapper around Radix `@radix-ui/react-dialog` (Trigger / Content / Header / Footer / Title / Description / Close) | default `max-w-md`, `sm` `max-w-sm`                 | `dialog.tsx` (US-002)   |
+| `Textarea` | —                                                                                                                        | `min-h-32`, `text-sm font-mono` cho markdown editor | `textarea.tsx` (US-002) |
+| `Toaster`  | sonner mount at app root — `success` / `error` / `info` variants theme-aware                                             | —                                                   | `toaster.tsx` (US-002)  |
 
 Thêm variant / component mới:
 
@@ -156,6 +161,8 @@ Thêm variant / component mới:
 Empty cho đến T9. Expect: `FeatureList`, `SectionIndicator`, `MarkdownView`, `FeatureSections`.
 
 T10 adds: `SearchResultRow` — `<Link>` wrap breadcrumb (`projectSlug › featureSlug`) + title + sanitized snippet với `<mark>` highlight. Used in [SearchPage](../../apps/web/src/pages/SearchPage.tsx).
+
+US-002 adds (planned): `CreateProjectDialog`, `CreateFeatureDialog`, `SectionCard` (view/edit mode toggle per AC-5), `SectionEditor` (2-col textarea + preview), `AdminGate` (wrapper hiding children when user.role !== "admin").
 
 ---
 
@@ -191,13 +198,15 @@ T10 adds: `SearchResultRow` — `<Link>` wrap breadcrumb (`projectSlug › featu
 
 Thêm row khi đổi token, icon registry, component inventory. Breaking change (rename/remove token) → bump minor version của file này + migrate per-screen specs cùng PR.
 
-| Date       | Change                                                                                                                                                                                                                                            | PR / commit  |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| 2026-04-23 | Initial scaffold: 10 tokens + lucide-react icon rules + 3 primitives + 4 layout comps.                                                                                                                                                            | (this)       |
-| 2026-04-23 | Dark `--destructive` 31% → 60% lightness — original was too dark for `text-destructive` on dark bg (fails 4.5:1).                                                                                                                                 | T8.5 Gate 2  |
-| 2026-04-23 | T9 scaffold: add 4 icons (ChevronRight, FileText, Clock, AlertCircle) + Card primitive + 7 layout components (Breadcrumb, FeatureCard, SectionBadge, RelativeTime, MarkdownView, SectionToc, EmptyState). Status `(planned)` cho tới khi T9 ship. | T9 Gate 1    |
-| 2026-04-23 | T9 components implemented + shipped. Status flip `(planned)` → live.                                                                                                                                                                              | T9 `879b15b` |
-| 2026-04-23 | T10 scaffold: add `--highlight` token (light `48 96% 89%` / dark `48 60% 35%`), `Search` + `X` icons, `SearchInput` + `SearchResultRow` + `FilterChip` components. Status `(planned)` tới khi T10 ship.                                           | T10 Gate 1   |
+| Date       | Change                                                                                                                                                                                                                                                                                                    | PR / commit   |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| 2026-04-23 | Initial scaffold: 10 tokens + lucide-react icon rules + 3 primitives + 4 layout comps.                                                                                                                                                                                                                    | (this)        |
+| 2026-04-23 | Dark `--destructive` 31% → 60% lightness — original was too dark for `text-destructive` on dark bg (fails 4.5:1).                                                                                                                                                                                         | T8.5 Gate 2   |
+| 2026-04-23 | T9 scaffold: add 4 icons (ChevronRight, FileText, Clock, AlertCircle) + Card primitive + 7 layout components (Breadcrumb, FeatureCard, SectionBadge, RelativeTime, MarkdownView, SectionToc, EmptyState). Status `(planned)` cho tới khi T9 ship.                                                         | T9 Gate 1     |
+| 2026-04-23 | T9 components implemented + shipped. Status flip `(planned)` → live.                                                                                                                                                                                                                                      | T9 `879b15b`  |
+| 2026-04-23 | T10 scaffold: add `--highlight` token (light `48 96% 89%` / dark `48 60% 35%`), `Search` + `X` icons, `SearchInput` + `SearchResultRow` + `FilterChip` components. Status `(planned)` tới khi T10 ship.                                                                                                   | T10 Gate 1    |
+| 2026-04-23 | T10 ship: `--highlight`, `Search`/`X`, `SearchInput`/`SearchResultRow`/`FilterChip` live.                                                                                                                                                                                                                 | T10 `5ca8e49` |
+| 2026-04-23 | US-002 Gate 0 scaffold: add `Plus` + `Pencil` icons, `Dialog` + `Textarea` + `Toaster` primitives (req deps `@radix-ui/react-dialog`, `sonner`), feature comps `CreateProjectDialog` / `CreateFeatureDialog` / `SectionCard` / `SectionEditor` / `AdminGate`. Status `(planned)` cho tới khi US-002 ship. | US-002 Gate 0 |
 
 ---
 
