@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-_Last updated: 2026-04-23 · [Keep-a-Changelog](https://keepachangelog.com/en/1.1.0/) format._
+_Last updated: 2026-04-23 · [Keep-a-Changelog](https://keepachangelog.com/en/1.1.0/) format. BUG-001 fix._
 
 Running log of user-facing changes. Thêm row dưới `[Unreleased]` khi commit ship feature/fix/change. Khi milestone đạt exit criteria → rename block thành `[Mx]` + release date, start new `[Unreleased]`.
 
@@ -33,7 +33,7 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 
 ### Fixed
 
-- (none)
+- BUG-001 — `pnpm docker:*` scripts now load repo-root `.env.local` via `--env-file`; port / credential overrides take effect (`908c37e`).
 
 ### Security
 

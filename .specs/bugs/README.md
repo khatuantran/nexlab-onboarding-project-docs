@@ -12,9 +12,9 @@ Related: [CLAUDE.md §When a request comes in](../../CLAUDE.md#when-a-request-co
 
 ## Items
 
-| ID      | Title                                           | Severity  | Status | Fixed at | File                     |
-| ------- | ----------------------------------------------- | --------- | ------ | -------- | ------------------------ |
-| BUG-001 | `pnpm docker:*` scripts không load `.env.local` | 🟡 Medium | Open   | —        | [BUG-001.md](BUG-001.md) |
+| ID      | Title                                           | Severity  | Status | Fixed at  | File                     |
+| ------- | ----------------------------------------------- | --------- | ------ | --------- | ------------------------ |
+| BUG-001 | `pnpm docker:*` scripts không load `.env.local` | 🟡 Medium | Fixed  | `908c37e` | [BUG-001.md](BUG-001.md) |
 
 ---
 
