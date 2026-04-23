@@ -54,9 +54,9 @@ Ký hiệu **Auth**: ❌ không yêu cầu · 🔐 session required · 👑 admi
 
 ### Sections
 
-| Method | Path                           | Auth | Request                       | Response                | Errors                                                                                               | FR                                                                      | Task        |
-| ------ | ------------------------------ | ---- | ----------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ----------- |
-| PUT    | `/features/:id/sections/:type` | 🔐   | `{ body: string }` (≤ 64 KiB) | 200 `{ data: Section }` | 404 `FEATURE_NOT_FOUND`; 400 `INVALID_SECTION_TYPE`; 413 `SECTION_TOO_LARGE`; 400 `VALIDATION_ERROR` | [FR-FEAT-003](02-requirements.md#fr-feat-003--per-section-multi-author) | US-002 task |
+| Method | Path                           | Auth | Request                       | Response                | Errors                                                                                               | FR                                                                      | Task                                                                           |
+| ------ | ------------------------------ | ---- | ----------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| PUT    | `/features/:id/sections/:type` | 🔐   | `{ body: string }` (≤ 64 KiB) | 200 `{ data: Section }` | 404 `FEATURE_NOT_FOUND`; 400 `INVALID_SECTION_TYPE`; 413 `SECTION_TOO_LARGE`; 400 `VALIDATION_ERROR` | [FR-FEAT-003](02-requirements.md#fr-feat-003--per-section-multi-author) | [T5 ✅ `ddfb9ab`](stories/US-002/tasks.md#t5--section-put-api--413-validation) |
 
 ### Uploads
 

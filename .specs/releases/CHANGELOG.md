@@ -17,6 +17,8 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 - Shared Zod schemas for US-002 create flows: `createProjectRequestSchema`, `createFeatureRequestSchema`, `updateSectionRequestSchema` (US-002 / T1).
 - `POST /api/v1/projects` endpoint: admin-only create với 201/409 `PROJECT_SLUG_TAKEN`/400/403 branches (US-002 / T2).
 - `POST /api/v1/projects/:slug/features` endpoint: author+ create feature + 5-section atomic init; 201/404/409/401/400 branches (US-002 / T3).
+- `CreateProjectDialog` FE: admin-gated dialog trong AppHeader, Radix Dialog + RHF + Zod, auto-derive slug với diacritic strip, 409 inline error, navigate sau 201 (US-002 / T4).
+- `PUT /api/v1/features/:featureId/sections/:type` endpoint: 64 KiB byte limit → 413 `SECTION_TOO_LARGE`, feature.updated_at bump, sibling sections stable (US-002 / T5).
 
 ### Changed
 
