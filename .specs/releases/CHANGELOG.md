@@ -14,14 +14,7 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 
 ### Added
 
-- Shared Zod schemas for US-002 create flows: `createProjectRequestSchema`, `createFeatureRequestSchema`, `updateSectionRequestSchema` (US-002 / T1).
-- `POST /api/v1/projects` endpoint: admin-only create với 201/409 `PROJECT_SLUG_TAKEN`/400/403 branches (US-002 / T2).
-- `POST /api/v1/projects/:slug/features` endpoint: author+ create feature + 5-section atomic init; 201/404/409/401/400 branches (US-002 / T3).
-- `CreateProjectDialog` FE: admin-gated dialog trong AppHeader, Radix Dialog + RHF + Zod, auto-derive slug với diacritic strip, 409 inline error, navigate sau 201 (US-002 / T4).
-- `PUT /api/v1/features/:featureId/sections/:type` endpoint: 64 KiB byte limit → 413 `SECTION_TOO_LARGE`, feature.updated_at bump, sibling sections stable (US-002 / T5).
-- `CreateFeatureDialog` FE: author-gated trigger trên ProjectLandingPage, Radix Dialog + RHF + Zod, slug auto-derive từ tiêu đề, 409 inline error, navigate sau 201 (US-002 / T6).
-- `SectionEditor` FE edit-in-place: per-section pencil toggle (business/user-flow/business-rules), 2-col markdown source + preview (200ms debounce), byte counter, sonner toasts (success + 413), native confirm on dirty cancel. Per-section state độc lập. (US-002 / T7).
-- sonner `<Toaster>` mounted globally trong App.tsx.
+- (none)
 
 ### Changed
 
@@ -37,11 +30,38 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 
 ### Fixed
 
-- `pnpm dev` tự động kill process zombie giữ port 3001 trước khi start (SIGTERM pre-flight) — EADDRINUSE hết xuất hiện giữa sessions. Thêm `pnpm stop` để stop chủ động cả API + Web.
+- (none)
 
 ### Security
 
 - (none)
+
+---
+
+## [US-002] — 2026-04-23 (BA Author Path)
+
+US-002 implementation complete — 8/8 tasks. Admin tạo project + author tạo feature (5 section atomic init) + edit 3 business sections in-place với live markdown preview. Playwright E2E smoke covers full happy path + persist-after-reload.
+
+### Added
+
+- T1 — Shared Zod schemas: `createProjectRequestSchema`, `createFeatureRequestSchema`, `updateSectionRequestSchema` (`e218c8e`).
+- T2 — `POST /api/v1/projects` endpoint: admin-only create với 201/409 `PROJECT_SLUG_TAKEN`/400/403 branches (`23f6c91`).
+- T3 — `POST /api/v1/projects/:slug/features` endpoint: author+ create feature + 5-section atomic init; 201/404/409/401/400 branches (`4869a68`).
+- T4 — `CreateProjectDialog` FE: admin-gated dialog trong AppHeader, Radix Dialog + RHF + Zod, auto-derive slug với diacritic strip, 409 inline error, navigate sau 201 (`956b959`).
+- T5 — `PUT /api/v1/features/:featureId/sections/:type` endpoint: 64 KiB byte limit → 413 `SECTION_TOO_LARGE`, feature.updated_at bump, sibling sections stable (`ddfb9ab`).
+- T6 — `CreateFeatureDialog` FE: author-gated trigger trên ProjectLandingPage, Radix Dialog + RHF + Zod, slug auto-derive từ tiêu đề, 409 inline error, navigate sau 201 (`522889c`).
+- T7 — `SectionEditor` FE edit-in-place: per-section pencil toggle (business/user-flow/business-rules), 2-col markdown source + preview (200ms debounce), byte counter, sonner toasts (success + 413), native confirm on dirty cancel. Per-section state độc lập. Sonner `<Toaster>` mounted globally (`03c83ba`).
+- T8 — Playwright E2E smoke `e2e/us-002.spec.ts`: login admin → tạo project → tạo feature → edit business section → reload → assert persist. Full E2E suite 2/2 green (US-001 + US-002) (`a482ecd`).
+
+### Fixed
+
+- `pnpm dev` tự động kill process zombie giữ port 3001 trước khi start (SIGTERM pre-flight) — EADDRINUSE hết xuất hiện giữa sessions. Thêm `pnpm stop` để stop chủ động cả API + Web (`8d17e09`).
+- US-001 E2E test label drift: seed feature title Vietnamese ("Đăng nhập bằng email") + section headings VN theo T8.5 design-system nhưng test regex English. Updated regex để match real labels (`a482ecd`).
+
+### Docs
+
+- DoD checkbox discipline: CLAUDE.md §Post-task progress sync mandates flip `[ ]` → `[x]` cùng commit sync (`9026801`), backfill 65 boxes cho US-001 T3-T10 + US-002 T1-T7 (`ba79822`).
+- `api-surface.md` + `error-codes.md` elevated thành dedicated bullets trong progress-sync checklist.
 
 ---
 

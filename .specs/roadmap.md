@@ -45,7 +45,7 @@ Implement US-001 qua 10 task (T1-T10 + T8.5). **Progress: 10/10 done.**
 - **Exit criteria**: chạy lại [SETUP.md](../docs/SETUP.md) từ fresh clone end-to-end pass 3 smoke checkpoint; tất cả AC của [US-001](stories/US-001.md) có automated test.
 - **Effort**: ~34h (tasks estimate, solo + TDD; +8h so với 26h ban đầu vì thêm T3-BE + T4-FE infra scaffold).
 
-### M2 — US-002 + US-003 Author path 🟡 _(target 2026-06-30, in progress)_
+### M2 — US-002 + US-003 Author path 🟡 _(target 2026-06-30, US-002 ✅ / US-003 pending)_
 
 Implement US-002 rồi US-003.
 
@@ -66,6 +66,8 @@ Implement US-002 rồi US-003.
   - [T5](stories/US-002/tasks.md#t5--section-put-api--413-validation) PUT /features/:id/sections/:type + 64 KiB byte limit — ✅ `ddfb9ab` (2026-04-23).
   - [T6](stories/US-002/tasks.md#t6--createfeaturedialog-fe) CreateFeatureDialog FE với author gate — ✅ `522889c` (2026-04-23).
   - [T7](stories/US-002/tasks.md#t7--sectioneditor-fe--edit-in-place-integration) SectionEditor FE + edit-in-place — ✅ `03c83ba` (2026-04-23).
+  - [T8](stories/US-002/tasks.md#t8--e2e-smoke--progress-sync-release-tag) Playwright E2E smoke (happy path create→feature→edit→persist) — ✅ `a482ecd` (2026-04-23). **US-002 Done**.
+- **Next**: US-003 (tech author + embed + upload) → flip M2 status ✅ khi US-003 ship.
 
 ### M3 — Pilot launch 🟡 _(target 2026-07-31)_
 
