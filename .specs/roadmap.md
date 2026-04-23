@@ -60,6 +60,7 @@ Implement US-002 rồi US-003.
 - **Effort**: ~20h story-level, ~40h task-level expected.
 - **Progress** (US-002, 8 tasks):
   - [T1](stories/US-002/tasks.md#t1--db-role-column--shared-schemas) shared schemas + role column verify — ✅ `e218c8e` (2026-04-23).
+  - [T2](stories/US-002/tasks.md#t2--project-create-api--admin-gate) POST /projects API + admin gate — ✅ `23f6c91` (2026-04-23).
 
 ### M3 — Pilot launch 🟡 _(target 2026-07-31)_
 

@@ -4,7 +4,7 @@
 
 _Story_: [US-002 — BA tạo project + feature với business sections](../US-002.md)
 _Total estimate_: ~18h (solo, TDD pace)
-_Last updated_: 2026-04-23 (T1 landed `e218c8e`)
+_Last updated_: 2026-04-23 (T2 landed `23f6c91`)
 
 ---
 
@@ -27,7 +27,7 @@ _Last updated_: 2026-04-23 (T1 landed `e218c8e`)
 | #                                                       | Title                                                | Effort | AC covered       | FR touched         | UI spec                                                             | Status       |
 | ------------------------------------------------------- | ---------------------------------------------------- | ------ | ---------------- | ------------------ | ------------------------------------------------------------------- | ------------ |
 | [T1](#t1--db-role-column--shared-schemas)               | DB role column check + shared schemas                | 2h     | AC-1 (role gate) | AUTH-001, FEAT-001 | —                                                                   | ✅ `e218c8e` |
-| [T2](#t2--project-create-api--admin-gate)               | `POST /projects` API + admin gate + 409 slug         | 3h     | AC-1, AC-2, AC-3 | PROJ-001           | —                                                                   | 🟡 Planned   |
+| [T2](#t2--project-create-api--admin-gate)               | `POST /projects` API + admin gate + 409 slug         | 3h     | AC-1, AC-2, AC-3 | PROJ-001           | —                                                                   | ✅ `23f6c91` |
 | [T3](#t3--feature-create-api--5-section-init)           | `POST /projects/:slug/features` API + section init   | 3h     | AC-4             | FEAT-001, FEAT-002 | —                                                                   | 🟡 Planned   |
 | [T4](#t4--create-project-dialog-fe)                     | CreateProjectDialog FE (Radix + RHF + Zod)           | 3h     | AC-1, AC-2, AC-3 | PROJ-001           | [create-project-dialog.md](../../ui/create-project-dialog.md)       | 🟡 Planned   |
 | [T5](#t5--section-put-api--413-validation)              | `PUT /features/:id/sections/:type` API + 413         | 2h     | AC-5, AC-6, AC-7 | FEAT-003           | —                                                                   | 🟡 Planned   |
