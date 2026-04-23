@@ -14,7 +14,7 @@ Related: [CLAUDE.md §When a request comes in](../../CLAUDE.md#when-a-request-co
 
 | ID     | Title                                                  | Scope       | Status   | Decided at | File                   |
 | ------ | ------------------------------------------------------ | ----------- | -------- | ---------- | ---------------------- |
-| CR-001 | Split monolithic `.env.local` into per-layer env files | tech-change | Proposed | —          | [CR-001.md](CR-001.md) |
+| CR-001 | Split monolithic `.env.local` into per-layer env files | tech-change | Approved | 2026-04-23 | [CR-001.md](CR-001.md) |
 
 ---
 
