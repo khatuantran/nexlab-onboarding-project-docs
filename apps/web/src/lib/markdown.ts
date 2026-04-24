@@ -89,7 +89,7 @@ export function renderMarkdown(source: string): string {
     }
     if (node.tagName === "IMG") {
       const src = node.getAttribute("src") ?? "";
-      if (!/^(https?:|\/uploads\/)/u.test(src)) {
+      if (!/^(https?:|\/api\/v1\/uploads\/|\/uploads\/)/u.test(src)) {
         node.removeAttribute("src");
       }
     }
