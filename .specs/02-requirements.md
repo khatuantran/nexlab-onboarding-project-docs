@@ -2,7 +2,7 @@
 
 <!-- templates: 01-functional-requirements-template.md@0.1, 01-non-functional-requirements-template.md@0.1 -->
 
-*Last updated: 2026-04-22 · Source of truth for MVP v1 scope. FRs drive user stories & task breakdowns.*
+_Last updated: 2026-04-22 · Source of truth for MVP v1 scope. FRs drive user stories & task breakdowns._
 
 ---
 
@@ -10,16 +10,17 @@
 
 Mỗi FR viết theo EARS (Easy Approach to Requirements Syntax):
 
-| Dạng | Template |
-|---|---|
-| Ubiquitous | `The <system> shall <response>.` |
-| Event-driven | `When <event>, the <system> shall <response>.` |
-| State-driven | `While <state>, the <system> shall <response>.` |
-| Optional | `Where <feature present>, the <system> shall <response>.` |
-| Unwanted | `If <trigger>, then the <system> shall <response>.` |
-| Complex | Kết hợp các dạng trên. |
+| Dạng         | Template                                                  |
+| ------------ | --------------------------------------------------------- |
+| Ubiquitous   | `The <system> shall <response>.`                          |
+| Event-driven | `When <event>, the <system> shall <response>.`            |
+| State-driven | `While <state>, the <system> shall <response>.`           |
+| Optional     | `Where <feature present>, the <system> shall <response>.` |
+| Unwanted     | `If <trigger>, then the <system> shall <response>.`       |
+| Complex      | Kết hợp các dạng trên.                                    |
 
 Mỗi FR có:
+
 - **ID** (`FR-<AREA>-NNN`)
 - **Statement** (EARS)
 - **Rationale** (1-2 câu)
@@ -30,17 +31,17 @@ Mỗi FR có:
 
 ## FR Summary Table
 
-| ID | Area | Summary | Priority | Maps to |
-|---|---|---|---|---|
-| [FR-AUTH-001](#fr-auth-001--emailpassword-auth) | Auth | Email + password login/logout, session cookie | P0 | US-001, US-002, US-003 |
-| [FR-PROJ-001](#fr-proj-001--project-crud-minimal) | Project | Admin tạo project + liệt kê | P0 | US-002 |
-| [FR-FEAT-001](#fr-feat-001--feature-crud-within-project) | Feature | Tạo / sửa / list feature trong project | P0 | US-002 |
-| [FR-FEAT-002](#fr-feat-002--5-section-template) | Feature | Feature có template cố định 5 section | P0 | US-001, US-002, US-003 |
-| [FR-FEAT-003](#fr-feat-003--per-section-multi-author) | Feature | Multi-author theo từng section | P0 | US-002, US-003 |
-| [FR-EMBED-001](#fr-embed-001--external-link-embed) | Embed | Paste Jira/Figma/GitHub URL → preview card | P0 | US-003 |
-| [FR-SEARCH-001](#fr-search-001--full-text-search) | Search | FTS feature theo title + section content | P0 | US-001 |
-| [FR-READ-001](#fr-read-001--project-landing--feature-index) | Read | Project landing page có feature index | P0 | US-001 |
-| [FR-UPLOAD-001](#fr-upload-001--image-upload-for-screenshots) | Upload | Upload image file → volume, trả stable URL | P0 | US-003 |
+| ID                                                            | Area    | Summary                                       | Priority | Maps to                |
+| ------------------------------------------------------------- | ------- | --------------------------------------------- | -------- | ---------------------- |
+| [FR-AUTH-001](#fr-auth-001--emailpassword-auth)               | Auth    | Email + password login/logout, session cookie | P0       | US-001, US-002, US-003 |
+| [FR-PROJ-001](#fr-proj-001--project-crud-minimal)             | Project | Admin tạo project + liệt kê                   | P0       | US-002                 |
+| [FR-FEAT-001](#fr-feat-001--feature-crud-within-project)      | Feature | Tạo / sửa / list feature trong project        | P0       | US-002                 |
+| [FR-FEAT-002](#fr-feat-002--5-section-template)               | Feature | Feature có template cố định 5 section         | P0       | US-001, US-002, US-003 |
+| [FR-FEAT-003](#fr-feat-003--per-section-multi-author)         | Feature | Multi-author theo từng section                | P0       | US-002, US-003         |
+| [FR-EMBED-001](#fr-embed-001--external-link-embed)            | Embed   | Paste Jira/Figma/GitHub URL → preview card    | P0       | US-003                 |
+| [FR-SEARCH-001](#fr-search-001--full-text-search)             | Search  | FTS feature theo title + section content      | P0       | US-001                 |
+| [FR-READ-001](#fr-read-001--project-landing--feature-index)   | Read    | Project landing page có feature index         | P0       | US-001                 |
+| [FR-UPLOAD-001](#fr-upload-001--image-upload-for-screenshots) | Upload  | Upload image file → volume, trả stable URL    | P0       | US-003                 |
 
 Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 
@@ -49,6 +50,7 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 ## FR-AUTH-001 — Email/password auth
 
 **Statement (Event-driven + Unwanted):**
+
 - When an authenticated user is not present and the user submits valid email and password to the login endpoint, the system shall create a server-side session in Redis and set an httpOnly cookie `sid`.
 - If the submitted credentials are invalid, then the system shall respond with HTTP 401 and error code `INVALID_CREDENTIALS` without revealing whether the email exists.
 - When the user invokes logout, the system shall destroy the session in Redis and clear the `sid` cookie.
@@ -59,6 +61,7 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 **Maps to**: US-001 (Minh login → read), US-002 (Lan login → author), US-003 (Hùng login → author). Personas: P1, P2, P3.
 
 **Acceptance hints**:
+
 - Valid login → 200 + set cookie `sid`; subsequent request có `req.user`.
 - Wrong password → 401 `INVALID_CREDENTIALS`.
 - Wrong email → 401 `INVALID_CREDENTIALS` (không 404, để tránh user enumeration).
@@ -73,24 +76,54 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 ## FR-PROJ-001 — Project CRUD (minimal)
 
 **Statement (Event-driven + Ubiquitous):**
+
 - When an authenticated user with role `admin` submits a project creation request with a unique slug and a human-readable name, the system shall persist the project and return its canonical URL.
-- The system shall expose a list endpoint that returns all projects to any authenticated user, sorted by most-recently-updated first.
+- The system shall expose a list endpoint that returns all non-archived projects to any authenticated user, sorted by most-recently-updated first.
 
-**Rationale**: Project là container top-level. V1 chỉ cần create + list (không edit/archive). **Access model**: mọi authenticated user đọc/ghi feature + section trong mọi project; chỉ `admin` mới tạo project. Không có membership table v1 (xem Open Q1 resolved bên dưới).
+**Rationale**: Project là container top-level. V1 cần create + list. Edit + archive tách ra FR-PROJ-002 (lifecycle management). **Access model**: mọi authenticated user đọc/ghi feature + section trong mọi project; chỉ `admin` mới tạo/edit/archive project. Không có membership table v1 (xem Open Q1 resolved bên dưới).
 
-**Maps to**: US-002 (Lan cần project trước khi tạo feature). Persona: Admin (minimal, v1).
+**Maps to**: US-002 (Lan cần project trước khi tạo feature). US-004 (dev/admin xem catalog). Persona: Admin (minimal, v1).
 
 **Acceptance hints**:
+
 - Slug unique, lowercase, kebab-case, 3-60 chars (Zod regex).
 - Non-admin POST → 403 `FORBIDDEN`.
 - Duplicate slug → 409 `PROJECT_SLUG_TAKEN`.
 - List endpoint trả `{ data: Project[] }`; rỗng khi chưa có project (không error).
+- List endpoint **loại** project có `archived_at IS NOT NULL` (soft-delete, xem FR-PROJ-002).
+
+---
+
+## FR-PROJ-002 — Project metadata edit + archive
+
+**Statement (Event-driven + Unwanted):**
+
+- When an authenticated user with role `admin` submits a project edit request (name / description) for an existing project, the system shall update the metadata and bump `updated_at`.
+- When an authenticated user with role `admin` submits a project archive request, the system shall set `archived_at = NOW()` and exclude the project from subsequent list responses.
+- If a non-admin user attempts either operation, the system shall respond with HTTP 403 `FORBIDDEN`.
+- If the target project does not exist, the system shall respond with HTTP 404 `PROJECT_NOT_FOUND`.
+
+**Rationale**: Project lifecycle management. Admin cần đổi name/description khi scope project clarify (VD "Pilot" → "Onboarding Pilot Q2") hoặc archive project kết thúc để clean catalog. Archive là **soft-delete** (data preserved) — recover v2, không scope v1. Slug immutable sau create để link không break.
+
+**Maps to**: US-004 (admin manage lifecycle). Persona: Admin.
+
+**Acceptance hints**:
+
+- Slug **không** edit được — immutable post-create (để internal links + bookmarks không break).
+- Name 1-120 chars, description 0-1000 chars (same constraints với create).
+- Archive là soft-delete: UPDATE `archived_at = NOW()`, không DELETE. Features + sections giữ nguyên.
+- Archived project:
+  - KHÔNG xuất hiện trong `GET /projects` catalog.
+  - Direct URL `/projects/:slug` return 404 `PROJECT_NOT_FOUND` (không leak tồn tại).
+  - Search `GET /search` skip archived projects trong scope.
+- Hard delete + recovery defer v2.
 
 ---
 
 ## FR-FEAT-001 — Feature CRUD within project
 
 **Statement (Event-driven + Unwanted):**
+
 - When an authenticated user submits a feature creation request scoped to an existing project with a unique slug within that project and a human-readable title, the system shall persist the feature with all 5 sections initialized as empty drafts.
 - If the target project does not exist or the user lacks access to it, then the system shall respond with HTTP 404 `PROJECT_NOT_FOUND` (không leak project tồn tại).
 - When an authenticated user edits a feature's title or slug, the system shall update it and invalidate any cached feature responses for that project.
@@ -100,6 +133,7 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 **Maps to**: US-002 (Lan tạo feature mới). Persona: P2 (BA/PM).
 
 **Acceptance hints**:
+
 - Slug unique trong cùng project, không bắt unique cross-project.
 - 5 section rows tạo đồng thời trong 1 transaction (atomic).
 - Edit title → feature `updated_at` refresh → landing page reorders.
@@ -109,6 +143,7 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 ## FR-FEAT-002 — 5-section template
 
 **Statement (Ubiquitous):**
+
 - The system shall represent each feature with exactly 5 sections identified by the types `business`, `user-flow`, `business-rules`, `tech-notes`, `screenshots`, rendered in that fixed order on the read view.
 - The system shall allow each section's body to be stored as markdown text up to 64 KiB, with `screenshots` additionally supporting embedded image references.
 
@@ -117,6 +152,7 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 **Maps to**: US-001 (Minh đọc 5 section), US-002 (Lan fill business), US-003 (Hùng fill tech). Personas: P1, P2, P3.
 
 **Acceptance hints**:
+
 - API trả sections array theo đúng thứ tự `[business, user-flow, business-rules, tech-notes, screenshots]` kể cả khi empty.
 - Section type ngoài 5 enum → 400 `INVALID_SECTION_TYPE`.
 - Body > 64 KiB → 413 `SECTION_TOO_LARGE`.
@@ -128,6 +164,7 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 ## FR-FEAT-003 — Per-section multi-author
 
 **Statement (Event-driven):**
+
 - When an authenticated user submits an update to a specific section of a feature, the system shall apply the change to that section only, record the `updated_by` user ID and `updated_at` timestamp on that section, and leave other sections of the same feature unchanged.
 
 **Rationale**: BA viết business, Dev viết tech, cả hai cùng edit 1 feature nhưng không đè lên nhau (tương đương "field-level ownership" thô sơ, không cần locking). V1 không có role check cứng — bất kỳ authenticated user nào cũng edit được, track ai edit gì để audit.
@@ -135,6 +172,7 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 **Maps to**: US-002 (Lan edit 3 business sections), US-003 (Hùng edit tech-notes cùng feature). Personas: P2, P3.
 
 **Acceptance hints**:
+
 - PUT `/api/v1/features/:id/sections/:type` chỉ update 1 row sections.
 - `updated_by` = session user id; `updated_at` = server time.
 - Concurrent edit 2 section khác nhau: cả 2 thành công (last-write-wins per section, không per feature).
@@ -145,6 +183,7 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 ## FR-EMBED-001 — External link embed
 
 **Statement (Event-driven):**
+
 - When a user includes a URL matching the Jira, Figma, or GitHub host patterns inside any section body, the read view shall render that URL as a preview card showing the service icon, a shortened URL label, and the origin domain.
 - The system shall not fetch metadata from the external service in v1; card content is derived client-side from the URL string alone.
 
@@ -153,6 +192,7 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 **Maps to**: US-003 (Hùng paste link GitHub PR vào tech-notes). Persona: P3, indirectly P2.
 
 **Acceptance hints**:
+
 - Host pattern whitelist: `*.atlassian.net`, `figma.com`, `github.com` (chỉ 3 domain cho v1).
 - URL khác whitelist → render plain link (không card).
 - Card clickable, `target="_blank" rel="noopener noreferrer"`.
@@ -163,6 +203,7 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 ## FR-SEARCH-001 — Full-text search
 
 **Statement (Event-driven):**
+
 - When an authenticated user submits a non-empty search query, the system shall return up to 20 features ranked by Postgres `ts_rank` against a `tsvector` derived from feature title plus all 5 section bodies, scoped optionally by project.
 - The system shall respond within 500 ms p95 for corpora up to 10,000 features.
 
@@ -171,6 +212,7 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 **Maps to**: US-001 (Minh tìm feature theo keyword). Persona: P1.
 
 **Acceptance hints**:
+
 - Empty query → 400 `SEARCH_QUERY_EMPTY` (không trả full list).
 - Query length > 200 chars → 400 `SEARCH_QUERY_TOO_LONG`.
 - Result item: `{ featureId, projectSlug, featureSlug, title, snippet, rank }`.
@@ -182,6 +224,7 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 ## FR-READ-001 — Project landing + feature index
 
 **Statement (Event-driven + Ubiquitous):**
+
 - When an authenticated user visits a project's landing URL, the system shall render the project name, description, and a list of all features in that project sorted by most-recently-updated first.
 - The system shall display for each listed feature: title, slug, last-updated timestamp (relative, e.g. "2h ago"), and a visual indicator of how many of the 5 sections are non-empty.
 
@@ -190,6 +233,7 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 **Maps to**: US-001 (Minh landing → click feature). Persona: P1.
 
 **Acceptance hints**:
+
 - Response time < 300ms cho project ≤ 500 feature.
 - Empty project → render "Chưa có feature nào" + CTA cho author (hiện CTA kể cả Minh để đơn giản v1).
 - Section-filled indicator: "3/5 sections filled" kèm dấu chấm xanh/xám.
@@ -199,6 +243,7 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 ## FR-UPLOAD-001 — Image upload for screenshots
 
 **Statement (Event-driven + Unwanted):**
+
 - When an authenticated user uploads an image file (MIME type `image/png`, `image/jpeg`, or `image/webp`, size ≤ 5 MiB) scoped to an existing feature, the system shall persist the file to the server-side upload volume, associate it with the feature, and respond with a stable URL of the form `/uploads/:id`.
 - If the upload exceeds 5 MiB, then the system shall respond with HTTP 413 and error code `FILE_TOO_LARGE` without persisting the partial payload.
 - If the upload MIME type is outside the allow-list, then the system shall respond with HTTP 415 and error code `UNSUPPORTED_MEDIA_TYPE`.
@@ -208,6 +253,7 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 **Maps to**: US-003 (Hùng upload screenshot vào feature của Lan). Persona: P3.
 
 **Acceptance hints**:
+
 - Endpoint: `POST /api/v1/features/:id/uploads`, multipart/form-data, field `file`.
 - Response: `{ data: { id, url, sizeBytes, mimeType, createdAt } }`.
 - File lưu tại `UPLOAD_DIR/:featureId/:uploadId.:ext` (env `UPLOAD_DIR`, default `./data/uploads`).
@@ -287,18 +333,18 @@ Format theo [templates/01-non-functional-requirements-template.md](../templates/
 
 ## Deferred / out-of-scope v1 (documented to avoid churn)
 
-| Item | Reason | Revisit when |
-|---|---|---|
-| Role-based permissions cứng (BA chỉ edit business, Dev chỉ edit tech) | YAGNI — v1 đi theo convention + audit trail | Team > 20 active author, có bad actor |
-| Versioning / diff / comments | Complexity lớn, không critical cho onboarding | User feedback sau pilot |
-| AI Q&A / RAG | Out of scope vision | v2 |
-| Real-time collab (y-websocket / liveblocks) | Complexity + infra | v2+ |
-| Native mobile | Web responsive đủ cho reader | v2+ |
-| SSO (Google/Azure AD) | Local email/password đủ cho internal + solo maintain | Company mandates SSO |
-| 2-way sync Jira/Figma/GitHub | OAuth + webhook infra tốn | User pain > embed card |
-| Advanced search (fuzzy, typo tolerance) | Postgres FTS đủ v1 | Corpus > 10k hoặc p95 > 500ms |
-| Server-side rate limit toàn bộ API | Chỉ auth endpoint v1 | Traffic pattern thực tế cho thấy abuse |
-| Automated backup | Manual pg_dump v1 | Có > 1 người maintain |
+| Item                                                                  | Reason                                               | Revisit when                           |
+| --------------------------------------------------------------------- | ---------------------------------------------------- | -------------------------------------- |
+| Role-based permissions cứng (BA chỉ edit business, Dev chỉ edit tech) | YAGNI — v1 đi theo convention + audit trail          | Team > 20 active author, có bad actor  |
+| Versioning / diff / comments                                          | Complexity lớn, không critical cho onboarding        | User feedback sau pilot                |
+| AI Q&A / RAG                                                          | Out of scope vision                                  | v2                                     |
+| Real-time collab (y-websocket / liveblocks)                           | Complexity + infra                                   | v2+                                    |
+| Native mobile                                                         | Web responsive đủ cho reader                         | v2+                                    |
+| SSO (Google/Azure AD)                                                 | Local email/password đủ cho internal + solo maintain | Company mandates SSO                   |
+| 2-way sync Jira/Figma/GitHub                                          | OAuth + webhook infra tốn                            | User pain > embed card                 |
+| Advanced search (fuzzy, typo tolerance)                               | Postgres FTS đủ v1                                   | Corpus > 10k hoặc p95 > 500ms          |
+| Server-side rate limit toàn bộ API                                    | Chỉ auth endpoint v1                                 | Traffic pattern thực tế cho thấy abuse |
+| Automated backup                                                      | Manual pg_dump v1                                    | Có > 1 người maintain                  |
 
 ---
 
