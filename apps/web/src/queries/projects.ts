@@ -12,6 +12,7 @@ import type {
   ProjectResponse,
   ProjectSummary,
   SectionResponse,
+  UpdateProjectRequest,
 } from "@onboarding/shared";
 import { apiFetch } from "@/lib/api";
 
@@ -61,6 +62,23 @@ export function useCreateProject(): UseMutationResult<
       }),
     onSuccess: (_data, vars) => {
       qc.invalidateQueries({ queryKey: projectKeys.byId(vars.slug) });
+      qc.invalidateQueries({ queryKey: projectKeys.all });
+    },
+  });
+}
+
+export function useUpdateProject(
+  slug: string,
+): UseMutationResult<ProjectResponse, Error, UpdateProjectRequest> {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body) =>
+      apiFetch<ProjectResponse>(`/projects/${slug}`, {
+        method: "PATCH",
+        body: JSON.stringify(body),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: projectKeys.byId(slug) });
       qc.invalidateQueries({ queryKey: projectKeys.all });
     },
   });
