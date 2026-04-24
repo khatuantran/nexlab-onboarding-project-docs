@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { AuthorGate } from "@/components/common/AuthorGate";
 import { MarkdownView } from "@/components/common/MarkdownView";
 import { SectionEditor } from "@/components/features/SectionEditor";
+import { formatRelativeVi } from "@/lib/relativeTime";
 
 const LABEL: Record<SectionType, string> = {
   business: "Nghiệp vụ",
@@ -13,8 +14,6 @@ const LABEL: Record<SectionType, string> = {
   "tech-notes": "Tech notes",
   screenshots: "Screenshots",
 };
-
-const EDITABLE: SectionType[] = ["business", "user-flow", "business-rules"];
 
 interface FeatureSectionsProps {
   projectSlug: string;
@@ -48,7 +47,7 @@ export function FeatureSections({
       {SECTION_ORDER.map((type) => {
         const section = byType.get(type);
         const body = section?.body ?? "";
-        const canEdit = EDITABLE.includes(type);
+        const hasBody = body.trim().length > 0;
         const isEditing = editing.has(type);
         return (
           <section
@@ -64,7 +63,7 @@ export function FeatureSections({
               >
                 {LABEL[type]}
               </h2>
-              {canEdit && !isEditing && (
+              {!isEditing && (
                 <AuthorGate>
                   <Button
                     variant="ghost"
@@ -78,6 +77,15 @@ export function FeatureSections({
                 </AuthorGate>
               )}
             </div>
+            {hasBody && !isEditing && section ? (
+              <p className="-mt-3 mb-4 text-xs text-muted-foreground">
+                Cập nhật bởi{" "}
+                <span className="font-medium text-foreground">
+                  @{section.updatedByName ?? "(người dùng đã xóa)"}
+                </span>
+                , {formatRelativeVi(section.updatedAt)}
+              </p>
+            ) : null}
             {isEditing ? (
               <SectionEditor
                 projectSlug={projectSlug}

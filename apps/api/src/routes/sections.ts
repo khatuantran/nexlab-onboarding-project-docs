@@ -85,6 +85,7 @@ export function createSectionsRouter(deps: SectionsRouterDeps): ExpressRouter {
         body: row.body,
         updatedAt: row.updatedAt.toISOString(),
         updatedBy: row.updatedBy,
+        updatedByName: req.user?.displayName ?? null,
       };
       res.status(200).json({ data: response });
     } catch (err) {

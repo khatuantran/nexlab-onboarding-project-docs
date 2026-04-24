@@ -90,6 +90,7 @@ export function createFeaturesRouter(deps: FeaturesRouterDeps): ExpressRouter {
           body: row?.body ?? "",
           updatedAt: (row?.updatedAt ?? result.feature.updatedAt).toISOString(),
           updatedBy: row?.updatedBy ?? null,
+          updatedByName: row?.updatedByName ?? null,
         };
       });
       const feature: FeatureResponse = {

@@ -82,17 +82,96 @@ function renderDetail() {
 }
 
 describe("SectionEditor — author gate + editable section list", () => {
-  it("author sees 'Sửa' on business/user-flow/business-rules only", async () => {
+  it("author sees 'Sửa' on all 5 sections (US-003 T6 enabled tech-notes + screenshots)", async () => {
     mockSession("author");
     mockFeature();
     renderDetail();
 
-    // business heading renders
     await screen.findByRole("heading", { name: /nghiệp vụ/i });
 
-    // AuthorGate depends on async /me resolution
     const editButtons = await screen.findAllByRole("button", { name: /^sửa section/i });
-    expect(editButtons).toHaveLength(3);
+    expect(editButtons).toHaveLength(5);
+  });
+
+  it("renders 'Cập nhật bởi @name, ... trước' dưới heading cho filled section", async () => {
+    mockSession("author");
+    server.use(
+      http.get(`${BASE}/projects/demo/features/login`, () =>
+        HttpResponse.json(
+          {
+            data: {
+              feature: {
+                id: "f-1",
+                slug: "login",
+                title: "Login",
+                createdAt: "2026-04-20T10:00:00Z",
+                updatedAt: "2026-04-23T09:00:00Z",
+              },
+              sections: [
+                {
+                  type: "business",
+                  body: "# Business\nhello",
+                  updatedAt: new Date(Date.now() - 60_000).toISOString(),
+                  updatedBy: "u-1",
+                  updatedByName: "Alice",
+                },
+                ...["user-flow", "business-rules", "tech-notes", "screenshots"].map((t) => ({
+                  type: t,
+                  body: "",
+                  updatedAt: "2026-04-23T09:00:00Z",
+                  updatedBy: null,
+                  updatedByName: null,
+                })),
+              ],
+            },
+          },
+          { status: 200 },
+        ),
+      ),
+    );
+    renderDetail();
+    await screen.findByText(/@Alice/);
+    expect(screen.getByText(/Cập nhật bởi/)).toBeInTheDocument();
+  });
+
+  it("shows '(người dùng đã xóa)' khi updatedByName null + body filled", async () => {
+    mockSession("author");
+    server.use(
+      http.get(`${BASE}/projects/demo/features/login`, () =>
+        HttpResponse.json(
+          {
+            data: {
+              feature: {
+                id: "f-1",
+                slug: "login",
+                title: "Login",
+                createdAt: "2026-04-20T10:00:00Z",
+                updatedAt: "2026-04-23T09:00:00Z",
+              },
+              sections: [
+                {
+                  type: "business",
+                  body: "# orphaned",
+                  updatedAt: "2026-04-20T10:00:00Z",
+                  updatedBy: null,
+                  updatedByName: null,
+                },
+                ...["user-flow", "business-rules", "tech-notes", "screenshots"].map((t) => ({
+                  type: t,
+                  body: "",
+                  updatedAt: "2026-04-23T09:00:00Z",
+                  updatedBy: null,
+                  updatedByName: null,
+                })),
+              ],
+            },
+          },
+          { status: 200 },
+        ),
+      ),
+    );
+    renderDetail();
+    await screen.findByText(/người dùng đã xóa/);
   });
 
   it("unauthenticated does not see pencil button", async () => {

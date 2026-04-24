@@ -124,6 +124,24 @@ describe("GET /projects/:slug/features/:featureSlug", () => {
     expect(types).toEqual(["business", "user-flow", "business-rules", "tech-notes", "screenshots"]);
   });
 
+  it("includes updatedByName per section (JOIN users) when updatedBy set", async () => {
+    const agent = await authedAgent();
+    const res = await agent.get("/api/v1/projects/demo/features/login-with-email");
+    expect(res.status).toBe(200);
+    // Seed pins admin as updatedBy on every section → display name hydrated.
+    for (const s of res.body.data.sections as Array<{
+      type: string;
+      updatedBy: string | null;
+      updatedByName: string | null;
+    }>) {
+      if (s.updatedBy) {
+        expect(s.updatedByName).toBeTruthy();
+      } else {
+        expect(s.updatedByName).toBeNull();
+      }
+    }
+  });
+
   it("returns 404 FEATURE_NOT_FOUND when the feature slug does not exist", async () => {
     const agent = await authedAgent();
     const res = await agent.get("/api/v1/projects/demo/features/no-such-feature");

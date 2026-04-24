@@ -1,7 +1,9 @@
 import { and, eq } from "drizzle-orm";
 import { SECTION_ORDER } from "@onboarding/shared";
 import type { Db } from "../db/client.js";
-import { features, projects, sections, type Feature, type Section } from "../db/schema.js";
+import { features, projects, sections, users, type Feature, type Section } from "../db/schema.js";
+
+export type SectionWithAuthor = Section & { updatedByName: string | null };
 
 export interface CreateFeatureInput {
   projectId: string;
@@ -20,7 +22,7 @@ export interface FeatureRepo {
   findByProjectAndSlug(
     projectSlug: string,
     featureSlug: string,
-  ): Promise<{ feature: Feature; sections: Section[] } | null>;
+  ): Promise<{ feature: Feature; sections: SectionWithAuthor[] } | null>;
   findById(id: string): Promise<Feature | null>;
   create(input: CreateFeatureInput): Promise<Feature>;
 }
@@ -38,8 +40,17 @@ export function createFeatureRepo(db: Db): FeatureRepo {
       if (!row) return null;
 
       const sectionRows = await db
-        .select()
+        .select({
+          id: sections.id,
+          featureId: sections.featureId,
+          type: sections.type,
+          body: sections.body,
+          updatedBy: sections.updatedBy,
+          updatedAt: sections.updatedAt,
+          updatedByName: users.displayName,
+        })
         .from(sections)
+        .leftJoin(users, eq(users.id, sections.updatedBy))
         .where(eq(sections.featureId, row.feature.id));
       return { feature: row.feature, sections: sectionRows };
     },

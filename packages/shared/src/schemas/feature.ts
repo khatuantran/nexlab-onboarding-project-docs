@@ -63,6 +63,7 @@ export interface SectionResponse {
   body: string;
   updatedAt: string;
   updatedBy: string | null;
+  updatedByName: string | null;
 }
 
 export interface FeatureResponse {
