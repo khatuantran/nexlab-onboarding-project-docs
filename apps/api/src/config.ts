@@ -8,6 +8,7 @@ const schema = z.object({
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("info"),
   SESSION_SECRET: z.string().min(16).default("dev-secret-change-me-min-16chars"),
   CORS_ORIGIN: z.string().default("http://localhost:5173"),
+  UPLOAD_DIR: z.string().default("./data/uploads"),
 });
 
 export type Config = z.infer<typeof schema>;

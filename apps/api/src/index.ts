@@ -11,11 +11,13 @@ import { createProjectsRouter } from "./routes/projects.js";
 import { createFeaturesRouter } from "./routes/features.js";
 import { createSectionsRouter } from "./routes/sections.js";
 import { createSearchRouter } from "./routes/search.js";
+import { createUploadsRouter } from "./routes/uploads.js";
 import { createUserRepo } from "./repos/userRepo.js";
 import { createProjectRepo } from "./repos/projectRepo.js";
 import { createFeatureRepo } from "./repos/featureRepo.js";
 import { createSectionRepo } from "./repos/sectionRepo.js";
 import { createSearchRepo } from "./repos/searchRepo.js";
+import { createUploadRepo } from "./repos/uploadRepo.js";
 import { createRateLimit } from "./middleware/rateLimit.js";
 import { createRequireAuth } from "./middleware/requireAuth.js";
 import { db } from "./db/client.js";
@@ -27,6 +29,7 @@ const projectRepo = createProjectRepo(db);
 const featureRepo = createFeatureRepo(db);
 const sectionRepo = createSectionRepo(db);
 const searchRepo = createSearchRepo(db);
+const uploadRepo = createUploadRepo(db);
 const loginRateLimit = createRateLimit({
   redis,
   keyFn: (req) => `login:${req.ip}`,
@@ -45,6 +48,12 @@ const app = createApp({
   featuresRouter: createFeaturesRouter({ featureRepo, projectRepo, requireAuth }),
   sectionsRouter: createSectionsRouter({ sectionRepo, requireAuth }),
   searchRouter: createSearchRouter({ searchRepo, requireAuth }),
+  uploadsRouter: createUploadsRouter({
+    uploadRepo,
+    featureRepo,
+    requireAuth,
+    uploadDir: config.UPLOAD_DIR,
+  }),
 });
 
 const server = app.listen(config.API_PORT, () => {

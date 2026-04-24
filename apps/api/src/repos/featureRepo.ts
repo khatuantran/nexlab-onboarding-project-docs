@@ -21,6 +21,7 @@ export interface FeatureRepo {
     projectSlug: string,
     featureSlug: string,
   ): Promise<{ feature: Feature; sections: Section[] } | null>;
+  findById(id: string): Promise<Feature | null>;
   create(input: CreateFeatureInput): Promise<Feature>;
 }
 
@@ -41,6 +42,10 @@ export function createFeatureRepo(db: Db): FeatureRepo {
         .from(sections)
         .where(eq(sections.featureId, row.feature.id));
       return { feature: row.feature, sections: sectionRows };
+    },
+    async findById(id) {
+      const rows = await db.select().from(features).where(eq(features.id, id)).limit(1);
+      return rows[0] ?? null;
     },
     async create(input) {
       try {
