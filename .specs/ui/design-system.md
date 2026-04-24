@@ -99,20 +99,23 @@ Library: [`lucide-react`](https://lucide.dev/). Đã trong `apps/web/package.jso
 
 **Icon registry** (icons đã hoặc sẽ dùng — thêm row khi dùng icon mới):
 
-| Icon           | Dùng ở                                                 | Label                            |
-| -------------- | ------------------------------------------------------ | -------------------------------- |
-| `Sun`          | ThemeToggle (state = light)                            | "Đang dùng chế độ sáng"          |
-| `Moon`         | ThemeToggle (state = dark)                             | "Đang dùng chế độ tối"           |
-| `Monitor`      | ThemeToggle (state = system)                           | "Theo chế độ hệ thống"           |
-| `LogOut`       | AppHeader logout button                                | "Đăng xuất" (kèm text, decor-ok) |
-| `Search`       | SearchPage input affordance + header                   | "Tìm kiếm" (T10)                 |
-| `X`            | FilterChip remove button (T10) + Dialog close (US-002) | "Bỏ lọc" / "Đóng"                |
-| `Plus`         | "Tạo project" + "Thêm feature" buttons (US-002)        | decor (kèm text, aria-hidden)    |
-| `Pencil`       | Section "Sửa" toggle (US-002)                          | "Sửa nội dung section"           |
-| `ChevronRight` | Card CTA, breadcrumb separator (T9)                    | decor (aria-hidden)              |
-| `FileText`     | Feature card leading icon (T9)                         | decor (aria-hidden)              |
-| `Clock`        | Relative-time indicator (T9)                           | decor (aria-hidden)              |
-| `AlertCircle`  | Empty-section / error state (T9, T10)                  | decor (aria-hidden)              |
+| Icon             | Dùng ở                                                 | Label                            |
+| ---------------- | ------------------------------------------------------ | -------------------------------- |
+| `Sun`            | ThemeToggle (state = light)                            | "Đang dùng chế độ sáng"          |
+| `Moon`           | ThemeToggle (state = dark)                             | "Đang dùng chế độ tối"           |
+| `Monitor`        | ThemeToggle (state = system)                           | "Theo chế độ hệ thống"           |
+| `LogOut`         | AppHeader logout button                                | "Đăng xuất" (kèm text, decor-ok) |
+| `Search`         | SearchPage input affordance + header                   | "Tìm kiếm" (T10)                 |
+| `X`              | FilterChip remove button (T10) + Dialog close (US-002) | "Bỏ lọc" / "Đóng"                |
+| `Plus`           | "Tạo project" + "Thêm feature" buttons (US-002)        | decor (kèm text, aria-hidden)    |
+| `Pencil`         | Section "Sửa" toggle (US-002)                          | "Sửa nội dung section"           |
+| `ChevronRight`   | Card CTA, breadcrumb separator (T9)                    | decor (aria-hidden)              |
+| `FileText`       | Feature card leading icon (T9)                         | decor (aria-hidden)              |
+| `Clock`          | Relative-time indicator (T9)                           | decor (aria-hidden)              |
+| `AlertCircle`    | Empty-section / error state (T9, T10)                  | decor (aria-hidden)              |
+| `Check`          | Save action buttons (US-002 T7 SectionEditor)          | decor (kèm text, aria-hidden)    |
+| `MoreHorizontal` | Overflow menu trigger trên project-landing (US-004)    | "Thao tác project"               |
+| `Archive`        | Archive action trong overflow menu (US-004)            | decor (kèm text, aria-hidden)    |
 
 ---
 
@@ -122,15 +125,16 @@ Mọi component dùng lại phải listed ở đây. Không variant mới / copy
 
 ### 5.1 Primitives — shadcn-style ([apps/web/src/components/ui/](../../apps/web/src/components/ui/))
 
-| Component  | Variants                                                                                                                 | Sizes                                               | File                    |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------- | ----------------------- |
-| `Button`   | `default` / `destructive` / `outline` / `ghost`                                                                          | `default` / `sm` / `lg` / `icon`                    | `button.tsx`            |
-| `Input`    | —                                                                                                                        | default height `h-10`                               | `input.tsx`             |
-| `Label`    | —                                                                                                                        | —                                                   | `label.tsx`             |
-| `Card`     | `default` (land T9)                                                                                                      | padding `p-5`, rounded `rounded-lg`                 | `card.tsx`              |
-| `Dialog`   | shadcn wrapper around Radix `@radix-ui/react-dialog` (Trigger / Content / Header / Footer / Title / Description / Close) | default `max-w-md`, `sm` `max-w-sm`                 | `dialog.tsx` (US-002)   |
-| `Textarea` | —                                                                                                                        | `min-h-32`, `text-sm font-mono` cho markdown editor | `textarea.tsx` (US-002) |
-| `Toaster`  | sonner mount at app root — `success` / `error` / `info` variants theme-aware                                             | —                                                   | `toaster.tsx` (US-002)  |
+| Component      | Variants                                                                                                                 | Sizes                                               | File                         |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------- | ---------------------------- |
+| `Button`       | `default` / `destructive` / `outline` / `ghost`                                                                          | `default` / `sm` / `lg` / `icon`                    | `button.tsx`                 |
+| `Input`        | —                                                                                                                        | default height `h-10`                               | `input.tsx`                  |
+| `Label`        | —                                                                                                                        | —                                                   | `label.tsx`                  |
+| `Card`         | `default` (land T9)                                                                                                      | padding `p-5`, rounded `rounded-lg`                 | `card.tsx`                   |
+| `Dialog`       | shadcn wrapper around Radix `@radix-ui/react-dialog` (Trigger / Content / Header / Footer / Title / Description / Close) | default `max-w-md`, `sm` `max-w-sm`                 | `dialog.tsx` (US-002)        |
+| `Textarea`     | —                                                                                                                        | `min-h-32`, `text-sm font-mono` cho markdown editor | `textarea.tsx` (US-002)      |
+| `Toaster`      | sonner mount at app root — `success` / `error` / `info` variants theme-aware                                             | —                                                   | `toaster.tsx` (US-002)       |
+| `DropdownMenu` | shadcn wrapper around Radix `@radix-ui/react-dropdown-menu` (Trigger / Content / Item / Separator / Label)               | default `min-w-40`                                  | `dropdown-menu.tsx` (US-004) |
 
 Thêm variant / component mới:
 
@@ -207,6 +211,7 @@ Thêm row khi đổi token, icon registry, component inventory. Breaking change 
 | 2026-04-23 | T10 scaffold: add `--highlight` token (light `48 96% 89%` / dark `48 60% 35%`), `Search` + `X` icons, `SearchInput` + `SearchResultRow` + `FilterChip` components. Status `(planned)` tới khi T10 ship.                                                                                                   | T10 Gate 1    |
 | 2026-04-23 | T10 ship: `--highlight`, `Search`/`X`, `SearchInput`/`SearchResultRow`/`FilterChip` live.                                                                                                                                                                                                                 | T10 `5ca8e49` |
 | 2026-04-23 | US-002 Gate 0 scaffold: add `Plus` + `Pencil` icons, `Dialog` + `Textarea` + `Toaster` primitives (req deps `@radix-ui/react-dialog`, `sonner`), feature comps `CreateProjectDialog` / `CreateFeatureDialog` / `SectionCard` / `SectionEditor` / `AdminGate`. Status `(planned)` cho tới khi US-002 ship. | US-002 Gate 0 |
+| 2026-04-24 | US-004 Gate 1 scaffold: add `Check` (retroactive, US-002 T7 ship), `MoreHorizontal`, `Archive` icons + `DropdownMenu` primitive (req dep `@radix-ui/react-dropdown-menu`). Cho overflow menu admin actions trên project-landing. Status `(planned)` cho tới khi US-004 ship.                              | US-004 Gate 1 |
 
 ---
 
