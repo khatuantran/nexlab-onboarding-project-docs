@@ -123,8 +123,8 @@ idle → loading (useProjects fetch)
   - `hover:bg-muted/30` row hover.
   - `--ring` focus outline.
 - **Typography**:
-  - H1 page heading: `text-2xl font-semibold tracking-tight`.
-  - H2 row name: `text-base font-semibold`.
+  - H1 page heading: `font-display text-3xl font-bold tracking-tight` (Inter, Nexlab ADR-003).
+  - H2 row name: `font-display text-base font-semibold`.
   - Description body: `text-sm leading-relaxed`.
   - Meta line: `text-xs`.
 - **Spacing**:

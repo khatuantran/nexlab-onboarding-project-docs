@@ -146,9 +146,9 @@ q present → loading
   - `ring-ring` focus input + card.
   - `--highlight` (new token, xem §design-system change below) cho `<mark>` bg.
 - **Typography**:
-  - Heading "Kết quả cho …": `text-xl font-semibold`.
+  - Heading "Kết quả cho …": `font-display text-2xl font-bold tracking-tight` (Inter, Nexlab ADR-003).
   - Count sub: `text-sm text-muted-foreground`.
-  - Row title: `text-base font-medium`.
+  - Row title: `font-display text-base font-semibold`.
   - Row breadcrumb: `text-xs text-muted-foreground`.
   - Row snippet: `text-sm text-muted-foreground leading-relaxed line-clamp-3`.
   - `<mark>`: `bg-[hsl(var(--highlight))] text-foreground px-0.5 rounded-sm`.

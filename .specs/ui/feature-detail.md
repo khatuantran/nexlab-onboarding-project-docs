@@ -138,8 +138,8 @@ Each **section content state** (trong success):
   - `border-border` TOC right divider desktop.
 - **Typography**:
   - Breadcrumb: `text-sm`.
-  - H1 feature title: `text-2xl font-semibold`.
-  - H2 section: `text-xl font-semibold mt-10 mb-4 scroll-mt-24` (scroll-mt offset sticky header).
+  - H1 feature title: `font-display text-3xl font-bold tracking-tight` (Inter, Nexlab ADR-003).
+  - H2 section: `font-display text-2xl font-bold mt-10 mb-4 scroll-mt-24` (Inter, scroll-mt offset sticky header).
   - Body prose: `text-base leading-relaxed` (`prose` class).
   - Code inline: `text-sm font-mono`.
   - Code block: `text-sm font-mono bg-muted p-3 rounded-md`.

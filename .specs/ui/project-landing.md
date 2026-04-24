@@ -114,9 +114,9 @@ idle → loading (useProject fetch)
   - `text-muted-foreground` sub-copy + icons.
   - `ring-ring` focus.
 - **Typography**:
-  - H1 project name: `text-2xl font-semibold`.
+  - H1 project name: `font-display text-3xl font-bold tracking-tight` (Inter, Nexlab ADR-003).
   - Sub-copy: `text-sm text-muted-foreground`.
-  - Card title: `text-base font-medium`.
+  - Card title: `font-display text-base font-semibold`.
   - Card meta: `text-xs text-muted-foreground`.
 - **Spacing**:
   - Header → grid gap: `mb-6`.

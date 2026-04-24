@@ -14,11 +14,11 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 
 ### Added
 
-- (none)
+- **Nexlab design system** adopted (ADR-003) — full token rewrite (orange primary `27 88% 51%` + gold secondary + error/success/warning/info semantic tokens + primary ramp 50-900), self-hosted Roboto + Inter (Latin + Vietnamese subsets via `@fontsource`), Tailwind config colors/borderRadius/boxShadow/fontFamily extended, derived dark palette, `NxLogo` brand component (lockup + mark variants), re-style shadcn primitives (Button/Input/Label/Textarea/Card/Dialog/DropdownMenu/Toaster) + layout + feature components + 5 screens re-skinned. 87 unit + 70 api + 3 E2E green zero regression (T-DS-1..13, 2026-04-24).
 
 ### Changed
 
-- (none)
+- ADR-001 + ADR-002 updated với Related links to ADR-003 (font stack + dark palette source superseded by Nexlab DS adoption).
 
 ### Deprecated
 

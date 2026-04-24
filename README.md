@@ -4,7 +4,7 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ## Trạng thái
 
-🚧 **M2 in progress — US-002 ✅ / US-004 ✅ / US-003 next.** M1 complete (US-001 ✅). US-004 shipped end-to-end (8/8 tasks): project catalog `/` + admin edit/archive lifecycle via `⋯` overflow menu. 3 Playwright E2E green (US-001 + US-002 + US-004 happy paths).
+🚧 **M2 in progress — US-002 ✅ / US-004 ✅ / US-003 paused trong DS migration.** M1 complete (US-001 ✅). **Nexlab design system adopted** (ADR-003, 2026-04-24) — re-skin toàn bộ 5 screens + 30+ components (orange primary + gold secondary + Roboto/Inter self-hosted). 3 Playwright E2E xanh zero regression.
 
 ## Vấn đề đang giải quyết
 

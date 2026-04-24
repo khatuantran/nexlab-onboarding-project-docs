@@ -98,7 +98,8 @@ idle
   - `text-destructive` cho inline validation errors + server error banner.
   - Focus ring `ring-ring`.
 - **Typography** (design-system §2):
-  - Heading: `text-2xl font-semibold`.
+  - NxLogo lockup (size 48) centered phía trên heading (Nexlab DS, ADR-003).
+  - Heading: `font-display text-3xl font-bold tracking-tight` (Inter, Nexlab — was `text-2xl font-semibold`).
   - Sub-copy: `text-sm text-muted-foreground`.
   - Input body: `text-sm`.
   - Validation error: `text-xs` cho per-field, `text-sm` cho server banner.
