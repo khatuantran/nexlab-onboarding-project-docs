@@ -7,8 +7,8 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `project-landing`
-- **Status**: Implemented (T9 `879b15b`)
-- **Last updated**: 2026-04-23
+- **Status**: Implemented (read path T9 `879b15b`) + Ready (admin actions, US-004)
+- **Last updated**: 2026-04-24
 
 ## Route
 
@@ -135,9 +135,82 @@ idle → loading (useProject fetch)
 - **Error other**: inline `text-destructive` banner trên cùng, giữ grid skeleton dưới để retry effect.
 - **Unauthenticated**: RequireAuth redirect `/login?next=/projects/<slug>`.
 
+## Admin actions (US-004)
+
+Admin-gated overflow menu trên header để edit metadata + archive project. Dev/Author không thấy menu (per AC-8 US-004).
+
+### Menu layout + trigger
+
+- **Position**: bên phải heading block, cạnh "Thêm feature" button (author-gated, đã có từ US-002 T6).
+- **Trigger**: icon button `MoreHorizontal` (size 20px), `aria-label="Thao tác project"`, variant `ghost size="icon"`.
+- **Menu items** (dropdown xổ xuống, align right):
+  - `Pencil` + "Sửa project" → mở `EditProjectDialog` (xem [edit-project-dialog.md](edit-project-dialog.md)).
+  - (Separator line)
+  - `Archive` + "Lưu trữ project" → native `window.confirm(...)` → POST archive → redirect `/`.
+
+### Wire-level (desktop)
+
+```text
+┌──────────────────────────────────────────────────────────┐
+│ Pilot Project                      h1 2xl                │
+│ MVP v1 for onboarding pilot team A.                      │
+│ Catalog 5 feature · cập nhật 2h trước                    │
+│                                                           │
+│                          [+ Thêm feature]  [⋯]            │
+│                          ^author-gated   ^admin-gated    │
+└──────────────────────────────────────────────────────────┘
+
+khi click [⋯]:
+                                             ┌──────────────┐
+                                             │ ✎ Sửa project│
+                                             ├──────────────┤
+                                             │ 📦 Lưu trữ    │
+                                             └──────────────┘
+```
+
+Mobile (< 640px): "Thêm feature" full-width button, `⋯` ở top-right cạnh heading.
+
+### Interactions (admin)
+
+| Trigger                  | Action                                                                                                       | Next state                 | Side effect                                          |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------ | -------------------------- | ---------------------------------------------------- |
+| Click `⋯` (trigger)      | Mở Radix DropdownMenu content                                                                                | menu closed → open         | Focus trap trong menu; ESC close                     |
+| Click "Sửa project"      | Close menu, open `EditProjectDialog` (pre-fill)                                                              | menu open → dialog open    | Per edit-project-dialog spec                         |
+| Click "Lưu trữ project"  | `window.confirm('Lưu trữ project "<name>"? Project sẽ ẩn khỏi catalog, features + sections giữ nguyên.')`    | menu open → confirm native | Nếu OK → archive flow; nếu Cancel → close menu, stay |
+| Archive confirm OK       | `POST /api/v1/projects/:slug/archive` → 204                                                                  | → archiving                | Disable menu items during request                    |
+| 204 success              | Sonner success "Đã lưu trữ project" 2s → `navigate("/")` → catalog refetch (query invalidate `["projects"]`) | → redirected               | Project không còn trong catalog                      |
+| 403 FORBIDDEN            | Sonner destructive "Bạn không có quyền" + đóng menu                                                          | → menu closed              | Reload user cache (role có thể stale)                |
+| 404 PROJECT_NOT_FOUND    | Sonner destructive + navigate `/` (project đã archived session khác)                                         | → redirected               | —                                                    |
+| 5xx / network            | Sonner destructive "Có lỗi xảy ra, thử lại"                                                                  | → menu closed              | Button re-enable                                     |
+| ESC / click outside menu | Close dropdown (trước khi click item)                                                                        | menu open → closed         | Return focus về trigger `⋯`                          |
+
+### Admin actions A11y
+
+- `⋯` button icon-only → `aria-label="Thao tác project"` (required).
+- DropdownMenu.Content `role="menu"`, items `role="menuitem"` (Radix default).
+- Keyboard:
+  - `⋯` focused + Enter/Space → open menu.
+  - Arrow down / up → navigate items.
+  - Enter → activate.
+  - ESC → close menu.
+- Confirm dialog native → browser handles focus/a11y.
+
+### Admin actions post-archive redirect
+
+- **Decision**: redirect `/` (catalog) + sonner "Đã lưu trữ project".
+- Rationale: project vừa archive không còn trong catalog — user confirm thao tác OK. Không stay trên URL archived (URL giờ 404 per AC-9).
+- Invalidate: `["projects"]` (catalog refresh) + `["project", slug]` (cache clear để nếu user back URL sẽ re-fetch → 404).
+
+### Gate 1 decisions (approved 2026-04-24 via AskUserQuestion)
+
+- [x] **Position**: Icon overflow menu (`⋯` MoreHorizontal) → dropdown xổ xuống với "Sửa" + "Lưu trữ" items. Compact header, scalable khi có nhiều admin actions tương lai (delete v2, archive v1).
+- [x] **Archive confirm wording**: `'Lưu trữ project "X"? Project sẽ ẩn khỏi catalog, features + sections giữ nguyên.'` — explicit name + consequence prevent archive nhầm.
+- [x] **Post-archive**: Redirect `/` (catalog) + sonner success. Clean UX, user confirm thao tác không cần back.
+
 ## Maps US
 
 - [US-001](../stories/US-001.md) — AC-3 (feature list + filledCount), AC-4 (empty state copy).
+- [US-004](../stories/US-004.md) — AC-5 (admin edit metadata trigger), AC-7 (admin archive trigger + redirect), AC-8 (non-admin không thấy menu).
 
 ## Implementation
 
@@ -153,6 +226,14 @@ idle → loading (useProject fetch)
 - **Shared helpers**:
   - `apps/web/src/lib/relativeTime.ts` — wrap `formatDistanceToNow(date, { addSuffix: true, locale: vi })` từ date-fns.
 - **Response type**: `ProjectResponse + FeatureListItem[]` từ [@onboarding/shared/schemas/feature.ts](../../packages/shared/src/schemas/feature.ts).
+
+### US-004 admin actions additions
+
+- **New primitive**: `apps/web/src/components/ui/dropdown-menu.tsx` (shadcn wrapper quanh `@radix-ui/react-dropdown-menu`).
+- **New component**: `apps/web/src/components/projects/ProjectActionsMenu.tsx` — overflow menu với 2 items, mount trong ProjectLandingPage header cạnh "Thêm feature".
+- **Mutation hooks**: `queries/projects.ts` — `useUpdateProject(slug)` (dùng bởi EditProjectDialog) + `useArchiveProject(slug)`.
+- **Server endpoints**: `PATCH /api/v1/projects/:slug` + `POST /api/v1/projects/:slug/archive` — task US-004 sẽ ship.
+- **Dep**: `@radix-ui/react-dropdown-menu` (pnpm install trong FE scaffold task).
 
 ## Open items (for user review — Gate 1)
 
