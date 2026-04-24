@@ -16,6 +16,7 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 
 - Shared `updateProjectRequestSchema` + `ProjectSummary` type + `projects.archived_at` column migration — prereq cho US-004 catalog + admin lifecycle (US-004 / T1).
 - `GET /api/v1/projects` list endpoint — trả `ProjectSummary[]` non-archived, sorted `updated_at` desc, include `featureCount` qua LEFT JOIN (US-004 / T2, `2939f56`).
+- `PATCH /api/v1/projects/:slug` + `POST /api/v1/projects/:slug/archive` endpoints — admin-only. PATCH update name/description (slug immutable, Zod strips); archive set `archived_at` (idempotent 204). `GET /projects/:slug` giờ trả 404 cho archived project (US-004 / T3, `3ae766f`).
 
 ### Changed
 

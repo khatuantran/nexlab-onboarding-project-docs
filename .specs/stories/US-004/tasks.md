@@ -4,7 +4,7 @@
 
 _Story_: [US-004 — Project catalog + admin lifecycle](../US-004.md)
 _Total estimate_: ~14-16h (solo, TDD pace)
-_Last updated_: 2026-04-24 (T2 landed `2939f56`)
+_Last updated_: 2026-04-24 (T3 landed `3ae766f`)
 
 ---
 
@@ -29,7 +29,7 @@ _Last updated_: 2026-04-24 (T2 landed `2939f56`)
 | ---------------------------------------------- | ------------------------------------------------------------- | ------ | ---------------------------- | ------------------ | ---------------------------------------------------------------- | ------------ |
 | [T1](#t1--schema-migration--shared-schemas)    | Schema migration (`archived_at`) + shared schemas             | 2h     | prereq                       | PROJ-001, PROJ-002 | —                                                                | ✅ `e9898c7` |
 | [T2](#t2--get-projects-list-api-loại-archived) | `GET /projects` list API (loại archived)                      | 2h     | AC-1, AC-4                   | PROJ-001           | —                                                                | ✅ `2939f56` |
-| [T3](#t3--project-patch--archive-apis)         | `PATCH /projects/:slug` + `POST /projects/:slug/archive` APIs | 3h     | AC-5, AC-6, AC-7, AC-8, AC-9 | PROJ-002           | —                                                                | 🟡 Planned   |
+| [T3](#t3--project-patch--archive-apis)         | `PATCH /projects/:slug` + `POST /projects/:slug/archive` APIs | 3h     | AC-5, AC-6, AC-7, AC-8, AC-9 | PROJ-002           | —                                                                | ✅ `3ae766f` |
 | [T4](#t4--dropdownmenu-primitive-fe-scaffold)  | DropdownMenu primitive FE scaffold                            | 1h     | prereq FE                    | —                  | [design-system §5.1](../../ui/design-system.md)                  | 🟡 Planned   |
 | [T5](#t5--homepage-catalog-fe)                 | HomePage catalog FE (ProjectRow + empty state)                | 3h     | AC-1, AC-2, AC-3, AC-4       | PROJ-001           | [home.md](../../ui/home.md)                                      | 🟡 Planned   |
 | [T6](#t6--editprojectdialog-fe)                | EditProjectDialog FE + useUpdateProject mutation              | 2h     | AC-5, AC-6                   | PROJ-002           | [edit-project-dialog.md](../../ui/edit-project-dialog.md)        | 🟡 Planned   |
@@ -230,10 +230,10 @@ describe("POST /projects/:slug/archive", () => {
 
 ### DoD
 
-- [ ] 11 test cases green (6 PATCH + 5 archive).
-- [ ] GET /projects/:slug handler filter archived (affects US-001 T7 read test — verify không regression).
-- [ ] api-surface.md + error-codes.md updated.
-- [ ] `pnpm test`/`lint`/`typecheck` green.
+- [x] 12 test cases green (6 PATCH + 6 archive, includes idempotency case).
+- [x] GET /projects/:slug handler filter archived (no regressions in US-001 read tests).
+- [x] api-surface.md updated (no new error codes — reused `PROJECT_NOT_FOUND` + `FORBIDDEN` + `VALIDATION_ERROR`).
+- [x] `pnpm test`/`lint`/`typecheck` green.
 
 ### Commit example
 
