@@ -14,7 +14,7 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 
 ### Added
 
-- (none)
+- Shared `updateProjectRequestSchema` + `ProjectSummary` type + `projects.archived_at` column migration — prereq cho US-004 catalog + admin lifecycle (US-004 / T1).
 
 ### Changed
 

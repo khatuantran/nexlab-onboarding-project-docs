@@ -4,7 +4,7 @@
 
 _Story_: [US-004 — Project catalog + admin lifecycle](../US-004.md)
 _Total estimate_: ~14-16h (solo, TDD pace)
-_Last updated_: 2026-04-24 (Ready — tasks drafted, awaiting first task start)
+_Last updated_: 2026-04-24 (T1 landed `e9898c7`)
 
 ---
 
@@ -25,16 +25,16 @@ _Last updated_: 2026-04-24 (Ready — tasks drafted, awaiting first task start)
 
 ## Task Summary
 
-| #                                              | Title                                                         | Effort | AC covered                   | FR touched         | UI spec                                                          | Status     |
-| ---------------------------------------------- | ------------------------------------------------------------- | ------ | ---------------------------- | ------------------ | ---------------------------------------------------------------- | ---------- |
-| [T1](#t1--schema-migration--shared-schemas)    | Schema migration (`archived_at`) + shared schemas             | 2h     | prereq                       | PROJ-001, PROJ-002 | —                                                                | 🟡 Planned |
-| [T2](#t2--get-projects-list-api-loại-archived) | `GET /projects` list API (loại archived)                      | 2h     | AC-1, AC-4                   | PROJ-001           | —                                                                | 🟡 Planned |
-| [T3](#t3--project-patch--archive-apis)         | `PATCH /projects/:slug` + `POST /projects/:slug/archive` APIs | 3h     | AC-5, AC-6, AC-7, AC-8, AC-9 | PROJ-002           | —                                                                | 🟡 Planned |
-| [T4](#t4--dropdownmenu-primitive-fe-scaffold)  | DropdownMenu primitive FE scaffold                            | 1h     | prereq FE                    | —                  | [design-system §5.1](../../ui/design-system.md)                  | 🟡 Planned |
-| [T5](#t5--homepage-catalog-fe)                 | HomePage catalog FE (ProjectRow + empty state)                | 3h     | AC-1, AC-2, AC-3, AC-4       | PROJ-001           | [home.md](../../ui/home.md)                                      | 🟡 Planned |
-| [T6](#t6--editprojectdialog-fe)                | EditProjectDialog FE + useUpdateProject mutation              | 2h     | AC-5, AC-6                   | PROJ-002           | [edit-project-dialog.md](../../ui/edit-project-dialog.md)        | 🟡 Planned |
-| [T7](#t7--projectactionsmenu-fe--archive-wire) | ProjectActionsMenu FE + archive wire + redirect               | 2h     | AC-7, AC-8                   | PROJ-002           | [project-landing.md §Admin actions](../../ui/project-landing.md) | 🟡 Planned |
-| [T8](#t8--e2e-smoke--progress-sync)            | Playwright E2E smoke + progress sync                          | 2h     | AC-1, AC-5, AC-7             | all                | —                                                                | 🟡 Planned |
+| #                                              | Title                                                         | Effort | AC covered                   | FR touched         | UI spec                                                          | Status       |
+| ---------------------------------------------- | ------------------------------------------------------------- | ------ | ---------------------------- | ------------------ | ---------------------------------------------------------------- | ------------ |
+| [T1](#t1--schema-migration--shared-schemas)    | Schema migration (`archived_at`) + shared schemas             | 2h     | prereq                       | PROJ-001, PROJ-002 | —                                                                | ✅ `e9898c7` |
+| [T2](#t2--get-projects-list-api-loại-archived) | `GET /projects` list API (loại archived)                      | 2h     | AC-1, AC-4                   | PROJ-001           | —                                                                | 🟡 Planned   |
+| [T3](#t3--project-patch--archive-apis)         | `PATCH /projects/:slug` + `POST /projects/:slug/archive` APIs | 3h     | AC-5, AC-6, AC-7, AC-8, AC-9 | PROJ-002           | —                                                                | 🟡 Planned   |
+| [T4](#t4--dropdownmenu-primitive-fe-scaffold)  | DropdownMenu primitive FE scaffold                            | 1h     | prereq FE                    | —                  | [design-system §5.1](../../ui/design-system.md)                  | 🟡 Planned   |
+| [T5](#t5--homepage-catalog-fe)                 | HomePage catalog FE (ProjectRow + empty state)                | 3h     | AC-1, AC-2, AC-3, AC-4       | PROJ-001           | [home.md](../../ui/home.md)                                      | 🟡 Planned   |
+| [T6](#t6--editprojectdialog-fe)                | EditProjectDialog FE + useUpdateProject mutation              | 2h     | AC-5, AC-6                   | PROJ-002           | [edit-project-dialog.md](../../ui/edit-project-dialog.md)        | 🟡 Planned   |
+| [T7](#t7--projectactionsmenu-fe--archive-wire) | ProjectActionsMenu FE + archive wire + redirect               | 2h     | AC-7, AC-8                   | PROJ-002           | [project-landing.md §Admin actions](../../ui/project-landing.md) | 🟡 Planned   |
+| [T8](#t8--e2e-smoke--progress-sync)            | Playwright E2E smoke + progress sync                          | 2h     | AC-1, AC-5, AC-7             | all                | —                                                                | 🟡 Planned   |
 
 **Critical path**: T1 → T2 → T3 → T4 → T5 → T6 → T7 → T8.
 
@@ -94,10 +94,10 @@ it("rejects empty name", () => { ... });
 
 ### DoD
 
-- [ ] Shared schema tests passing (`pnpm --filter @onboarding/shared test`).
-- [ ] Drizzle migration SQL file committed vào `apps/api/src/db/migrations/`.
-- [ ] `pnpm db:migrate` clean apply trên fresh DB.
-- [ ] `pnpm lint` + `pnpm typecheck` green.
+- [x] Shared schema tests passing (`pnpm --filter @onboarding/shared test`).
+- [x] Drizzle migration SQL file committed vào `apps/api/src/db/migrations/`.
+- [x] `pnpm db:migrate` clean apply trên fresh DB.
+- [x] `pnpm lint` + `pnpm typecheck` green.
 
 ### Commit example
 
