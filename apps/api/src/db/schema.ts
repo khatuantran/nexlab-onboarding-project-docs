@@ -1,4 +1,4 @@
-import { pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { integer, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 /**
  * Drizzle schema — source of truth for DB structure.
@@ -75,6 +75,18 @@ export const sections = pgTable(
   (table) => [uniqueIndex("sections_feature_type_uidx").on(table.featureId, table.type)],
 );
 
+export const uploads = pgTable("uploads", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  featureId: uuid("feature_id")
+    .notNull()
+    .references(() => features.id, { onDelete: "cascade" }),
+  uploadedBy: uuid("uploaded_by").references(() => users.id, { onDelete: "set null" }),
+  mimeType: text("mime_type").notNull(),
+  sizeBytes: integer("size_bytes").notNull(),
+  filename: text("filename").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Project = typeof projects.$inferSelect;
@@ -83,3 +95,5 @@ export type Feature = typeof features.$inferSelect;
 export type NewFeature = typeof features.$inferInsert;
 export type Section = typeof sections.$inferSelect;
 export type NewSection = typeof sections.$inferInsert;
+export type Upload = typeof uploads.$inferSelect;
+export type NewUpload = typeof uploads.$inferInsert;
