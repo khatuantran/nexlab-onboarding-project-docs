@@ -77,6 +77,18 @@ Mục đích: khi đổi 1 FR biết ngay tác động tới story + task nào. 
 | [T7](stories/US-004/tasks.md#t7--projectactionsmenu-fe--archive-wire) | PROJ-002           | AC-7, AC-8                   | ✅ `904e9c8` |
 | [T8](stories/US-004/tasks.md#t8--e2e-smoke--progress-sync)            | all                | AC-1, AC-5, AC-7             | ✅ `a9282d6` |
 
+### US-003 tasks
+
+| Task                                                                | Primary FR           | AC covered (US-003) | Status     |
+| ------------------------------------------------------------------- | -------------------- | ------------------- | ---------- |
+| [T1](stories/US-003/tasks.md#t1--uploads-migration--shared-schemas) | UPLOAD-001           | prereq              | 🟡 Planned |
+| [T2](stories/US-003/tasks.md#t2--post-uploads-endpoint)             | UPLOAD-001           | AC-4, AC-5, AC-6    | 🟡 Planned |
+| [T3](stories/US-003/tasks.md#t3--get-uploads-id-static-serve)       | UPLOAD-001, AUTH-001 | AC-4 read, AC-9     | 🟡 Planned |
+| [T4](stories/US-003/tasks.md#t4--embed-parser--embedcard-component) | EMBED-001            | AC-2, AC-3, AC-8    | 🟡 Planned |
+| [T5](stories/US-003/tasks.md#t5--sectioneditor-upload-toolbar)      | UPLOAD-001, FEAT-003 | AC-4, AC-5, AC-6    | 🟡 Planned |
+| [T6](stories/US-003/tasks.md#t6--section-editable-gate--ownership)  | FEAT-002, FEAT-003   | AC-1, AC-7          | 🟡 Planned |
+| [T7](stories/US-003/tasks.md#t7--e2e-smoke--progress-sync)          | all                  | cross-cutting       | 🟡 Planned |
+
 ---
 
 ## NFR coverage
