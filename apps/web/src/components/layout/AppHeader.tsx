@@ -1,7 +1,8 @@
 import { LogOut } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AdminGate } from "@/components/common/AdminGate";
+import { NxLogo } from "@/components/common/NxLogo";
 import { CreateProjectDialog } from "@/components/projects/CreateProjectDialog";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { SearchInput } from "@/components/search/SearchInput";
@@ -21,13 +22,19 @@ export function AppHeader(): JSX.Element | null {
   };
 
   return (
-    <header className="border-b border-border">
+    <header className="border-b border-border bg-background">
       <div className="mx-auto flex max-w-5xl items-center gap-4 px-6 py-3">
-        <span className="text-sm font-medium">Onboarding Portal</span>
+        <Link
+          to="/"
+          aria-label="Về trang chủ Nexlab"
+          className="flex-shrink-0 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <NxLogo size={28} />
+        </Link>
         <div className="flex-1">
           <SearchInput />
         </div>
-        <div className="flex items-center gap-3 text-sm">
+        <div className="flex items-center gap-3 font-ui text-sm">
           <AdminGate>
             <CreateProjectDialog />
           </AdminGate>
