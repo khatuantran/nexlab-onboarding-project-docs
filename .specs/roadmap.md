@@ -67,7 +67,9 @@ Implement US-002 rồi US-003.
   - [T6](stories/US-002/tasks.md#t6--createfeaturedialog-fe) CreateFeatureDialog FE với author gate — ✅ `522889c` (2026-04-23).
   - [T7](stories/US-002/tasks.md#t7--sectioneditor-fe--edit-in-place-integration) SectionEditor FE + edit-in-place — ✅ `03c83ba` (2026-04-23).
   - [T8](stories/US-002/tasks.md#t8--e2e-smoke--progress-sync-release-tag) Playwright E2E smoke (happy path create→feature→edit→persist) — ✅ `a482ecd` (2026-04-23). **US-002 Done**.
-- **Next in M2**: US-003 (tech author + embed + upload) remaining → flip M2 status ✅ khi US-003 ship.
+- **Progress** (US-003, 7 tasks, in progress):
+  - [T1](stories/US-003/tasks.md#t1--uploads-migration--shared-schemas) uploads table migration + shared schemas + file-type dep — ✅ `b285b99` (2026-04-24).
+- **Next in M2**: US-003 T2 (POST /features/:id/uploads) → flip M2 status ✅ khi US-003 ship.
 - **Added mid-milestone + shipped**: [US-004](stories/US-004.md) — project catalog `/` + admin lifecycle (edit + archive). **Done 2026-04-24**, 8/8 tasks + 3 E2E green. Progress:
   - [T1](stories/US-004/tasks.md#t1--schema-migration--shared-schemas) schema migration `archived_at` + shared schemas — ✅ `e9898c7` (2026-04-24).
   - [T2](stories/US-004/tasks.md#t2--get-projects-list-api-loại-archived) GET /projects list API (non-archived, featureCount) — ✅ `2939f56` (2026-04-24).
