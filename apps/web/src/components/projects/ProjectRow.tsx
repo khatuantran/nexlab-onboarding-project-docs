@@ -12,10 +12,10 @@ export function ProjectRow({ project }: ProjectRowProps): JSX.Element {
     <Link
       to={`/projects/${project.slug}`}
       aria-label={`Xem chi tiết project ${project.name}`}
-      className="grid grid-cols-[1fr_auto] items-start gap-4 p-4 transition-colors hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="grid grid-cols-[1fr_auto] items-start gap-4 p-5 transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
     >
       <div className="min-w-0">
-        <h2 className="text-base font-semibold text-foreground">{project.name}</h2>
+        <h2 className="font-display text-base font-semibold text-foreground">{project.name}</h2>
         {project.description ? (
           <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
             {project.description}
