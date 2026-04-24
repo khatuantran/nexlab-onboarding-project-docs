@@ -72,6 +72,7 @@ Implement US-002 rồi US-003.
   - [T1](stories/US-004/tasks.md#t1--schema-migration--shared-schemas) schema migration `archived_at` + shared schemas — ✅ `e9898c7` (2026-04-24).
   - [T2](stories/US-004/tasks.md#t2--get-projects-list-api-loại-archived) GET /projects list API (non-archived, featureCount) — ✅ `2939f56` (2026-04-24).
   - [T3](stories/US-004/tasks.md#t3--project-patch--archive-apis) PATCH + archive endpoints (admin-only, idempotent archive, GET filter) — ✅ `3ae766f` (2026-04-24).
+  - [T4](stories/US-004/tasks.md#t4--dropdownmenu-primitive-fe-scaffold) DropdownMenu primitive FE scaffold (`@radix-ui/react-dropdown-menu` wrapper) — ✅ `54b276c` (2026-04-24).
 
 ### M3 — Pilot launch 🟡 _(target 2026-07-31)_
 

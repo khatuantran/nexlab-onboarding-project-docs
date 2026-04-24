@@ -125,16 +125,16 @@ Mọi component dùng lại phải listed ở đây. Không variant mới / copy
 
 ### 5.1 Primitives — shadcn-style ([apps/web/src/components/ui/](../../apps/web/src/components/ui/))
 
-| Component      | Variants                                                                                                                 | Sizes                                               | File                         |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------- | ---------------------------- |
-| `Button`       | `default` / `destructive` / `outline` / `ghost`                                                                          | `default` / `sm` / `lg` / `icon`                    | `button.tsx`                 |
-| `Input`        | —                                                                                                                        | default height `h-10`                               | `input.tsx`                  |
-| `Label`        | —                                                                                                                        | —                                                   | `label.tsx`                  |
-| `Card`         | `default` (land T9)                                                                                                      | padding `p-5`, rounded `rounded-lg`                 | `card.tsx`                   |
-| `Dialog`       | shadcn wrapper around Radix `@radix-ui/react-dialog` (Trigger / Content / Header / Footer / Title / Description / Close) | default `max-w-md`, `sm` `max-w-sm`                 | `dialog.tsx` (US-002)        |
-| `Textarea`     | —                                                                                                                        | `min-h-32`, `text-sm font-mono` cho markdown editor | `textarea.tsx` (US-002)      |
-| `Toaster`      | sonner mount at app root — `success` / `error` / `info` variants theme-aware                                             | —                                                   | `toaster.tsx` (US-002)       |
-| `DropdownMenu` | shadcn wrapper around Radix `@radix-ui/react-dropdown-menu` (Trigger / Content / Item / Separator / Label)               | default `min-w-40`                                  | `dropdown-menu.tsx` (US-004) |
+| Component      | Variants                                                                                                                 | Sizes                                               | File                                        |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------- | ------------------------------------------- |
+| `Button`       | `default` / `destructive` / `outline` / `ghost`                                                                          | `default` / `sm` / `lg` / `icon`                    | `button.tsx`                                |
+| `Input`        | —                                                                                                                        | default height `h-10`                               | `input.tsx`                                 |
+| `Label`        | —                                                                                                                        | —                                                   | `label.tsx`                                 |
+| `Card`         | `default` (land T9)                                                                                                      | padding `p-5`, rounded `rounded-lg`                 | `card.tsx`                                  |
+| `Dialog`       | shadcn wrapper around Radix `@radix-ui/react-dialog` (Trigger / Content / Header / Footer / Title / Description / Close) | default `max-w-md`, `sm` `max-w-sm`                 | `dialog.tsx` (US-002)                       |
+| `Textarea`     | —                                                                                                                        | `min-h-32`, `text-sm font-mono` cho markdown editor | `textarea.tsx` (US-002)                     |
+| `Toaster`      | sonner mount at app root — `success` / `error` / `info` variants theme-aware                                             | —                                                   | `toaster.tsx` (US-002)                      |
+| `DropdownMenu` | shadcn wrapper around Radix `@radix-ui/react-dropdown-menu` (Trigger / Content / Item / Separator / Label)               | default `min-w-40`                                  | `dropdown-menu.tsx` (US-004 / T4 `54b276c`) |
 
 Thêm variant / component mới:
 
