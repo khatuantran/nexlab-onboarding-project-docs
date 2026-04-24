@@ -8,13 +8,13 @@
 - **Date**: 2026-04-24
 - **Deciders**: @khatuantran11
 - **Supersedes**: partial ADR-001 (§font stack), partial ADR-002 (dark derivation source)
-- **Related**: [ADR-001](ADR-001-tech-stack.md), [ADR-002](ADR-002-light-dark-theme.md), [design-system.md](../ui/design-system.md), [design-system/](../../design-system/) (uploaded UI kit), [US-003](../stories/US-003.md) (paused pending this migration)
+- **Related**: [ADR-001](ADR-001-tech-stack.md), [ADR-002](ADR-002-light-dark-theme.md), [design-system.md](../ui/design-system.md), [US-003](../stories/US-003.md) (paused pending this migration)
 
 ---
 
 ## 1. Context
 
-Sau khi M1 (US-001) + US-002 + US-004 ship với UI shadcn-neutral (grayscale) + system font stack + lucide icons, user đã chuẩn bị sẵn bộ Nexlab design system (rebrand từ Figma "A3 Solutions", orange + gold palette, Material 3-flavored) và upload vào [design-system/](../../design-system/) ở repo root. Yêu cầu: thay thế toàn bộ DS hiện tại trước khi tiếp tục US-003.
+Sau khi M1 (US-001) + US-002 + US-004 ship với UI shadcn-neutral (grayscale) + system font stack + lucide icons, user cung cấp bộ Nexlab design system (rebrand từ Figma "A3 Solutions", orange + gold palette, Material 3-flavored). Source materials (colors CSS, reference JSX, preview HTMLs, brand assets) được tham khảo trong quá trình migration rồi tokens + brand SVGs port vào `apps/web/` — source folder không còn trong repo sau T-DS-16. Yêu cầu: thay thế toàn bộ DS hiện tại trước khi tiếp tục US-003.
 
 **Constraint**:
 
@@ -67,7 +67,7 @@ Sau khi M1 (US-001) + US-002 + US-004 ship với UI shadcn-neutral (grayscale) +
 ### 2.4 Icons
 
 - Keep lucide-react (Nexlab README approves "close stylistic match + approved fallback"). No icon migration work.
-- Brand lockup dùng NxLogo component wrap `design-system/assets/logo-nexlab.svg` + bird mark mask.
+- Brand lockup dùng NxLogo component wrap `apps/web/src/assets/logo-nexlab.svg` + bird mark mask.
 
 ### 2.5 Dark mode
 
@@ -182,8 +182,8 @@ Import fonts từ `fonts.googleapis.com` như Nexlab `colors_and_type.css`. **Re
 
 ## 7. References
 
-- [design-system/](../../design-system/) — uploaded UI kit folder (README, colors_and_type.css, ui_kits/web/components.jsx, assets/icons, preview/\*.html)
-- [Nexlab brand guidelines](../../design-system/README.md) — content fundamentals + visual foundations + iconography
+- Nexlab UI kit source (đã consumed, không còn trong repo): README + colors_and_type.css + ui_kits/web/components.jsx + 19 preview HTMLs + logo SVGs. Tokens port vào `apps/web/src/styles/index.css`; brand SVGs vào `apps/web/src/assets/`.
+- Brand fundamentals (ghi tóm tắt vào spec này §1 + §2, không cần link): orange primary ramp 050-900 anchor `#F07613`, gold secondary `#D9AF62`, error `#DE2C00`, success `#33B64F`, warning `#FF9F00`, info `#6B75FF`. Fonts Roboto (body) + Inter (display) + Montserrat (wordmark/unused, SVG only).
 - [ADR-001 §Font stack](ADR-001-tech-stack.md) — system stack decision (superseded §Font stack only)
 - [ADR-002 light+dark theme](ADR-002-light-dark-theme.md) — dark mode mandate (extended với Nexlab-derived palette)
 - [design-system.md](../ui/design-system.md) — cross-screen registry (rewritten T-DS-4)
