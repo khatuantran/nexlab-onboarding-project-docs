@@ -71,7 +71,8 @@ Implement US-002 rồi US-003.
   - [T1](stories/US-003/tasks.md#t1--uploads-migration--shared-schemas) uploads table migration + shared schemas + file-type dep — ✅ `b285b99` (2026-04-24).
   - [T2](stories/US-003/tasks.md#t2--post-uploads-endpoint) POST /features/:id/uploads endpoint (multer + magic-byte sniff) — ✅ `b082416` (2026-04-24).
   - [T3](stories/US-003/tasks.md#t3--get-uploads-id-static-serve) GET /uploads/:id session-protected static serve — ✅ `4690b8e` (2026-04-24).
-- **Next in M2**: US-003 T4 (embed parser + EmbedCard FE) → flip M2 status ✅ khi US-003 ship.
+  - [T4](stories/US-003/tasks.md#t4--embed-parser--embedcard-component) embed parser + EmbedCard HTML post-process — ✅ `a262cf3` (2026-04-24).
+- **Next in M2**: US-003 T5 (SectionEditor upload toolbar) → flip M2 status ✅ khi US-003 ship.
 - **Added mid-milestone + shipped**: [US-004](stories/US-004.md) — project catalog `/` + admin lifecycle (edit + archive). **Done 2026-04-24**, 8/8 tasks + 3 E2E green. Progress:
   - [T1](stories/US-004/tasks.md#t1--schema-migration--shared-schemas) schema migration `archived_at` + shared schemas — ✅ `e9898c7` (2026-04-24).
   - [T2](stories/US-004/tasks.md#t2--get-projects-list-api-loại-archived) GET /projects list API (non-archived, featureCount) — ✅ `2939f56` (2026-04-24).

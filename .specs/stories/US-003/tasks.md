@@ -4,7 +4,7 @@
 
 _Story_: [US-003 — Dev bổ sung tech-notes + screenshots](../US-003.md)
 _Total estimate_: ~12-14h (solo, TDD pace)
-_Last updated_: 2026-04-24 (T1-T3 ✅ — 3/7 shipped, BE complete)
+_Last updated_: 2026-04-24 (T1-T4 ✅ — 4/7 shipped; BE + embed FE done)
 
 ---
 
@@ -30,7 +30,7 @@ _Last updated_: 2026-04-24 (T1-T3 ✅ — 3/7 shipped, BE complete)
 | [T1](#t1--uploads-migration--shared-schemas) | Uploads table migration + shared schemas + `file-type` dep               | 1h     | prereq           | UPLOAD-001           | —                                                       | ✅ `b285b99` |
 | [T2](#t2--post-uploads-endpoint)             | `POST /features/:id/uploads` endpoint (multer + magic bytes + DB)        | 3h     | AC-4, AC-5, AC-6 | UPLOAD-001           | —                                                       | ✅ `b082416` |
 | [T3](#t3--get-uploads-id-static-serve)       | `GET /uploads/:id` session-protected static file serve                   | 1h     | AC-4 read, AC-9  | UPLOAD-001, AUTH-001 | —                                                       | ✅ `4690b8e` |
-| [T4](#t4--embed-parser--embedcard-component) | Embed parser util + `EmbedCard` + MarkdownView integration               | 2h     | AC-2, AC-3, AC-8 | EMBED-001            | [feature-detail §Embed](../../ui/feature-detail.md)     | 🟡 Planned   |
+| [T4](#t4--embed-parser--embedcard-component) | Embed parser util + `EmbedCard` + MarkdownView integration               | 2h     | AC-2, AC-3, AC-8 | EMBED-001            | [feature-detail §Embed](../../ui/feature-detail.md)     | ✅ `a262cf3` |
 | [T5](#t5--sectioneditor-upload-toolbar)      | SectionEditor upload toolbar + `useUpload` mutation + cursor insert      | 2h     | AC-4, AC-5, AC-6 | UPLOAD-001, FEAT-003 | [feature-detail §Upload](../../ui/feature-detail.md)    | 🟡 Planned   |
 | [T6](#t6--section-editable-gate--ownership)  | Enable tech-notes/screenshots edit + per-section "Cập nhật bởi" metadata | 2h     | AC-1, AC-7       | FEAT-002, FEAT-003   | [feature-detail §Ownership](../../ui/feature-detail.md) | 🟡 Planned   |
 | [T7](#t7--e2e-smoke--progress-sync)          | Playwright E2E + story-level progress sync + CHANGELOG cut `[US-003]`    | 2h     | cross-cutting    | all                  | —                                                       | 🟡 Planned   |
@@ -280,10 +280,10 @@ it("keeps non-whitelist <a> as plain anchor", () => { ... });
 
 ### DoD
 
-- [ ] Parser 6 test cases green.
-- [ ] EmbedCard 3 test cases green.
-- [ ] MarkdownView integration 2 test cases green.
-- [ ] `pnpm test`/`lint`/`typecheck` green.
+- [x] Parser 7 test cases green (github / atlassian subdomain / figma+query / spoof / invalid / non-whitelist / ftp).
+- [x] Embed card render inlined in markdown.ts post-process step (pure HTML — no React component needed, brand SVG inlined).
+- [x] MarkdownView integration 5 test cases green (autolink swap, custom label pass-through, target/rel).
+- [x] `pnpm test`/`lint`/`typecheck` green.
 
 ### Commit example
 
