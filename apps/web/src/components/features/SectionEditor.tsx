@@ -1,13 +1,17 @@
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { Check } from "lucide-react";
 import type { SectionType } from "@onboarding/shared";
 import { ApiError } from "@/lib/api";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useUpdateSection } from "@/queries/sections";
+import { insertAtCursor } from "@/lib/cursor";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { MarkdownView } from "@/components/common/MarkdownView";
+import { UploadButton } from "@/components/features/UploadButton";
+
+const UPLOAD_ENABLED_TYPES: readonly SectionType[] = ["tech-notes", "screenshots"];
 
 interface Props {
   projectSlug: string;
@@ -34,8 +38,33 @@ export function SectionEditor({
   const [draft, setDraft] = useState(initialBody);
   const preview = useDebouncedValue(draft, 200);
   const bytes = new Blob([draft]).size;
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const lastCursorRef = useRef<number>(initialBody.length);
 
   const mutation = useUpdateSection(projectSlug, featureSlug, featureId);
+  const showUpload = UPLOAD_ENABLED_TYPES.includes(type);
+
+  const handleUploaded = (markdown: string): void => {
+    setDraft((curr) => {
+      const pos = lastCursorRef.current;
+      const { body: next, cursor } = insertAtCursor(curr, markdown, pos);
+      lastCursorRef.current = cursor;
+      // Restore focus + caret on next tick after state applies.
+      queueMicrotask(() => {
+        const el = textareaRef.current;
+        if (el) {
+          el.focus();
+          el.setSelectionRange(cursor, cursor);
+        }
+      });
+      return next;
+    });
+  };
+
+  const handleSelect = (): void => {
+    const el = textareaRef.current;
+    if (el) lastCursorRef.current = el.selectionStart;
+  };
 
   const isDirty = draft !== initialBody;
 
@@ -77,8 +106,12 @@ export function SectionEditor({
           </label>
           <Textarea
             id={`editor-${type}`}
+            ref={textareaRef}
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
+            onSelect={handleSelect}
+            onKeyUp={handleSelect}
+            onClick={handleSelect}
             rows={12}
             maxLength={70000}
             aria-describedby={`byte-count-${type}`}
@@ -104,6 +137,11 @@ export function SectionEditor({
         </div>
       </div>
       <div className="flex items-center justify-end gap-2 border-t border-border px-4 py-3">
+        {showUpload ? (
+          <div className="mr-auto">
+            <UploadButton featureId={featureId} onUploaded={handleUploaded} />
+          </div>
+        ) : null}
         <Button type="button" variant="ghost" size="sm" onClick={handleCancel}>
           Hủy
         </Button>

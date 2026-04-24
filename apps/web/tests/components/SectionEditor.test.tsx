@@ -166,6 +166,17 @@ describe("SectionEditor — edit → save → collapse", () => {
     expect(screen.getByRole("form", { name: /đang chỉnh sửa user-flow/i })).toBeInTheDocument();
   });
 
+  it("business editor has no UploadButton (only tech-notes/screenshots do)", async () => {
+    mockSession("admin");
+    mockFeature();
+    renderDetail();
+    const user = userEvent.setup();
+
+    await user.click(await screen.findByRole("button", { name: /^sửa section nghiệp vụ$/i }));
+    const businessForm = await screen.findByRole("form", { name: /đang chỉnh sửa business/i });
+    expect(within(businessForm).queryByRole("button", { name: /upload ảnh/i })).toBeNull();
+  });
+
   it("cancel with dirty draft shows confirm; false keeps editor open", async () => {
     mockSession("admin");
     mockFeature({ businessBody: "initial" });
