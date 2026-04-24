@@ -8,7 +8,7 @@
 - **Date**: 2026-04-23
 - **Deciders**: @khatuantran11
 - **Supersedes**: —
-- **Related**: [ADR-001](ADR-001-tech-stack.md), [design-system.md](../ui/design-system.md), [US-001](../stories/US-001.md)
+- **Related**: [ADR-001](ADR-001-tech-stack.md), [ADR-003 Nexlab DS](ADR-003-nexlab-design-system.md) (dark palette now derived from Nexlab, not shadcn-neutral), [design-system.md](../ui/design-system.md), [US-001](../stories/US-001.md)
 
 ---
 
