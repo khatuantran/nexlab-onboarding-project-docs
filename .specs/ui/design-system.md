@@ -99,23 +99,29 @@ Library: [`lucide-react`](https://lucide.dev/). Đã trong `apps/web/package.jso
 
 **Icon registry** (icons đã hoặc sẽ dùng — thêm row khi dùng icon mới):
 
-| Icon             | Dùng ở                                                 | Label                            |
-| ---------------- | ------------------------------------------------------ | -------------------------------- |
-| `Sun`            | ThemeToggle (state = light)                            | "Đang dùng chế độ sáng"          |
-| `Moon`           | ThemeToggle (state = dark)                             | "Đang dùng chế độ tối"           |
-| `Monitor`        | ThemeToggle (state = system)                           | "Theo chế độ hệ thống"           |
-| `LogOut`         | AppHeader logout button                                | "Đăng xuất" (kèm text, decor-ok) |
-| `Search`         | SearchPage input affordance + header                   | "Tìm kiếm" (T10)                 |
-| `X`              | FilterChip remove button (T10) + Dialog close (US-002) | "Bỏ lọc" / "Đóng"                |
-| `Plus`           | "Tạo project" + "Thêm feature" buttons (US-002)        | decor (kèm text, aria-hidden)    |
-| `Pencil`         | Section "Sửa" toggle (US-002)                          | "Sửa nội dung section"           |
-| `ChevronRight`   | Card CTA, breadcrumb separator (T9)                    | decor (aria-hidden)              |
-| `FileText`       | Feature card leading icon (T9)                         | decor (aria-hidden)              |
-| `Clock`          | Relative-time indicator (T9)                           | decor (aria-hidden)              |
-| `AlertCircle`    | Empty-section / error state (T9, T10)                  | decor (aria-hidden)              |
-| `Check`          | Save action buttons (US-002 T7 SectionEditor)          | decor (kèm text, aria-hidden)    |
-| `MoreHorizontal` | Overflow menu trigger trên project-landing (US-004)    | "Thao tác project"               |
-| `Archive`        | Archive action trong overflow menu (US-004)            | decor (kèm text, aria-hidden)    |
+| Icon                  | Dùng ở                                                             | Label                             |
+| --------------------- | ------------------------------------------------------------------ | --------------------------------- |
+| `Sun`                 | ThemeToggle (state = light)                                        | "Đang dùng chế độ sáng"           |
+| `Moon`                | ThemeToggle (state = dark)                                         | "Đang dùng chế độ tối"            |
+| `Monitor`             | ThemeToggle (state = system)                                       | "Theo chế độ hệ thống"            |
+| `LogOut`              | AppHeader logout button                                            | "Đăng xuất" (kèm text, decor-ok)  |
+| `Search`              | SearchPage input affordance + header                               | "Tìm kiếm" (T10)                  |
+| `X`                   | FilterChip remove button (T10) + Dialog close (US-002)             | "Bỏ lọc" / "Đóng"                 |
+| `Plus`                | "Tạo project" + "Thêm feature" buttons (US-002)                    | decor (kèm text, aria-hidden)     |
+| `Pencil`              | Section "Sửa" toggle (US-002)                                      | "Sửa nội dung section"            |
+| `ChevronRight`        | Card CTA, breadcrumb separator (T9)                                | decor (aria-hidden)               |
+| `FileText`            | Feature card leading icon (T9)                                     | decor (aria-hidden)               |
+| `Clock`               | Relative-time indicator (T9)                                       | decor (aria-hidden)               |
+| `AlertCircle`         | Empty-section / error state (T9, T10)                              | decor (aria-hidden)               |
+| `Check`               | Save action buttons (US-002 T7 SectionEditor)                      | decor (kèm text, aria-hidden)     |
+| `MoreHorizontal`      | Overflow menu trigger trên project-landing (US-004)                | "Thao tác project"                |
+| `Archive`             | Archive action trong overflow menu (US-004)                        | decor (kèm text, aria-hidden)     |
+| `Upload`              | SectionEditor upload toolbar (US-003)                              | "Upload ảnh vào section"          |
+| `Image`               | Preview pane fallback cho broken `<img>` (US-003)                  | decor (aria-hidden)               |
+| `ExternalLink`        | Plain anchor leading icon cho non-whitelist URL (US-003, optional) | decor (aria-hidden)               |
+| `Github` (custom SVG) | EmbedCard icon cho github.com URLs (US-003)                        | decor (kèm URL text, aria-hidden) |
+| `Figma` (custom SVG)  | EmbedCard icon cho figma.com URLs (US-003)                         | decor (kèm URL text, aria-hidden) |
+| `Jira` (custom SVG)   | EmbedCard icon cho atlassian.net URLs (US-003)                     | decor (kèm URL text, aria-hidden) |
 
 ---
 
@@ -168,6 +174,12 @@ T10 adds: `SearchResultRow` — `<Link>` wrap breadcrumb (`projectSlug › featu
 
 US-002 adds (planned): `CreateProjectDialog`, `CreateFeatureDialog`, `SectionCard` (view/edit mode toggle per AC-5), `SectionEditor` (2-col textarea + preview), `AdminGate` (wrapper hiding children when user.role !== "admin").
 
+US-003 adds (planned):
+
+- `UploadButton` — ghost variant wrapping `<input type="file">`. `Upload` icon (swap với spinner `Loader2 animate-spin` during upload) + "Upload ảnh" label. Mount trong SectionEditor footer cho `tech-notes` + `screenshots` section types. Props: `featureId`, `onUploaded(markdown)`, `disabled`.
+- `EmbedCard` — bordered card (`border border-border hover:border-primary/40 rounded-md p-3`). Brand icon 24px bên trái + 2-line text (URL path + domain subtitle). Wrapped trong `<a target="_blank" rel="noopener noreferrer">`. Props: `url: string`, `hostname: string`, `icon: LucideIcon | JSX`.
+- Brand icons (custom SVG components ~20 LOC each): `GithubIcon`, `FigmaIcon`, `JiraIcon`. Lucide không có brand icons → inline SVG với `currentColor` stroke.
+
 ---
 
 ## 6. A11y floor (áp dụng mọi screen)
@@ -212,6 +224,7 @@ Thêm row khi đổi token, icon registry, component inventory. Breaking change 
 | 2026-04-23 | T10 ship: `--highlight`, `Search`/`X`, `SearchInput`/`SearchResultRow`/`FilterChip` live.                                                                                                                                                                                                                 | T10 `5ca8e49` |
 | 2026-04-23 | US-002 Gate 0 scaffold: add `Plus` + `Pencil` icons, `Dialog` + `Textarea` + `Toaster` primitives (req deps `@radix-ui/react-dialog`, `sonner`), feature comps `CreateProjectDialog` / `CreateFeatureDialog` / `SectionCard` / `SectionEditor` / `AdminGate`. Status `(planned)` cho tới khi US-002 ship. | US-002 Gate 0 |
 | 2026-04-24 | US-004 Gate 1 scaffold: add `Check` (retroactive, US-002 T7 ship), `MoreHorizontal`, `Archive` icons + `DropdownMenu` primitive (req dep `@radix-ui/react-dropdown-menu`). Cho overflow menu admin actions trên project-landing. Status `(planned)` cho tới khi US-004 ship.                              | US-004 Gate 1 |
+| 2026-04-24 | US-003 Gate 1 scaffold: add `Upload` + `Image` + `ExternalLink` lucide icons + `Github` + `Figma` + `Jira` custom SVG brand icons. Add `UploadButton` + `EmbedCard` feature components. Req dep `file-type` (BE). Status `(planned)` cho tới khi US-003 ship.                                             | US-003 Gate 1 |
 
 ---
 
