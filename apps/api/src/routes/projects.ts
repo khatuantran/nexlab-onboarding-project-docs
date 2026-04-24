@@ -7,16 +7,33 @@ import {
   type CreateProjectRequest,
   type FeatureListItem,
   type ProjectResponse,
+  type ProjectSummary,
 } from "@onboarding/shared";
 import { HttpError } from "../errors.js";
 import { requireAdmin } from "../middleware/requireAdmin.js";
 import { zodValidate } from "../middleware/zodValidate.js";
-import { SlugConflictError, type ProjectRepo } from "../repos/projectRepo.js";
+import {
+  SlugConflictError,
+  type ProjectRepo,
+  type ProjectSummaryRow,
+} from "../repos/projectRepo.js";
 import type { Project } from "../db/schema.js";
 
 export interface ProjectsRouterDeps {
   projectRepo: ProjectRepo;
   requireAuth: RequestHandler;
+}
+
+function toProjectSummary(row: ProjectSummaryRow): ProjectSummary {
+  return {
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    description: row.description,
+    featureCount: Number(row.featureCount),
+    createdAt: row.createdAt.toISOString(),
+    updatedAt: row.updatedAt.toISOString(),
+  };
 }
 
 function toProjectResponse(row: Project): ProjectResponse {
@@ -85,6 +102,16 @@ export function createProjectsRouter(deps: ProjectsRouterDeps): ExpressRouter {
     }
   };
 
+  const list: RequestHandler = async (_req, res, next) => {
+    try {
+      const rows = await projectRepo.listNonArchived();
+      res.status(200).json({ data: rows.map(toProjectSummary) });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  router.get("/", requireAuth, list);
   router.post(
     "/",
     requireAuth,

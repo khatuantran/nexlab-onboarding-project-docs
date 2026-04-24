@@ -1,4 +1,4 @@
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import type { Db } from "../db/client.js";
 import { features, projects, sections, type Project } from "../db/schema.js";
 
@@ -8,6 +8,16 @@ export interface FeatureListRow {
   title: string;
   updatedAt: Date;
   filledCount: number;
+}
+
+export interface ProjectSummaryRow {
+  id: string;
+  slug: string;
+  name: string;
+  description: string | null;
+  featureCount: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface CreateProjectInput {
@@ -27,6 +37,7 @@ export class SlugConflictError extends Error {
 export interface ProjectRepo {
   findBySlug(slug: string): Promise<Project | null>;
   listFeatures(projectId: string): Promise<FeatureListRow[]>;
+  listNonArchived(): Promise<ProjectSummaryRow[]>;
   create(input: CreateProjectInput): Promise<Project>;
 }
 
@@ -35,6 +46,24 @@ export function createProjectRepo(db: Db): ProjectRepo {
     async findBySlug(slug) {
       const rows = await db.select().from(projects).where(eq(projects.slug, slug)).limit(1);
       return rows[0] ?? null;
+    },
+    async listNonArchived() {
+      const rows = await db
+        .select({
+          id: projects.id,
+          slug: projects.slug,
+          name: projects.name,
+          description: projects.description,
+          createdAt: projects.createdAt,
+          updatedAt: projects.updatedAt,
+          featureCount: sql<number>`COUNT(${features.id})::int`,
+        })
+        .from(projects)
+        .leftJoin(features, eq(features.projectId, projects.id))
+        .where(isNull(projects.archivedAt))
+        .groupBy(projects.id)
+        .orderBy(desc(projects.updatedAt));
+      return rows;
     },
     async create(input) {
       try {
