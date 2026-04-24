@@ -40,6 +40,9 @@ export const projects = pgTable("projects", {
     .references(() => users.id),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  // Soft-delete timestamp (FR-PROJ-002). NULL = active; set → archived.
+  // Catalog list + direct detail lookup phải filter WHERE archived_at IS NULL.
+  archivedAt: timestamp("archived_at", { withTimezone: true }),
 });
 
 export const features = pgTable(

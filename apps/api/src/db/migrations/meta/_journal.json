@@ -15,6 +15,13 @@
       "when": 1776885400000,
       "tag": "0001_fts_triggers",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1777005612276,
+      "tag": "0002_workable_mole_man",
+      "breakpoints": true
     }
   ]
 }
