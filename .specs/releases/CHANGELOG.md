@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-_Last updated: 2026-04-23 · [Keep-a-Changelog](https://keepachangelog.com/en/1.1.0/) format. M1 closed._
+_Last updated: 2026-04-24 · [Keep-a-Changelog](https://keepachangelog.com/en/1.1.0/) format. M1 closed · US-002 + US-004 shipped in M2._
 
 Running log of user-facing changes. Thêm row dưới `[Unreleased]` khi commit ship feature/fix/change. Khi milestone đạt exit criteria → rename block thành `[Mx]` + release date, start new `[Unreleased]`.
 
@@ -14,13 +14,7 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 
 ### Added
 
-- Shared `updateProjectRequestSchema` + `ProjectSummary` type + `projects.archived_at` column migration — prereq cho US-004 catalog + admin lifecycle (US-004 / T1).
-- `GET /api/v1/projects` list endpoint — trả `ProjectSummary[]` non-archived, sorted `updated_at` desc, include `featureCount` qua LEFT JOIN (US-004 / T2, `2939f56`).
-- `PATCH /api/v1/projects/:slug` + `POST /api/v1/projects/:slug/archive` endpoints — admin-only. PATCH update name/description (slug immutable, Zod strips); archive set `archived_at` (idempotent 204). `GET /projects/:slug` giờ trả 404 cho archived project (US-004 / T3, `3ae766f`).
-- `DropdownMenu` UI primitive (`apps/web/src/components/ui/dropdown-menu.tsx`) — shadcn-style wrapper around `@radix-ui/react-dropdown-menu`. Prereq cho US-004 T7 ProjectActionsMenu (US-004 / T4, `54b276c`).
-- HomePage `/` project catalog — list rows với name + description (line-clamp-2) + featureCount + relative time, ChevronRight arrow, 4 states (loading skeletons / list / empty / error). Admin empty state có inline CTA "Tạo project đầu tiên" reuse CreateProjectDialog (`triggerLabel` prop). `useProjects()` TanStack Query, key `["projects"]` (US-004 / T5, `6981c07`).
-- `EditProjectDialog` component (`apps/web/src/components/projects/EditProjectDialog.tsx`) + `useUpdateProject(slug)` mutation — RHF+Zod form, slug readonly với hint, "Lưu" submit (Check icon), sonner success toast, native confirm cho dirty cancel. Controlled dialog (open + onOpenChange props). Mount wiring defer T7 (US-004 / T6, `c2d7988`).
-- `ProjectActionsMenu` component + admin overflow menu trên ProjectLandingPage header. `⋯` (MoreHorizontal) trigger opens DropdownMenu với "Sửa project" (opens EditProjectDialog controlled) và "Lưu trữ project" (destructive). Archive flow: native confirm `'Lưu trữ project "X"? Project sẽ ẩn khỏi catalog, features + sections giữ nguyên.'` → `useArchiveProject` POST → sonner "Đã lưu trữ project" + `navigate("/")`. 403/404/5xx → destructive toast. AdminGate-wrapped (US-004 / T7, `904e9c8`).
+- (none)
 
 ### Changed
 
@@ -41,6 +35,31 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 ### Security
 
 - (none)
+
+---
+
+## [US-004] — 2026-04-24 (Project Catalog + Admin Lifecycle)
+
+US-004 implementation complete — 8/8 tasks. Project catalog `/` với list rows (name/description/featureCount/relative time), admin-only edit metadata + archive qua `⋯` overflow menu trên project landing header. Archive redirect `/` + excludes từ catalog + makes detail URL 404. Playwright E2E covers full happy path catalog → edit → archive → redirect.
+
+### Added
+
+- T1 — Shared `updateProjectRequestSchema` + `ProjectSummary` type + `projects.archived_at` column migration (`e9898c7`).
+- T2 — `GET /api/v1/projects` list endpoint: `ProjectSummary[]` non-archived, sorted `updated_at` desc, `featureCount` qua LEFT JOIN (`2939f56`).
+- T3 — `PATCH /api/v1/projects/:slug` + `POST /api/v1/projects/:slug/archive` admin-only endpoints. PATCH update name/description (slug immutable — Zod strips); archive set `archived_at` (idempotent 204). `GET /projects/:slug` filter archived → 404 (`3ae766f`).
+- T4 — `DropdownMenu` UI primitive: shadcn-style wrapper around `@radix-ui/react-dropdown-menu`. 6 sub-components exported (Root/Trigger/Portal/Content/Item/Separator/Label) (`54b276c`).
+- T5 — HomePage `/` catalog: list rows với name + description (line-clamp-2) + featureCount + relative time, ChevronRight arrow, 4 states (loading skeletons / list / empty / error). Admin empty state có inline CTA "Tạo project đầu tiên" reuse CreateProjectDialog (`triggerLabel` prop). `useProjects()` TanStack Query, key `["projects"]` (`6981c07`).
+- T6 — `EditProjectDialog` + `useUpdateProject(slug)` mutation. RHF+Zod, slug readonly với hint, "Lưu" (Check icon), sonner success, native confirm cho dirty cancel. Controlled dialog (open + onOpenChange props) (`c2d7988`).
+- T7 — `ProjectActionsMenu` trên ProjectLandingPage header. `⋯` (MoreHorizontal) trigger → DropdownMenu với "Sửa project" (opens EditProjectDialog) + "Lưu trữ project" (destructive). Archive flow: native confirm `'Lưu trữ project "X"? Project sẽ ẩn khỏi catalog, features + sections giữ nguyên.'` → `useArchiveProject` POST → sonner "Đã lưu trữ project" + `navigate("/")`. AdminGate-wrapped (`904e9c8`).
+- T8 — Playwright E2E `e2e/us-004.spec.ts`: login admin → create seed project → return catalog → click row → detail → ⋯ → "Sửa project" → rename → verify heading → ⋯ → "Lưu trữ" → auto-accept confirm → redirect `/` → archived project gone. Full E2E suite 3/3 green (US-001 + US-002 + US-004) (`a9282d6`).
+
+### Added (requirements)
+
+- [FR-PROJ-002](../02-requirements.md#fr-proj-002--project-metadata-edit--archive) — admin metadata edit + soft-delete archive via `archived_at`. FR-PROJ-001 clarified: catalog list excludes archived.
+
+### Design system
+
+- Icons added: `Check` (retroactive US-002 T7), `MoreHorizontal`, `Archive`. Component: `DropdownMenu` primitive (requires `@radix-ui/react-dropdown-menu`).
 
 ---
 

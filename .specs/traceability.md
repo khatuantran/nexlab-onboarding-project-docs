@@ -75,7 +75,7 @@ Mục đích: khi đổi 1 FR biết ngay tác động tới story + task nào. 
 | [T5](stories/US-004/tasks.md#t5--homepage-catalog-fe)                 | PROJ-001           | AC-1, AC-2, AC-3, AC-4       | ✅ `6981c07` |
 | [T6](stories/US-004/tasks.md#t6--editprojectdialog-fe)                | PROJ-002           | AC-5, AC-6                   | ✅ `c2d7988` |
 | [T7](stories/US-004/tasks.md#t7--projectactionsmenu-fe--archive-wire) | PROJ-002           | AC-7, AC-8                   | ✅ `904e9c8` |
-| [T8](stories/US-004/tasks.md#t8--e2e-smoke--progress-sync)            | all                | AC-1, AC-5, AC-7             | 🟡 Planned   |
+| [T8](stories/US-004/tasks.md#t8--e2e-smoke--progress-sync)            | all                | AC-1, AC-5, AC-7             | ✅ `a9282d6` |
 
 ---
 

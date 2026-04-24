@@ -67,8 +67,8 @@ Implement US-002 rồi US-003.
   - [T6](stories/US-002/tasks.md#t6--createfeaturedialog-fe) CreateFeatureDialog FE với author gate — ✅ `522889c` (2026-04-23).
   - [T7](stories/US-002/tasks.md#t7--sectioneditor-fe--edit-in-place-integration) SectionEditor FE + edit-in-place — ✅ `03c83ba` (2026-04-23).
   - [T8](stories/US-002/tasks.md#t8--e2e-smoke--progress-sync-release-tag) Playwright E2E smoke (happy path create→feature→edit→persist) — ✅ `a482ecd` (2026-04-23). **US-002 Done**.
-- **Next in M2**: US-003 (tech author + embed + upload) → flip M2 status ✅ khi US-003 ship.
-- **Added mid-milestone**: [US-004](stories/US-004.md) — project catalog `/` + admin lifecycle (edit + archive). Ready với 8-task breakdown + 3 UI specs + FR-PROJ-002. Progress:
+- **Next in M2**: US-003 (tech author + embed + upload) remaining → flip M2 status ✅ khi US-003 ship.
+- **Added mid-milestone + shipped**: [US-004](stories/US-004.md) — project catalog `/` + admin lifecycle (edit + archive). **Done 2026-04-24**, 8/8 tasks + 3 E2E green. Progress:
   - [T1](stories/US-004/tasks.md#t1--schema-migration--shared-schemas) schema migration `archived_at` + shared schemas — ✅ `e9898c7` (2026-04-24).
   - [T2](stories/US-004/tasks.md#t2--get-projects-list-api-loại-archived) GET /projects list API (non-archived, featureCount) — ✅ `2939f56` (2026-04-24).
   - [T3](stories/US-004/tasks.md#t3--project-patch--archive-apis) PATCH + archive endpoints (admin-only, idempotent archive, GET filter) — ✅ `3ae766f` (2026-04-24).
@@ -76,6 +76,7 @@ Implement US-002 rồi US-003.
   - [T5](stories/US-004/tasks.md#t5--homepage-catalog-fe) HomePage catalog FE (ProjectRow + 4 states + admin empty CTA) — ✅ `6981c07` (2026-04-24).
   - [T6](stories/US-004/tasks.md#t6--editprojectdialog-fe) EditProjectDialog FE + useUpdateProject (controlled dialog, slug readonly, sonner) — ✅ `c2d7988` (2026-04-24).
   - [T7](stories/US-004/tasks.md#t7--projectactionsmenu-fe--archive-wire) ProjectActionsMenu FE + archive wire (⋯ overflow, useArchiveProject, redirect `/`) — ✅ `904e9c8` (2026-04-24).
+  - [T8](stories/US-004/tasks.md#t8--e2e-smoke--progress-sync) Playwright E2E smoke (catalog → edit → archive → redirect) — ✅ `a9282d6` (2026-04-24). **US-004 Done**.
 
 ### M3 — Pilot launch 🟡 _(target 2026-07-31)_
 

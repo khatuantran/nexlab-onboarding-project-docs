@@ -4,7 +4,7 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ## Trạng thái
 
-🚧 **M2 in progress — US-002 ✅ / US-003 next.** M1 complete (US-001 ✅). US-002 shipped end-to-end (8/8 tasks): admin tạo project + author tạo feature + edit 3 business sections với markdown preview. 136 unit tests + 2 Playwright E2E green (US-001 + US-002 happy paths).
+🚧 **M2 in progress — US-002 ✅ / US-004 ✅ / US-003 next.** M1 complete (US-001 ✅). US-004 shipped end-to-end (8/8 tasks): project catalog `/` + admin edit/archive lifecycle via `⋯` overflow menu. 3 Playwright E2E green (US-001 + US-002 + US-004 happy paths).
 
 ## Vấn đề đang giải quyết
 
@@ -87,7 +87,7 @@ Full setup (DB migrate / seed / dev servers / E2E) ở [docs/SETUP.md](docs/SETU
 - [US-001 — Dev reads & search feature catalog](.specs/stories/US-001.md) + [tasks](.specs/stories/US-001/tasks.md)
 - [US-002 — BA creates project + feature with business sections](.specs/stories/US-002.md) + [tasks](.specs/stories/US-002/tasks.md) — **Done** (8/8 ✅, 2026-04-23)
 - [US-003 — Dev adds tech-notes + screenshots](.specs/stories/US-003.md)
-- [US-004 — Project catalog + admin lifecycle](.specs/stories/US-004.md) + [tasks](.specs/stories/US-004/tasks.md) — in progress (T1-T7/8 ✅)
+- [US-004 — Project catalog + admin lifecycle](.specs/stories/US-004.md) + [tasks](.specs/stories/US-004/tasks.md) — **Done** (8/8 ✅, 2026-04-24)
 
 **Operational**:
 
