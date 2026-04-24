@@ -4,36 +4,132 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+  Nexlab design tokens (ADR-003).
+  Nexlab RGB palette converted to HSL to giữ shadcn convention.
+  Dark variants derived from light palette (invert luminance, primary
+  lightness +10% cho dark readability; Nexlab không cung cấp dark
+  official, derivation verified contrast 4.5:1).
+*/
+
 @layer base {
   :root {
+    /* Semantic surfaces */
     --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
-    --primary: 222 47% 11%;
-    --primary-foreground: 210 40% 98%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
-    --highlight: 48 96% 89%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 222 47% 11%;
+    --foreground: 240 3% 16%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 3% 16%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 3% 16%;
+
+    /* Primary — Nexlab orange */
+    --primary: 27 88% 51%;
+    --primary-foreground: 0 0% 100%;
+    --primary-50: 38 83% 96%;
+    --primary-100: 36 90% 92%;
+    --primary-200: 34 92% 83%;
+    --primary-300: 32 91% 72%;
+    --primary-400: 28 89% 61%;
+    --primary-500: 27 88% 51%;
+    --primary-600: 25 84% 48%;
+    --primary-700: 22 82% 40%;
+    --primary-800: 17 73% 34%;
+    --primary-900: 15 69% 28%;
+
+    /* Secondary — Nexlab gold */
+    --secondary: 39 61% 62%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-bg: 39 67% 94%;
+    --secondary-text: 35 45% 46%;
+
+    /* Accent — hover surfaces (alias muted for now) */
+    --accent: 0 0% 95%;
+    --accent-foreground: 240 3% 16%;
+
+    /* Muted */
+    --muted: 0 0% 95%;
+    --muted-foreground: 0 0% 55%;
+
+    /* Destructive — Nexlab error */
+    --destructive: 12 100% 44%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Success / Warning / Info (aux semantic) */
+    --success: 133 56% 46%;
+    --success-foreground: 0 0% 100%;
+    --warning: 37 100% 50%;
+    --warning-foreground: 0 0% 15%;
+    --info: 236 100% 71%;
+    --info-foreground: 0 0% 100%;
+
+    /* Highlight — tinted orange cho <mark> bg */
+    --highlight: 34 92% 83%;
+
+    /* Borders + rings */
+    --border: 0 0% 89%;
+    --input: 0 0% 89%;
+    --ring: 27 88% 51%;
+
+    /* Radii (Nexlab: 8 buttons/fields, 16 cards) */
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222 47% 11%;
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
-    --destructive: 0 75% 60%;
-    --destructive-foreground: 210 40% 98%;
-    --highlight: 48 60% 35%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 210 40% 98%;
+    /* Semantic surfaces — swap to neutral-ink */
+    --background: 0 0% 15%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 15%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 15%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Primary — orange lighter cho dark surface readability */
+    --primary: 28 89% 61%;
+    --primary-foreground: 0 0% 15%;
+    --primary-50: 15 69% 18%;
+    --primary-100: 17 73% 24%;
+    --primary-200: 22 82% 30%;
+    --primary-300: 25 84% 38%;
+    --primary-400: 27 88% 48%;
+    --primary-500: 28 89% 58%;
+    --primary-600: 32 91% 68%;
+    --primary-700: 34 92% 78%;
+    --primary-800: 36 90% 87%;
+    --primary-900: 38 83% 94%;
+
+    /* Secondary — gold lightened */
+    --secondary: 39 61% 70%;
+    --secondary-foreground: 0 0% 15%;
+    --secondary-bg: 39 20% 22%;
+    --secondary-text: 39 61% 75%;
+
+    /* Accent */
+    --accent: 0 0% 22%;
+    --accent-foreground: 0 0% 98%;
+
+    /* Muted */
+    --muted: 0 0% 22%;
+    --muted-foreground: 0 0% 70%;
+
+    /* Destructive */
+    --destructive: 12 90% 55%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Success / Warning / Info */
+    --success: 133 56% 55%;
+    --success-foreground: 0 0% 15%;
+    --warning: 37 100% 60%;
+    --warning-foreground: 0 0% 15%;
+    --info: 236 100% 78%;
+    --info-foreground: 0 0% 15%;
+
+    /* Highlight — darker orange cho <mark> bg on dark */
+    --highlight: 27 60% 35%;
+
+    /* Borders + rings */
+    --border: 0 0% 28%;
+    --input: 0 0% 28%;
+    --ring: 28 89% 61%;
   }
 
   body {
