@@ -84,6 +84,19 @@ export function useUpdateProject(
   });
 }
 
+export function useArchiveProject(slug: string): UseMutationResult<void, Error, void> {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      await apiFetch<void>(`/projects/${slug}/archive`, { method: "POST" });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: projectKeys.byId(slug) });
+      qc.invalidateQueries({ queryKey: projectKeys.all });
+    },
+  });
+}
+
 export function useFeature(
   slug: string,
   featureSlug: string,

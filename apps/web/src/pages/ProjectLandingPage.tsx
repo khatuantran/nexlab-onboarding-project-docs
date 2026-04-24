@@ -1,10 +1,12 @@
 import { Link, useParams } from "react-router-dom";
 import { ApiError } from "@/lib/api";
 import { Card } from "@/components/ui/card";
+import { AdminGate } from "@/components/common/AdminGate";
 import { AuthorGate } from "@/components/common/AuthorGate";
 import { EmptyState } from "@/components/common/EmptyState";
 import { CreateFeatureDialog } from "@/components/features/CreateFeatureDialog";
 import { FeatureCard } from "@/components/features/FeatureCard";
+import { ProjectActionsMenu } from "@/components/projects/ProjectActionsMenu";
 import { useProject } from "@/queries/projects";
 
 export function ProjectLandingPage(): JSX.Element {
@@ -70,9 +72,14 @@ export function ProjectLandingPage(): JSX.Element {
           ) : null}
           <p className="mt-1 text-sm text-muted-foreground">Catalog {features.length} feature</p>
         </div>
-        <AuthorGate>
-          <CreateFeatureDialog projectSlug={project.slug} projectName={project.name} />
-        </AuthorGate>
+        <div className="flex items-center gap-2">
+          <AuthorGate>
+            <CreateFeatureDialog projectSlug={project.slug} projectName={project.name} />
+          </AuthorGate>
+          <AdminGate>
+            <ProjectActionsMenu project={project} />
+          </AdminGate>
+        </div>
       </header>
 
       {features.length === 0 ? (
