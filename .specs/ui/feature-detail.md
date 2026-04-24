@@ -7,8 +7,8 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `feature-detail`
-- **Status**: Implemented (read path T9 `879b15b` + edit-in-place T7 `03c83ba`)
-- **Last updated**: 2026-04-23
+- **Status**: Implemented (read path T9 `879b15b`; edit-in-place T7 `03c83ba`) + Ready (US-003 tech-notes/screenshots/embed/upload, Gate 1 approved 2026-04-24)
+- **Last updated**: 2026-04-24
 
 ## Route
 
@@ -196,7 +196,7 @@ Thêm capability edit section trong cùng route (không tách `/edit`). Admin/au
 
 ### Scope edit-in-place
 
-- **Editable sections**: `business`, `user-flow`, `business-rules` (3 business sections). `tech-notes` + `screenshots` defer US-003.
+- **Editable sections**: **all 5 sections** (US-003 flips `tech-notes` + `screenshots` from defer → editable). Per Gate 1 Q2, upload widget enabled on `tech-notes` + `screenshots` (dev có thể embed arch diagrams trong tech-notes).
 - **Not editable v1**: title feature, slug, project metadata, section order, delete section.
 
 ### Per-section state machine
@@ -312,7 +312,129 @@ Mỗi section slot độc lập (3 section cùng lúc ở editing cũng OK).
 - [x] Section separator edit vs read = border card `border-primary/20` + bg `bg-muted/30` để visually distinguish editing card.
 - [x] Byte counter reuse util `Buffer.byteLength` server-side; client ước tính bằng `new Blob([text]).size`.
 
+## Tech context additions (US-003)
+
+US-003 layers 3 capabilities trên existing edit-in-place flow mà không tách route riêng: image upload, embed card render, per-section ownership metadata visible. Reuses SectionEditor + MarkdownView pipelines; adds `UploadButton` toolbar + `EmbedCard` renderer + parser util.
+
+### US-003 scope additions
+
+- **Sections enabled for edit**: `tech-notes` + `screenshots` (previously deferred). Flow identical to 3 business sections (US-002 T7) — thêm upload toolbar only.
+- **Upload widget**: toolbar button trong SectionEditor footer cho 2 sections. Max 5 MiB; png / jpg / webp only. Auto-insert markdown `![filename](/uploads/:id)` tại cursor position.
+- **Embed card render**: inline trong MarkdownView read view + preview pane. URL matching 3 whitelisted hostnames → render `EmbedCard`; else → plain `<a target="_blank" rel="noopener noreferrer">`.
+- **Per-section ownership**: subtitle under section h2 — "Cập nhật bởi \<displayName\>, N trước" dùng `RelativeTime`. Renders for both read + edit modes (meta persist during save).
+
+### Upload widget (§A1 — Gate 1 Q2+Q3)
+
+```text
+┌─ Section card (editing, tech-notes hoặc screenshots) ─────────────┐
+│  ## Screenshots                                                    │
+│  cập nhật bởi @hung, vừa xong                                     │
+│  ┌──────────────────────────┬────────────────────────────────────┐│
+│  │ Markdown source          │ Preview                            ││
+│  │ ┌──────────────────────┐ │ ┌──────────────────────────────┐  ││
+│  │ │ # UI                 │ │ │ <h1>UI</h1>                  │  ││
+│  │ │ ![login.png](/upl…)  │ │ │ <img src="/uploads/…" …/>    │  ││
+│  │ │                      │ │ │                              │  ││
+│  │ └──────────────────────┘ │ └──────────────────────────────┘  ││
+│  │ 340 / 65536 B            │                                   ││
+│  └──────────────────────────┴───────────────────────────────────┘│
+│  ──────────────────────────────────────────────────────────────── │
+│  [📎 Upload ảnh]                          [Hủy]  [ ✓ Lưu ]       │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+- **Trigger**: button ghost variant, `Upload` lucide icon + label "Upload ảnh". `aria-label="Upload ảnh vào section"`.
+- **Flow**:
+  1. Click → OS file picker (`accept="image/png,image/jpeg,image/webp"`).
+  2. File chosen → POST `/api/v1/features/:featureId/uploads` multipart.
+  3. While uploading: button disabled + spinner thay Upload icon.
+  4. 201 → response `{ id, url, sizeBytes, mimeType }` → insert `![filename](/uploads/:id)\n` tại textarea `selectionStart` → cursor advances → preview debounces update.
+  5. Toast success: sonner `"Đã upload <filename>"` 2s.
+- **Error handling**:
+  - 413 `FILE_TOO_LARGE` → sonner destructive `"File quá lớn (max 5 MiB)"` + markdown không đổi (AC-5).
+  - 415 `UNSUPPORTED_MEDIA_TYPE` → sonner destructive `"Chỉ chấp nhận png, jpg, webp"` + markdown không đổi (AC-6).
+  - 401 → redirect `/login?next=<current>` (AC-9 / reuse interceptor).
+  - 5xx / network → sonner destructive `"Có lỗi xảy ra, thử lại"`.
+- **Section-type gate**: upload button chỉ render khi `section.type === "tech-notes" || section.type === "screenshots"`. 3 business sections không thấy button.
+- **Cursor preservation**: dùng `textareaRef.current.selectionStart` snapshot trước khi click upload; restore sau insert để Tab chain hoạt động bình thường.
+
+### Embed card render (§A2 — Gate 1 Q1+Q5)
+
+Inline detection: bất kỳ `<a href>` được markdown-it emit → check `new URL(href).hostname`. Nếu match whitelist → replace anchor với `EmbedCard`. Else → anchor giữ nguyên (plain link per AC-3).
+
+**Whitelist** (strict 3):
+
+| Hostname          | Icon (design-system §4) | Domain subtitle |
+| ----------------- | ----------------------- | --------------- |
+| `github.com`      | `Github` (custom SVG)   | "github.com"    |
+| `*.atlassian.net` | `Jira` (custom SVG)     | "atlassian.net" |
+| `figma.com`       | `Figma` (custom SVG)    | "figma.com"     |
+
+Subdomain handling: `hostname === domain || hostname.endsWith("." + domain)` → match. Chặn spoof `evil.com/github.com` (path ≠ hostname).
+
+**Card layout**:
+
+```text
+┌──────────────────────────────────────────────┐
+│  [icon 24px]  github.com/acme/repo/pull/42   │
+│               github.com                     │
+└──────────────────────────────────────────────┘
+```
+
+- **Content**:
+  - Row 1: `text-sm` truncate URL path (strip protocol, show first ~60 chars with ellipsis).
+  - Row 2: `text-xs text-muted-foreground` domain subtitle.
+- **Interactions**: `<a target="_blank" rel="noopener noreferrer">` wrapping the card. Hover `border-primary/40`. Focus `ring-2 ring-ring`. Cursor pointer.
+- **Rendered in**: both read-mode MarkdownView + edit-mode preview pane (unified pipeline).
+- **Security** (§US-003 Risks): `new URL()` throws on invalid URLs — try/catch → fallback plain anchor. Hostname match strict (no substring). DOMPurify still strips `<script>` first.
+
+### Per-section ownership metadata (§A3 — Gate 1 Q6)
+
+Under each section h2, render meta line: `"cập nhật bởi @<displayName>, <relative time>"`. Uses `RelativeTime` component + user.displayName from section.updatedBy foreign key.
+
+**API contract change required for US-003**: `SectionResponse` must include resolved `updatedByName: string | null` (join users.display_name via section.updated_by). Current shape only has `updatedBy: string | null` (id). T6 task extends response shape.
+
+```text
+## Tech notes
+cập nhật bởi @hùng, 2 phút trước     ← meta line, muted xs
+<body markdown>
+```
+
+- **Fallback**: `updatedBy === null` (user deleted per `ON DELETE SET NULL`) → show "cập nhật bởi (người dùng đã xóa), N trước".
+- **Empty section** (body === ""): skip meta line (no author yet).
+- **Typography**: `text-xs text-muted-foreground mt-1 mb-4`.
+
+### US-003 interactions additions
+
+| Trigger                                     | Action                                                       | Next state          | Side effect                      |
+| ------------------------------------------- | ------------------------------------------------------------ | ------------------- | -------------------------------- |
+| Click "Upload ảnh" (tech-notes/screenshots) | Open OS file picker                                          | editing             | —                                |
+| File chosen (valid)                         | POST `/features/:id/uploads` multipart                       | editing → uploading | Button disabled + spinner        |
+| 201                                         | Insert `![filename](/uploads/:id)` at cursor; toast success  | uploading → editing | Preview re-renders with `<img>`  |
+| 413                                         | Toast destructive "File quá lớn (max 5 MiB)"                 | uploading → editing | Markdown unchanged               |
+| 415                                         | Toast destructive "Chỉ chấp nhận png, jpg, webp"             | uploading → editing | Markdown unchanged               |
+| Read view render sees whitelisted URL       | Replace `<a>` với `EmbedCard` inline                         | —                   | `<a target="_blank">` wraps card |
+| Read view render sees non-whitelist URL     | Plain anchor `<a target="_blank" rel="noopener noreferrer">` | —                   | —                                |
+
+### US-003 A11y additions
+
+- Upload button: `aria-label="Upload ảnh vào section <type>"`, `aria-busy="true"` during upload.
+- EmbedCard: outer `<a>` carries `aria-label="Mở <URL> trong tab mới — <domain>"` (screen reader context).
+- Ownership meta: decorative `@` prefix marked `aria-hidden="true"`; displayName + time readable by SR.
+- Uploaded `<img>` trong read view: `alt` derives from markdown alt text; fallback filename if empty.
+
+### US-003 Gate 1 decisions (approved 2026-04-24 via AskUserQuestion)
+
+1. [x] **Embed whitelist strict 3**: atlassian.net + figma.com + github.com. GitLab / Google Docs defer v2 based on pilot feedback.
+2. [x] **Upload enabled on both `tech-notes` + `screenshots`**: dev có thể paste arch diagrams trong tech-notes. Section-type guard in SectionEditor.
+3. [x] **Upload UX = toolbar button**: `[📎 Upload ảnh]` cạnh Hủy/Lưu. OS file picker → POST → auto-insert markdown at cursor. Drag-drop / paste-image deferred.
+4. [x] **Upload validation = magic bytes via `file-type` lib**: server reads first bytes → detect real MIME. Chặn spoof `evil.exe → evil.png` per story §Risks.
+5. [x] **Embed card inline render**: URL match → card replaces `<a>` tại vị trí gốc trong markdown flow. "Related links" block-at-end deferred.
+6. [x] **Per-section ownership visible**: subtitle "cập nhật bởi @X, N trước" dưới section h2. API T6 extends SectionResponse với `updatedByName`.
+7. [x] **File serve session-protected**: `GET /uploads/:id` requires `sid` cookie (401 if missing). Same-origin `<img>` tag gửi cookie auto.
+
 ## Maps US
 
 - [US-001](../stories/US-001.md) — AC-3 (feature + sections), AC-5 (5 section ordered), AC-6 (markdown render), AC-4 (empty section variant).
 - [US-002](../stories/US-002.md) — AC-5 (edit business section), AC-6 (save 2 section độc lập), AC-7 (413 section too large), AC-8 (401 redirect).
+- [US-003](../stories/US-003.md) — AC-1 (Hùng opens Lan's feature with ownership intact), AC-2 (tech-notes edit + GitHub card render), AC-3 (non-whitelist → plain anchor), AC-4 (upload happy path), AC-5 (413 too large), AC-6 (415 bad MIME), AC-7 (per-section ownership visible), AC-8 (embed card renders in read view), AC-9 (unauth upload blocked).
