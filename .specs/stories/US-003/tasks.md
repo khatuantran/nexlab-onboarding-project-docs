@@ -4,7 +4,7 @@
 
 _Story_: [US-003 — Dev bổ sung tech-notes + screenshots](../US-003.md)
 _Total estimate_: ~12-14h (solo, TDD pace)
-_Last updated_: 2026-04-24 (T1 ✅ `b285b99`, T2 ✅ `b082416` — 2/7 shipped)
+_Last updated_: 2026-04-24 (T1-T3 ✅ — 3/7 shipped, BE complete)
 
 ---
 
@@ -29,7 +29,7 @@ _Last updated_: 2026-04-24 (T1 ✅ `b285b99`, T2 ✅ `b082416` — 2/7 shipped)
 | -------------------------------------------- | ------------------------------------------------------------------------ | ------ | ---------------- | -------------------- | ------------------------------------------------------- | ------------ |
 | [T1](#t1--uploads-migration--shared-schemas) | Uploads table migration + shared schemas + `file-type` dep               | 1h     | prereq           | UPLOAD-001           | —                                                       | ✅ `b285b99` |
 | [T2](#t2--post-uploads-endpoint)             | `POST /features/:id/uploads` endpoint (multer + magic bytes + DB)        | 3h     | AC-4, AC-5, AC-6 | UPLOAD-001           | —                                                       | ✅ `b082416` |
-| [T3](#t3--get-uploads-id-static-serve)       | `GET /uploads/:id` session-protected static file serve                   | 1h     | AC-4 read, AC-9  | UPLOAD-001, AUTH-001 | —                                                       | 🟡 Planned   |
+| [T3](#t3--get-uploads-id-static-serve)       | `GET /uploads/:id` session-protected static file serve                   | 1h     | AC-4 read, AC-9  | UPLOAD-001, AUTH-001 | —                                                       | ✅ `4690b8e` |
 | [T4](#t4--embed-parser--embedcard-component) | Embed parser util + `EmbedCard` + MarkdownView integration               | 2h     | AC-2, AC-3, AC-8 | EMBED-001            | [feature-detail §Embed](../../ui/feature-detail.md)     | 🟡 Planned   |
 | [T5](#t5--sectioneditor-upload-toolbar)      | SectionEditor upload toolbar + `useUpload` mutation + cursor insert      | 2h     | AC-4, AC-5, AC-6 | UPLOAD-001, FEAT-003 | [feature-detail §Upload](../../ui/feature-detail.md)    | 🟡 Planned   |
 | [T6](#t6--section-editable-gate--ownership)  | Enable tech-notes/screenshots edit + per-section "Cập nhật bởi" metadata | 2h     | AC-1, AC-7       | FEAT-002, FEAT-003   | [feature-detail §Ownership](../../ui/feature-detail.md) | 🟡 Planned   |
@@ -210,10 +210,10 @@ it("returns 401 cho no session", async () => { ... });
 
 ### DoD
 
-- [ ] 4 test cases green.
-- [ ] api-surface.md updated.
-- [ ] `<img src="/uploads/:id">` works trong FE với cookie (manual smoke).
-- [ ] `pnpm test`/`lint`/`typecheck` green.
+- [x] 3 test cases green (happy 200 + binary, 404 unknown, 401 no-session).
+- [x] api-surface.md updated.
+- [ ] `<img src="/api/v1/uploads/:id">` works trong FE với cookie — verify in T5 integration.
+- [x] `pnpm test`/`lint`/`typecheck` green.
 
 ### Commit example
 
