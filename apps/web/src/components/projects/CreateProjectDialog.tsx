@@ -28,7 +28,13 @@ import { Textarea } from "@/components/ui/textarea";
  * after which it stays sticky (Gate 1 decision). Cancel confirms via
  * native `window.confirm` when the form is dirty.
  */
-export function CreateProjectDialog(): JSX.Element {
+interface CreateProjectDialogProps {
+  triggerLabel?: string;
+}
+
+export function CreateProjectDialog({
+  triggerLabel = "Tạo project",
+}: CreateProjectDialogProps = {}): JSX.Element {
   const [open, setOpen] = useState(false);
   const [slugTouched, setSlugTouched] = useState(false);
   const [serverSlugError, setServerSlugError] = useState<string | null>(null);
@@ -96,7 +102,7 @@ export function CreateProjectDialog(): JSX.Element {
       <DialogTrigger asChild>
         <Button variant="default" size="sm">
           <Plus className="mr-2 size-4" aria-hidden="true" />
-          Tạo project
+          {triggerLabel}
         </Button>
       </DialogTrigger>
       <DialogContent>

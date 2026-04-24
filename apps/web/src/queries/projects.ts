@@ -10,14 +10,24 @@ import type {
   FeatureListItem,
   FeatureResponse,
   ProjectResponse,
+  ProjectSummary,
   SectionResponse,
 } from "@onboarding/shared";
 import { apiFetch } from "@/lib/api";
 
 export const projectKeys = {
+  all: ["projects"] as const,
   byId: (slug: string) => ["project", slug] as const,
   feature: (slug: string, featureSlug: string) => ["feature", slug, featureSlug] as const,
 };
+
+export function useProjects(): UseQueryResult<ProjectSummary[], Error> {
+  return useQuery({
+    queryKey: projectKeys.all,
+    queryFn: () => apiFetch<ProjectSummary[]>("/projects"),
+    retry: false,
+  });
+}
 
 export interface ProjectWithFeatures {
   project: ProjectResponse;
@@ -51,6 +61,7 @@ export function useCreateProject(): UseMutationResult<
       }),
     onSuccess: (_data, vars) => {
       qc.invalidateQueries({ queryKey: projectKeys.byId(vars.slug) });
+      qc.invalidateQueries({ queryKey: projectKeys.all });
     },
   });
 }
