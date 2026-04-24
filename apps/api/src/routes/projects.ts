@@ -4,10 +4,12 @@ import {
   ErrorCode,
   createProjectRequestSchema,
   slugSchema,
+  updateProjectRequestSchema,
   type CreateProjectRequest,
   type FeatureListItem,
   type ProjectResponse,
   type ProjectSummary,
+  type UpdateProjectRequest,
 } from "@onboarding/shared";
 import { HttpError } from "../errors.js";
 import { requireAdmin } from "../middleware/requireAdmin.js";
@@ -57,7 +59,7 @@ export function createProjectsRouter(deps: ProjectsRouterDeps): ExpressRouter {
     try {
       const { slug } = req.params as { slug: string };
       const project = await projectRepo.findBySlug(slug);
-      if (!project) {
+      if (!project || project.archivedAt !== null) {
         next(new HttpError(404, ErrorCode.PROJECT_NOT_FOUND, "Project không tồn tại"));
         return;
       }
@@ -102,6 +104,38 @@ export function createProjectsRouter(deps: ProjectsRouterDeps): ExpressRouter {
     }
   };
 
+  const patch: RequestHandler = async (req, res, next) => {
+    try {
+      const { slug } = req.params as { slug: string };
+      const body = req.body as UpdateProjectRequest;
+      const updated = await projectRepo.updateMetadata(slug, {
+        name: body.name,
+        description: body.description ?? null,
+      });
+      if (!updated) {
+        next(new HttpError(404, ErrorCode.PROJECT_NOT_FOUND, "Project không tồn tại"));
+        return;
+      }
+      res.status(200).json({ data: toProjectResponse(updated) });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  const archive: RequestHandler = async (req, res, next) => {
+    try {
+      const { slug } = req.params as { slug: string };
+      const ok = await projectRepo.archive(slug);
+      if (!ok) {
+        next(new HttpError(404, ErrorCode.PROJECT_NOT_FOUND, "Project không tồn tại"));
+        return;
+      }
+      res.status(204).end();
+    } catch (err) {
+      next(err);
+    }
+  };
+
   const list: RequestHandler = async (_req, res, next) => {
     try {
       const rows = await projectRepo.listNonArchived();
@@ -120,5 +154,13 @@ export function createProjectsRouter(deps: ProjectsRouterDeps): ExpressRouter {
     create,
   );
   router.get("/:slug", requireAuth, zodValidate({ params }), getBySlug);
+  router.patch(
+    "/:slug",
+    requireAuth,
+    requireAdmin,
+    zodValidate({ params, body: updateProjectRequestSchema }),
+    patch,
+  );
+  router.post("/:slug/archive", requireAuth, requireAdmin, zodValidate({ params }), archive);
   return router;
 }

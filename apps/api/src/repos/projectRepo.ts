@@ -34,11 +34,18 @@ export class SlugConflictError extends Error {
   }
 }
 
+export interface UpdateProjectMetadataInput {
+  name: string;
+  description?: string | null;
+}
+
 export interface ProjectRepo {
   findBySlug(slug: string): Promise<Project | null>;
   listFeatures(projectId: string): Promise<FeatureListRow[]>;
   listNonArchived(): Promise<ProjectSummaryRow[]>;
   create(input: CreateProjectInput): Promise<Project>;
+  updateMetadata(slug: string, input: UpdateProjectMetadataInput): Promise<Project | null>;
+  archive(slug: string): Promise<boolean>;
 }
 
 export function createProjectRepo(db: Db): ProjectRepo {
@@ -89,6 +96,26 @@ export function createProjectRepo(db: Db): ProjectRepo {
         }
         throw err;
       }
+    },
+    async updateMetadata(slug, input) {
+      const rows = await db
+        .update(projects)
+        .set({
+          name: input.name,
+          description: input.description ?? null,
+          updatedAt: new Date(),
+        })
+        .where(and(eq(projects.slug, slug), isNull(projects.archivedAt)))
+        .returning();
+      return rows[0] ?? null;
+    },
+    async archive(slug) {
+      const rows = await db
+        .update(projects)
+        .set({ archivedAt: new Date() })
+        .where(eq(projects.slug, slug))
+        .returning({ id: projects.id });
+      return rows.length > 0;
     },
     async listFeatures(projectId) {
       // Feature list + count of sections with non-empty body (filledCount).
