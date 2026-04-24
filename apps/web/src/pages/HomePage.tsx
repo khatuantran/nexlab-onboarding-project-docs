@@ -26,11 +26,11 @@ export function HomePage(): JSX.Element {
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-8" aria-busy={isLoading || undefined}>
-      <h1 className="text-2xl font-semibold tracking-tight">Danh sách project</h1>
+      <h1 className="font-display text-3xl font-bold tracking-tight">Danh sách project</h1>
 
       <div className="mt-6">
         {isLoading ? (
-          <div className="divide-y divide-border rounded-lg border border-border">
+          <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card shadow-sm">
             <ProjectRowSkeleton />
             <ProjectRowSkeleton />
             <ProjectRowSkeleton />
@@ -57,7 +57,7 @@ export function HomePage(): JSX.Element {
             action={isAdmin ? <CreateProjectDialog triggerLabel="Tạo project đầu tiên" /> : null}
           />
         ) : (
-          <div className="divide-y divide-border rounded-lg border border-border">
+          <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card shadow-sm">
             {projects?.map((project) => (
               <ProjectRow key={project.id} project={project} />
             ))}

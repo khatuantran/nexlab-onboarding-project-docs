@@ -33,7 +33,9 @@ export function SearchPage(): JSX.Element {
     <main className="mx-auto max-w-3xl px-6 py-8" aria-busy={isLoading}>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold">Kết quả cho &quot;{q}&quot;</h1>
+          <h1 className="font-display text-2xl font-bold tracking-tight">
+            Kết quả cho &quot;{q}&quot;
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground" aria-live="polite">
             {isLoading ? "Đang tìm..." : `${hits?.length ?? 0} feature`}
           </p>

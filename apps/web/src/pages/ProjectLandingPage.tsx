@@ -66,7 +66,9 @@ export function ProjectLandingPage(): JSX.Element {
     <main className="mx-auto max-w-5xl px-6 py-8">
       <header className="mb-6 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">{project.name}</h1>
+          <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
+            {project.name}
+          </h1>
           {project.description ? (
             <p className="mt-1 text-sm text-muted-foreground">{project.description}</p>
           ) : null}

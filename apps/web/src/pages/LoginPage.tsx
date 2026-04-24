@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ApiError } from "@/lib/api";
 import { messageForCode } from "@/lib/errorMessages";
+import { NxLogo } from "@/components/common/NxLogo";
 import { useLogin, useMe } from "@/queries/auth";
 
 export function LoginPage(): JSX.Element {
@@ -41,12 +42,15 @@ export function LoginPage(): JSX.Element {
 
   return (
     <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-6 py-12">
-      <h1 className="text-2xl font-semibold">Đăng nhập</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
+      <div className="mb-10 flex justify-center">
+        <NxLogo size={48} />
+      </div>
+      <h1 className="font-display text-3xl font-bold tracking-tight">Đăng nhập</h1>
+      <p className="mt-2 font-ui text-sm text-muted-foreground">
         Dùng tài khoản nội bộ để xem tài liệu onboarding.
       </p>
 
-      <form className="mt-6 flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)} noValidate>
+      <form className="mt-8 flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)} noValidate>
         <div className="flex flex-col gap-1">
           <Label htmlFor="email">Email</Label>
           <Input
@@ -85,7 +89,7 @@ export function LoginPage(): JSX.Element {
           </p>
         ) : null}
 
-        <Button type="submit" disabled={isSubmitting || login.isPending}>
+        <Button type="submit" size="lg" disabled={isSubmitting || login.isPending} className="mt-2">
           {login.isPending ? "Đang đăng nhập…" : "Đăng nhập"}
         </Button>
       </form>
