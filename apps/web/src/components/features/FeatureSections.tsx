@@ -60,7 +60,7 @@ export function FeatureSections({
             <div className="mt-10 mb-4 flex items-start justify-between gap-3 first:mt-0">
               <h2
                 id={`heading-${type}`}
-                className="text-xl font-semibold tracking-tight text-foreground"
+                className="font-display text-2xl font-bold tracking-tight text-foreground"
               >
                 {LABEL[type]}
               </h2>

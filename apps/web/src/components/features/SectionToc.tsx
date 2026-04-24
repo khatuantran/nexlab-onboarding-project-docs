@@ -56,8 +56,10 @@ export function SectionToc(): JSX.Element {
               <a
                 href={`#section-${type}`}
                 className={cn(
-                  "block rounded-sm px-2 py-1 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                  active === type ? "text-foreground font-medium" : "text-muted-foreground",
+                  "block rounded-md px-3 py-1.5 font-ui transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  active === type
+                    ? "font-bold text-primary border-l-2 border-primary -ml-[2px] pl-[10px]"
+                    : "text-muted-foreground",
                 )}
               >
                 {LABEL[type]}

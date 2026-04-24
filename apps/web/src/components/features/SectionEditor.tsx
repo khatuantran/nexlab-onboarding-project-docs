@@ -68,7 +68,7 @@ export function SectionEditor({
     <form
       onSubmit={handleSubmit}
       aria-label={`Đang chỉnh sửa ${type}`}
-      className="rounded-md border border-primary/20 bg-muted/30"
+      className="rounded-xl border border-primary/30 bg-primary-50/60 shadow-sm dark:bg-primary-900/20"
     >
       <div className="grid gap-4 p-4 md:grid-cols-2">
         <div className="flex flex-col gap-1.5">
@@ -92,7 +92,7 @@ export function SectionEditor({
         <div className="flex flex-col gap-1.5">
           <span className="text-xs font-medium text-muted-foreground">Preview</span>
           <div
-            className="min-h-[12rem] rounded-md border border-border bg-background p-3"
+            className="min-h-[12rem] rounded-lg border border-border bg-background p-4"
             aria-live="polite"
           >
             {preview.trim().length === 0 ? (
