@@ -75,6 +75,7 @@ Implement US-002 rồi US-003.
   - [T4](stories/US-004/tasks.md#t4--dropdownmenu-primitive-fe-scaffold) DropdownMenu primitive FE scaffold (`@radix-ui/react-dropdown-menu` wrapper) — ✅ `54b276c` (2026-04-24).
   - [T5](stories/US-004/tasks.md#t5--homepage-catalog-fe) HomePage catalog FE (ProjectRow + 4 states + admin empty CTA) — ✅ `6981c07` (2026-04-24).
   - [T6](stories/US-004/tasks.md#t6--editprojectdialog-fe) EditProjectDialog FE + useUpdateProject (controlled dialog, slug readonly, sonner) — ✅ `c2d7988` (2026-04-24).
+  - [T7](stories/US-004/tasks.md#t7--projectactionsmenu-fe--archive-wire) ProjectActionsMenu FE + archive wire (⋯ overflow, useArchiveProject, redirect `/`) — ✅ `904e9c8` (2026-04-24).
 
 ### M3 — Pilot launch 🟡 _(target 2026-07-31)_
 

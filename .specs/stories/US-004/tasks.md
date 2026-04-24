@@ -4,7 +4,7 @@
 
 _Story_: [US-004 — Project catalog + admin lifecycle](../US-004.md)
 _Total estimate_: ~14-16h (solo, TDD pace)
-_Last updated_: 2026-04-24 (T6 landed `c2d7988`)
+_Last updated_: 2026-04-24 (T7 landed `904e9c8`)
 
 ---
 
@@ -33,7 +33,7 @@ _Last updated_: 2026-04-24 (T6 landed `c2d7988`)
 | [T4](#t4--dropdownmenu-primitive-fe-scaffold)  | DropdownMenu primitive FE scaffold                            | 1h     | prereq FE                    | —                  | [design-system §5.1](../../ui/design-system.md)                  | ✅ `54b276c` |
 | [T5](#t5--homepage-catalog-fe)                 | HomePage catalog FE (ProjectRow + empty state)                | 3h     | AC-1, AC-2, AC-3, AC-4       | PROJ-001           | [home.md](../../ui/home.md)                                      | ✅ `6981c07` |
 | [T6](#t6--editprojectdialog-fe)                | EditProjectDialog FE + useUpdateProject mutation              | 2h     | AC-5, AC-6                   | PROJ-002           | [edit-project-dialog.md](../../ui/edit-project-dialog.md)        | ✅ `c2d7988` |
-| [T7](#t7--projectactionsmenu-fe--archive-wire) | ProjectActionsMenu FE + archive wire + redirect               | 2h     | AC-7, AC-8                   | PROJ-002           | [project-landing.md §Admin actions](../../ui/project-landing.md) | 🟡 Planned   |
+| [T7](#t7--projectactionsmenu-fe--archive-wire) | ProjectActionsMenu FE + archive wire + redirect               | 2h     | AC-7, AC-8                   | PROJ-002           | [project-landing.md §Admin actions](../../ui/project-landing.md) | ✅ `904e9c8` |
 | [T8](#t8--e2e-smoke--progress-sync)            | Playwright E2E smoke + progress sync                          | 2h     | AC-1, AC-5, AC-7             | all                | —                                                                | 🟡 Planned   |
 
 **Critical path**: T1 → T2 → T3 → T4 → T5 → T6 → T7 → T8.
@@ -419,9 +419,9 @@ it("confirm archive → POST /archive → toast + navigate / + invalidate querie
 
 ### DoD
 
-- [ ] 6 test cases green.
-- [ ] Post-archive redirect verified (MemoryRouter location probe).
-- [ ] `pnpm test`/`lint`/`typecheck` green.
+- [x] 6 test cases green (trigger, menu items, edit dialog open, confirm wording, happy archive + redirect, 403 toast).
+- [x] Post-archive redirect verified via MemoryRouter route marker.
+- [x] `pnpm test`/`lint`/`typecheck` green.
 
 ### Commit example
 

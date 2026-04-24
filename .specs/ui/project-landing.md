@@ -7,7 +7,7 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `project-landing`
-- **Status**: Implemented (read path T9 `879b15b`) + Ready (admin actions, US-004)
+- **Status**: Implemented (read path T9 `879b15b`; admin actions US-004 / T7 `904e9c8`)
 - **Last updated**: 2026-04-24
 
 ## Route
