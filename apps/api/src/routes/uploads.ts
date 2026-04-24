@@ -133,3 +133,46 @@ export function createUploadsRouter(deps: UploadsRouterDeps): ExpressRouter {
 
   return router;
 }
+
+export interface UploadsReadRouterDeps {
+  uploadRepo: UploadRepo;
+  requireAuth: RequestHandler;
+  uploadDir: string;
+}
+
+export function createUploadsReadRouter(deps: UploadsReadRouterDeps): ExpressRouter {
+  const { uploadRepo, requireAuth, uploadDir } = deps;
+  const router = Router();
+  const baseDir = path.resolve(uploadDir);
+
+  const get: RequestHandler = async (req, res, next) => {
+    try {
+      const { id } = req.params as { id: string };
+      const row = await uploadRepo.findById(id);
+      if (!row) {
+        next(new HttpError(404, ErrorCode.NOT_FOUND, "Upload không tồn tại"));
+        return;
+      }
+      if (!isWhitelistedMime(row.mimeType)) {
+        next(new HttpError(404, ErrorCode.NOT_FOUND, "Upload không tồn tại"));
+        return;
+      }
+      const absPath = resolveUploadPath(baseDir, row.id, row.mimeType);
+      if (!absPath.startsWith(baseDir + path.sep)) {
+        next(new HttpError(404, ErrorCode.NOT_FOUND, "Upload không tồn tại"));
+        return;
+      }
+      res.setHeader("Content-Type", row.mimeType);
+      res.setHeader("Cache-Control", "private, max-age=300");
+      res.sendFile(absPath, (err) => {
+        if (err) next(new HttpError(404, ErrorCode.NOT_FOUND, "File not found"));
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  router.get("/:id", requireAuth, get);
+
+  return router;
+}

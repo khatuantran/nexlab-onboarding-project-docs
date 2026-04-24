@@ -11,7 +11,7 @@ import { createProjectsRouter } from "./routes/projects.js";
 import { createFeaturesRouter } from "./routes/features.js";
 import { createSectionsRouter } from "./routes/sections.js";
 import { createSearchRouter } from "./routes/search.js";
-import { createUploadsRouter } from "./routes/uploads.js";
+import { createUploadsReadRouter, createUploadsRouter } from "./routes/uploads.js";
 import { createUserRepo } from "./repos/userRepo.js";
 import { createProjectRepo } from "./repos/projectRepo.js";
 import { createFeatureRepo } from "./repos/featureRepo.js";
@@ -51,6 +51,11 @@ const app = createApp({
   uploadsRouter: createUploadsRouter({
     uploadRepo,
     featureRepo,
+    requireAuth,
+    uploadDir: config.UPLOAD_DIR,
+  }),
+  uploadsReadRouter: createUploadsReadRouter({
+    uploadRepo,
     requireAuth,
     uploadDir: config.UPLOAD_DIR,
   }),
