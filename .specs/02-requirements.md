@@ -34,7 +34,8 @@ Mỗi FR có:
 | ID                                                            | Area    | Summary                                       | Priority | Maps to                |
 | ------------------------------------------------------------- | ------- | --------------------------------------------- | -------- | ---------------------- |
 | [FR-AUTH-001](#fr-auth-001--emailpassword-auth)               | Auth    | Email + password login/logout, session cookie | P0       | US-001, US-002, US-003 |
-| [FR-PROJ-001](#fr-proj-001--project-crud-minimal)             | Project | Admin tạo project + liệt kê                   | P0       | US-002                 |
+| [FR-PROJ-001](#fr-proj-001--project-crud-minimal)             | Project | Admin tạo project + liệt kê non-archived      | P0       | US-002, US-004         |
+| [FR-PROJ-002](#fr-proj-002--project-metadata-edit--archive)   | Project | Admin rename metadata + archive soft-delete   | P0       | US-004                 |
 | [FR-FEAT-001](#fr-feat-001--feature-crud-within-project)      | Feature | Tạo / sửa / list feature trong project        | P0       | US-002                 |
 | [FR-FEAT-002](#fr-feat-002--5-section-template)               | Feature | Feature có template cố định 5 section         | P0       | US-001, US-002, US-003 |
 | [FR-FEAT-003](#fr-feat-003--per-section-multi-author)         | Feature | Multi-author theo từng section                | P0       | US-002, US-003         |

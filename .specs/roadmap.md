@@ -67,7 +67,8 @@ Implement US-002 rồi US-003.
   - [T6](stories/US-002/tasks.md#t6--createfeaturedialog-fe) CreateFeatureDialog FE với author gate — ✅ `522889c` (2026-04-23).
   - [T7](stories/US-002/tasks.md#t7--sectioneditor-fe--edit-in-place-integration) SectionEditor FE + edit-in-place — ✅ `03c83ba` (2026-04-23).
   - [T8](stories/US-002/tasks.md#t8--e2e-smoke--progress-sync-release-tag) Playwright E2E smoke (happy path create→feature→edit→persist) — ✅ `a482ecd` (2026-04-23). **US-002 Done**.
-- **Next**: US-003 (tech author + embed + upload) → flip M2 status ✅ khi US-003 ship.
+- **Next in M2**: US-003 (tech author + embed + upload) → flip M2 status ✅ khi US-003 ship.
+- **Added mid-milestone**: [US-004](stories/US-004.md) — project catalog `/` + admin lifecycle (edit + archive). Draft `fd0ee34`. FR-PROJ-002 new `4d290ad`. Scope M2 hoặc M3 (user decide — không block M3 nếu pilot chạy với URL direct được).
 
 ### M3 — Pilot launch 🟡 _(target 2026-07-31)_
 
