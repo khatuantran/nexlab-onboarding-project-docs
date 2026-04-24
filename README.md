@@ -87,7 +87,7 @@ Full setup (DB migrate / seed / dev servers / E2E) ở [docs/SETUP.md](docs/SETU
 - [US-001 — Dev reads & search feature catalog](.specs/stories/US-001.md) + [tasks](.specs/stories/US-001/tasks.md)
 - [US-002 — BA creates project + feature with business sections](.specs/stories/US-002.md) + [tasks](.specs/stories/US-002/tasks.md) — **Done** (8/8 ✅, 2026-04-23)
 - [US-003 — Dev adds tech-notes + screenshots](.specs/stories/US-003.md)
-- [US-004 — Project catalog + admin lifecycle](.specs/stories/US-004.md) + [tasks](.specs/stories/US-004/tasks.md) — in progress (T1-T5/8 ✅)
+- [US-004 — Project catalog + admin lifecycle](.specs/stories/US-004.md) + [tasks](.specs/stories/US-004/tasks.md) — in progress (T1-T6/8 ✅)
 
 **Operational**:
 

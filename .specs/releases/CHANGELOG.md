@@ -19,6 +19,7 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 - `PATCH /api/v1/projects/:slug` + `POST /api/v1/projects/:slug/archive` endpoints — admin-only. PATCH update name/description (slug immutable, Zod strips); archive set `archived_at` (idempotent 204). `GET /projects/:slug` giờ trả 404 cho archived project (US-004 / T3, `3ae766f`).
 - `DropdownMenu` UI primitive (`apps/web/src/components/ui/dropdown-menu.tsx`) — shadcn-style wrapper around `@radix-ui/react-dropdown-menu`. Prereq cho US-004 T7 ProjectActionsMenu (US-004 / T4, `54b276c`).
 - HomePage `/` project catalog — list rows với name + description (line-clamp-2) + featureCount + relative time, ChevronRight arrow, 4 states (loading skeletons / list / empty / error). Admin empty state có inline CTA "Tạo project đầu tiên" reuse CreateProjectDialog (`triggerLabel` prop). `useProjects()` TanStack Query, key `["projects"]` (US-004 / T5, `6981c07`).
+- `EditProjectDialog` component (`apps/web/src/components/projects/EditProjectDialog.tsx`) + `useUpdateProject(slug)` mutation — RHF+Zod form, slug readonly với hint, "Lưu" submit (Check icon), sonner success toast, native confirm cho dirty cancel. Controlled dialog (open + onOpenChange props). Mount wiring defer T7 (US-004 / T6, `c2d7988`).
 
 ### Changed
 

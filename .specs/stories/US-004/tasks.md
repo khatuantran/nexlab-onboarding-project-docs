@@ -4,7 +4,7 @@
 
 _Story_: [US-004 — Project catalog + admin lifecycle](../US-004.md)
 _Total estimate_: ~14-16h (solo, TDD pace)
-_Last updated_: 2026-04-24 (T5 landed `6981c07`)
+_Last updated_: 2026-04-24 (T6 landed `c2d7988`)
 
 ---
 
@@ -32,7 +32,7 @@ _Last updated_: 2026-04-24 (T5 landed `6981c07`)
 | [T3](#t3--project-patch--archive-apis)         | `PATCH /projects/:slug` + `POST /projects/:slug/archive` APIs | 3h     | AC-5, AC-6, AC-7, AC-8, AC-9 | PROJ-002           | —                                                                | ✅ `3ae766f` |
 | [T4](#t4--dropdownmenu-primitive-fe-scaffold)  | DropdownMenu primitive FE scaffold                            | 1h     | prereq FE                    | —                  | [design-system §5.1](../../ui/design-system.md)                  | ✅ `54b276c` |
 | [T5](#t5--homepage-catalog-fe)                 | HomePage catalog FE (ProjectRow + empty state)                | 3h     | AC-1, AC-2, AC-3, AC-4       | PROJ-001           | [home.md](../../ui/home.md)                                      | ✅ `6981c07` |
-| [T6](#t6--editprojectdialog-fe)                | EditProjectDialog FE + useUpdateProject mutation              | 2h     | AC-5, AC-6                   | PROJ-002           | [edit-project-dialog.md](../../ui/edit-project-dialog.md)        | 🟡 Planned   |
+| [T6](#t6--editprojectdialog-fe)                | EditProjectDialog FE + useUpdateProject mutation              | 2h     | AC-5, AC-6                   | PROJ-002           | [edit-project-dialog.md](../../ui/edit-project-dialog.md)        | ✅ `c2d7988` |
 | [T7](#t7--projectactionsmenu-fe--archive-wire) | ProjectActionsMenu FE + archive wire + redirect               | 2h     | AC-7, AC-8                   | PROJ-002           | [project-landing.md §Admin actions](../../ui/project-landing.md) | 🟡 Planned   |
 | [T8](#t8--e2e-smoke--progress-sync)            | Playwright E2E smoke + progress sync                          | 2h     | AC-1, AC-5, AC-7             | all                | —                                                                | 🟡 Planned   |
 
@@ -370,9 +370,9 @@ it("cancel with dirty → native confirm", async () => { ... });
 
 ### DoD
 
-- [ ] 5 test cases green.
-- [ ] Dialog isolated reusable.
-- [ ] `pnpm test`/`lint`/`typecheck` green.
+- [x] 5 test cases green.
+- [x] Dialog isolated reusable (controlled `open` + `onOpenChange` + `project` props).
+- [x] `pnpm test`/`lint`/`typecheck` green.
 
 ### Commit example
 
