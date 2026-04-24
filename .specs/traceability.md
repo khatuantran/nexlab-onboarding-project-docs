@@ -82,7 +82,7 @@ Mục đích: khi đổi 1 FR biết ngay tác động tới story + task nào. 
 | Task                                                                | Primary FR           | AC covered (US-003) | Status       |
 | ------------------------------------------------------------------- | -------------------- | ------------------- | ------------ |
 | [T1](stories/US-003/tasks.md#t1--uploads-migration--shared-schemas) | UPLOAD-001           | prereq              | ✅ `b285b99` |
-| [T2](stories/US-003/tasks.md#t2--post-uploads-endpoint)             | UPLOAD-001           | AC-4, AC-5, AC-6    | 🟡 Planned   |
+| [T2](stories/US-003/tasks.md#t2--post-uploads-endpoint)             | UPLOAD-001           | AC-4, AC-5, AC-6    | ✅ `b082416` |
 | [T3](stories/US-003/tasks.md#t3--get-uploads-id-static-serve)       | UPLOAD-001, AUTH-001 | AC-4 read, AC-9     | 🟡 Planned   |
 | [T4](stories/US-003/tasks.md#t4--embed-parser--embedcard-component) | EMBED-001            | AC-2, AC-3, AC-8    | 🟡 Planned   |
 | [T5](stories/US-003/tasks.md#t5--sectioneditor-upload-toolbar)      | UPLOAD-001, FEAT-003 | AC-4, AC-5, AC-6    | 🟡 Planned   |

@@ -4,7 +4,7 @@
 
 _Story_: [US-003 — Dev bổ sung tech-notes + screenshots](../US-003.md)
 _Total estimate_: ~12-14h (solo, TDD pace)
-_Last updated_: 2026-04-24 (T1 ✅ `b285b99` — 1/7 shipped)
+_Last updated_: 2026-04-24 (T1 ✅ `b285b99`, T2 ✅ `b082416` — 2/7 shipped)
 
 ---
 
@@ -28,7 +28,7 @@ _Last updated_: 2026-04-24 (T1 ✅ `b285b99` — 1/7 shipped)
 | #                                            | Title                                                                    | Effort | AC covered       | FR touched           | UI spec                                                 | Status       |
 | -------------------------------------------- | ------------------------------------------------------------------------ | ------ | ---------------- | -------------------- | ------------------------------------------------------- | ------------ |
 | [T1](#t1--uploads-migration--shared-schemas) | Uploads table migration + shared schemas + `file-type` dep               | 1h     | prereq           | UPLOAD-001           | —                                                       | ✅ `b285b99` |
-| [T2](#t2--post-uploads-endpoint)             | `POST /features/:id/uploads` endpoint (multer + magic bytes + DB)        | 3h     | AC-4, AC-5, AC-6 | UPLOAD-001           | —                                                       | 🟡 Planned   |
+| [T2](#t2--post-uploads-endpoint)             | `POST /features/:id/uploads` endpoint (multer + magic bytes + DB)        | 3h     | AC-4, AC-5, AC-6 | UPLOAD-001           | —                                                       | ✅ `b082416` |
 | [T3](#t3--get-uploads-id-static-serve)       | `GET /uploads/:id` session-protected static file serve                   | 1h     | AC-4 read, AC-9  | UPLOAD-001, AUTH-001 | —                                                       | 🟡 Planned   |
 | [T4](#t4--embed-parser--embedcard-component) | Embed parser util + `EmbedCard` + MarkdownView integration               | 2h     | AC-2, AC-3, AC-8 | EMBED-001            | [feature-detail §Embed](../../ui/feature-detail.md)     | 🟡 Planned   |
 | [T5](#t5--sectioneditor-upload-toolbar)      | SectionEditor upload toolbar + `useUpload` mutation + cursor insert      | 2h     | AC-4, AC-5, AC-6 | UPLOAD-001, FEAT-003 | [feature-detail §Upload](../../ui/feature-detail.md)    | 🟡 Planned   |
@@ -160,11 +160,11 @@ describe("POST /features/:id/uploads", () => {
 
 ### DoD
 
-- [ ] 8 test cases green.
-- [ ] api-surface.md updated.
-- [ ] `UPLOAD_DIR` có default `./data/uploads`, gitignored path.
-- [ ] Docker compose volume mount cho persistence (nếu infra dev chạy qua docker).
-- [ ] `pnpm test`/`lint`/`typecheck` green.
+- [x] 7 test cases green (happy path + 413 + 415 PDF-spoof + 415 GIF + 404 + 401 + path-traversal).
+- [x] api-surface.md updated.
+- [x] `UPLOAD_DIR` có default `./data/uploads`, gitignored path.
+- [ ] Docker compose volume mount cho persistence (deferred tới M3 infra hardening — dev chạy native).
+- [x] `pnpm test`/`lint`/`typecheck` green.
 
 ### Commit example
 

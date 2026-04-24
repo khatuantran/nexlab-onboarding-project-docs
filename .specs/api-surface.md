@@ -62,10 +62,10 @@ Ký hiệu **Auth**: ❌ không yêu cầu · 🔐 session required · 👑 admi
 
 ### Uploads
 
-| Method | Path                    | Auth | Request          | Response                                                    | Errors                                                                      | FR                                                                              | Task        |
-| ------ | ----------------------- | ---- | ---------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ----------- |
-| POST   | `/features/:id/uploads` | 🔐   | multipart `file` | 201 `{ data: { id, url, sizeBytes, mimeType, createdAt } }` | 404 `FEATURE_NOT_FOUND`; 413 `FILE_TOO_LARGE`; 415 `UNSUPPORTED_MEDIA_TYPE` | [FR-UPLOAD-001](02-requirements.md#fr-upload-001--image-upload-for-screenshots) | US-003 task |
-| GET    | `/uploads/:id`          | 🔐   | —                | 200 binary + `Content-Type`                                 | 404                                                                         | FR-UPLOAD-001                                                                   | US-003 task |
+| Method | Path                    | Auth | Request          | Response                                                    | Errors                                                                      | FR                                                                              | Task                                                                 |
+| ------ | ----------------------- | ---- | ---------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| POST   | `/features/:id/uploads` | 🔐   | multipart `file` | 201 `{ data: { id, url, sizeBytes, mimeType, createdAt } }` | 404 `FEATURE_NOT_FOUND`; 413 `FILE_TOO_LARGE`; 415 `UNSUPPORTED_MEDIA_TYPE` | [FR-UPLOAD-001](02-requirements.md#fr-upload-001--image-upload-for-screenshots) | [T2 ✅ `b082416`](stories/US-003/tasks.md#t2--post-uploads-endpoint) |
+| GET    | `/uploads/:id`          | 🔐   | —                | 200 binary + `Content-Type`                                 | 404                                                                         | FR-UPLOAD-001                                                                   | US-003 task                                                          |
 
 ### Search
 
