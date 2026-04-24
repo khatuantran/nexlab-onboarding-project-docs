@@ -2,11 +2,13 @@
 
 <!-- exempt: registry (no template required) -->
 
-_Last updated: 2026-04-23 · Source of truth for cross-screen UI consistency: tokens, icons, components, a11y floor._
+_Last updated: 2026-04-24 · Source of truth for cross-screen UI consistency: tokens, icons, components, a11y floor._
 
 Mỗi file `.specs/ui/<screen>.md` **must** reference tokens/components ở file này — không redefine colors/fonts/spacing locally. Thêm token/variant/icon mới = update file này trong commit riêng trước khi code.
 
-Related: [ADR-002 light+dark theme](../adr/ADR-002-light-dark-theme.md), [templates/02-ui-spec-template.md](../../templates/02-ui-spec-template.md).
+**Brand**: Nexlab (orange + gold, Material 3-flavored). Adopted per [ADR-003](../adr/ADR-003-nexlab-design-system.md) 2026-04-24 — supersede shadcn-neutral tokens + system font stack.
+
+Related: [ADR-001 tech stack](../adr/ADR-001-tech-stack.md), [ADR-002 light+dark theme](../adr/ADR-002-light-dark-theme.md), [ADR-003 Nexlab DS](../adr/ADR-003-nexlab-design-system.md), [design-system/ (uploaded UI kit)](../../design-system/), [templates/02-ui-spec-template.md](../../templates/02-ui-spec-template.md).
 
 ---
 
@@ -16,25 +18,75 @@ Light + dark theme qua Tailwind `darkMode: "class"` + CSS vars trên `:root` và
 
 ### 1.1 Token map
 
-| Token                      | Light HSL     | Dark HSL      | Dùng ở                                          |
-| -------------------------- | ------------- | ------------- | ----------------------------------------------- |
-| `--background`             | `0 0% 100%`   | `222 47% 11%` | Page background, card background                |
-| `--foreground`             | `222 47% 11%` | `210 40% 98%` | Primary text                                    |
-| `--muted`                  | `210 40% 96%` | `217 33% 17%` | Subtle surfaces (hover, secondary bg)           |
-| `--muted-foreground`       | `215 16% 47%` | `215 20% 65%` | Sub-copy, placeholder, disabled text            |
-| `--border`                 | `214 32% 91%` | `217 33% 17%` | Input border, card divider                      |
-| `--input`                  | `214 32% 91%` | `217 33% 17%` | Input border (alias of `--border` hiện tại)     |
-| `--ring`                   | `222 47% 11%` | `210 40% 98%` | Focus ring (`focus-visible:ring-2`)             |
-| `--primary`                | `222 47% 11%` | `210 40% 98%` | Button primary bg, link, focus-visible outline  |
-| `--primary-foreground`     | `210 40% 98%` | `222 47% 11%` | Text on primary bg                              |
-| `--destructive`            | `0 84% 60%`   | `0 75% 60%`   | Error text, destructive action bg               |
-| `--destructive-foreground` | `210 40% 98%` | `210 40% 98%` | Text on destructive bg                          |
-| `--highlight`              | `48 96% 89%`  | `48 60% 35%`  | `<mark>` bg (search snippet, future highlights) |
-| `--radius`                 | `0.5rem`      | `0.5rem`      | Border radius base (Button/Input/Card)          |
+Nexlab palette converted RGB → HSL (ADR-003 §2.1). Dark derived từ light (invert luminance; primary/secondary lightness +8-10% cho dark readability).
 
-**Contrast**: mọi cặp fg/bg ≥ 4.5:1 (WCAG AA) trong cả 2 mode. Verify bằng eyeball + Chrome DevTools contrast checker.
+**Semantic surfaces**:
 
-**Hiện trạng code**: `:root` + `.dark` + `--ring` + `--input` landed T8.5 (`51802c0`).
+| Token                  | Light HSL    | Dark HSL     | Dùng ở                          |
+| ---------------------- | ------------ | ------------ | ------------------------------- |
+| `--background`         | `0 0% 100%`  | `0 0% 15%`   | Page background                 |
+| `--foreground`         | `240 3% 16%` | `0 0% 98%`   | Primary text                    |
+| `--card`               | `0 0% 100%`  | `0 0% 15%`   | Card surface bg                 |
+| `--card-foreground`    | `240 3% 16%` | `0 0% 98%`   | Text on card                    |
+| `--popover`            | `0 0% 100%`  | `0 0% 15%`   | DropdownMenu / tooltip bg       |
+| `--popover-foreground` | `240 3% 16%` | `0 0% 98%`   | Text on popover                 |
+| `--muted`              | `0 0% 95%`   | `0 0% 22%`   | Section bg, disabled, hover     |
+| `--muted-foreground`   | `0 0% 55%`   | `0 0% 70%`   | Sub-copy, placeholder, inactive |
+| `--accent`             | `0 0% 95%`   | `0 0% 22%`   | Hover surfaces (alias muted)    |
+| `--accent-foreground`  | `240 3% 16%` | `0 0% 98%`   | Text on accent                  |
+| `--border`             | `0 0% 89%`   | `0 0% 28%`   | Input border, card divider      |
+| `--input`              | `0 0% 89%`   | `0 0% 28%`   | Input field border              |
+| `--ring`               | `27 88% 51%` | `28 89% 61%` | Focus ring (primary-500)        |
+| `--radius`             | `0.5rem`     | `0.5rem`     | Base radius (buttons/inputs 8)  |
+
+**Primary — Nexlab orange**:
+
+| Token                  | Light HSL    | Dark HSL     | Dùng ở                                    |
+| ---------------------- | ------------ | ------------ | ----------------------------------------- |
+| `--primary`            | `27 88% 51%` | `28 89% 61%` | Button orange variant, active state, link |
+| `--primary-foreground` | `0 0% 100%`  | `0 0% 15%`   | Text on primary bg                        |
+
+Primary ramp 50-900 exposed cho tinted surfaces (Tailwind `bg-primary-100` etc.):
+
+| Step | Light HSL    | Light RGB (source)     |
+| ---- | ------------ | ---------------------- |
+| 50   | `38 83% 96%` | rgb(254, 248, 238)     |
+| 100  | `36 90% 92%` | rgb(253, 238, 215)     |
+| 200  | `34 92% 83%` | rgb(251, 218, 173)     |
+| 300  | `32 91% 72%` | rgb(248, 191, 121)     |
+| 400  | `28 89% 61%` | rgb(244, 154, 67)      |
+| 500  | `27 88% 51%` | rgb(240, 118, 19) base |
+| 600  | `25 84% 48%` | rgb(226, 99, 20)       |
+| 700  | `22 82% 40%` | rgb(187, 74, 19)       |
+| 800  | `17 73% 34%` | rgb(149, 59, 23)       |
+| 900  | `15 69% 28%` | rgb(120, 51, 22)       |
+
+**Secondary — Nexlab gold** (default button bg per Nexlab convention):
+
+| Token                    | Light HSL    | Dark HSL     | Dùng ở                        |
+| ------------------------ | ------------ | ------------ | ----------------------------- |
+| `--secondary`            | `39 61% 62%` | `39 61% 70%` | Button default variant bg     |
+| `--secondary-foreground` | `0 0% 100%`  | `0 0% 15%`   | Text on secondary bg          |
+| `--secondary-bg`         | `39 67% 94%` | `39 20% 22%` | Chip fill, muted gold surface |
+| `--secondary-text`       | `35 45% 46%` | `39 61% 75%` | Text on secondary-bg          |
+
+**Semantic (success / warning / info / destructive)**:
+
+| Token                      | Light HSL      | Dark HSL       | Dùng ở                              |
+| -------------------------- | -------------- | -------------- | ----------------------------------- |
+| `--destructive`            | `12 100% 44%`  | `12 90% 55%`   | Destructive button, error banner    |
+| `--destructive-foreground` | `0 0% 100%`    | `0 0% 98%`     | Text on destructive                 |
+| `--success`                | `133 56% 46%`  | `133 56% 55%`  | Success toast, checkmarks           |
+| `--success-foreground`     | `0 0% 100%`    | `0 0% 15%`     | Text on success                     |
+| `--warning`                | `37 100% 50%`  | `37 100% 60%`  | Warning alert                       |
+| `--warning-foreground`     | `0 0% 15%`     | `0 0% 15%`     | Text on warning (dark cho contrast) |
+| `--info`                   | `236 100% 71%` | `236 100% 78%` | Info alert                          |
+| `--info-foreground`        | `0 0% 100%`    | `0 0% 15%`     | Text on info                        |
+| `--highlight`              | `34 92% 83%`   | `27 60% 35%`   | `<mark>` bg (search snippet)        |
+
+**Contrast**: mọi cặp fg/bg ≥ 4.5:1 (WCAG AA) trong cả 2 mode. Primary-500 orange trên white: ratio ~4.7:1 ✅; Dark primary-400 orange trên `neutral-ink`: ~6.2:1 ✅.
+
+**Hiện trạng code**: Nexlab tokens landed T-DS-3 (`87b9827`).
 
 ### 1.2 Theme toggle behavior
 
@@ -50,19 +102,28 @@ Light + dark theme qua Tailwind `darkMode: "class"` + CSS vars trên `:root` và
 
 ## 2. Typography
 
-- **Font family**: system stack (`ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`). Không web font cho v1 (latency + Vietnamese diacritics render OK với system).
-- **Scale** (Tailwind class):
+**Fonts (ADR-003 §2.3)** — self-hosted via `@fontsource` npm packages (bundled by Vite, không CDN). Latin + Vietnamese subsets only.
 
-| Role                  | Tailwind                        | Size | Line-height |
-| --------------------- | ------------------------------- | ---- | ----------- |
-| H1 (page title)       | `text-2xl font-semibold`        | 24px | 32px        |
-| H2 (section)          | `text-xl font-semibold`         | 20px | 28px        |
-| H3 (sub-section)      | `text-lg font-medium`           | 18px | 28px        |
-| Body default          | `text-sm`                       | 14px | 20px        |
-| Body prose (markdown) | `text-base leading-relaxed`     | 16px | 28px        |
-| Caption / helper text | `text-xs text-muted-foreground` | 12px | 16px        |
+- **Body**: `Roboto` (400 / 500 / 700). Tailwind class `font-body` (default `font-sans` alias).
+- **Display / Heading / Label**: `Inter` (400 / 500 / 600 / 700). Tailwind class `font-display`.
+- **UI chrome (buttons, fields)**: SF Pro Text fallback Inter via `font-ui` stack (`-apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", ...`).
+- **Brand wordmark**: SVG lockup (no font needed). Reserved Montserrat if future override needed.
+- Applied tự động: `body` → Roboto, `h1..h6` → Inter (index.css). Override per-screen qua Tailwind class nếu cần.
 
-- **Letter-spacing**: Tailwind default (`tracking-normal` cho body, `tracking-tight` cho heading).
+**Scale** (Nexlab Material 3 mapping):
+
+| Role                  | Tailwind                                     | Size | Line-height | Font           |
+| --------------------- | -------------------------------------------- | ---- | ----------- | -------------- |
+| H1 (page title)       | `text-2xl font-semibold font-display`        | 24px | 32px        | Inter          |
+| H2 (section)          | `text-xl font-semibold font-display`         | 20px | 28px        | Inter          |
+| H3 (sub-section)      | `text-lg font-medium font-display`           | 18px | 28px        | Inter          |
+| Body default          | `text-sm`                                    | 14px | 20px        | Roboto         |
+| Body prose (markdown) | `text-base leading-relaxed`                  | 16px | 28px        | Roboto         |
+| Caption / helper text | `text-xs text-muted-foreground`              | 12px | 16px        | Roboto         |
+| Button label          | `text-sm font-bold font-ui tracking-[0.1px]` | 14px | 20px        | SF Pro / Inter |
+
+- **Letter-spacing**: Tailwind default; button label `tracking-[0.1px]` theo Nexlab.
+- **Nexlab scale keys** (reference, optional): display-lg 57/64, display-md 45/52, headline-lg 32/40, headline-md 28/36, headline-sm 24/32, title-xl 20/28, body-lg 16/24, body-md 14/20, body-sm 12/16. V1 dùng Tailwind default scale; adopt Nexlab specific values khi screen cần.
 
 ---
 
@@ -122,6 +183,13 @@ Library: [`lucide-react`](https://lucide.dev/). Đã trong `apps/web/package.jso
 | `Github` (custom SVG) | EmbedCard icon cho github.com URLs (US-003)                        | decor (kèm URL text, aria-hidden) |
 | `Figma` (custom SVG)  | EmbedCard icon cho figma.com URLs (US-003)                         | decor (kèm URL text, aria-hidden) |
 | `Jira` (custom SVG)   | EmbedCard icon cho atlassian.net URLs (US-003)                     | decor (kèm URL text, aria-hidden) |
+
+**Brand logo** — Nexlab wordmark SVG (không dùng lucide):
+
+| Asset                       | Dùng ở                          | Source                                                                                                                     |
+| --------------------------- | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `NxLogo` (variant `lockup`) | AppHeader, login brand chrome   | [design-system/assets/logo-nexlab.svg](../../design-system/assets/logo-nexlab.svg)                                         |
+| `NxLogo` (variant `mark`)   | Compact spots (avatar, favicon) | [design-system/assets/logo-nexlab-mark.svg](../../design-system/assets/logo-nexlab-mark.svg) + `var(--logo-gradient)` mask |
 
 ---
 
@@ -214,17 +282,18 @@ US-003 adds (planned):
 
 Thêm row khi đổi token, icon registry, component inventory. Breaking change (rename/remove token) → bump minor version của file này + migrate per-screen specs cùng PR.
 
-| Date       | Change                                                                                                                                                                                                                                                                                                    | PR / commit   |
-| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
-| 2026-04-23 | Initial scaffold: 10 tokens + lucide-react icon rules + 3 primitives + 4 layout comps.                                                                                                                                                                                                                    | (this)        |
-| 2026-04-23 | Dark `--destructive` 31% → 60% lightness — original was too dark for `text-destructive` on dark bg (fails 4.5:1).                                                                                                                                                                                         | T8.5 Gate 2   |
-| 2026-04-23 | T9 scaffold: add 4 icons (ChevronRight, FileText, Clock, AlertCircle) + Card primitive + 7 layout components (Breadcrumb, FeatureCard, SectionBadge, RelativeTime, MarkdownView, SectionToc, EmptyState). Status `(planned)` cho tới khi T9 ship.                                                         | T9 Gate 1     |
-| 2026-04-23 | T9 components implemented + shipped. Status flip `(planned)` → live.                                                                                                                                                                                                                                      | T9 `879b15b`  |
-| 2026-04-23 | T10 scaffold: add `--highlight` token (light `48 96% 89%` / dark `48 60% 35%`), `Search` + `X` icons, `SearchInput` + `SearchResultRow` + `FilterChip` components. Status `(planned)` tới khi T10 ship.                                                                                                   | T10 Gate 1    |
-| 2026-04-23 | T10 ship: `--highlight`, `Search`/`X`, `SearchInput`/`SearchResultRow`/`FilterChip` live.                                                                                                                                                                                                                 | T10 `5ca8e49` |
-| 2026-04-23 | US-002 Gate 0 scaffold: add `Plus` + `Pencil` icons, `Dialog` + `Textarea` + `Toaster` primitives (req deps `@radix-ui/react-dialog`, `sonner`), feature comps `CreateProjectDialog` / `CreateFeatureDialog` / `SectionCard` / `SectionEditor` / `AdminGate`. Status `(planned)` cho tới khi US-002 ship. | US-002 Gate 0 |
-| 2026-04-24 | US-004 Gate 1 scaffold: add `Check` (retroactive, US-002 T7 ship), `MoreHorizontal`, `Archive` icons + `DropdownMenu` primitive (req dep `@radix-ui/react-dropdown-menu`). Cho overflow menu admin actions trên project-landing. Status `(planned)` cho tới khi US-004 ship.                              | US-004 Gate 1 |
-| 2026-04-24 | US-003 Gate 1 scaffold: add `Upload` + `Image` + `ExternalLink` lucide icons + `Github` + `Figma` + `Jira` custom SVG brand icons. Add `UploadButton` + `EmbedCard` feature components. Req dep `file-type` (BE). Status `(planned)` cho tới khi US-003 ship.                                             | US-003 Gate 1 |
+| Date       | Change                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | PR / commit                                 |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| 2026-04-23 | Initial scaffold: 10 tokens + lucide-react icon rules + 3 primitives + 4 layout comps.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | (this)                                      |
+| 2026-04-23 | Dark `--destructive` 31% → 60% lightness — original was too dark for `text-destructive` on dark bg (fails 4.5:1).                                                                                                                                                                                                                                                                                                                                                                                                                                                                | T8.5 Gate 2                                 |
+| 2026-04-23 | T9 scaffold: add 4 icons (ChevronRight, FileText, Clock, AlertCircle) + Card primitive + 7 layout components (Breadcrumb, FeatureCard, SectionBadge, RelativeTime, MarkdownView, SectionToc, EmptyState). Status `(planned)` cho tới khi T9 ship.                                                                                                                                                                                                                                                                                                                                | T9 Gate 1                                   |
+| 2026-04-23 | T9 components implemented + shipped. Status flip `(planned)` → live.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | T9 `879b15b`                                |
+| 2026-04-23 | T10 scaffold: add `--highlight` token (light `48 96% 89%` / dark `48 60% 35%`), `Search` + `X` icons, `SearchInput` + `SearchResultRow` + `FilterChip` components. Status `(planned)` tới khi T10 ship.                                                                                                                                                                                                                                                                                                                                                                          | T10 Gate 1                                  |
+| 2026-04-23 | T10 ship: `--highlight`, `Search`/`X`, `SearchInput`/`SearchResultRow`/`FilterChip` live.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | T10 `5ca8e49`                               |
+| 2026-04-23 | US-002 Gate 0 scaffold: add `Plus` + `Pencil` icons, `Dialog` + `Textarea` + `Toaster` primitives (req deps `@radix-ui/react-dialog`, `sonner`), feature comps `CreateProjectDialog` / `CreateFeatureDialog` / `SectionCard` / `SectionEditor` / `AdminGate`. Status `(planned)` cho tới khi US-002 ship.                                                                                                                                                                                                                                                                        | US-002 Gate 0                               |
+| 2026-04-24 | US-004 Gate 1 scaffold: add `Check` (retroactive, US-002 T7 ship), `MoreHorizontal`, `Archive` icons + `DropdownMenu` primitive (req dep `@radix-ui/react-dropdown-menu`). Cho overflow menu admin actions trên project-landing. Status `(planned)` cho tới khi US-004 ship.                                                                                                                                                                                                                                                                                                     | US-004 Gate 1                               |
+| 2026-04-24 | US-003 Gate 1 scaffold: add `Upload` + `Image` + `ExternalLink` lucide icons + `Github` + `Figma` + `Jira` custom SVG brand icons. Add `UploadButton` + `EmbedCard` feature components. Req dep `file-type` (BE). Status `(planned)` cho tới khi US-003 ship.                                                                                                                                                                                                                                                                                                                    | US-003 Gate 1                               |
+| 2026-04-24 | **Nexlab DS adopted** ([ADR-003](../adr/ADR-003-nexlab-design-system.md)). Full token rewrite: primary orange `27 88% 51%` (was shadcn neutral `222 47% 11%`), secondary gold, new semantic tokens (success/warning/info/accent/popover/card + secondary-bg/text), primary ramp 50-900 exposed. Self-host Roboto + Inter via `@fontsource` (Latin + Vietnamese subsets). `NxLogo` brand component registered. Tailwind config: colors/borderRadius/boxShadow/fontFamily rewritten. Dark variants derived từ Nexlab palette. Supersede shadcn-neutral tokens + system font stack. | T-DS-1..4 `3e32743` / `96a1251` / `87b9827` |
 
 ---
 
