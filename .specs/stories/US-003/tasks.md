@@ -4,7 +4,7 @@
 
 _Story_: [US-003 — Dev bổ sung tech-notes + screenshots](../US-003.md)
 _Total estimate_: ~12-14h (solo, TDD pace)
-_Last updated_: 2026-04-24 (T1-T6 ✅ — 6/7 shipped, only E2E remaining)
+_Last updated_: 2026-04-24 (T1-T7 ✅ — 7/7 shipped, US-003 Done)
 
 ---
 
@@ -33,7 +33,7 @@ _Last updated_: 2026-04-24 (T1-T6 ✅ — 6/7 shipped, only E2E remaining)
 | [T4](#t4--embed-parser--embedcard-component) | Embed parser util + `EmbedCard` + MarkdownView integration               | 2h     | AC-2, AC-3, AC-8 | EMBED-001            | [feature-detail §Embed](../../ui/feature-detail.md)     | ✅ `a262cf3` |
 | [T5](#t5--sectioneditor-upload-toolbar)      | SectionEditor upload toolbar + `useUpload` mutation + cursor insert      | 2h     | AC-4, AC-5, AC-6 | UPLOAD-001, FEAT-003 | [feature-detail §Upload](../../ui/feature-detail.md)    | ✅ `f75f75a` |
 | [T6](#t6--section-editable-gate--ownership)  | Enable tech-notes/screenshots edit + per-section "Cập nhật bởi" metadata | 2h     | AC-1, AC-7       | FEAT-002, FEAT-003   | [feature-detail §Ownership](../../ui/feature-detail.md) | ✅ `dd1c213` |
-| [T7](#t7--e2e-smoke--progress-sync)          | Playwright E2E + story-level progress sync + CHANGELOG cut `[US-003]`    | 2h     | cross-cutting    | all                  | —                                                       | 🟡 Planned   |
+| [T7](#t7--e2e-smoke--progress-sync)          | Playwright E2E + story-level progress sync + CHANGELOG cut `[US-003]`    | 2h     | cross-cutting    | all                  | —                                                       | ✅ `c6c57fc` |
 
 **Critical path**: T1 → T2 → (T3 ∥ T4) → T5 → T6 → T7.
 
@@ -476,9 +476,9 @@ Sau khi T7 merge, commit riêng `docs: sync progress markers after US-003 comple
 
 ### DoD
 
-- [ ] E2E test green locally (`pnpm test:e2e`).
-- [ ] Progress sync commit landed.
-- [ ] `pnpm test`/`lint`/`typecheck` green.
+- [x] E2E test green locally (`pnpm test:e2e` — 4/4 pass incl. US-003).
+- [x] Progress sync commit landed (this commit).
+- [x] `pnpm test`/`lint`/`typecheck` green (81 api + 114 web + 24 shared).
 
 ### Commit example
 

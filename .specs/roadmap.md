@@ -45,7 +45,7 @@ Implement US-001 qua 10 task (T1-T10 + T8.5). **Progress: 10/10 done.**
 - **Exit criteria**: chạy lại [SETUP.md](../docs/SETUP.md) từ fresh clone end-to-end pass 3 smoke checkpoint; tất cả AC của [US-001](stories/US-001.md) có automated test.
 - **Effort**: ~34h (tasks estimate, solo + TDD; +8h so với 26h ban đầu vì thêm T3-BE + T4-FE infra scaffold).
 
-### M2 — US-002 + US-003 Author path 🟡 _(target 2026-06-30, US-002 ✅ / US-003 pending)_
+### M2 — US-002 + US-003 Author path ✅ _(closed 2026-04-24, ahead of target 2026-06-30)_
 
 Implement US-002 rồi US-003.
 
@@ -74,7 +74,8 @@ Implement US-002 rồi US-003.
   - [T4](stories/US-003/tasks.md#t4--embed-parser--embedcard-component) embed parser + EmbedCard HTML post-process — ✅ `a262cf3` (2026-04-24).
   - [T5](stories/US-003/tasks.md#t5--sectioneditor-upload-toolbar) SectionEditor upload toolbar + useUpload + cursor insert — ✅ `f75f75a` (2026-04-24).
   - [T6](stories/US-003/tasks.md#t6--section-editable-gate--ownership) Enable 5-section edit + per-section ownership UI — ✅ `dd1c213` (2026-04-24).
-- **Next in M2**: US-003 T7 (E2E smoke + story close-out) → flip M2 status ✅ khi US-003 ship.
+  - [T7](stories/US-003/tasks.md#t7--e2e-smoke--progress-sync) Playwright E2E smoke + story close-out — ✅ `c6c57fc` (2026-04-24). **US-003 Done**.
+- **M2 closed**: US-002 + US-003 + US-004 all ✅; exit criteria met (1 project pilot với ≥ 3 feature end-to-end covered by E2E).
 - **Added mid-milestone + shipped**: [US-004](stories/US-004.md) — project catalog `/` + admin lifecycle (edit + archive). **Done 2026-04-24**, 8/8 tasks + 3 E2E green. Progress:
   - [T1](stories/US-004/tasks.md#t1--schema-migration--shared-schemas) schema migration `archived_at` + shared schemas — ✅ `e9898c7` (2026-04-24).
   - [T2](stories/US-004/tasks.md#t2--get-projects-list-api-loại-archived) GET /projects list API (non-archived, featureCount) — ✅ `2939f56` (2026-04-24).

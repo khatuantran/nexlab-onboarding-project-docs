@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-_Last updated: 2026-04-24 · [Keep-a-Changelog](https://keepachangelog.com/en/1.1.0/) format. M1 closed · US-002 + US-004 shipped in M2._
+_Last updated: 2026-04-24 · [Keep-a-Changelog](https://keepachangelog.com/en/1.1.0/) format. M1 closed · M2 closed (US-002 + US-003 + US-004 shipped)._
 
 Running log of user-facing changes. Thêm row dưới `[Unreleased]` khi commit ship feature/fix/change. Khi milestone đạt exit criteria → rename block thành `[Mx]` + release date, start new `[Unreleased]`.
 
@@ -35,6 +35,34 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 ### Security
 
 - (none)
+
+---
+
+## [US-003] — 2026-04-24 (Tech-notes + Screenshots + Embed + Ownership)
+
+US-003 implementation complete — 7/7 tasks. Dev bổ sung `tech-notes` + `screenshots` với image upload (5 MiB, magic-byte sniff), GitHub/Figma/Jira embed cards inline cho whitelisted autolinks, per-section "Cập nhật bởi" ownership hiển thị dưới heading. All 5 sections now editable (tech-notes + screenshots joined business/user-flow/business-rules). Playwright E2E covers full happy path embed + upload + reload persistence.
+
+### Added
+
+- T1 — Shared `uploadResponseSchema` + `UPLOAD_MIME_WHITELIST` + `UPLOAD_MAX_BYTES` (5 MiB) + `uploads` pgTable migration + `file-type` dep (`b285b99`).
+- T2 — `POST /api/v1/features/:id/uploads` multipart endpoint: multer memoryStorage + 5 MiB fileSize limit → 413 FILE_TOO_LARGE, file-type magic-byte sniff → 415 UNSUPPORTED_MEDIA_TYPE (PDF-spoof + GIF rejected), UUID filename on disk + sanitized originalname in DB (`b082416`).
+- T3 — `GET /api/v1/uploads/:id` session-protected static serve: DB lookup → Content-Type from row.mime_type, resolved path + sep boundary check, `Cache-Control: private 5 min` (`4690b8e`).
+- T4 — Embed parser `embedFromUrl` + markdown post-process: DOMParser walk `<a>` tags, swap whitelisted autolinks (github.com, figma.com, atlassian.net) with embed-card HTML (inline brand SVG + path + domain subtitle). Custom-labeled links stay plain anchors. Strict hostname match prevents `evil.com/github.com` spoof (`a262cf3`).
+- T5 — `useUpload(featureId)` mutation + `UploadButton` component + SectionEditor conditional toolbar (tech-notes + screenshots only). Cursor position captured via textarea ref, `![alt](url)` spliced at last-known selectionStart after 201, focus + caret restored via queueMicrotask (`f75f75a`).
+- T6 — Drop `EDITABLE` gate → all 5 sections editable. `SectionResponse.updatedByName` hydrated via `LEFT JOIN users` ở feature repo; PUT response sets it from `req.user.displayName`. FE subtitle "Cập nhật bởi @{name}, {relative time}" under filled sections; null renders `(người dùng đã xóa)` (`dd1c213`).
+- T7 — Playwright E2E `e2e/us-003.spec.ts`: admin tạo project+feature → logout → dev login → tech-notes embed autolink → screenshots `setInputFiles(tiny.png)` → save → reload → assert both embed-card + `<img src=/api/v1/uploads/>` + ownership line persist. Full E2E suite 4/4 green (US-001 + US-002 + US-003 + US-004) (`c6c57fc`).
+
+### Fixed
+
+- Markdown sanitizer img-src allowlist: `/uploads/` → `/api/v1/uploads/` để DOMPurify không strip src của uploaded images (caught by E2E, not unit tests). Committed cùng T7 (`c6c57fc`).
+
+### Added (requirements)
+
+- [FR-UPLOAD-001](../02-requirements.md#fr-upload-001--image-upload-for-screenshots) + [FR-EMBED-001](../02-requirements.md#fr-embed-001--external-link-embed) now implemented end-to-end.
+
+### Design system
+
+- Icons added: `ImagePlus` (Upload toolbar). Components: `UploadButton`, embed-card HTML (post-process MarkdownView, no separate component).
 
 ---
 
