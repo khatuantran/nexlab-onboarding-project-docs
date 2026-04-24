@@ -7,7 +7,7 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `home`
-- **Status**: Ready
+- **Status**: Implemented (US-004 / T5 `6981c07`)
 - **Last updated**: 2026-04-24
 
 ## Route
