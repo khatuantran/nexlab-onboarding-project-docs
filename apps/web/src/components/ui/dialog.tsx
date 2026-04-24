@@ -14,7 +14,10 @@ export const DialogOverlay = forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Overlay
     ref={ref}
-    className={cn("fixed inset-0 z-50 bg-black/40 backdrop-blur-sm", className)}
+    className={cn(
+      "fixed inset-0 z-50 bg-black/50 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      className,
+    )}
     {...props}
   />
 ));
@@ -30,8 +33,9 @@ export const DialogContent = forwardRef<
       ref={ref}
       className={cn(
         "fixed left-1/2 top-1/2 z-50 grid w-full max-w-md -translate-x-1/2 -translate-y-1/2",
-        "gap-0 border border-border bg-background shadow-lg rounded-lg",
+        "gap-0 border border-border bg-popover text-popover-foreground rounded-xl shadow-lg",
         "focus:outline-none",
+        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
         className,
       )}
       {...props}
@@ -82,7 +86,11 @@ export const DialogTitle = forwardRef<
   ElementRef<typeof DialogPrimitive.Title>,
   ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
 >(({ className, ...props }, ref) => (
-  <DialogPrimitive.Title ref={ref} className={cn("text-lg font-semibold", className)} {...props} />
+  <DialogPrimitive.Title
+    ref={ref}
+    className={cn("font-display text-xl font-semibold leading-tight", className)}
+    {...props}
+  />
 ));
 DialogTitle.displayName = "DialogTitle";
 
