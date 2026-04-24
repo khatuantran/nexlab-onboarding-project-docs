@@ -15,6 +15,7 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 ### Added
 
 - Shared `updateProjectRequestSchema` + `ProjectSummary` type + `projects.archived_at` column migration — prereq cho US-004 catalog + admin lifecycle (US-004 / T1).
+- `GET /api/v1/projects` list endpoint — trả `ProjectSummary[]` non-archived, sorted `updated_at` desc, include `featureCount` qua LEFT JOIN (US-004 / T2, `2939f56`).
 
 ### Changed
 

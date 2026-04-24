@@ -70,6 +70,7 @@ Implement US-002 rồi US-003.
 - **Next in M2**: US-003 (tech author + embed + upload) → flip M2 status ✅ khi US-003 ship.
 - **Added mid-milestone**: [US-004](stories/US-004.md) — project catalog `/` + admin lifecycle (edit + archive). Ready với 8-task breakdown + 3 UI specs + FR-PROJ-002. Progress:
   - [T1](stories/US-004/tasks.md#t1--schema-migration--shared-schemas) schema migration `archived_at` + shared schemas — ✅ `e9898c7` (2026-04-24).
+  - [T2](stories/US-004/tasks.md#t2--get-projects-list-api-loại-archived) GET /projects list API (non-archived, featureCount) — ✅ `2939f56` (2026-04-24).
 
 ### M3 — Pilot launch 🟡 _(target 2026-07-31)_
 
