@@ -27,7 +27,7 @@ export function SearchInput(): JSX.Element {
   return (
     <form role="search" onSubmit={handleSubmit} className="relative flex items-center">
       <Search
-        className="pointer-events-none absolute left-2 size-4 text-muted-foreground"
+        className="pointer-events-none absolute left-3 size-4 text-muted-foreground"
         aria-hidden="true"
       />
       <input
@@ -37,7 +37,7 @@ export function SearchInput(): JSX.Element {
         placeholder="Tìm kiếm..."
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        className="h-9 w-56 rounded-md border border-input bg-muted/40 pl-8 pr-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="h-10 w-64 rounded-lg border border-input bg-muted/50 pl-9 pr-4 font-ui text-sm text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/20"
       />
     </form>
   );

@@ -14,13 +14,13 @@ export function FeatureCard({ projectSlug, feature }: FeatureCardProps): JSX.Ele
   return (
     <Link
       to={`/projects/${projectSlug}/features/${feature.slug}`}
-      className="block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       aria-label={`Xem chi tiết feature ${feature.title}`}
     >
-      <Card className="flex h-full flex-col gap-3 transition-shadow hover:shadow-sm">
+      <Card className="flex h-full flex-col gap-3 transition-all hover:border-primary/30 hover:shadow-md">
         <div className="flex items-start gap-2">
-          <FileText aria-hidden="true" className="size-5 shrink-0 text-muted-foreground" />
-          <h2 className="text-base font-medium text-foreground">{feature.title}</h2>
+          <FileText aria-hidden="true" className="size-5 shrink-0 text-primary" />
+          <h2 className="font-display text-base font-semibold text-foreground">{feature.title}</h2>
         </div>
         <div className="mt-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
