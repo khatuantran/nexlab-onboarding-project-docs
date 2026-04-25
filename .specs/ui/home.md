@@ -7,7 +7,7 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `home`
-- **Status**: Implemented (US-004 / T5 `6981c07`) · UI uplift draft (CR-002 / Phase 1B-1, 2026-04-25)
+- **Status**: Implemented (US-004 / T5 `6981c07`) · UI uplift draft v2 Workspace (CR-002 / Phase 1B-1', 2026-04-25)
 - **Last updated**: 2026-04-25
 
 ## Route
@@ -57,116 +57,159 @@ idle → loading (useProjects fetch)
 - **Focus ring**: token `--ring` trên `<a>` row (`focus-visible:ring-2 focus-visible:ring-ring`).
 - **Contrast**: theo token (4.5:1 cả light + dark).
 
-## Wire-level description (UI uplift — CR-002)
+## Wire-level description (UI uplift v2 — Workspace style — CR-002)
 
-### Desktop (≥ 768px)
+### Desktop (≥ 1024px)
 
 ```text
-┌────────────────────────────────────────────────────────────────────────┐
-│ AppHeader (NxLogo · Search · [Tạo project (admin)] · ThemeToggle · …)  │
-├────────────────────────────────────────────────────────────────────────┤
-│  max-w-5xl, px-6, py-8                                                  │
-│                                                                         │
-│  ╔═══════════════════════════════════════════════════════════════════╗  │
-│  ║ HERO PANEL (rounded-2xl, gradient primary-50→bg→secondary-bg/50)  ║  │
-│  ║ ring-1 ring-primary/10 · py-10 px-8 · NxLogo mark abs right opacity-5 ║  │
-│  ║                                                                    ║  │
-│  ║   ONBOARDING PORTAL    ← eyebrow text-xs uppercase tracking-wide  ║  │
-│  ║   Danh sách project    ← h1 font-display text-3xl font-bold       ║  │
-│  ║   12 project active · 47 feature đã document  ← stats text-base   ║  │
-│  ║                                                                    ║  │
-│  ║                                       [+ Tạo project] ← admin only ║  │
-│  ╚═══════════════════════════════════════════════════════════════════╝  │
-│                                                                         │
-│  Mới cập nhật ở đầu                                  12 project        │
-│                                                                         │
-│  ┌────────────────────────────────────────────────────────────────────┐ │
-│  │ rounded-xl bg-card shadow-sm border border-border divide-y         │ │
-│  │ ┌───────────────────────────────────────────────────────────────┐  │ │
-│  │ │ ┌──┐ Pilot Project                              ┌────┐ Mới  → │  │ │
-│  │ │ │PP│ MVP v1 cho onboarding catalog pilot team A │  5 │       │  │ │
-│  │ │ │  │ ⏱ 2 giờ trước                              │feat│       │  │ │
-│  │ │ └──┘ 56×56 grad avatar         font-display text-lg semibold  │  │ │
-│  │ ├───────────────────────────────────────────────────────────────┤  │ │
-│  │ │ ┌──┐ Demo Project                                ┌────┐    →  │  │ │
-│  │ │ │DP│ Sandbox cho dev mới onboard                 │  1 │       │  │ │
-│  │ │ │  │ ⏱ 1 ngày trước                              │feat│       │  │ │
-│  │ │ └──┘                                                            │  │ │
-│  │ ├───────────────────────────────────────────────────────────────┤  │ │
-│  │ │ ┌──┐ Alpha                                        ┌────┐    →  │  │ │
-│  │ │ │ A│ ⏱ 3 ngày trước                               │  — │       │  │ │
-│  │ │ └──┘ (no description → omit dòng đó hoàn toàn)    └────┘       │  │ │
-│  │ └───────────────────────────────────────────────────────────────┘  │ │
-│  └────────────────────────────────────────────────────────────────────┘ │
-└────────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ AppHeader                                                                     │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ max-w-6xl, px-10, py-8                                                        │
+│                                                                               │
+│  ┌──────────────────────────────────────────────────────────────────────────┐ │
+│  │ HERO ROW (flex items-end gap-6 mb-6)                                     │ │
+│  │  ┌─────────────────────────────────────┐  ┌──────┐ ┌──────┐ ┌──────┐    │ │
+│  │  │ WORKSPACE CỦA BẠN ← eyebrow primary │  │ Stat │ │ Stat │ │ Stat │    │ │
+│  │  │ Danh sách project ← h1 36/40 bold   │  │ Chip │ │ Chip │ │ Chip │    │ │
+│  │  │ Tất cả tài liệu onboarding cho ...  │  │ 12   │ │ 14   │ │  8   │    │ │
+│  │  │ ← subtitle 15/22 muted, max-w-xl    │  │ Proj │ │ Đủdoc│ │ Đóng │    │ │
+│  │  └─────────────────────────────────────┘  │ active│ │      │ │ góp  │    │ │
+│  │                                            └──────┘ └──────┘ └──────┘    │ │
+│  └──────────────────────────────────────────────────────────────────────────┘ │
+│                                                                               │
+│  ┌──────────────────────────────────────────────────────────────────────────┐ │
+│  │ FILTER ROW (rounded-xl bg-muted/40 border px-3 py-2.5 mb-5)              │ │
+│  │  [Tất cả] [Đang viết] [Đủ doc] [Cần bổ sung] [Mình theo dõi]   Sắp xếp: │ │
+│  │  ↑ pill buttons (active = bg-card shadow-sm)         [Mới cập nhật ▾]   │ │
+│  │                                                       [⊞] [☰]            │ │
+│  └──────────────────────────────────────────────────────────────────────────┘ │
+│                                                                               │
+│  ┌─────────────────────────────────┐  ┌─────────────────────────────────┐    │
+│  │ ┌──┐ Pilot Project    [Tag]  →  │  │ ┌──┐ Demo Project    [Tag]  →  │    │
+│  │ │PP│ MVP v1 cho onboarding...   │  │ │DP│ Sandbox cho dev mới...    │    │
+│  │ └──┘                             │  │ └──┘                            │    │
+│  │                                  │  │                                 │    │
+│  │ 12/20 sections có nội dung 60%  │  │ 5/5 sections có nội dung  100%  │    │
+│  │ ████████████░░░░░░ ←progress    │  │ ████████████████████ ←progress  │    │
+│  │                                  │  │                                 │    │
+│  │ ─────────────────────────────── │  │ ─────────────────────────────── │    │
+│  │ [TM][NL][PT]  4 feature  ●⏱ 2h │  │ [NL][PT]      1 feature   ⏱ 1d │    │
+│  │ avatar stack            live    │  │ avatar stack                    │    │
+│  └─────────────────────────────────┘  └─────────────────────────────────┘    │
+│  ┌─────────────────────────────────┐  ┌─────────────────────────────────┐    │
+│  │ ┌──┐ Alpha            [Draft] → │  │ + Tạo project mới              │    │
+│  │ │ A│ (no description omitted)  │  │   dashed tile, admin only      │    │
+│  │ └──┘                             │  │                                 │    │
+│  │ 0/5 sections có nội dung  0%   │  │                                 │    │
+│  │ ░░░░░░░░░░░░░░░░░░░ ←progress   │  │                                 │    │
+│  │ ─────────────────────────────── │  │                                 │    │
+│  │ [HD]            0 feature ⏱ 6d │  │                                 │    │
+│  └─────────────────────────────────┘  └─────────────────────────────────┘    │
+└──────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Mobile (< 768px)
+### Tablet (768-1023px) — 1-col grid, hero stack
+
+### Mobile (<768px) — 1-col grid, hero stack vertical, filter row scrolls horizontally
 
 ```text
 ┌──────────────────────────┐
 │ AppHeader                │
 ├──────────────────────────┤
-│ Hero panel (stacked)     │
-│  ONBOARDING PORTAL       │
-│  Danh sách project       │
-│  12 project · 47 feature │
-│  [+ Tạo project] admin   │
+│ Workspace của bạn        │
+│ Danh sách project        │
+│ Tất cả tài liệu...       │
 │                          │
-│ Mới cập nhật ở đầu       │
+│ ┌────┐ ┌────┐ ┌────┐    │
+│ │ 12 │ │ 14 │ │ 8  │←scroll
+│ │Proj│ │Đủ  │ │Đóng│    │
+│ └────┘ └────┘ └────┘    │
+│                          │
+│ [Tất cả|Đang|Đủ doc...] ←scroll
+│                          │
 │ ┌──────────────────────┐ │
-│ │ ┌──┐ Pilot Project →│ │
-│ │ │PP│ MVP v1...       │ │
-│ │ │  │ 5 feature · 2h  │ │
-│ │ └──┘                  │ │
-│ ├──────────────────────┤ │
-│ │ ┌──┐ Demo Project  →│ │
-│ │ │DP│ ⏱ 1 ngày        │ │
-│ │ │  │ 1 feature       │ │
-│ │ └──┘                  │ │
+│ │ Pilot Project   [T] →│ │
+│ │ MVP v1 cho...        │ │
+│ │ 12/20 ████░░ 60%     │ │
+│ │ [TM][NL] 4 feat ●2h  │ │
+│ └──────────────────────┘ │
+│ ┌──────────────────────┐ │
+│ │ Demo Project    [T] →│ │
+│ │ ...                  │ │
 │ └──────────────────────┘ │
 └──────────────────────────┘
 ```
 
-- **Layout**:
-  - Container: `mx-auto max-w-5xl px-6 py-8`.
-  - **Hero panel** (NEW): `rounded-2xl bg-gradient-to-br from-primary-50 via-background to-secondary-bg/50 ring-1 ring-primary/10 py-10 px-8 relative overflow-hidden`. NxLogo mark variant abs right `size-32 opacity-5 text-primary` (decorative, `aria-hidden`).
-  - Filter strip: `mt-6 flex items-center justify-between text-sm`. Left "Mới cập nhật ở đầu" muted; right `{count} project` muted. (Sort dropdown deferred v1.)
-  - List wrapper: `mt-3 rounded-xl bg-card shadow-sm border border-border divide-y divide-border`.
-  - **Row** (REDESIGN): `group grid grid-cols-[auto_1fr_auto_auto] items-center gap-5 p-5 transition-all hover:bg-muted/30 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring`.
-- **Row cells**:
-  - **Cell 1 — Avatar 56×56**: `rounded-xl shadow-sm ring-1 ring-primary-200/40 dark:ring-primary-700/40 bg-gradient-to-br from-primary-{N}00 to-primary-{N+2}00 text-white font-display font-bold text-2xl flex items-center justify-center`. N = hash(slug) bucket (200→400 / 300→500 / 400→600 / 500→700 / 600→800). Letter = first non-space char of name uppercase. `aria-hidden`.
-  - **Cell 2 — Body**: name `font-display text-lg font-semibold text-foreground line-clamp-1`. Description `text-sm text-muted-foreground line-clamp-1` (CHỈ render khi có — drop "(chưa có mô tả)" placeholder hoàn toàn). Meta row `mt-1 flex items-center gap-1.5 text-xs text-muted-foreground` với Clock icon size-3 + RelativeTime.
-  - **Cell 3 — Feature count badge**: `flex flex-col items-center justify-center rounded-xl bg-secondary-bg/60 dark:bg-secondary/10 px-3 py-2 min-w-[64px]`. Count `font-display text-2xl font-bold text-secondary-text`; label `text-[10px] uppercase tracking-wide text-secondary-text/80` "feature". Khi count=0 → render muted "—" thay vì pill.
-  - **Cell 4 — "Mới" badge + chevron**: pill `text-xs font-semibold text-primary bg-primary-50 ring-1 ring-primary/20 rounded-full px-2 py-0.5` chỉ render khi `updatedAt < 24h ago`. Chevron `size-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition`.
-- **Hover state**: row bg `bg-muted/30` + avatar gets `ring-2 ring-primary/20` + chevron slide. `transition-all` 150ms ease-out per charter §4.
-- **Key components**:
-  - New: `ProjectAvatar` (extract — reused trong ProjectLanding hero per CR-002 Phase 2).
-  - Updated: `ProjectRow` (4-cell grid, gradient avatar, gold count badge, "Mới" pill).
-  - Reused: `RelativeTime` (date-fns `vi` locale), `EmptyState`, `Button`, `CreateProjectDialog`.
-  - Reused icon: `ChevronRight`, `Clock`, `Plus`, `FolderOpen` (empty), `NxLogo` (mark variant).
-- **Key tokens** (charter §2-3):
-  - Hero: `from-primary-50 via-background to-secondary-bg/50`, `ring-primary/10`, eyebrow `text-primary`.
-  - Avatar gradient: `from-primary-{N}00 to-primary-{N+2}00`, `ring-primary-200/40` (light), `ring-primary-700/40` (dark).
-  - Count badge: `bg-secondary-bg/60`, `text-secondary-text`.
-  - "Mới" pill: `bg-primary-50`, `text-primary`, `ring-primary/20`.
-  - Hover: `bg-muted/30`, chevron `text-primary`.
-  - Focus: `ring-ring` standard.
-- **Typography** (charter §1):
-  - Page hero h1: `font-display text-3xl font-bold tracking-tight`.
-  - Eyebrow: `text-xs font-semibold uppercase tracking-wider text-primary`.
-  - Stats line: `text-base text-muted-foreground`.
-  - Row name: `font-display text-lg font-semibold` (bumped từ text-base).
-  - Description: `text-sm leading-relaxed` (line-clamp-1).
-  - Meta: `text-xs text-muted-foreground`.
-  - Count badge value: `font-display text-2xl font-bold`.
-- **Spacing** (charter §1 4pt):
-  - Hero inner: `py-10 px-8`. Hero → filter: `mt-6`. Filter → list: `mt-3`.
-  - Row inner: `p-5`. Row gap: `gap-5`. Row stack inner: name → desc `mt-0.5`, desc → meta `mt-1`.
+### Layout primitives
+
+- **Container**: `mx-auto max-w-6xl px-10 py-8` (bumped từ max-w-5xl/px-6 cho info density). Mobile: `px-4`.
+- **Hero row** (NEW — replaces hero panel): `flex flex-col xl:flex-row xl:items-end gap-6 mb-6`. Left: text block max-w-2xl (eyebrow + h1 + subtitle). Right: 3 StatChips horizontal (charter §10).
+- **Filter row** (NEW): `rounded-xl bg-muted/40 border border-border px-3 py-2.5 flex items-center gap-3`. Left: pill button group `bg-transparent` mỗi pill `px-3 py-1.5 rounded-md font-ui font-semibold text-xs`; active = `bg-card shadow-sm text-foreground`, idle = `text-muted-foreground hover:text-foreground`. Right cluster: "Sắp xếp:" muted label + sort button `border bg-card px-2.5 h-7 rounded-md` với chevron + view toggle (list `[☰]` / grid `[⊞]`) icons. **v1 simplification**: filter pills ["Tất cả", "Đang viết", "Đủ doc", "Cần bổ sung"] — derive client-side từ `featureCount` + computed filledCount; "Mình theo dõi" hidden v1 (no follow data). Sort + view toggle render but text-only (single sort = updated desc, single view = grid).
+- **Project grid**: `grid gap-4 sm:grid-cols-1 lg:grid-cols-2` (2-col từ 1024px+). Cards 180-220px tall.
+- **"Tạo project mới" tile** (admin only, last cell): `rounded-xl border-2 border-dashed border-border hover:border-primary/40 hover:bg-primary-50/30 cursor-pointer transition-all flex items-center justify-center gap-3 min-h-[180px] text-muted-foreground hover:text-primary font-ui font-semibold text-sm` với Plus icon trong primary-50 circle. Click mở `<CreateProjectDialog />`.
+
+### ProjectCard (REDESIGN v2)
+
+```
+┌─────────────────────────────────┐
+│ ┌──┐ Pilot Project  [Tag]    →  │  ← p-5, gap-3.5 row
+│ │PP│ MVP v1 cho onboarding...   │     avatar 44×44 grad rounded-lg
+│ └──┘ description line-clamp-1   │     name h4 font-display 15/22 bold
+│                                  │     tag = badge dot small (computed status)
+│                                  │     chevron right edge muted
+│                                  │
+│ 12/20 sections có nội dung  60% │  ← progress block
+│ ██████████░░░░░░░░░░ ←6px bar   │     label-row: muted + primary % right
+│                                  │     bar: rounded-full bg-neutral-100,
+│                                  │     fill = primary-500
+│                                  │
+│ ──────────────────────────────  │  ← border-t pt-3
+│ [TM][NL][PT]  4 feature  ●⏱ 2h │
+│  avatar stack         live indicator
+└─────────────────────────────────┘
+```
+
+- **Container**: `group rounded-xl border border-border bg-card p-5 flex flex-col gap-4 hover:border-primary/30 hover:shadow-md transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-ring`. Wrapped in semantic `<Link>` element.
+- **Top row** (`flex gap-3.5 items-start`):
+  - **ProjectAvatar 44×44** `rounded-lg shrink-0 bg-gradient-to-br from-primary-{N}00 to-primary-{N+2}00 text-primary-800 font-display font-bold text-base flex items-center justify-center`. Letters = first 2 chars of first word uppercase (e.g. "Pilot Project" → "PI"). N = hash bucket. `aria-hidden`.
+  - **Body** flex-1 min-w-0:
+    - Title row: `<h2>` name `font-display text-[15px] leading-[22px] font-bold line-clamp-1` + tag badge inline (status badge: "Đang viết" primary, "Đủ doc" success, "Cần bổ sung" warning, "Draft" neutral — derive from filled% client-side; v1 logic: ≥80%=Đủ, ≥1=Đang viết, 0=Draft).
+    - Description: `font-body text-[13px] leading-[18px] text-muted-foreground line-clamp-1 mt-1` (drop "(chưa có mô tả)" placeholder; omit khi không có).
+  - **Chevron button** 28×28 transparent border-none `text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition shrink-0`.
+- **Progress block** (vertical stack):
+  - Label row `flex justify-between mb-1.5`: left `font-ui font-semibold text-xs text-foreground/80` "{filled}/{total} sections có nội dung"; right `font-ui font-bold text-xs text-primary` "{pct}%".
+  - Bar: `h-1.5 rounded-full bg-neutral-100 dark:bg-muted overflow-hidden`. Fill `h-full bg-primary-500 rounded-full transition-all duration-500` width = `${pct}%`.
+  - Computed: `total = featureCount × 5` (5 sections/feature). `filled` = sum filledCount across project's features. v1: only `featureCount` available trên `ProjectSummary`; **needs API extension** OR derive at fetch time. Decision: **extend `ProjectSummary` BE-side với `filledSectionCount` + `totalSectionCount`** (1-line SQL aggregate trong projects list query). If BE not ready → render placeholder "{?} sections" + bar empty với tooltip "Đang đồng bộ".
+- **Footer row** `pt-3 border-t border-border flex items-center justify-between`:
+  - Left: `<AvatarStack ids={[...contributors]}/>` — v1 hardcoded từ `updatedBy` join. Display 2-3 avatars with -ml-2 overlap, `+N` if more. Size-7 ring-2 ring-background. Khi không có data → hide stack. Right of stack: muted "{featureCount} feature".
+  - Right: `flex items-center gap-1.5 text-xs`. Activity indicator: pulse dot success-500 + "{N} đang chỉnh · " (HIDDEN v1, no presence data); Clock icon size-3.5 + RelativeTime muted. Live state colored success-500 khi >0 contributors active (placeholder: hardcode false v1).
+
+### StatChip (charter §10)
+
+3 chips trong hero right-side:
+
+1. **Project active**: `<FolderOpen>` primary tone, value = `projects.length`, label "Project active".
+2. **Feature đủ doc**: `<CheckCircle>` success tone, value = sum projects where filledRatio ≥ 0.8 (placeholder count v1; final logic post BE extension), label "Feature đủ doc".
+3. **Đang đóng góp**: `<Users>` info tone, value = hardcoded "8" placeholder OR distinct contributors from updatedByName, label "Đang đóng góp".
+
+Container: `flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-2.5`. Icon plate 36×36 rounded-lg bg `${tone}/10%` icon size-4.5 colored `${tone}-500`. Stack value font-display 18/1 bold + label text-[11px] uppercase tracking-wide muted mt-1.
+
+### Tokens & typography
+
+- Hero: eyebrow `text-[12px] font-semibold uppercase tracking-[0.16em] text-primary-600`; h1 `font-display text-[36px] leading-10 font-bold tracking-[-0.02em]`; subtitle `font-body text-[15px] leading-[22px] text-muted-foreground max-w-2xl mt-2.5`.
+- Card title: `font-display text-[15px] leading-[22px] font-bold`.
+- Card progress label: `font-ui text-xs font-semibold`. Percentage: `font-ui text-xs font-bold text-primary-600`.
+- Card footer text: `font-ui text-xs font-medium text-muted-foreground`.
+- Filter pills: `font-ui text-[13px] font-semibold`.
+
+### Spacing
+
+- Hero row → filter: mb-5. Filter → grid: native (default flow). Hero internal: gap-6 (text block ↔ chip cluster). Card gap-4 outer, p-5 + gap-4 inner stacks.
 
 ## Error / empty / loading states
 
-- **Loading**: 3 row skeletons match shape mới — avatar block 56×56 `rounded-xl animate-pulse bg-muted` + 2 text bars (name + meta) + count block 56×56. `aria-busy="true"` trên `<main>`. **Hero panel KHÔNG skeleton** — text static, chỉ stats numbers chờ data có thể render `—` placeholder.
+- **Loading**: 4 card skeletons match shape mới (2-col grid) — avatar 44×44 `rounded-lg animate-pulse bg-muted` + 2 text bars (name 60% + desc 90%) + progress block (label bar + 6px bar) + footer (avatar stack + text bar). `aria-busy="true"` trên `<main>`. **Hero KHÔNG skeleton** — text static; StatChip values render "—" placeholder cho tới khi data về.
 - **Empty** (projects.length === 0) — charter §5:
   - Centered `py-16 px-6 max-w-md mx-auto`.
   - Icon: `FolderOpen` 64×64 `text-primary/40 mx-auto`.
@@ -194,16 +237,27 @@ idle → loading (useProjects fetch)
 - **Tasks**:
   - Initial implementation: US-004 / T5 ✅ `6981c07`.
   - UI uplift refresh: CR-002 / Phase 2-1 (TBD hash).
-- **Page component**: `apps/web/src/pages/HomePage.tsx` — refactor để bao gồm hero panel + filter strip + list wrapper. Compute `totalFeatures = sum(p.featureCount)` cho hero stats. Recent-update detection (`<24h`) trong row component.
+- **Page component**: `apps/web/src/pages/HomePage.tsx` — refactor: hero row (text + StatChip cluster) + filter row + 2-col grid + admin "Tạo project" tile. Compute `totalFeatures = sum(p.featureCount)`, `featuresInfullyDoc = ...` (placeholder logic v1 hardcoded 0 → BE extension).
 - **Sub-components**:
-  - `apps/web/src/components/projects/ProjectRow.tsx` (UPDATE — 4-cell grid, gradient avatar, count badge, "Mới" pill).
-  - `apps/web/src/components/projects/ProjectAvatar.tsx` (NEW — extract avatar logic, used here + ProjectLanding).
-- **Queries**: `apps/web/src/queries/projects.ts` `useProjects()` — unchanged shape.
-- **Shared schema**: `packages/shared/src/schemas/project.ts` — `ProjectSummary` unchanged.
+  - `apps/web/src/components/projects/ProjectCard.tsx` (NEW — replaces `ProjectRow`. Card with avatar + name + tag + description + progress + footer. Same path renaming for clarity.) v1 keep both files; deprecate ProjectRow trong Phase 2 commit.
+  - `apps/web/src/components/projects/ProjectAvatar.tsx` (NEW — gradient letter avatar, `size` prop for 44 / 56 / 80 variants. Used Home + ProjectLanding hero).
+  - `apps/web/src/components/common/StatChip.tsx` (NEW — shared, used Home + future dashboards. Props: icon, tone, value, label.).
+  - `apps/web/src/components/common/AvatarStack.tsx` (NEW — overlapping avatar circles, +N counter).
+  - `apps/web/src/components/common/ProgressBar.tsx` (NEW — thin 6px bar, primary fill, animated transition).
+  - `apps/web/src/components/projects/ProjectFilterPills.tsx` (NEW — 4 filter states client-side).
+- **Queries**: `useProjects()` — unchanged. `ProjectSummary` requires extension (post-BE work — see below).
+- **Shared schema extension** (BE follow-up — separate task):
+  - `ProjectSummary` add `filledSectionCount: number` (sum sections.body !== '') + `totalSectionCount: number` (= featureCount × 5).
+  - v1 implementation: render placeholder "—/— sections" + empty bar nếu BE chưa ready; OR compute client-side bằng `featureCount * 5` cho `total`, hardcode `filled = 0` cho UI to ship UI without BE block. Final wire khi BE PR ready.
+- **Hardcoded/dummy data v1** (skeleton-UI policy charter v2):
+  - StatChip "Đang đóng góp" → hardcode "8" hoặc distinct count of `updatedByName` từ projects (no separate API).
+  - AvatarStack contributors → derive từ `project.updatedByName` (1 avatar) + 0-2 hardcoded extras `[NL, PT]` placeholder.
+  - "{N} đang chỉnh" live indicator → hidden v1.
+  - Tag badge status → derived from filledRatio client-side.
 - **Reuse**:
-  - `CreateProjectDialog` empty state instance + hero CTA instance.
-  - `NxLogo` (mark variant) trong hero decorative.
-  - `RelativeTime`, `EmptyState`, `Button`, `Clock`/`FolderOpen`/`ChevronRight` lucide.
+  - `CreateProjectDialog` admin tile + admin empty state (2 instances).
+  - `NxLogo` (mark) — defer Home v2 (no decorative mark in this layout; reserved for Login/ProjectLanding).
+  - `RelativeTime`, `EmptyState`, `Button`, lucide icons (`FolderOpen`, `CheckCircle`, `Users`, `Plus`, `Clock`, `ChevronRight`, `ChevronDown`, `LayoutGrid`, `List`).
 
 ## Gate 1 decisions (approved 2026-04-24 via AskUserQuestion)
 
