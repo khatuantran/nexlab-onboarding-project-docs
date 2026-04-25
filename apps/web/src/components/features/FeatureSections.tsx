@@ -1,8 +1,20 @@
 import { useState } from "react";
-import { AlertCircle, Pencil } from "lucide-react";
+import {
+  Briefcase,
+  Code,
+  Image,
+  Info,
+  ListChecks,
+  Pencil,
+  Workflow,
+  type LucideIcon,
+} from "lucide-react";
+import { toast } from "sonner";
 import { SECTION_ORDER, type SectionResponse, type SectionType } from "@onboarding/shared";
+import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/button";
 import { AuthorGate } from "@/components/common/AuthorGate";
+import { EmptyDashedCard } from "@/components/common/EmptyDashedCard";
 import { MarkdownView } from "@/components/common/MarkdownView";
 import { SectionEditor } from "@/components/features/SectionEditor";
 import { formatRelativeVi } from "@/lib/relativeTime";
@@ -13,6 +25,22 @@ const LABEL: Record<SectionType, string> = {
   "business-rules": "Business rules",
   "tech-notes": "Tech notes",
   screenshots: "Screenshots",
+};
+
+const ICON: Record<SectionType, LucideIcon> = {
+  business: Briefcase,
+  "user-flow": Workflow,
+  "business-rules": ListChecks,
+  "tech-notes": Code,
+  screenshots: Image,
+};
+
+const EDITOR_ROLE: Record<SectionType, "BA" | "Dev"> = {
+  business: "BA",
+  "user-flow": "BA",
+  "business-rules": "BA",
+  "tech-notes": "Dev",
+  screenshots: "Dev",
 };
 
 interface FeatureSectionsProps {
@@ -43,49 +71,60 @@ export function FeatureSections({
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-4">
       {SECTION_ORDER.map((type) => {
         const section = byType.get(type);
         const body = section?.body ?? "";
         const hasBody = body.trim().length > 0;
         const isEditing = editing.has(type);
+        const Icon = ICON[type];
         return (
           <section
             key={type}
             id={`section-${type}`}
             aria-labelledby={`heading-${type}`}
-            className="scroll-mt-24"
+            className="scroll-mt-24 rounded-xl border border-border bg-card p-5"
           >
-            <div className="mt-10 mb-4 flex items-start justify-between gap-3 first:mt-0">
+            <div className="mb-3.5 flex items-center gap-2.5">
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "inline-flex size-8 items-center justify-center rounded-lg shrink-0",
+                  hasBody ? "bg-success/10 text-success" : "bg-muted text-muted-foreground",
+                )}
+              >
+                <Icon className="size-4" />
+              </span>
               <h2
                 id={`heading-${type}`}
-                className="font-display text-2xl font-bold tracking-tight text-foreground"
+                className="flex-1 line-clamp-1 font-display text-[18px] leading-none font-bold text-foreground"
               >
                 {LABEL[type]}
               </h2>
+              {hasBody && !isEditing && section ? (
+                <span className="hidden md:inline font-ui text-xs text-muted-foreground">
+                  Cập nhật bởi{" "}
+                  <strong className="text-foreground/80">
+                    @{section.updatedByName ?? "(người dùng đã xóa)"}
+                  </strong>{" "}
+                  · {formatRelativeVi(section.updatedAt)}
+                </span>
+              ) : null}
               {!isEditing && (
                 <AuthorGate>
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
+                    className="h-8 px-3"
                     onClick={() => openEdit(type)}
                     aria-label={`Sửa section ${LABEL[type]}`}
                   >
-                    <Pencil className="mr-2 size-4" aria-hidden="true" />
+                    <Pencil className="mr-1.5 size-3.5" aria-hidden="true" />
                     Sửa
                   </Button>
                 </AuthorGate>
               )}
             </div>
-            {hasBody && !isEditing && section ? (
-              <p className="-mt-3 mb-4 text-xs text-muted-foreground">
-                Cập nhật bởi{" "}
-                <span className="font-medium text-foreground">
-                  @{section.updatedByName ?? "(người dùng đã xóa)"}
-                </span>
-                , {formatRelativeVi(section.updatedAt)}
-              </p>
-            ) : null}
             {isEditing ? (
               <SectionEditor
                 projectSlug={projectSlug}
@@ -95,19 +134,30 @@ export function FeatureSections({
                 initialBody={body}
                 onDone={() => closeEdit(type)}
               />
-            ) : body.trim().length === 0 ? (
-              <div
-                className="flex items-start gap-3 rounded-md border border-dashed border-border bg-muted/30 p-6 text-sm text-muted-foreground"
-                role="status"
-              >
-                <AlertCircle aria-hidden="true" className="mt-0.5 size-5 shrink-0" />
-                <div>
-                  <p className="font-medium text-foreground">Chưa có nội dung</p>
-                  <p>BA hoặc dev chưa điền section này.</p>
-                </div>
-              </div>
-            ) : (
+            ) : hasBody ? (
               <MarkdownView source={body} />
+            ) : (
+              <EmptyDashedCard
+                icon={Info}
+                title="Chưa có nội dung"
+                description={
+                  <>
+                    {EDITOR_ROLE[type]} hoặc dev chưa điền section này. Bấm <strong>Sửa</strong> để
+                    bắt đầu — hoặc dùng template gợi ý.
+                  </>
+                }
+                action={
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    type="button"
+                    className="h-8"
+                    onClick={() => toast("Templates: tính năng đang phát triển trong v2")}
+                  >
+                    Dùng template
+                  </Button>
+                }
+              />
             )}
           </section>
         );
