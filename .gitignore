@@ -67,3 +67,4 @@ data/
 # Generated (to be added when tooling lands)
 # drizzle/migrations/meta/_journal.json  ← keep in git, do not ignore
 # apps/*/dist/
+screens/

@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-_Last updated: 2026-04-25 · Source of truth cho design quality bar across 5 screens. Mọi UI work phải tuân theo._
+_Last updated: 2026-04-25 · v2 amendment · Source of truth cho design quality bar across 5 screens. Mọi UI work phải tuân theo._
 
 Related: [design-system.md](design-system.md) (tokens), [ADR-003](../adr/ADR-003-nexlab-design-system.md) (Nexlab DS adoption), per-screen specs `.specs/ui/<screen>.md`.
 
@@ -85,13 +85,13 @@ Related: [design-system.md](design-system.md) (tokens), [ADR-003](../adr/ADR-003
 
 ## 6. Density rules per screen type
 
-| Screen type                          | Row/Card height target | Notes                                              |
-| ------------------------------------ | ---------------------- | -------------------------------------------------- |
-| Catalog list (Home)                  | 80-96px row            | Avatar + name + meta + chip + chevron.             |
-| Card grid (Project landing features) | 180-220px card         | Title + section progress + meta footer.            |
-| Detail prose                         | max 65ch read width    | Center column, sidebar TOC fixed at xl breakpoint. |
-| Search results                       | 120-140px row          | Title + snippet (line-clamp-3) + meta breadcrumb.  |
-| Auth (Login)                         | Single panel ~440px    | Hero left + form right (xl); stacked on mobile.    |
+| Screen type                          | Row/Card height target | Notes                                                                                                                                                      |
+| ------------------------------------ | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Catalog grid (Home)                  | 180-220px card, 2-col  | Avatar + name + tag + description + progress bar + avatar stack + activity meta. Revised 2026-04-25 from list to grid for richer per-project info density. |
+| Card grid (Project landing features) | 132-180px card, 2-col  | Icon plate + title + status badge + section progress (bar + dot row) + avatar stack.                                                                       |
+| Detail prose                         | max 65ch read width    | Center column, sidebar TOC fixed at xl breakpoint.                                                                                                         |
+| Search results                       | 120-140px row          | Title + snippet (line-clamp-3) + meta breadcrumb.                                                                                                          |
+| Auth (Login)                         | Single panel ~440px    | Hero left + form right (xl); stacked on mobile.                                                                                                            |
 
 ## 7. Illustration policy
 
@@ -119,7 +119,76 @@ Related: [design-system.md](design-system.md) (tokens), [ADR-003](../adr/ADR-003
 - ❌ `bg-muted` only for hover — at minimum add border or shadow shift.
 - ❌ Generic "Loading...", "Error" text — be specific ("Đang tải catalog", "Không tải được, thử lại").
 
-## 10. Compliance
+## 10. Component patterns (Workspace style — v2)
+
+Reusable visual patterns appearing across multiple screens. Implement as shared primitives khi xuất hiện ≥2 screens.
+
+### StatChip (used: Home hero, Project detail mini-stats, dashboard placeholders)
+
+- Horizontal row: icon plate (36×36 `rounded-lg bg-{tone}/14%`) + value (font-display 18-22px bold) + label (text-xs uppercase tracking-wide muted).
+- Tones: primary (orange) / success (green) / info (indigo) / warning (amber).
+- Container: `rounded-xl border border-border bg-card px-4 py-2.5`.
+- Use cho hero stat clusters (3-4 metrics row), không cho inline body text.
+
+### FloatStat (used: Login brand panel only)
+
+- Floating card 240px wide trên gradient backdrop: `rounded-2xl bg-white/92 backdrop-blur-md shadow-card ring-1 ring-white/60`.
+- Icon plate top + label + value (font-display 28px) + delta line ("+3 tuần này", colored theo tone).
+- 2-4 cards positioned absolutely với offsets, tạo collage.
+
+### MiniStat (used: Project detail hero)
+
+- Vertical stack: label uppercase 11px tracking-wide muted → value font-display 22px bold (optional primary tone) → sub-line text-xs muted.
+- Inline trong hero panel (gap-7 horizontal between stats).
+- Optional `live` prop adds pulsing dot prefix (success-500).
+
+### ProgressStrip (used: Feature detail header)
+
+- Horizontal panel `rounded-xl bg-muted/40 border border-border px-4 py-3.5`.
+- Layout: large fraction left (e.g. "2/5 section đã có", font-display 22px primary) + 5-segment progress bar middle (each segment `flex-1 h-1.5 rounded-full`, filled = primary-500, empty = neutral-200) + segment labels below + (optional) avatar stack right with "N người đang chỉnh" placeholder.
+
+### SectionDots (used: Feature card footer)
+
+- Inline row of 5 dots size-2 rounded-full, gap-1.5.
+- Filled = primary-500; empty = neutral-200.
+- Aria-label: `"{filled}/5 sections có nội dung"`.
+
+### Avatar / AvatarStack
+
+- Single Avatar: `rounded-full ring-2 ring-background size-7` với letter initials gradient bg theo hash.
+- Stack: 2-3 avatars overlap với `-ml-2`, last có `+N` chip nếu nhiều hơn.
+- Use cho contributor visibility.
+
+### LiveIndicator (placeholder v1)
+
+- Pulsing dot success-500 + label.
+- v1: hardcoded "0 đang chỉnh" hoặc hide nếu count=0. Real-time presence deferred (FR mới sau).
+
+### TabBar (used: Project detail)
+
+- Horizontal `border-b border-border` row, items `px-4 py-3.5 font-ui font-semibold text-sm` muted; active item `text-primary` + `border-b-2 border-primary -mb-px`.
+- Optional count badge sau label: pill 10px primary bg với white number.
+- v1: chỉ Catalog tab active; Activity/Members/Settings render placeholder empty state.
+
+### DecorativeMark (used: hero panels Home, Project detail, Login)
+
+- Absolute positioned NxLogo mark variant, gradient masked, opacity 5-18%, rotated -8deg.
+- Size 280-520px depending on hero size.
+- `aria-hidden="true"`, no semantic role.
+
+### TemplateRadio (used: Add Feature dialog)
+
+- Card-style radio: `rounded-lg border-1.5 px-3 py-2.5` với active state `border-primary` + `bg-primary-50` + `shadow-[0_0_0_3px_rgba(240,118,19,0.12)]`.
+- Top row: dot indicator (size-3.5 round, primary fill if active) + label bold.
+- Sub-text 11px muted describing template content.
+
+### EmptyDashedCard (used: empty section, "Tạo feature mới" tile)
+
+- Container: `rounded-xl border-2 border-dashed border-border bg-transparent p-6 flex items-center gap-3.5`.
+- Icon circle (32 round bg-primary-50) + heading + sub + (optional) inline action.
+- Khác standard EmptyState ở chỗ inline (in-flow, không centered page).
+
+## 11. Compliance
 
 Mọi PR đụng UI:
 
@@ -129,6 +198,7 @@ Mọi PR đụng UI:
 
 ## CHANGELOG
 
-| Version | Date       | Notes                                                                                                |
-| ------- | ---------- | ---------------------------------------------------------------------------------------------------- |
-| v1      | 2026-04-25 | Initial charter (CR-002). 5 screens uplift baseline. Hero panel pattern + density rules established. |
+| Version | Date       | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| v1      | 2026-04-25 | Initial charter (CR-002). 5 screens uplift baseline. Hero panel pattern + density rules established.                                                                                                                                                                                                                                                                                                                                     |
+| v2      | 2026-04-25 | Workspace-style amendment: §6 Home density list→grid 2-col 180-220px; §10 NEW component patterns (StatChip, FloatStat, MiniStat, ProgressStrip, SectionDots, AvatarStack, LiveIndicator placeholder, TabBar, DecorativeMark, TemplateRadio, EmptyDashedCard); §11 renumbered. Skeleton-UI policy: build full reference design, dummy/placeholder cho data chưa có (no realtime presence, activity log static, tabs Catalog-only active). |
