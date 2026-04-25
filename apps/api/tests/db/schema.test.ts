@@ -78,7 +78,9 @@ describe("FTS trigger features_rebuild_search_vector", () => {
       WHERE search_vector @@ plainto_tsquery('simple', 'đăng')
     `);
     expect(result.rows.length).toBeGreaterThan(0);
-    expect(result.rows[0]?.slug).toBe("login-with-email");
+    // Pilot fixtures (Daikin KTV, etc.) also match 'đăng'; assert the demo
+    // feature is in the result set rather than at position 0.
+    expect(result.rows.some((r) => r.slug === "login-with-email")).toBe(true);
   });
 
   it("matches tsquery for a term present only in section body", async () => {

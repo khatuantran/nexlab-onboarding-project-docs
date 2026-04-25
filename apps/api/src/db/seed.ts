@@ -6,6 +6,7 @@ import { db } from "./client.js";
 import { features, projects, sections, users } from "./schema.js";
 import { logger } from "../logger.js";
 import { pool } from "../db.js";
+import { PILOT_PROJECTS, type SeedProject } from "./seed-fixtures.js";
 
 const SEED_USERS = [
   {
@@ -133,16 +134,65 @@ async function seed(): Promise<void> {
       .onConflictDoNothing({ target: [sections.featureId, sections.type] });
   }
 
+  // ---------------------------------------------------------------------
+  // Pilot fixtures: Daikin KTV + Daikin Vietnam + A3 Solutions
+  // (US-005 follow-up, content marked DRAFT in every section).
+  // ---------------------------------------------------------------------
+  for (const proj of PILOT_PROJECTS) {
+    await upsertProject(proj, admin.id);
+  }
+
   const userCount = (await db.select().from(users)).length;
+  const projectCount = (await db.select().from(projects)).length;
+  const featureCount = (await db.select().from(features)).length;
   const sectionCount = (await db.select().from(sections)).length;
   logger.info(
-    { users: userCount, projects: 1, features: 1, sections: sectionCount },
+    { users: userCount, projects: projectCount, features: featureCount, sections: sectionCount },
     "Seed complete",
   );
   // eslint-disable-next-line no-console
   console.log(
-    `✓ Seeded ${userCount} users, 1 project ("Demo Project"), 1 feature ("Đăng nhập bằng email") với ${sectionCount} sections`,
+    `✓ Seeded ${userCount} users, ${projectCount} projects, ${featureCount} features, ${sectionCount} sections`,
   );
+}
+
+async function upsertProject(proj: SeedProject, createdBy: string): Promise<void> {
+  await db
+    .insert(projects)
+    .values({
+      slug: proj.slug,
+      name: proj.name,
+      description: proj.description,
+      createdBy,
+    })
+    .onConflictDoNothing({ target: projects.slug });
+
+  const [row] = await db.select().from(projects).where(eq(projects.slug, proj.slug)).limit(1);
+  if (!row) throw new Error(`Seed failed: project ${proj.slug} not found after insert`);
+
+  for (const feat of proj.features) {
+    await db
+      .insert(features)
+      .values({ projectId: row.id, slug: feat.slug, title: feat.title })
+      .onConflictDoNothing({ target: [features.projectId, features.slug] });
+
+    const [featRow] = await db.select().from(features).where(eq(features.slug, feat.slug)).limit(1);
+    if (!featRow) throw new Error(`Seed failed: feature ${feat.slug} not found after insert`);
+
+    for (const [type, body] of Object.entries(feat.sections) as Array<
+      [keyof typeof feat.sections, string]
+    >) {
+      await db
+        .insert(sections)
+        .values({
+          featureId: featRow.id,
+          type,
+          body,
+          updatedBy: createdBy,
+        })
+        .onConflictDoNothing({ target: [sections.featureId, sections.type] });
+    }
+  }
 }
 
 seed()
