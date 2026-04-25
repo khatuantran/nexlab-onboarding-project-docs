@@ -30,10 +30,17 @@ import { Textarea } from "@/components/ui/textarea";
  */
 interface CreateProjectDialogProps {
   triggerLabel?: string;
+  /**
+   * Optional fully custom trigger element (overrides default Button + label).
+   * Passing this wraps your element in DialogTrigger asChild — element must
+   * forward refs (e.g., button or styled component).
+   */
+  customTrigger?: React.ReactElement;
 }
 
 export function CreateProjectDialog({
   triggerLabel = "Tạo project",
+  customTrigger,
 }: CreateProjectDialogProps = {}): JSX.Element {
   const [open, setOpen] = useState(false);
   const [slugTouched, setSlugTouched] = useState(false);
@@ -100,10 +107,12 @@ export function CreateProjectDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="default" size="sm">
-          <Plus className="mr-2 size-4" aria-hidden="true" />
-          {triggerLabel}
-        </Button>
+        {customTrigger ?? (
+          <Button variant="default" size="sm">
+            <Plus className="mr-2 size-4" aria-hidden="true" />
+            {triggerLabel}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
