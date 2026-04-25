@@ -84,6 +84,9 @@ export const uploads = pgTable("uploads", {
   mimeType: text("mime_type").notNull(),
   sizeBytes: integer("size_bytes").notNull(),
   filename: text("filename").notNull(),
+  // FR-SEARCH-002: optional human-readable caption searched via FTS.
+  // UI editor for caption defers to a later milestone.
+  caption: text("caption"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
