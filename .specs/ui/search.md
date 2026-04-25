@@ -7,7 +7,7 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `search`
-- **Status**: Ready (US-005 multi-entity + filters spec — code pending US-005 T6-T10). Previously Implemented v1: T10 `5ca8e49`; UI uplift v2 Workspace CR-002 / Phase 2-4 `4407c53`.
+- **Status**: Implemented (US-005 v2 multi-entity + filters shipped `a9fbf86` 2026-04-25). Previously Implemented v1: T10 `5ca8e49`; UI uplift v2 Workspace CR-002 / Phase 2-4 `4407c53`.
 - **Last updated**: 2026-04-25
 
 ## Route

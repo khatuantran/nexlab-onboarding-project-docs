@@ -4,7 +4,7 @@
 
 _Story_: [US-005 — Search v2: multi-entity + filters](../US-005.md)
 _Total estimate_: ~14-18h (solo, TDD pace)
-_Last updated_: 2026-04-25 (Draft — Phase 0 spec artifacts in progress)
+_Last updated_: 2026-04-25 (Done — 10/10 tasks shipped, `d570bd1..a9fbf86` + sync)
 
 ---
 
@@ -24,18 +24,18 @@ _Last updated_: 2026-04-25 (Draft — Phase 0 spec artifacts in progress)
 
 ## Task Summary
 
-| #                                                      | Title                                                 | Effort | AC covered                          | FR touched             | Layer  | Status     |
-| ------------------------------------------------------ | ----------------------------------------------------- | ------ | ----------------------------------- | ---------------------- | ------ | ---------- |
-| [T1](#t1--db-migration-tsvector-projects--uploads)     | DB migration tsvector projects + uploads + caption    | 1.5h   | prereq                              | SEARCH-002             | BE     | 🟡 Planned |
-| [T2](#t2--searchrepo-multi-entity-rewrite)             | searchRepo multi-entity `searchAll(q, opts)` rewrite  | 3h     | AC-1, AC-2, AC-3, AC-4, AC-5, AC-10 | SEARCH-002, SEARCH-003 | BE     | 🟡 Planned |
-| [T3](#t3--shared-schemas-searchresultsv2)              | Shared schemas: `SearchResultsV2` + filter types      | 1h     | AC-1                                | SEARCH-002, SEARCH-003 | shared | 🟡 Planned |
-| [T4](#t4--search-route-v2-with-filters)                | `GET /api/v1/search` route v2 with filter params      | 2h     | AC-1, AC-6, AC-7, AC-8, AC-9        | SEARCH-002, SEARCH-003 | BE     | 🟡 Planned |
-| [T5](#t5--get-users-endpoint--user-list-repo)          | `GET /api/v1/users` endpoint + `userRepo.listUsers()` | 1.5h   | AC-11                               | USER-001               | BE     | 🟡 Planned |
-| [T6](#t6--frontend-query-hooks-usesearch-v2--useusers) | FE query hooks: useSearch v2 + useUsers               | 1h     | AC-1, AC-11                         | SEARCH-002, USER-001   | FE     | 🟡 Planned |
-| [T7](#t7--filterbar-component--sub-filters)            | FilterBar + 4 sub-filter components + URL state       | 3h     | AC-6, AC-7, AC-8, AC-9, AC-13       | SEARCH-003             | FE     | 🟡 Planned |
-| [T8](#t8--per-entity-result-cards)                     | 5 per-entity result cards + sanitize roundtrip        | 2.5h   | AC-2, AC-3, AC-4, AC-5, AC-15       | SEARCH-002             | FE     | 🟡 Planned |
-| [T9](#t9--searchpage-grouped-layout--anchors)          | SearchPage grouped layout + section anchor verify     | 2h     | AC-3, AC-12, AC-14                  | SEARCH-002             | FE     | 🟡 Planned |
-| [T10](#t10--tests--e2e--progress-sync)                 | Tests + E2E us-005.spec + progress sync               | 1.5h   | all                                 | all                    | test   | 🟡 Planned |
+| #                                                      | Title                                                 | Effort | AC covered                          | FR touched             | Layer  | Status           |
+| ------------------------------------------------------ | ----------------------------------------------------- | ------ | ----------------------------------- | ---------------------- | ------ | ---------------- |
+| [T1](#t1--db-migration-tsvector-projects--uploads)     | DB migration tsvector projects + uploads + caption    | 1.5h   | prereq                              | SEARCH-002             | BE     | ✅ `d570bd1`     |
+| [T2](#t2--searchrepo-multi-entity-rewrite)             | searchRepo multi-entity `searchAll(q, opts)` rewrite  | 3h     | AC-1, AC-2, AC-3, AC-4, AC-5, AC-10 | SEARCH-002, SEARCH-003 | BE     | ✅ `3de57a5`     |
+| [T3](#t3--shared-schemas-searchresultsv2)              | Shared schemas: `SearchResultsV2` + filter types      | 1h     | AC-1                                | SEARCH-002, SEARCH-003 | shared | ✅ `3de57a5`     |
+| [T4](#t4--search-route-v2-with-filters)                | `GET /api/v1/search` route v2 with filter params      | 2h     | AC-1, AC-6, AC-7, AC-8, AC-9        | SEARCH-002, SEARCH-003 | BE     | ✅ `2da1d2e`     |
+| [T5](#t5--get-users-endpoint--user-list-repo)          | `GET /api/v1/users` endpoint + `userRepo.listUsers()` | 1.5h   | AC-11                               | USER-001               | BE     | ✅ `df8d877`     |
+| [T6](#t6--frontend-query-hooks-usesearch-v2--useusers) | FE query hooks: useSearch v2 + useUsers               | 1h     | AC-1, AC-11                         | SEARCH-002, USER-001   | FE     | ✅ `a9fbf86`     |
+| [T7](#t7--filterbar-component--sub-filters)            | FilterBar + 4 sub-filter components + URL state       | 3h     | AC-6, AC-7, AC-8, AC-9, AC-13       | SEARCH-003             | FE     | ✅ `a9fbf86`     |
+| [T8](#t8--per-entity-result-cards)                     | 5 per-entity result cards + sanitize roundtrip        | 2.5h   | AC-2, AC-3, AC-4, AC-5, AC-15       | SEARCH-002             | FE     | ✅ `a9fbf86`     |
+| [T9](#t9--searchpage-grouped-layout--anchors)          | SearchPage grouped layout + section anchor verify     | 2h     | AC-3, AC-12, AC-14                  | SEARCH-002             | FE     | ✅ `a9fbf86`     |
+| [T10](#t10--tests--e2e--progress-sync)                 | Tests + E2E us-005.spec + progress sync               | 1.5h   | all                                 | all                    | test   | ✅ `this commit` |
 
 **Critical path**: T1 → T2 → T3 → T4 → T6 → T7/T8 → T9 → T10.
 
@@ -76,10 +76,10 @@ _Last updated_: 2026-04-25 (Draft — Phase 0 spec artifacts in progress)
 
 ### DoD checklist
 
-- [ ] Migration file landed; `pnpm db:up` clean run.
-- [ ] Schema.ts reflect cột mới.
-- [ ] Repo test red → green.
-- [ ] `pnpm lint` + `pnpm typecheck` xanh.
+- [x] Migration file landed; `pnpm db:up` clean run.
+- [x] Schema.ts reflect cột mới.
+- [x] Repo test red → green.
+- [x] `pnpm lint` + `pnpm typecheck` xanh.
 
 ### Commit example
 
@@ -133,10 +133,10 @@ Rewrite `apps/api/src/repos/searchRepo.ts`:
 
 ### DoD checklist
 
-- [ ] 5 entity queries pass.
-- [ ] 8+ filter combo cases pass.
-- [ ] `pnpm --filter @onboarding/api test` xanh.
-- [ ] Manual benchmark seeded 100 features < 200ms p95 (note in PR comment).
+- [x] 5 entity queries pass.
+- [x] 8+ filter combo cases pass.
+- [x] `pnpm --filter @onboarding/api test` xanh.
+- [x] Manual benchmark seeded 100 features < 200ms p95 (note in PR comment).
 
 ### Commit example
 
@@ -173,8 +173,8 @@ Update `packages/shared/src/search.ts`:
 
 ### DoD checklist
 
-- [ ] Schemas parse/reject expected.
-- [ ] `pnpm --filter @onboarding/shared test` xanh.
+- [x] Schemas parse/reject expected.
+- [x] `pnpm --filter @onboarding/shared test` xanh.
 
 ### Commit example
 
@@ -213,8 +213,8 @@ Update `apps/api/src/routes/search.ts`:
 
 ### DoD checklist
 
-- [ ] Integration tests pass.
-- [ ] api-surface.md row updated trong cùng commit.
+- [x] Integration tests pass.
+- [x] api-surface.md row updated trong cùng commit.
 
 ### Commit example
 
@@ -251,8 +251,8 @@ feat(api): search v2 route with filters (US-005 / T4 / FR-SEARCH-002,003)
 
 ### DoD checklist
 
-- [ ] Tests pass; response shape verified excludes sensitive fields.
-- [ ] api-surface.md row added.
+- [x] Tests pass; response shape verified excludes sensitive fields.
+- [x] api-surface.md row added.
 
 ### Commit example
 
@@ -287,8 +287,8 @@ feat(api): GET /users for author filter (US-005 / T5 / FR-USER-001)
 
 ### DoD checklist
 
-- [ ] Hook tests pass.
-- [ ] No leftover `SearchHit` consumer.
+- [x] Hook tests pass.
+- [x] No leftover `SearchHit` consumer.
 
 ### Commit example
 
@@ -330,9 +330,9 @@ URL state: `useSearchParams` round-trip; only non-default values serialize.
 
 ### DoD checklist
 
-- [ ] Component unit tests pass.
-- [ ] URL state roundtrip test pass (AC-13).
-- [ ] aria-labels on all interactive triggers.
+- [x] Component unit tests pass.
+- [x] URL state roundtrip test pass (AC-13).
+- [x] aria-labels on all interactive triggers.
 
 ### Commit example
 
@@ -374,9 +374,9 @@ Reuse `sanitizeSnippet`, `ProjectAvatar`, `Avatar`, `Badge`, `RelativeTime`.
 
 ### DoD checklist
 
-- [ ] All 5 cards render expected.
-- [ ] Sanitize regression pass.
-- [ ] Section card href = `/projects/:p/features/:f#section-:t`.
+- [x] All 5 cards render expected.
+- [x] Sanitize regression pass.
+- [x] Section card href = `/projects/:p/features/:f#section-:t`.
 
 ### Commit example
 
@@ -418,9 +418,9 @@ Verify FeatureDetailPage section heading có `id="section-{type}"`. Nếu chưa,
 
 ### DoD checklist
 
-- [ ] All Page tests pass.
-- [ ] Browser smoke 5 groups visible với seed data.
-- [ ] Section anchor scroll work in browser.
+- [x] All Page tests pass.
+- [x] Browser smoke 5 groups visible với seed data.
+- [x] Section anchor scroll work in browser.
 
 ### Commit example
 
@@ -454,9 +454,9 @@ feat(web): SearchPage grouped multi-entity (US-005 / T9 / FR-SEARCH-002)
 
 ### DoD checklist
 
-- [ ] `pnpm test:e2e` xanh (us-005 + existing 4 specs).
-- [ ] `pnpm test` toàn bộ workspaces xanh.
-- [ ] Progress-sync commit landed.
+- [x] `pnpm test:e2e` xanh (us-005 + existing 4 specs).
+- [x] `pnpm test` toàn bộ workspaces xanh.
+- [x] Progress-sync commit landed.
 
 ### Commit example
 

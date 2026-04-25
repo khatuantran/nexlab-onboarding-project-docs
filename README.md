@@ -4,7 +4,9 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ## Trạng thái
 
-✅ **M2 closed 2026-04-24** — US-002 + US-003 + US-004 all shipped. M1 complete (US-001 ✅). Nexlab design system adopted (ADR-003). 4/4 Playwright E2E green (US-001 + US-002 + US-003 + US-004). 24 shared + 81 api + 114 web unit tests zero regression.
+✅ **M2 closed 2026-04-24** — US-002 + US-003 + US-004 all shipped. M1 complete (US-001 ✅). Nexlab design system adopted (ADR-003). 5/5 Playwright E2E green (US-001 + US-002 + US-003 + US-004 + US-005). 24 shared + 117 api + 127 web unit tests zero regression.
+
+✅ **US-005 Search v2 shipped 2026-04-25** — multi-entity grouped search (projects + features + sections + authors + uploads) with section-type / author / time / status filters. FR-SEARCH-002, FR-SEARCH-003, FR-USER-001 all green.
 
 ## Vấn đề đang giải quyết
 
@@ -88,6 +90,7 @@ Full setup (DB migrate / seed / dev servers / E2E) ở [docs/SETUP.md](docs/SETU
 - [US-002 — BA creates project + feature with business sections](.specs/stories/US-002.md) + [tasks](.specs/stories/US-002/tasks.md) — **Done** (8/8 ✅, 2026-04-23)
 - [US-003 — Dev adds tech-notes + screenshots](.specs/stories/US-003.md) + [tasks](.specs/stories/US-003/tasks.md) — **Done** (7/7 ✅, 2026-04-24)
 - [US-004 — Project catalog + admin lifecycle](.specs/stories/US-004.md) + [tasks](.specs/stories/US-004/tasks.md) — **Done** (8/8 ✅, 2026-04-24)
+- [US-005 — Search v2 multi-entity + filters](.specs/stories/US-005.md) + [tasks](.specs/stories/US-005/tasks.md) — **Done** (10/10 ✅, 2026-04-25)
 
 **Operational**:
 

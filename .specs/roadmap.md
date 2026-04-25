@@ -86,6 +86,17 @@ Implement US-002 rồi US-003.
   - [T7](stories/US-004/tasks.md#t7--projectactionsmenu-fe--archive-wire) ProjectActionsMenu FE + archive wire (⋯ overflow, useArchiveProject, redirect `/`) — ✅ `904e9c8` (2026-04-24).
   - [T8](stories/US-004/tasks.md#t8--e2e-smoke--progress-sync) Playwright E2E smoke (catalog → edit → archive → redirect) — ✅ `a9282d6` (2026-04-24). **US-004 Done**.
 
+### Post-M2 enhancement — US-005 Search v2 ✅ _(2026-04-25)_
+
+Multi-entity grouped search + filters (project + feature + section + author + upload caption + section-type / author / time / status filters). 10 task / 7 commit.
+
+- [T1](stories/US-005/tasks.md#t1--db-migration-tsvector-projects--uploads) tsvector + GIN cho projects + uploads + caption col — ✅ `d570bd1`.
+- [T2 + T3](stories/US-005/tasks.md#t2--searchrepo-multi-entity-rewrite) searchRepo `searchAll` + shared SearchResultsV2 — ✅ `3de57a5`.
+- [T4](stories/US-005/tasks.md#t4--search-route-v2-with-filters) route v2 + FE useSearch atomic flip — ✅ `2da1d2e`.
+- [T5](stories/US-005/tasks.md#t5--get-users-endpoint--user-list-repo) `GET /users` + userRepo.listUsers — ✅ `df8d877`.
+- [T6 + T7 + T8 + T9](stories/US-005/tasks.md#t6--frontend-query-hooks-usesearch-v2--useusers) FilterBar + 4 sub-filters + 5 entity cards + grouped SearchPage — ✅ `a9fbf86`.
+- [T10](stories/US-005/tasks.md#t10--tests--e2e--progress-sync) Playwright us-005 + progress sync — ✅ this commit.
+
 ### M3 — Pilot launch 🟡 _(target 2026-07-31)_
 
 Deploy lên VPS + pilot với 1 project thật.
