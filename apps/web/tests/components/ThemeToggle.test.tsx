@@ -53,25 +53,25 @@ describe("ThemeProvider + ThemeToggle", () => {
     expect(screen.getByTestId("read").textContent).toBe("system|light");
   });
 
-  it("cycles light → dark → system on each click", async () => {
+  it("toggles light ↔ dark on each click (BUG-002 — system removed from cycle)", async () => {
     mountWithProvider();
     const user = userEvent.setup();
     const btn = screen.getByRole("button", { name: /chế độ/i });
 
-    // system → light
-    await user.click(btn);
-    expect(screen.getByTestId("read").textContent).toBe("light|light");
-    expect(document.documentElement.classList.contains("dark")).toBe(false);
-
-    // light → dark
+    // OS prefers light → initial system|light → click → dark
     await user.click(btn);
     expect(screen.getByTestId("read").textContent).toBe("dark|dark");
     expect(document.documentElement.classList.contains("dark")).toBe(true);
 
-    // dark → system
+    // dark → light
     await user.click(btn);
-    expect(screen.getByTestId("read").textContent).toBe("system|light");
+    expect(screen.getByTestId("read").textContent).toBe("light|light");
     expect(document.documentElement.classList.contains("dark")).toBe(false);
+
+    // light → dark again
+    await user.click(btn);
+    expect(screen.getByTestId("read").textContent).toBe("dark|dark");
+    expect(document.documentElement.classList.contains("dark")).toBe(true);
   });
 
   it("persists the chosen theme to localStorage", async () => {
@@ -79,11 +79,11 @@ describe("ThemeProvider + ThemeToggle", () => {
     const user = userEvent.setup();
     const btn = screen.getByRole("button", { name: /chế độ/i });
 
-    await user.click(btn); // system → light
-    expect(localStorage.getItem("theme")).toBe("light");
-
-    await user.click(btn); // light → dark
+    await user.click(btn); // system|light → dark
     expect(localStorage.getItem("theme")).toBe("dark");
+
+    await user.click(btn); // dark → light
+    expect(localStorage.getItem("theme")).toBe("light");
   });
 
   it("hydrates from localStorage on mount", () => {

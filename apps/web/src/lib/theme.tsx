@@ -100,8 +100,13 @@ export function ThemeProvider({ children }: { children: ReactNode }): JSX.Elemen
   }, []);
 
   const cycleTheme = useCallback(() => {
+    // BUG-002: a 3-state cycle that includes `system` causes the toggle to
+    // appear unresponsive when the OS preference matches the current
+    // resolved mode (dark→system→still dark on a dark-OS host). Toggle is
+    // now driven by the visible (resolved) mode so every click flips it.
     setThemeState((prev) => {
-      const next: Theme = prev === "system" ? "light" : prev === "light" ? "dark" : "system";
+      const currentResolved = resolve(prev);
+      const next: Theme = currentResolved === "dark" ? "light" : "dark";
       writeStored(next);
       return next;
     });
