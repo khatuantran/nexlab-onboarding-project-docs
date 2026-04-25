@@ -8,7 +8,7 @@ Mỗi file `.specs/ui/<screen>.md` **must** reference tokens/components ở file
 
 **Brand**: Nexlab (orange + gold, Material 3-flavored). Adopted per [ADR-003](../adr/ADR-003-nexlab-design-system.md) 2026-04-24 — supersede shadcn-neutral tokens + system font stack.
 
-Related: [ADR-001 tech stack](../adr/ADR-001-tech-stack.md), [ADR-002 light+dark theme](../adr/ADR-002-light-dark-theme.md), [ADR-003 Nexlab DS](../adr/ADR-003-nexlab-design-system.md), [templates/02-ui-spec-template.md](../../templates/02-ui-spec-template.md).
+Related: [visual-language.md](visual-language.md) (UI Quality Charter — design bar across 5 screens), [ADR-001 tech stack](../adr/ADR-001-tech-stack.md), [ADR-002 light+dark theme](../adr/ADR-002-light-dark-theme.md), [ADR-003 Nexlab DS](../adr/ADR-003-nexlab-design-system.md), [templates/02-ui-spec-template.md](../../templates/02-ui-spec-template.md).
 
 ---
 
