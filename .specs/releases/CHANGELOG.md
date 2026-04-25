@@ -49,7 +49,7 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 
 ### Fixed
 
-- (none)
+- **Theme toggle requires only one click to flip light ↔ dark** ([BUG-002](../bugs/BUG-002.md), 2026-04-25 — fix `51d0543`, regression test `95f6bb5`). The 3-state cycle (`system → light → dark → system`) was masking the click on dark-OS hosts: clicking from `dark` landed on `system`, which re-resolved to dark, leaving the visible page unchanged and forcing a second click. `cycleTheme` now reads `resolvedTheme` and toggles light ↔ dark; `system` is no longer in the click cycle (still the default before any explicit choice and still tracks OS changes while active). ThemeToggle's icon + aria-label bind to `resolvedTheme`. 6/6 ThemeToggle tests green.
 
 ### Security
 
