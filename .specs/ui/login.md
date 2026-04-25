@@ -9,7 +9,7 @@ Referenced tokens, icons, components từ [design-system.md](design-system.md). 
 ## Screen metadata
 
 - **Screen ID**: `login`
-- **Status**: Implemented (T8 `5e90753`) · UI uplift draft v2 Workspace 2-pane (CR-002 / Phase 1B-5, 2026-04-25)
+- **Status**: Implemented (T8 `5e90753`; UI uplift v2 Workspace 2-pane CR-002 / Phase 2-5 `a2b347d`)
 - **Last updated**: 2026-04-25
 
 ## Route

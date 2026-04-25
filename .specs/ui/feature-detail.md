@@ -7,7 +7,7 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `feature-detail`
-- **Status**: Implemented (read T9 `879b15b`; edit T7 `03c83ba`; US-003 embed+upload+ownership T4-T6 `a262cf3`/`f75f75a`/`dd1c213`; E2E T7 `c6c57fc`) · UI uplift draft v2 Workspace (CR-002 / Phase 1B-3, 2026-04-25)
+- **Status**: Implemented (read T9 `879b15b`; edit T7 `03c83ba`; US-003 embed+upload+ownership T4-T6 `a262cf3`/`f75f75a`/`dd1c213`; E2E T7 `c6c57fc`; UI uplift v2 Workspace CR-002 / Phase 2-3 `2a0caad`)
 - **Last updated**: 2026-04-25
 
 ## Route

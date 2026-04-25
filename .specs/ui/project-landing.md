@@ -7,7 +7,7 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `project-landing`
-- **Status**: Implemented (read path T9 `879b15b`; admin actions US-004 / T7 `904e9c8`) · UI uplift draft v2 Workspace (CR-002 / Phase 1B-2, 2026-04-25)
+- **Status**: Implemented (read T9 `879b15b`; admin actions US-004 / T7 `904e9c8`; UI uplift v2 Workspace CR-002 / Phase 2-2 `8da2aff`)
 - **Last updated**: 2026-04-25
 
 ## Route

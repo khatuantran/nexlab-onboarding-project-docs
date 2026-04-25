@@ -12,10 +12,10 @@ Related: [CLAUDE.md §When a request comes in](../../CLAUDE.md#when-a-request-co
 
 ## Items
 
-| ID     | Title                                                  | Scope       | Status                      | Decided at | File                   |
-| ------ | ------------------------------------------------------ | ----------- | --------------------------- | ---------- | ---------------------- |
-| CR-001 | Split monolithic `.env.local` into per-layer env files | tech-change | Approved (impl `bcf8512`)   | 2026-04-23 | [CR-001.md](CR-001.md) |
-| CR-002 | UI Quality Uplift v1 (5 screens)                       | spec-change | Approved (impl in progress) | 2026-04-25 | [CR-002.md](CR-002.md) |
+| ID     | Title                                                  | Scope       | Status                    | Decided at | File                   |
+| ------ | ------------------------------------------------------ | ----------- | ------------------------- | ---------- | ---------------------- |
+| CR-001 | Split monolithic `.env.local` into per-layer env files | tech-change | Approved (impl `bcf8512`) | 2026-04-23 | [CR-001.md](CR-001.md) |
+| CR-002 | UI Quality Uplift v1 (5 screens)                       | spec-change | Approved (impl `a2b347d`) | 2026-04-25 | [CR-002.md](CR-002.md) |
 
 ---
 

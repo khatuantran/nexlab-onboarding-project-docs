@@ -7,7 +7,7 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `home`
-- **Status**: Implemented (US-004 / T5 `6981c07`) · UI uplift draft v2 Workspace (CR-002 / Phase 1B-1', 2026-04-25)
+- **Status**: Implemented (US-004 / T5 `6981c07`; UI uplift v2 Workspace CR-002 / Phase 2-1 `1d76919`)
 - **Last updated**: 2026-04-25
 
 ## Route
