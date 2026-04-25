@@ -4,11 +4,11 @@ import { defineConfig } from "vitest/config";
 
 /**
  * API test config: load `apps/api/.env` (CR-001, amended) into `process.env`
- * so integration tests can reach Postgres + Redis on their overridden
- * ports. Plain-text parser to avoid pulling dotenv into vitest config.
+ * then overlay `.env.test` so integration tests hit the isolated
+ * `onboardingdb_test` database. Plain-text parser to avoid pulling
+ * dotenv into vitest config.
  */
-function loadEnvLocal(): Record<string, string> {
-  const envPath = path.resolve(__dirname, ".env");
+function parseEnvFile(envPath: string): Record<string, string> {
   const out: Record<string, string> = {};
   try {
     const content = readFileSync(envPath, "utf8");
@@ -22,9 +22,15 @@ function loadEnvLocal(): Record<string, string> {
       if (key) out[key] = value;
     }
   } catch {
-    // .env optional — devs without it run via CI env.
+    // file optional — devs without it run via CI env.
   }
   return out;
+}
+
+function loadTestEnv(): Record<string, string> {
+  const base = parseEnvFile(path.resolve(__dirname, ".env"));
+  const overlay = parseEnvFile(path.resolve(__dirname, ".env.test"));
+  return { ...base, ...overlay, APP_ENV: "test" };
 }
 
 export default defineConfig({
@@ -34,6 +40,6 @@ export default defineConfig({
     include: ["**/*.{test,spec}.{ts,tsx}"],
     exclude: ["**/node_modules/**", "**/dist/**", "**/e2e/**"],
     reporters: ["default"],
-    env: loadEnvLocal(),
+    env: loadTestEnv(),
   },
 });

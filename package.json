@@ -20,6 +20,7 @@
     "migrate:env": "./scripts/migrate-env.sh",
     "smoke": "./scripts/smoke.sh",
     "dev": "pnpm -r --parallel run dev",
+    "dev:test": "pnpm --filter @onboarding/api dev:test & pnpm --filter @onboarding/web dev",
     "stop": "(lsof -ti:3001,5173 | xargs kill -TERM 2>/dev/null || true) && echo 'stopped dev servers'",
     "docker:up": "docker compose -f infra/docker/docker-compose.yml up -d",
     "docker:down": "docker compose -f infra/docker/docker-compose.yml down",
@@ -27,8 +28,12 @@
     "docker:logs": "docker compose -f infra/docker/docker-compose.yml logs -f",
     "db:generate": "pnpm --filter @onboarding/api db:generate",
     "db:migrate": "pnpm --filter @onboarding/api db:migrate",
+    "db:migrate:test": "pnpm --filter @onboarding/api db:migrate:test",
     "db:check": "pnpm --filter @onboarding/api db:check",
     "db:seed": "pnpm --filter @onboarding/api db:seed",
+    "db:seed:test": "pnpm --filter @onboarding/api db:seed:test",
+    "db:create:test": "pnpm --filter @onboarding/api db:create:test",
+    "db:reset:test": "pnpm --filter @onboarding/api db:reset:test",
     "prepare": "husky"
   },
   "lint-staged": {

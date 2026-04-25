@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "(lsof -ti:3001 | xargs kill -TERM 2>/dev/null || true) && tsx watch src/index.ts",
+    "dev:test": "(lsof -ti:3001 | xargs kill -TERM 2>/dev/null || true) && APP_ENV=test tsx watch src/index.ts",
     "build": "tsc --build tsconfig.build.json",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
@@ -12,8 +13,12 @@
     "test:watch": "vitest --passWithNoTests",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:migrate:test": "APP_ENV=test drizzle-kit migrate",
     "db:check": "drizzle-kit check",
-    "db:seed": "tsx src/db/seed.ts"
+    "db:seed": "tsx src/db/seed.ts",
+    "db:seed:test": "APP_ENV=test SEED_MINIMAL=1 tsx src/db/seed.ts",
+    "db:create:test": "docker exec onboarding-portal-postgres-1 psql -U dev -d onboardingdb -tc \"SELECT 1 FROM pg_database WHERE datname = 'onboardingdb_test'\" | grep -q 1 || docker exec onboarding-portal-postgres-1 psql -U dev -d onboardingdb -c 'CREATE DATABASE onboardingdb_test OWNER dev'",
+    "db:reset:test": "docker exec onboarding-portal-postgres-1 psql -U dev -d onboardingdb -c 'DROP DATABASE IF EXISTS onboardingdb_test' && docker exec onboarding-portal-postgres-1 psql -U dev -d onboardingdb -c 'CREATE DATABASE onboardingdb_test OWNER dev' && pnpm db:migrate:test && pnpm db:seed:test"
   },
   "dependencies": {
     "@onboarding/shared": "workspace:*",

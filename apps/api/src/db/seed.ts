@@ -137,9 +137,13 @@ async function seed(): Promise<void> {
   // ---------------------------------------------------------------------
   // Pilot fixtures: Daikin KTV + Daikin Vietnam + A3 Solutions
   // (US-005 follow-up, content marked DRAFT in every section).
+  // SEED_MINIMAL=1 (used by `pnpm db:seed:test`) skips these so the test
+  // database stays small and deterministic.
   // ---------------------------------------------------------------------
-  for (const proj of PILOT_PROJECTS) {
-    await upsertProject(proj, admin.id);
+  if (process.env.SEED_MINIMAL !== "1") {
+    for (const proj of PILOT_PROJECTS) {
+      await upsertProject(proj, admin.id);
+    }
   }
 
   const userCount = (await db.select().from(users)).length;

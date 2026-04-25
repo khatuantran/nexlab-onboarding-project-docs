@@ -12,6 +12,10 @@ services:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      # Init script (only runs on first volume creation) — creates the
+      # `onboardingdb_test` database for vitest + Playwright. Existing
+      # volumes need a one-time `pnpm db:create:test`.
+      - ./init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dev} -d ${POSTGRES_DB:-onboardingdb}"]
       interval: 5s

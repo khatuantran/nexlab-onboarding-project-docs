@@ -176,6 +176,19 @@ Reset DB + reseed (dev only — destructive):
 pnpm db:reset
 ```
 
+### 6.1 Test database isolation (one-time setup) ✅
+
+Vitest + Playwright run against a dedicated `onboardingdb_test` database in the same Postgres container so tests never touch dev data. First-time setup:
+
+```bash
+pnpm db:create:test     # idempotent CREATE DATABASE onboardingdb_test (skip if init script already ran)
+pnpm db:reset:test      # drop + create + migrate + minimal seed (admin + dev users + demo project + demo feature)
+```
+
+Subsequent runs reuse the migrated test DB; vitest auto-loads `.env.test` overlay so `pnpm test` already uses it. Re-run `pnpm db:reset:test` only when you want a clean slate (after a migration changes shape, or if a flaky test left bad data).
+
+**File:** `apps/api/.env.test` (gitignored, copy from `.env.test.example`) — only overrides `DATABASE_URL` to point at `onboardingdb_test`.
+
 ---
 
 ## 7. Start dev servers ✅ (T2 + T4; login lands T8)
@@ -258,26 +271,31 @@ pnpm test:e2e
 
 Progress: ✅ = live sau T1 · 🟡 = pending task.
 
-| Command             | Mục đích                                       | Status                   |
-| ------------------- | ---------------------------------------------- | ------------------------ |
-| `pnpm install`      | Install workspace deps                         | ✅ T1                    |
-| `pnpm lint`         | ESLint cho toàn repo                           | ✅ T1                    |
-| `pnpm format`       | Prettier format                                | ✅ T1                    |
-| `pnpm typecheck`    | `tsc --noEmit` all workspaces                  | ✅ T1                    |
-| `pnpm test`         | Vitest (passWithNoTests hiện tại)              | ✅ T1                    |
-| `pnpm smoke`        | `scripts/smoke.sh` = lint + typecheck + test   | ✅ T1                    |
-| `pnpm dev`          | Start API + Web parallel (auto-free port 3001) | ✅ T2 (API) + T4 (Web)   |
-| `pnpm stop`         | Stop API + Web (SIGTERM port 3001 + 5173)      | ✅ infra chore           |
-| `pnpm build`        | Build api + web prod                           | ✅ T2 (API) + T4 (Web)   |
-| `pnpm docker:up`    | Start postgres + redis                         | ✅ T2                    |
-| `pnpm docker:down`  | Stop containers                                | ✅ T2                    |
-| `pnpm docker:reset` | Stop + xoá data volumes                        | ✅ T2                    |
-| `pnpm docker:logs`  | Tail logs postgres + redis                     | ✅ T2                    |
-| `pnpm db:generate`  | Generate migration từ schema change            | ✅ T3 config + T5 schema |
-| `pnpm db:migrate`   | Drizzle migrate up                             | ✅ T5                    |
-| `pnpm db:check`     | Drizzle-kit consistency check                  | ✅ T5                    |
-| `pnpm db:seed`      | Seed dev data (admin/author + demo project)    | ✅ T5                    |
-| `pnpm test:e2e`     | Playwright E2E smoke (US-001 happy path)       | ✅ T10                   |
+| Command                | Mục đích                                                | Status                   |
+| ---------------------- | ------------------------------------------------------- | ------------------------ |
+| `pnpm install`         | Install workspace deps                                  | ✅ T1                    |
+| `pnpm lint`            | ESLint cho toàn repo                                    | ✅ T1                    |
+| `pnpm format`          | Prettier format                                         | ✅ T1                    |
+| `pnpm typecheck`       | `tsc --noEmit` all workspaces                           | ✅ T1                    |
+| `pnpm test`            | Vitest (passWithNoTests hiện tại)                       | ✅ T1                    |
+| `pnpm smoke`           | `scripts/smoke.sh` = lint + typecheck + test            | ✅ T1                    |
+| `pnpm dev`             | Start API + Web parallel (auto-free port 3001)          | ✅ T2 (API) + T4 (Web)   |
+| `pnpm stop`            | Stop API + Web (SIGTERM port 3001 + 5173)               | ✅ infra chore           |
+| `pnpm build`           | Build api + web prod                                    | ✅ T2 (API) + T4 (Web)   |
+| `pnpm docker:up`       | Start postgres + redis                                  | ✅ T2                    |
+| `pnpm docker:down`     | Stop containers                                         | ✅ T2                    |
+| `pnpm docker:reset`    | Stop + xoá data volumes                                 | ✅ T2                    |
+| `pnpm docker:logs`     | Tail logs postgres + redis                              | ✅ T2                    |
+| `pnpm db:generate`     | Generate migration từ schema change                     | ✅ T3 config + T5 schema |
+| `pnpm db:migrate`      | Drizzle migrate up                                      | ✅ T5                    |
+| `pnpm db:check`        | Drizzle-kit consistency check                           | ✅ T5                    |
+| `pnpm db:seed`         | Seed dev data (admin/author + demo + pilot projects)    | ✅ T5                    |
+| `pnpm db:create:test`  | Create onboardingdb_test in same Postgres (idempotent)  | ✅                       |
+| `pnpm db:migrate:test` | Drizzle migrate against test DB (APP_ENV=test)          | ✅                       |
+| `pnpm db:seed:test`    | Minimal seed (admin/author + demo only) on test DB      | ✅                       |
+| `pnpm db:reset:test`   | Drop + create + migrate + seed test DB                  | ✅                       |
+| `pnpm dev:test`        | Start API (APP_ENV=test) + web; tests / E2E hit test DB | ✅                       |
+| `pnpm test:e2e`        | Playwright E2E smoke (US-001..US-005)                   | ✅                       |
 
 ---
 
