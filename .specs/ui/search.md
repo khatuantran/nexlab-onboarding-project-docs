@@ -7,7 +7,7 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `search`
-- **Status**: Implemented (T10 `5ca8e49`; UI uplift v2 Workspace CR-002 / Phase 2-4 `4407c53`)
+- **Status**: Ready (US-005 multi-entity + filters spec — code pending US-005 T6-T10). Previously Implemented v1: T10 `5ca8e49`; UI uplift v2 Workspace CR-002 / Phase 2-4 `4407c53`.
 - **Last updated**: 2026-04-25
 
 ## Route
@@ -255,9 +255,225 @@ Thêm vào `design-system.md` trong commit riêng TRƯỚC khi code T10:
 - **Icon**: `Search`, `X` (lucide-react — đã có lib, chỉ declare).
 - **§7 CHANGELOG row**: `2026-04-23 — Add highlight token + SearchInput/SearchResultRow/FilterChip primitives for T10 search page.`
 
+---
+
+## US-005 v2 — Multi-entity grouped + filters
+
+> Below additions superseded v1 single-entity layout starting from US-005 ship. v1 sections above remain for historical reference until US-005 T9 lands.
+
+### State machine v2
+
+```text
+idle (no q) → empty-placeholder
+q present  → loading
+              ├── success (any group has hits) → grouped-list
+              ├── success (all groups empty)   → zero-result (with active-filter chip list nếu có)
+              └── error
+                   ├── 400 SEARCH_QUERY_EMPTY / TOO_LONG → inline hint dưới input
+                   ├── 400 VALIDATION_ERROR (filter param) → inline error trong FilterBar
+                   └── 5xx → banner role=alert phía trên list
+```
+
+### Interactions v2 (additive)
+
+| Trigger                                    | Action                                                                 | Next state       | Side effect                               |
+| ------------------------------------------ | ---------------------------------------------------------------------- | ---------------- | ----------------------------------------- |
+| Toggle SectionType chip                    | Update `sectionTypes` URL param (CSV)                                  | refetch          | Filter narrows sections + features groups |
+| Change Author dropdown                     | Update `authorId` URL param                                            | refetch          | Filter narrows sections + uploads groups  |
+| Change TimeRange dropdown                  | Update `updatedSince` URL param (ISO)                                  | refetch          | Filter narrows mọi group có `updatedAt`   |
+| Toggle Status chip                         | Update `status` URL param (single-select-or-clear)                     | refetch          | Filter narrows features + sections        |
+| Click "× <filter>" trong zero-result panel | Remove that filter param                                               | refetch          | URL replace                               |
+| Click ProjectResultCard                    | Navigate `/projects/:slug`                                             | unmount          | SPA push                                  |
+| Click SectionResultCard                    | Navigate `/projects/:projectSlug/features/:featureSlug#section-{type}` | unmount          | Browser scroll vào section anchor         |
+| Click AuthorResultCard                     | v1 placeholder → toast "Trang user defer v2"                           | —                | None                                      |
+| Click UploadResultCard                     | Navigate parent feature `/projects/:p/features/:f#section-screenshots` | unmount          | SPA push                                  |
+| AuthorPicker input typing                  | Debounced 300ms `useUsers({ q })`                                      | dropdown refresh | TanStack Query key `["users", q]`         |
+| Empty AuthorPicker selection               | Clear `authorId` param                                                 | refetch          | URL replace                               |
+
+### A11y v2
+
+- **FilterBar**: `<section role="search" aria-label="Bộ lọc tìm kiếm">` wrap toàn bộ filter cluster.
+- **SectionTypeChips**: group `role="group" aria-label="Lọc theo loại section"`. Mỗi chip = `<button role="checkbox" aria-checked>` (multi-select).
+- **Status chips**: group `role="radiogroup" aria-label="Lọc theo trạng thái feature"`. Mỗi chip = `<button role="radio" aria-checked>`.
+- **AuthorPicker**: combobox pattern WAI-ARIA 1.2 — `<input role="combobox" aria-expanded aria-controls="author-listbox">`.
+- **TimeRangeDropdown**: `<button aria-haspopup="listbox">` mở `<ul role="listbox">`.
+- **Group section header**: `<h2>` + `<span aria-label="N kết quả">`. Live region `aria-live="polite"` announce tổng kết khi list update.
+- **Section anchor target**: FeatureDetailPage section heading có `id="section-<type>"` + `tabindex="-1"` để focus when scrolled.
+
+### Wire-level v2 — Desktop (≥ 1024px)
+
+```text
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ AppHeader (search input)                                                      │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ max-w-5xl, px-10, py-7                                                        │
+│                                                                               │
+│ HERO BLOCK (flat)                                                             │
+│  TÌM KIẾM ← eyebrow primary                                                   │
+│  Kết quả cho "đăng nhập"                                                      │
+│  18 kết quả · trong toàn workspace                                            │
+│                                                                               │
+│ ┌──────────────────────────────────────────────────────────────────────┐     │
+│ │ FILTER BAR (rounded-xl bg-muted/40 px-4 py-3 flex flex-wrap gap-3)   │     │
+│ │  [Loại: ▢ Business ▣ User-flow ▢ Rules ▢ Tech ▢ Screenshots]        │     │
+│ │  [Author: Tất cả ▾]  [Cập nhật: Mọi lúc ▾]  [Trạng thái: ◯ Đủ ◯ ◯] │     │
+│ └──────────────────────────────────────────────────────────────────────┘     │
+│                                                                               │
+│ ┌─ 📁 Projects · 2 ─────────────────────────────────────────────────────┐    │
+│ │  [ProjectResultCard] [ProjectResultCard]                              │    │
+│ └───────────────────────────────────────────────────────────────────────┘    │
+│ ┌─ 📄 Features · 5 ─────────────────────────────────────────────────────┐    │
+│ │  [FeatureResultCard] [FeatureResultCard] ... (max 5)                  │    │
+│ └───────────────────────────────────────────────────────────────────────┘    │
+│ ┌─ 📝 Sections · 4 ─────────────────────────────────────────────────────┐    │
+│ │  [SectionResultCard with section-type icon + breadcrumb + snippet]    │    │
+│ └───────────────────────────────────────────────────────────────────────┘    │
+│ ┌─ 👤 Authors · 1 ──────────────────────────────────────────────────────┐    │
+│ │  [AuthorResultCard]                                                   │    │
+│ └───────────────────────────────────────────────────────────────────────┘    │
+│ ┌─ 📎 Uploads · 0 ─────  (skipped — không render khi count=0)                │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Wire-level v2 — Group section header
+
+`mt-8 mb-3 flex items-center justify-between`:
+
+- Left `flex items-center gap-2`:
+  - Icon (size-5 text-primary): FolderOpen / FileText / FileType / User / Paperclip per entity.
+  - h2 `font-display text-base font-bold tracking-tight`: "Projects" / "Features" / "Sections" / "Authors" / "Uploads".
+  - Count badge `text-xs font-semibold text-muted-foreground bg-muted rounded-full px-2 py-0.5`.
+- Right (defer v2): "Xem tất cả →" link placeholder, hidden v1 (top-5 đủ).
+
+### Card variants v2
+
+#### ProjectResultCard
+
+`flex items-center gap-4 p-5 rounded-xl border bg-card hover:border-primary/30 hover:shadow-md`:
+
+- ProjectAvatar 40 (gradient bucket via `avatarBucket(slug)`).
+- Body min-w-0: name `font-display text-lg font-semibold line-clamp-1`; description `text-sm text-muted-foreground line-clamp-1`; meta `flex items-center gap-3 text-xs text-muted-foreground` (FolderOpen `{featureCount} feature` + Clock RelativeTime).
+- Chevron right.
+
+#### FeatureResultCard
+
+(refactor existing SearchResultRow, keep current shape) — icon plate FolderOpen + title + breadcrumb + snippet line-clamp-3 + footer (section + author + time).
+
+#### SectionResultCard
+
+`flex flex-col gap-3 p-5 rounded-xl border bg-card hover:border-primary/30`:
+
+- Top `flex items-start gap-3`:
+  - Section-type icon plate 36 (icon by type: ScrollText / Workflow / ListChecks / Wrench / Image).
+  - Body: section-type label `font-ui text-xs font-bold uppercase tracking-wider text-primary-700`; breadcrumb projectName › featureTitle (text-xs text-muted-foreground line-clamp-1).
+- Snippet: `font-body text-sm leading-relaxed line-clamp-3` với `<mark>` highlight.
+- Footer `flex items-center gap-2 text-xs text-muted-foreground`: Avatar xs (updatedBy) + display name + RelativeTime.
+- Anchor href: `/projects/:projectSlug/features/:featureSlug#section-{type}`.
+
+#### AuthorResultCard
+
+`flex items-center gap-4 p-4 rounded-xl border bg-card`:
+
+- Avatar md (display name initial, gradient bucket).
+- Body: displayName `font-display text-base font-semibold` + role badge (`admin` tone primary / `author` tone neutral) + meta `text-xs text-muted-foreground` "Đã touch {N} feature".
+- Click → toast "Trang user defer v2" (skeleton-UI policy).
+
+#### UploadResultCard
+
+`flex items-center gap-3 p-4 rounded-xl border bg-card hover:border-primary/30`:
+
+- File icon plate 36 (FileImage / FileText by mime).
+- Body: filename `font-mono text-sm line-clamp-1` + caption nếu có `text-xs text-muted-foreground line-clamp-1`; meta breadcrumb projectName › featureTitle + uploadedByName + RelativeTime.
+- Anchor href: parent feature page screenshots section.
+
+### Filter bar layout
+
+`mt-6 mb-6 rounded-xl bg-muted/40 border border-border px-4 py-3 flex flex-wrap items-center gap-3`. Order kiosk-style:
+
+1. **SectionTypeChips** (eyebrow "Loại:" left): horizontal chip group 5 items, multi-select toggle.
+2. **AuthorPicker** (eyebrow "Tác giả:"): combobox button placeholder "Tất cả tác giả ▾" → mở dropdown listbox với search input on top.
+3. **TimeRangeDropdown** (eyebrow "Cập nhật:"): button "Mọi lúc ▾" / "24 giờ" / "7 ngày" / "30 ngày".
+4. **StatusChips** (eyebrow "Trạng thái:"): 3 toggle "Đủ doc / Đang viết / Chưa có" — single-select with clear (click chip đang active để clear).
+
+Mobile: filter bar overflow-x-auto, no wrap; eyebrow labels visually hidden but `aria-label` retained.
+
+### Idle state v2 (no `q`)
+
+(unchanged từ v1, keep tip card; thêm tip "Filter loại section để tìm theme cụ thể (vd. user-flow cho business flow).")
+
+### Zero-result state v2 (q valid, all groups empty)
+
+```text
+┌──────────────────────────────┐
+│   🔍❌ SearchX size-16        │
+│                               │
+│  Không tìm thấy kết quả nào  │
+│                               │
+│  Không có gì khớp "<query>"   │
+│  với filter hiện tại.         │
+│                               │
+│  Filter đang áp dụng:         │
+│  [✕ Loại: User-flow]         │
+│  [✕ Tác giả: Lan]            │
+│                               │
+│  [Xoá tất cả filter]          │
+│  [Quay về catalog]            │
+└──────────────────────────────┘
+```
+
+- Active-filter chips removable: click chip × → remove that filter param → refetch.
+- "Xoá tất cả filter": reset toàn bộ filter params, giữ `q`.
+- Hidden filter chip list nếu không có filter active.
+
+### Loading v2
+
+- Hero static, count "—".
+- FilterBar visible nhưng disabled (`aria-busy`).
+- 3 group skeletons (Projects + Features + Sections fake) với shape match real cards.
+
+### Section anchor verification (US-005 T9 in-scope)
+
+FeatureDetailPage hiện tại render section heading. Verify:
+
+- Heading element `<h2 id="section-business">`, `<h2 id="section-user-flow">`, ... đã có id chuẩn hoá `section-<type>`.
+- Nếu chưa, T9 thêm id + `tabindex="-1"` + `scroll-margin-top: 5rem` để header sticky không che heading khi scroll-into-view.
+- Update [.specs/ui/feature-detail.md](feature-detail.md) §A11y nếu fix anchor.
+
+### Component additions cho US-005
+
+Thêm vào [.specs/ui/design-system.md](design-system.md) trong commit T7/T8 (FE):
+
+- **Components**:
+  - `FilterBar` (composite container)
+  - `SectionTypeChips` (multi-select chip group)
+  - `AuthorPicker` (combobox + listbox với search-as-you-type)
+  - `TimeRangeDropdown` (preset 4 values)
+  - `StatusChips` (single-select chip group)
+  - `ProjectResultCard`, `SectionResultCard`, `AuthorResultCard`, `UploadResultCard`
+  - `FeatureResultCard` (rename `SearchResultRow`)
+  - `EntityGroup<T>` wrapper (header + skip-when-empty pattern)
+- **Icons** (lucide-react, đã có lib): `ScrollText`, `Workflow`, `ListChecks`, `Wrench`, `Image`, `User`, `Paperclip`, `FileImage`, `FileText`, `Clock`, `Filter`.
+- **CHANGELOG row design-system.md**:
+  `2026-04-25 — Add FilterBar + 4 sub-filters + 5 entity result cards + EntityGroup wrapper for US-005 search v2.`
+
+### Gate decisions US-005 (approved 2026-04-25)
+
+- **Filter bar order**: SectionType → Author → TimeRange → Status (most-frequent leftmost).
+- **Status chip semantics**: single-select with toggle-clear (không multi-select 3 tone vì mâu thuẫn — "filled" và "partial" loại trừ nhau).
+- **Group skip when empty**: ✅ skip; không render zero-card placeholder per group.
+- **Author card click**: placeholder toast (skeleton-UI policy — defer routing).
+- **Upload card click**: target screenshots section của parent feature.
+- **URL serialization**: only non-default values; `sectionTypes` CSV; status enum literal.
+- **Mobile filter bar**: horizontal scroll, không drawer/sheet (defer drawer pattern).
+- **AuthorPicker debounce**: 300ms.
+- **Skeleton-UI policy**: AuthorResultCard click target defer; touched feature count tính qua subquery, không cần endpoint mới.
+
+---
+
 ## Maps US
 
 - [US-001](../stories/US-001.md) — AC-7 (FTS search), AC-8 (empty query không fetch).
+- [US-005](../stories/US-005.md) — AC-1 đến AC-15 (multi-entity + filters + URL state + section anchor + sanitize).
 
 ## Implementation
 
@@ -268,6 +484,21 @@ Thêm vào `design-system.md` trong commit riêng TRƯỚC khi code T10:
   - `apps/web/src/components/search/SearchInput.tsx` (used in AppHeader + optional page).
   - `apps/web/src/components/search/SearchResultRow.tsx`.
   - `apps/web/src/components/common/FilterChip.tsx`.
+- **Sub-components US-005 v2** (T7-T9):
+  - `apps/web/src/components/search/FilterBar.tsx`
+  - `apps/web/src/components/search/SectionTypeChips.tsx`
+  - `apps/web/src/components/search/AuthorPicker.tsx`
+  - `apps/web/src/components/search/TimeRangeDropdown.tsx`
+  - `apps/web/src/components/search/StatusChips.tsx`
+  - `apps/web/src/components/search/ProjectResultCard.tsx`
+  - `apps/web/src/components/search/FeatureResultCard.tsx` (rename from `SearchResultRow.tsx`)
+  - `apps/web/src/components/search/SectionResultCard.tsx`
+  - `apps/web/src/components/search/AuthorResultCard.tsx`
+  - `apps/web/src/components/search/UploadResultCard.tsx`
+  - `apps/web/src/components/search/EntityGroup.tsx`
+- **Queries (US-005)**:
+  - Update `apps/web/src/queries/search.ts` — `useSearch({ q, projectSlug, sectionTypes?, authorId?, updatedSince?, status? })` returning `SearchResultsV2`.
+  - New `apps/web/src/queries/users.ts` — `useUsers({ q?, role? })`.
 - **Shared helper**: `apps/web/src/lib/sanitize.ts` (hoặc extend `lib/markdown.ts`) — `sanitizeSnippet()` allow-list chỉ `<mark>`.
 - **AppHeader update**: wire SearchInput, detect current project slug qua `useLocation` + parse path.
 - **Playwright E2E**: `e2e/us-001.spec.ts` (new) — full happy path login → landing → feature → search với `<mark>` assertion. Playwright config `playwright.config.ts` + `pnpm test:e2e` script wire-up.
