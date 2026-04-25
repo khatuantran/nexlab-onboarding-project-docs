@@ -87,7 +87,7 @@ describe("SearchPage", () => {
     expect(
       await screen.findByRole("heading", { name: /kết quả cho "login"/i }),
     ).toBeInTheDocument();
-    expect(await screen.findByText("2 feature")).toBeInTheDocument();
+    expect(await screen.findByText("2 kết quả")).toBeInTheDocument();
 
     const firstRow = screen.getByRole("link", { name: /đăng nhập bằng email/i });
     expect(within(firstRow).getByText(/demo/i)).toBeInTheDocument();
@@ -115,8 +115,8 @@ describe("SearchPage", () => {
     expect(row.innerHTML).toContain("<mark>login</mark>");
   });
 
-  it("empty-result copy when hits = []", async () => {
-    server.use(http.get(`${BASE}/search`, () => HttpResponse.json({ data: [] })));
+  it("empty-result copy when all groups empty", async () => {
+    server.use(http.get(`${BASE}/search`, () => HttpResponse.json({ data: EMPTY_RESULTS })));
 
     renderSearch("/search?q=nothing");
 
@@ -156,11 +156,11 @@ describe("SearchPage", () => {
     // Chip present
     const chip = await screen.findByRole("button", { name: /bỏ lọc/i });
     expect(chip).toBeInTheDocument();
-    expect(await screen.findByText("1 feature")).toBeInTheDocument();
+    expect(await screen.findByText("1 kết quả")).toBeInTheDocument();
 
     // Click X → projectSlug gone, count updates to 2
     await user.click(chip);
-    expect(await screen.findByText("2 feature")).toBeInTheDocument();
+    expect(await screen.findByText("2 kết quả")).toBeInTheDocument();
 
     const loc = screen.getByTestId("loc");
     expect(loc.textContent).toContain("q=login");

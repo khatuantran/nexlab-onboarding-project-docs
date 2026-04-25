@@ -1,11 +1,27 @@
-import { ChevronDown, Search, SearchX } from "lucide-react";
+import { useMemo } from "react";
+import { FileText, FolderOpen, Paperclip, Search, SearchX, ScrollText, User } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { toast } from "sonner";
+import type { FeatureStatus, SectionType } from "@onboarding/shared";
 import { Button } from "@/components/ui/button";
 import { FilterChip } from "@/components/common/FilterChip";
 import { TipCard } from "@/components/common/TipCard";
-import { SearchResultRow } from "@/components/search/SearchResultRow";
-import { useSearch } from "@/queries/search";
+import { AuthorResultCard } from "@/components/search/AuthorResultCard";
+import { EntityGroup } from "@/components/search/EntityGroup";
+import { FilterBar, type FilterBarValue } from "@/components/search/FilterBar";
+import { ProjectResultCard } from "@/components/search/ProjectResultCard";
+import { SearchResultRow as FeatureResultCard } from "@/components/search/SearchResultRow";
+import { SectionResultCard } from "@/components/search/SectionResultCard";
+import { UploadResultCard } from "@/components/search/UploadResultCard";
+import { isoToPreset, presetToIso } from "@/components/search/TimeRangeDropdown";
+import { totalHits, useSearch } from "@/queries/search";
+
+const SECTION_TYPE_VALUES = [
+  "business",
+  "user-flow",
+  "business-rules",
+  "tech-notes",
+  "screenshots",
+] as const;
 
 function ResultSkeleton(): JSX.Element {
   return (
@@ -26,22 +42,93 @@ function ResultSkeleton(): JSX.Element {
   );
 }
 
+function parseSectionTypes(raw: string | null): SectionType[] {
+  if (!raw) return [];
+  return raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter((s): s is SectionType => (SECTION_TYPE_VALUES as readonly string[]).includes(s));
+}
+
+function parseStatus(raw: string | null): FeatureStatus | undefined {
+  if (raw === "filled" || raw === "partial" || raw === "empty") return raw;
+  return undefined;
+}
+
 export function SearchPage(): JSX.Element {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const q = params.get("q")?.trim() ?? "";
   const projectSlug = params.get("projectSlug") ?? undefined;
+  const sectionTypes = parseSectionTypes(params.get("sectionTypes"));
+  const authorId = params.get("authorId") ?? undefined;
+  const updatedSince = params.get("updatedSince") ?? undefined;
+  const status = parseStatus(params.get("status"));
+  const authorDisplayName = params.get("authorName") ?? undefined;
 
-  const { data, isLoading, isError } = useSearch({ q, projectSlug });
-  const hits = data?.features ?? [];
+  const sectionTypesKey = sectionTypes.join(",");
+  const filterValue = useMemo<FilterBarValue>(
+    () => ({
+      sectionTypes,
+      authorId,
+      authorDisplayName,
+      timeRange: isoToPreset(updatedSince),
+      status,
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [sectionTypesKey, authorId, authorDisplayName, updatedSince, status],
+  );
 
-  const removeScope = (): void => {
-    const next = new URLSearchParams(params);
-    next.delete("projectSlug");
-    setParams(next, { replace: true });
+  const { data, isLoading, isError } = useSearch({
+    q,
+    projectSlug,
+    sectionTypes: sectionTypes.length > 0 ? sectionTypes : undefined,
+    authorId,
+    updatedSince,
+    status,
+  });
+
+  const hitsTotal = totalHits(data);
+  const filtersActive =
+    sectionTypes.length > 0 ||
+    authorId !== undefined ||
+    updatedSince !== undefined ||
+    status !== undefined;
+
+  const updateFilters = (next: FilterBarValue): void => {
+    const url = new URLSearchParams(params);
+    if (next.sectionTypes.length > 0) url.set("sectionTypes", next.sectionTypes.join(","));
+    else url.delete("sectionTypes");
+    if (next.authorId) {
+      url.set("authorId", next.authorId);
+      if (next.authorDisplayName) url.set("authorName", next.authorDisplayName);
+      else url.delete("authorName");
+    } else {
+      url.delete("authorId");
+      url.delete("authorName");
+    }
+    const iso = presetToIso(next.timeRange);
+    if (iso) url.set("updatedSince", iso);
+    else url.delete("updatedSince");
+    if (next.status) url.set("status", next.status);
+    else url.delete("status");
+    setParams(url, { replace: true });
   };
 
-  // Idle state
+  const clearFilter = (key: string): void => {
+    const url = new URLSearchParams(params);
+    if (key === "authorId") {
+      url.delete("authorId");
+      url.delete("authorName");
+    } else {
+      url.delete(key);
+    }
+    setParams(url, { replace: true });
+  };
+
+  const removeScope = (): void => clearFilter("projectSlug");
+
+  // Idle state — q empty.
   if (q === "") {
     return (
       <main className="mx-auto max-w-2xl px-6 py-16 text-center">
@@ -50,18 +137,14 @@ export function SearchPage(): JSX.Element {
           Tìm trong workspace
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Nhập từ khoá vào search box ở thanh top để tìm features. FTS hỗ trợ tiếng Việt có dấu.
+          Nhập từ khoá vào search box ở thanh top để tìm projects, features, sections, tác giả,
+          file.
         </p>
         <TipCard title="MẸO TÌM KIẾM" className="mt-6 text-left">
           <ul className="list-disc space-y-1 pl-4">
             <li>Tìm theo title hoặc nội dung section.</li>
-            <li>
-              Bao quanh cụm từ với <code className="rounded bg-muted px-1 py-0.5">"..."</code> để
-              match exact phrase.
-            </li>
-            <li>
-              Filter theo project bằng cách click chip <strong>Project: ...</strong> trên kết quả.
-            </li>
+            <li>Filter loại section để tìm theme cụ thể (vd. user-flow cho business flow).</li>
+            <li>Filter tác giả + thời gian để zoom vào edits gần đây.</li>
           </ul>
         </TipCard>
       </main>
@@ -86,47 +169,23 @@ export function SearchPage(): JSX.Element {
             <span>Đang tìm...</span>
           ) : (
             <>
-              <span className="font-semibold text-foreground">{`${hits.length} feature`}</span>
+              <span className="font-semibold text-foreground">{`${hitsTotal} kết quả`}</span>
               <span>· {projectSlug ? `trong project ${projectSlug}` : "trong toàn workspace"}</span>
             </>
           )}
         </div>
       </div>
 
-      {/* Filter row */}
-      <div className="mb-6 flex flex-wrap items-center gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3">
-        <span className="font-ui text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-          Phạm vi:
-        </span>
-        <div className="flex flex-wrap items-center gap-2">
-          {!projectSlug ? (
-            <span className="inline-flex h-7 items-center rounded-md bg-card px-3 font-ui text-xs font-semibold text-foreground shadow-sm">
-              Toàn workspace
-            </span>
-          ) : (
-            <FilterChip label={`Project: ${projectSlug}`} onRemove={removeScope} />
-          )}
-          <button
-            type="button"
-            onClick={() => toast("Filter loại: tính năng đang phát triển trong v2")}
-            className="inline-flex h-7 items-center gap-1 rounded-md border border-border bg-transparent px-3 font-ui text-xs font-semibold text-muted-foreground hover:bg-card hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            Loại: Tất cả
-            <ChevronDown className="size-3" aria-hidden="true" />
-          </button>
+      {/* Scope chip + filter bar */}
+      {projectSlug ? (
+        <div className="mb-3 flex items-center gap-2">
+          <span className="font-ui text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Phạm vi:
+          </span>
+          <FilterChip label={`Project: ${projectSlug}`} onRemove={removeScope} />
         </div>
-        <div className="ml-auto flex items-center gap-3">
-          <span className="font-ui text-xs text-muted-foreground">Sắp xếp:</span>
-          <button
-            type="button"
-            onClick={() => toast("Sắp xếp: tính năng đang phát triển trong v2")}
-            className="inline-flex h-7 items-center gap-1 rounded-md border border-border bg-card px-2.5 font-ui text-xs font-semibold text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            Liên quan nhất
-            <ChevronDown className="size-3 text-muted-foreground" aria-hidden="true" />
-          </button>
-        </div>
-      </div>
+      ) : null}
+      <FilterBar value={filterValue} onChange={updateFilters} />
 
       {/* Body */}
       {isLoading && (
@@ -146,16 +205,43 @@ export function SearchPage(): JSX.Element {
         </p>
       )}
 
-      {!isLoading && !isError && hits.length === 0 && (
+      {!isLoading && !isError && hitsTotal === 0 && (
         <div className="mx-auto max-w-md py-12 text-center">
           <SearchX className="mx-auto size-16 text-primary/40" aria-hidden="true" />
           <h2 className="mt-6 font-display text-xl font-semibold text-foreground">
-            Không tìm thấy feature nào khớp với "{q}"
+            {filtersActive
+              ? "Không có kết quả với filter hiện tại"
+              : `Không tìm thấy feature nào khớp với "${q}"`}
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Thử từ khoá khác hoặc bỏ filter project. FTS hỗ trợ tiếng Việt có dấu — kiểm tra chính
-            tả nếu kết quả trống.
+            Thử từ khoá khác hoặc bỏ filter. FTS hỗ trợ tiếng Việt có dấu — kiểm tra chính tả nếu
+            kết quả trống.
           </p>
+          {filtersActive && (
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+              {sectionTypes.length > 0 && (
+                <FilterChip
+                  label={`Loại: ${sectionTypes.join(", ")}`}
+                  onRemove={() => clearFilter("sectionTypes")}
+                />
+              )}
+              {authorId && (
+                <FilterChip
+                  label={`Tác giả: ${authorDisplayName ?? "đã chọn"}`}
+                  onRemove={() => clearFilter("authorId")}
+                />
+              )}
+              {updatedSince && (
+                <FilterChip label="Thời gian" onRemove={() => clearFilter("updatedSince")} />
+              )}
+              {status && (
+                <FilterChip
+                  label={`Trạng thái: ${status}`}
+                  onRemove={() => clearFilter("status")}
+                />
+              )}
+            </div>
+          )}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             {projectSlug ? (
               <Button variant="outline" size="sm" type="button" onClick={removeScope}>
@@ -169,14 +255,47 @@ export function SearchPage(): JSX.Element {
         </div>
       )}
 
-      {!isLoading && !isError && hits.length > 0 && (
-        <ul className="space-y-3.5">
-          {hits.map((hit) => (
-            <li key={`${hit.projectSlug}/${hit.featureSlug}`}>
-              <SearchResultRow hit={hit} />
-            </li>
-          ))}
-        </ul>
+      {!isLoading && !isError && hitsTotal > 0 && data && (
+        <div>
+          {data.projects.length > 0 && (
+            <EntityGroup icon={FolderOpen} title="Projects" count={data.projects.length}>
+              {data.projects.map((hit) => (
+                <ProjectResultCard key={hit.slug} hit={hit} />
+              ))}
+            </EntityGroup>
+          )}
+          {data.features.length > 0 && (
+            <EntityGroup icon={FileText} title="Features" count={data.features.length}>
+              {data.features.map((hit) => (
+                <FeatureResultCard key={`${hit.projectSlug}/${hit.featureSlug}`} hit={hit} />
+              ))}
+            </EntityGroup>
+          )}
+          {data.sections.length > 0 && (
+            <EntityGroup icon={ScrollText} title="Sections" count={data.sections.length}>
+              {data.sections.map((hit) => (
+                <SectionResultCard
+                  key={`${hit.projectSlug}/${hit.featureSlug}/${hit.sectionType}`}
+                  hit={hit}
+                />
+              ))}
+            </EntityGroup>
+          )}
+          {data.authors.length > 0 && (
+            <EntityGroup icon={User} title="Authors" count={data.authors.length}>
+              {data.authors.map((hit) => (
+                <AuthorResultCard key={hit.id} hit={hit} />
+              ))}
+            </EntityGroup>
+          )}
+          {data.uploads.length > 0 && (
+            <EntityGroup icon={Paperclip} title="Uploads" count={data.uploads.length}>
+              {data.uploads.map((hit) => (
+                <UploadResultCard key={hit.id} hit={hit} />
+              ))}
+            </EntityGroup>
+          )}
+        </div>
       )}
     </main>
   );

@@ -12,6 +12,9 @@ export const defaultHandlers: HttpHandler[] = [
   http.get(`${BASE}/auth/me`, () =>
     HttpResponse.json({ error: { code: "UNAUTHENTICATED", message: "" } }, { status: 401 }),
   ),
+  // Author filter dropdown (US-005) fetches eagerly on mount; tests that
+  // don't override this just want an empty list rather than an MSW miss.
+  http.get(`${BASE}/users`, () => HttpResponse.json({ data: [] })),
 ];
 
 export const server = setupServer(...defaultHandlers);
