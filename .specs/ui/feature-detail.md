@@ -2,13 +2,13 @@
 
 <!-- template: 02-ui-spec-template.md@0.1 -->
 
-Referenced tokens / icons / components từ [design-system.md](design-system.md).
+Referenced tokens / icons / components từ [design-system.md](design-system.md). Visual quality bar per [visual-language.md](visual-language.md) charter (CR-002).
 
 ## Screen metadata
 
 - **Screen ID**: `feature-detail`
-- **Status**: Implemented (read T9 `879b15b`; edit T7 `03c83ba`; US-003 embed+upload+ownership T4-T6 `a262cf3`/`f75f75a`/`dd1c213`; E2E T7 `c6c57fc`)
-- **Last updated**: 2026-04-24
+- **Status**: Implemented (read T9 `879b15b`; edit T7 `03c83ba`; US-003 embed+upload+ownership T4-T6 `a262cf3`/`f75f75a`/`dd1c213`; E2E T7 `c6c57fc`) · UI uplift draft v2 Workspace (CR-002 / Phase 1B-3, 2026-04-25)
+- **Last updated**: 2026-04-25
 
 ## Route
 
@@ -61,81 +61,162 @@ Each **section content state** (trong success):
 - **Contrast**: theo token. Code block `bg-muted` vs `text-foreground` ≥ 4.5:1.
 - **Motion**: smooth scroll respect `prefers-reduced-motion: reduce` → fallback instant jump.
 
-## Wire-level description
+## Wire-level description (UI uplift v2 — Workspace style — CR-002)
 
-### Desktop (≥ 1024px)
+### Desktop (≥ 1280px)
 
-```
-┌───────────────────────────────────────────────────────────┐
-│ AppHeader                                                  │
-├───────────────────────────────────────────────────────────┤
-│  max-w-5xl, px-6, py-8                                     │
-│                                                            │
-│  Demo / Login with email                     breadcrumb sm │
-│                                                            │
-│  # Đăng nhập bằng email                       h1 2xl       │
-│  Cập nhật 2 giờ trước · bởi @admin            muted xs     │
-│                                                            │
-│  ┌──────────────┬────────────────────────────────────┐     │
-│  │ Sections     │ ## Business                        │     │
-│  │ (sticky)     │ Markdown content...                │     │
-│  │              │                                    │     │
-│  │ ▸ Business   │ ## User flow                       │     │
-│  │   User flow  │ ...                                │     │
-│  │   Rules      │                                    │     │
-│  │   Tech       │ ## Business rules                  │     │
-│  │   Screens    │ [Chưa có nội dung]  (empty)        │     │
-│  │              │                                    │     │
-│  │ (top: 96px)  │ ## Tech notes                      │     │
-│  │              │ ...                                │     │
-│  │              │                                    │     │
-│  │              │ ## Screenshots                     │     │
-│  │              │ ...                                │     │
-│  └──────────────┴────────────────────────────────────┘     │
-└───────────────────────────────────────────────────────────┘
-```
-
-### Mobile (< 1024px)
-
-```
-┌──────────────────────┐
-│ AppHeader            │
-├──────────────────────┤
-│ Demo / Login with…   │
-│ # Đăng nhập bằng…    │
-│ cập nhật 2 giờ…      │
-│                      │
-│ [Sections ▾]         │  ← Collapsible TOC dropdown
-│                      │
-│ ## Business          │
-│ content...           │
-│                      │
-│ ## User flow         │
-│ ...                  │
-│                      │
-│ (stacked all 5)      │
-└──────────────────────┘
+```text
+┌────────────────────────────────────────────────────────────────────────────────────┐
+│ AppHeader                                                                           │
+├────────────────────────────────────────────────────────────────────────────────────┤
+│  Breadcrumb: Projects › <projectSlug> › <featureTitle>                              │
+│                                                                                     │
+│  ┌──────────────────────────────────────────────────────────────────────────┐      │
+│  │ FEATURE HEADER (no panel — flat block)                                   │      │
+│  │  [Đang viết] [v2] · Cập nhật 18 giờ · @TríMinh    [👁 PR] [⭐ Theo dõi] │      │
+│  │                                                   [✎ Sửa nhanh] [⋯]     │      │
+│  │  Đăng nhập bằng email   ← h1 32/40 bold tracking-tight                  │      │
+│  │  Tài liệu nghiệp vụ + tech notes...                                     │      │
+│  └──────────────────────────────────────────────────────────────────────────┘      │
+│                                                                                     │
+│  ┌──────────────────────────────────────────────────────────────────────────┐      │
+│  │ PROGRESS STRIP                                                            │      │
+│  │  2/5 ████ ████ ░░░░ ░░░░ ░░░░  Nghiệp vụ · Flow · Rules · Tech · Screens│      │
+│  │      labels muted xs evenly distributed              │ live placeholder │      │
+│  └──────────────────────────────────────────────────────────────────────────┘      │
+│                                                                                     │
+│  ┌─────────────┐ ┌──────────────────────────────────────┐ ┌─────────────────┐     │
+│  │ SECTIONS    │ │ MAIN CONTENT (sections)              │ │ HOẠT ĐỘNG       │     │
+│  │ sticky 240  │ │  ┌──────────────────────────────────┐ │ │ sticky 280      │     │
+│  │             │ │  │ 🏷 Nghiệp vụ      @X · 2h    ✎  │ │ │ Hoạt động       │     │
+│  │ ▎🏷 Nghiệp ✓│ │  │   icon plate primary-50          │ │ │ Xem tất cả →    │     │
+│  │   active    │ │  │  {MarkdownView prose}            │ │ │                 │     │
+│  │  📊 Flow ✓  │ │  └──────────────────────────────────┘ │ │ [TM] Trí Minh   │     │
+│  │  📋 Rules ○ │ │  ┌──────────────────────────────────┐ │ │ chỉnh tech-notes│     │
+│  │  🔧 Tech ○  │ │  │ 📊 User flow              ...    │ │ │ 12 phút trước   │     │
+│  │  🖼 Screen ○│ │  │  EmptyDashedCard nếu trống       │ │ │ [NL] Ngọc Linh  │     │
+│  │             │ │  └──────────────────────────────────┘ │ │ thêm screenshot │     │
+│  │ [+ Thêm     │ │                                       │ │                 │     │
+│  │  section]   │ │                                       │ │ ──────────      │     │
+│  └─────────────┘ └──────────────────────────────────────┘ │ │ MẸO ONBOARDING  │     │
+│                                                            │ │ Đọc Nghiệp vụ.. │     │
+│                                                            │ └─────────────────┘     │
+└────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-- **Layout**:
-  - Desktop: grid `grid-cols-[180px_1fr] gap-8` dưới heading block. TOC `aside` `sticky top-24 self-start` (96px = AppHeader + margin).
-  - Mobile: `<details>` dropdown dưới heading, content stack bình thường.
-- **Key components** (design-system §5):
-  - `Breadcrumb` — `<nav>` với separator `ChevronRight size-3.5 text-muted-foreground`.
-  - `SectionToc` — desktop sticky aside with 5 anchor link, active state via IntersectionObserver; mobile `<details>` dropdown.
-  - `MarkdownView` — wraps sanitized markdown, class `prose prose-sm max-w-none`.
-  - `RelativeTime` — meta line "cập nhật 2 giờ trước".
-  - `EmptyState` (inline variant) cho section body empty.
-- **Key icons** (design-system §4):
-  - `ChevronRight` — breadcrumb separator.
-  - `Clock` — relative time.
-  - `AlertCircle` — empty section placeholder.
-- **Key tokens**:
-  - `bg-background` main.
-  - `text-foreground` heading + body.
-  - `text-muted-foreground` breadcrumb items, sub-copy, TOC inactive items, inline code muted.
-  - `bg-muted` code block bg + empty-section placeholder bg.
-  - `border-border` TOC right divider desktop.
+### Tablet (1024-1279px) — 2-col (TOC + main, drop activity rail)
+
+### Mobile (< 1024px) — 1-col, TOC collapsed `<details>` dropdown, activity hidden v1
+
+### Layout primitives
+
+- **Container**: `mx-auto max-w-7xl px-10 py-6`. Mobile: `px-4 py-4`.
+- **Breadcrumb** (top, existing): muted text-sm.
+- **Feature header** (flat block, charter §3 no panel):
+  - `mb-5 flex items-start justify-between gap-6`.
+  - Left flex-1:
+    - Status row `mb-2 flex items-center gap-2`: `<Badge tone={statusTone} dot size="sm">{statusLabel}</Badge>` (derived: filledCount=5 → "Đủ doc" success / 1-4 → "Đang viết" primary / 0 → "Draft" neutral) + `<Badge tone="info" size="sm">v2</Badge>` (placeholder hardcoded) + `<span className="text-xs text-muted-foreground">· Cập nhật {RelativeTime} · @{updatedByName ?? "—"}</span>`.
+    - h1: `font-display text-[32px] leading-10 font-bold tracking-[-0.02em]` = `feature.title`.
+    - Subtitle: `mt-2 text-sm leading-relaxed text-foreground/80 max-w-3xl` placeholder copy "Tài liệu nghiệp vụ + tech notes. Mọi section đều có thể chỉnh sửa song song bởi BA và Dev."
+  - Right action cluster `flex flex-wrap gap-2`:
+    - Outline: `[Eye] Xem PR` placeholder toast.
+    - Outline: `[Bookmark] Theo dõi` placeholder toast.
+    - Default: `[Pencil] Sửa nhanh` — scrolls to first empty section editor (or first section if all filled).
+    - Outline icon-only: `[⋯]` admin overflow placeholder (defer real menu to v2).
+
+### Progress strip (NEW — charter §10)
+
+`mb-7 rounded-xl bg-muted/40 border border-border px-4.5 py-3.5 flex items-center gap-6`:
+
+- **Big fraction** `flex items-center gap-2.5`: value `font-display text-[22px] leading-none font-bold text-primary` `{filled}` + meta stack `text-xs leading-tight font-ui text-muted-foreground` "/5\nsection đã có".
+- **Bar+labels** flex-1 stack:
+  - 5 segments: `flex gap-1.5 mb-1.5`, each `flex-1 h-1.5 rounded-full bg-{filled?primary-500:neutral-200}`.
+  - Labels row: `flex justify-between font-ui text-[11px] text-muted-foreground` evenly distributed = `{Nghiệp vụ, User flow, Rules, Tech, Screens}` shorthand.
+- **Divider**: `w-px h-8 bg-border`.
+- **Live indicator placeholder**: `flex items-center gap-2.5` `<AvatarStack ids={[updatedByName, ...]} size="sm">` + stack với pulse dot success-500 + "Live · cập nhật {RelativeTime}". v1 hardcode count=0, hide entirely if no data.
+
+### 3-column main layout
+
+`grid gap-8 xl:grid-cols-[240px_1fr_280px] lg:grid-cols-[200px_1fr] grid-cols-1`.
+
+### TOC sidebar (left, sticky)
+
+`sticky top-5 self-start rounded-xl border border-border bg-card p-3.5`:
+
+- Eyebrow `font-ui text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground mb-2.5` "Sections".
+- Items per existing `<SectionToc>` scrollspy, redesigned:
+  - `flex items-center gap-2.5 px-2.5 py-2 rounded-lg font-ui text-[13px] font-semibold transition-colors relative`.
+  - Active: `text-primary bg-primary-50` + `before:absolute before:left-0 before:top-2 before:bottom-2 before:w-[3px] before:rounded-full before:bg-primary`.
+  - Idle: `text-foreground/70 hover:text-foreground hover:bg-muted/50`.
+  - Inside: section icon size-3.5 colored (primary if active, muted if idle) + label flex-1 + status indicator:
+    - **filled** = green disc 3.5 round bg-success-500 với white check icon.
+    - **empty** = `size-3.5 rounded-full border-1.5 border-dashed border-border-strong`.
+- **Footer** `mt-3.5 pt-3.5 border-t border-border`: button "+ Thêm section" full-width `h-8 rounded-lg border border-dashed border-border-strong bg-transparent hover:border-primary/40 hover:text-primary text-muted-foreground font-ui font-semibold text-xs flex items-center justify-center gap-1.5`. v1 placeholder click → toast "5 sections cố định trong v1; custom sections trong v2".
+
+### Section blocks (center)
+
+Stack `flex flex-col gap-4`. Mỗi `<SectionBlock>`:
+
+- Container: `id="section-{type}" scroll-mt-24 rounded-xl border border-border bg-card p-5 transition-all`. Active section (currently visible per scrollspy) → `border-primary-200 shadow-[0_0_0_3px_rgba(240,118,19,0.06)]`.
+- **Header row** `mb-3.5 flex items-center gap-2.5`:
+  - Icon plate 32×32: `rounded-lg flex items-center justify-center bg-{statusBg}` — `success-50` if filled, `neutral-100` if empty. Icon size-4 colored matching tone (success-500 / muted-foreground).
+  - h2 `font-display text-[18px] leading-none font-bold flex-1 line-clamp-1` = section label.
+  - Ownership inline (filled only): `font-ui text-xs text-muted-foreground` "Cập nhật bởi <b className='text-foreground/80'>@{updatedByName}</b> · {RelativeTime}". Khi `updatedByName === null` (deleted user) → "(người dùng đã xóa)".
+  - Edit button: `<Button variant="outline" size="sm" className="h-8 px-3"><Pencil className="size-3.5 mr-1.5" />Sửa</Button>`. Visibility per existing `<AuthorGate>`.
+- **Body**:
+  - **Filled**: `<MarkdownView source={body} />` (existing component, prose readable max 65ch per charter §6).
+  - **Empty**: `<EmptyDashedCard>` charter §10 — `rounded-lg border border-dashed border-border bg-muted/30 px-5 py-5 flex items-center gap-3.5`:
+    - Circle icon 40×40: `rounded-full bg-card border border-border flex items-center justify-center` chứa `<Info className="size-4.5 text-muted-foreground">`.
+    - Body flex-1: `font-ui font-semibold text-sm text-foreground` "Chưa có nội dung" + `font-body text-xs leading-snug text-muted-foreground mt-1` "{role} hoặc dev chưa điền section này. Bấm <b>Sửa</b> để bắt đầu — hoặc dùng template gợi ý." (role: business/user-flow/business-rules → "BA"; tech-notes/screenshots → "Dev").
+    - Right action: `<Button variant="outline" size="sm" className="h-8">Dùng template</Button>` v1 placeholder toast.
+  - **Editing**: existing `<SectionEditor>` flow unchanged (border-primary/30 bg-primary-50/60 from US-002 T7 + Nexlab DS).
+
+### Activity rail (right sidebar, sticky, placeholder v1)
+
+`sticky top-5 self-start rounded-xl border border-border bg-card p-4`:
+
+- **Header** `mb-3.5 flex items-center justify-between`:
+  - h3 `font-ui text-[13px] font-bold` "Hoạt động".
+  - `<a href="#" className="font-ui text-xs font-semibold text-primary">Xem tất cả</a>` placeholder toast.
+- **Activity list** `flex flex-col gap-3.5`, **v1 hardcoded 3-4 dummy items** seed từ feature data (use existing `sections.updatedBy` + `sections.updatedAt` to construct plausible activities):
+  - Each item `flex gap-2.5`: `<Avatar size="sm">` ring-2 ring-background size-7 + body flex-1 (`font-body text-xs leading-snug text-foreground/80`):
+    - `<b>{name}</b> {action}` (e.g., "Trí Minh chỉnh **tech-notes**", "Ngọc Linh thêm **screenshot**").
+    - Sub: `mt-1 font-ui text-[11px] text-muted-foreground` "{relative time}".
+- **Tip card** `mt-4.5 rounded-lg bg-info-50 dark:bg-info-950/30 border border-info-200 dark:border-info-800 p-3.5`:
+  - Header `flex items-center gap-2 mb-1.5`: `<Info className="size-3.5 text-info-500">` + `font-ui text-xs font-bold text-info-700 dark:text-info-300` "MẸO ONBOARDING".
+  - Copy `font-body text-xs leading-snug text-foreground/80` "Đọc <b>Nghiệp vụ</b> trước rồi đến <b>User flow</b> để hiểu bối cảnh, sau đó mới sang <b>Tech notes</b>."
+
+### Section icons map
+
+| Section type   | Icon         | Status tone (filled / empty)   |
+| -------------- | ------------ | ------------------------------ |
+| business       | `Briefcase`  | success-500 / muted-foreground |
+| user-flow      | `Workflow`   | success-500 / muted-foreground |
+| business-rules | `ListChecks` | success-500 / muted-foreground |
+| tech-notes     | `Code`       | success-500 / muted-foreground |
+| screenshots    | `Image`      | success-500 / muted-foreground |
+
+### Out of scope v1 / placeholder
+
+- Activity feed: hardcoded 3-4 dummy items seeded từ section.updatedBy/At.
+- Tip card: static copy.
+- Live indicator (count đang chỉnh): hardcoded 0 / hidden.
+- v2 badge in header: hardcoded.
+- Xem PR / Theo dõi buttons: placeholder toasts.
+- Sửa nhanh: implements scroll-to-first-empty-section behavior.
+- "+ Thêm section" footer button: placeholder toast.
+- "Dùng template" empty state action: placeholder toast.
+- "⋯" feature-level admin overflow: placeholder (defer real menu).
+- Tablet+mobile activity rail: hidden.
+- Mobile TOC: collapse `<details>` dropdown summary "Sections ▾".
+
+### Components introduced/reused
+
+- **NEW**: `ProgressStrip` (charter §10, used Feature only v1 — extract if reused), `EmptyDashedCard` (charter §10, also Project Landing), `ActivityRail` (right sidebar with hardcoded dummy data v1), `TipCard` (info-tinted callout).
+- **UPDATE**: `SectionToc` — bigger sticky pill list với status indicators (check disc / dashed circle), left primary rail bar trên active. Footer "+ Thêm section" placeholder.
+- **UPDATE**: `FeatureSections` — wrap each section in `<SectionBlock>` với icon plate + ownership inline + edit button (move from current heading-row layout).
+- **REUSE**: `Breadcrumb`, `MarkdownView` (existing), `SectionEditor` (existing), `Badge`, `Button`, `AvatarStack` (NEW from Home spec), `Avatar`, `RelativeTime`.
+- **lucide**: `Briefcase`, `Workflow`, `ListChecks`, `Code`, `Image`, `Eye`, `Bookmark`, `Pencil`, `MoreHorizontal`, `Info`, `Plus`, `CheckCircle`.
 - **Typography**:
   - Breadcrumb: `text-sm`.
   - H1 feature title: `font-display text-3xl font-bold tracking-tight` (Inter, Nexlab ADR-003).
