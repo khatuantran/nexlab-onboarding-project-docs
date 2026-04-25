@@ -23,6 +23,8 @@ import { Label } from "@/components/ui/label";
 interface Props {
   projectSlug: string;
   projectName?: string;
+  /** Optional fully custom trigger element (overrides default Button). */
+  customTrigger?: React.ReactElement;
 }
 
 /**
@@ -30,7 +32,11 @@ interface Props {
  * Parity với CreateProjectDialog: slug auto-derive + sticky, native
  * confirm on dirty-cancel, close + navigate on 201.
  */
-export function CreateFeatureDialog({ projectSlug, projectName }: Props): JSX.Element {
+export function CreateFeatureDialog({
+  projectSlug,
+  projectName,
+  customTrigger,
+}: Props): JSX.Element {
   const [open, setOpen] = useState(false);
   const [slugTouched, setSlugTouched] = useState(false);
   const [serverSlugError, setServerSlugError] = useState<string | null>(null);
@@ -90,10 +96,12 @@ export function CreateFeatureDialog({ projectSlug, projectName }: Props): JSX.El
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="default" size="sm">
-          <Plus className="mr-2 size-4" aria-hidden="true" />
-          Thêm feature
-        </Button>
+        {customTrigger ?? (
+          <Button variant="default" size="sm">
+            <Plus className="mr-2 size-4" aria-hidden="true" />
+            Thêm feature
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
