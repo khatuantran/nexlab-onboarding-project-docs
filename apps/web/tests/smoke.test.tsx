@@ -6,7 +6,8 @@ import { App } from "../src/App";
 describe("App smoke (unauthenticated)", () => {
   it("redirects to /login and renders the login form", async () => {
     renderWithProviders(<App />);
-    expect(await screen.findByRole("heading", { name: /đăng nhập/i })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /chào mừng/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /đăng nhập/i })).toBeInTheDocument();
   });
 });
