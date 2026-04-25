@@ -2,13 +2,13 @@
 
 <!-- template: 02-ui-spec-template.md@0.1 -->
 
-Referenced tokens / icons / components từ [design-system.md](design-system.md).
+Referenced tokens / icons / components từ [design-system.md](design-system.md). Visual quality bar per [visual-language.md](visual-language.md) charter (CR-002).
 
 ## Screen metadata
 
 - **Screen ID**: `project-landing`
-- **Status**: Implemented (read path T9 `879b15b`; admin actions US-004 / T7 `904e9c8`)
-- **Last updated**: 2026-04-24
+- **Status**: Implemented (read path T9 `879b15b`; admin actions US-004 / T7 `904e9c8`) · UI uplift draft v2 Workspace (CR-002 / Phase 1B-2, 2026-04-25)
+- **Last updated**: 2026-04-25
 
 ## Route
 
@@ -53,79 +53,135 @@ idle → loading (useProject fetch)
 - **Focus ring**: token `--ring` trên card link (`focus-visible:ring-2`).
 - **Contrast**: theo token (4.5:1 cả light + dark).
 
-## Wire-level description
+## Wire-level description (UI uplift v2 — Workspace style — CR-002)
 
-### Desktop (≥ 768px)
+### Desktop (≥ 1024px)
 
-```
-┌────────────────────────────────────────────────────────┐
-│ AppHeader (logo · user · ThemeToggle · Đăng xuất)       │
-├────────────────────────────────────────────────────────┤
-│  max-w-5xl, px-6, py-8                                  │
-│                                                         │
-│  Demo Project                              h1 2xl       │
-│  Catalog 5 feature · cập nhật 2h trước     muted sm     │
-│                                                         │
-│  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐     │
-│  │ 📄 Login     │ │ 📄 Search    │ │ 📄 Export    │     │
-│  │              │ │              │ │              │     │
-│  │ [5/5] ·⏱ 2h │ │ [3/5] ·⏱ 1d │ │ [0/5] ·⏱ 3d │     │
-│  │           →  │ │           →  │ │           →  │     │
-│  └──────────────┘ └──────────────┘ └──────────────┘     │
-│                                                         │
-└────────────────────────────────────────────────────────┘
+```text
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ AppHeader                                                                     │
+├──────────────────────────────────────────────────────────────────────────────┤
+│  Breadcrumb: 📁 Projects › Pilot Project                                      │
+│                                                                               │
+│  ┌──────────────────────────────────────────────────────────────────────┐    │
+│  │ HERO PANEL (rounded-2xl, primary-50→primary-100 gradient)            │    │
+│  │  decorative NxLogo mark abs right opacity-0.18 rotate-[-8deg]         │    │
+│  │                                                                       │    │
+│  │  [Pilot] [Đang chạy] · Sprint 14 · Catalog                            │    │
+│  │  Pilot Project ← h1 32/38 bold tracking-tight                         │    │
+│  │  MVP v1 cho onboarding catalog. BA: Trí Minh · Tech lead: Ngọc Linh.  │    │
+│  │                                                                       │    │
+│  │  FEATURES         SECTIONS HOÀN     ĐANG CHỈNH      CẬP NHẬT CUỐI    │    │
+│  │  4                11/20 (55%)       —              12 phút trước     │    │
+│  │  2 đã đủ doc      55% tổng tiến độ  v2 placeholder  · @TríMinh        │    │
+│  │  ↑ MiniStat       ↑ tone primary    ↑ live disabled ↑ MiniStat       │    │
+│  │                                                                       │    │
+│  │             [⭐ Theo dõi] [</> Repo] [+ Thêm feature]   [⋯ admin]    │    │
+│  │             ghost btns                primary CTA      overflow menu │    │
+│  └──────────────────────────────────────────────────────────────────────┘    │
+│                                                                               │
+│  ┌──────────────────────────────────────────────────────────────────────┐    │
+│  │ TABS (border-b)                                                       │    │
+│  │  [Catalog 4] · Activity · Members · Settings                          │    │
+│  │   ↑ active primary, count badge      ↑ placeholder tabs (empty state) │    │
+│  └──────────────────────────────────────────────────────────────────────┘    │
+│                                                                               │
+│  ┌─────────────────────────────────┐  ┌─────────────────────────────────┐    │
+│  │ ┌──┐ Đăng nhập email   →        │  │ ┌──┐ Voucher sinh nhật     →    │    │
+│  │ │📄│ [Đang viết · 18 giờ trước] │  │ │📄│ [Đủ doc · hôm qua]         │    │
+│  │ └──┘ icon plate primary-50      │  │ └──┘ success-50                 │    │
+│  │                                  │  │                                 │    │
+│  │ 2/5 sections          40%        │  │ 5/5 sections        100%        │    │
+│  │ ████░░░░░░░ ←progress 6px       │  │ ██████████ ←progress 6px        │    │
+│  │ ─────────────────────────────── │  │ ─────────────────────────────── │    │
+│  │ [TM][NL]  ● ● ○ ○ ○ ←dots      │  │ [NL]      ● ● ● ● ●             │    │
+│  └─────────────────────────────────┘  └─────────────────────────────────┘    │
+│  ┌─────────────────────────────────┐  ┌─────────────────────────────────┐    │
+│  │ ┌──┐ Đối soát hoàn tiền  →     │  │ + Tạo feature mới              │    │
+│  │ │📄│ [Đang viết · 3 ngày]      │  │   dashed tile circle plus      │    │
+│  │ └──┘                             │  │   author-gated trigger         │    │
+│  │ 1/5 sections          20%        │  │                                 │    │
+│  │ ──────────────────────────────  │  │                                 │    │
+│  │ [PT]      ● ○ ○ ○ ○             │  │                                 │    │
+│  └─────────────────────────────────┘  └─────────────────────────────────┘    │
+└──────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Mobile (< 768px)
 
-```
-┌──────────────────────┐
-│ AppHeader            │
-├──────────────────────┤
-│ Demo Project     h1  │
-│ Catalog 5 feature    │
-│                      │
-│ ┌──────────────────┐ │
-│ │ 📄 Login         │ │
-│ │ [5/5] · 2h    →  │ │
-│ └──────────────────┘ │
-│ ┌──────────────────┐ │
-│ │ 📄 Search        │ │
-│ │ [3/5] · 1d    →  │ │
-│ └──────────────────┘ │
-└──────────────────────┘
-```
+Hero panel stacks: badges → h1 → subtitle → mini-stats grid 2×2 → action buttons full-width vertical. Tabs scroll horizontally. Cards 1-col.
 
-- **Layout**: main `max-w-5xl px-6 py-8`. Header block (project name + summary) `mb-6`. Grid: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4`.
-- **Key components** (design-system §5):
-  - `FeatureCard` — `Card` wrap link. Padding `p-5`, border `border`, rounded `rounded-lg`, hover `hover:shadow-sm transition-shadow`.
-  - `SectionBadge` — pill "3/5", `text-xs`, bg `bg-muted`, rounded `rounded-full`, padding `px-2 py-0.5`.
-  - `RelativeTime` — `<time>` với icon `Clock size-3.5` + text "2 giờ trước".
-  - `EmptyState` — center icon `AlertCircle size-10 text-muted-foreground` + copy + CTA.
-- **Key icons** (design-system §4):
-  - `FileText` — leading icon trong card (`size-5 text-muted-foreground`).
-  - `ChevronRight` — trailing CTA icon card (`size-4 text-muted-foreground self-end`).
-  - `Clock` — trước relative time.
-  - `AlertCircle` — empty state.
-- **Key tokens**:
-  - `bg-background` main.
-  - `border-border` card.
-  - `text-foreground` title.
-  - `text-muted-foreground` sub-copy + icons.
-  - `ring-ring` focus.
-- **Typography**:
-  - H1 project name: `font-display text-3xl font-bold tracking-tight` (Inter, Nexlab ADR-003).
-  - Sub-copy: `text-sm text-muted-foreground`.
-  - Card title: `font-display text-base font-semibold`.
-  - Card meta: `text-xs text-muted-foreground`.
-- **Spacing**:
-  - Header → grid gap: `mb-6`.
-  - Card inner gap: `gap-3` (icon/title row, badge/time row, CTA).
+### Layout primitives
+
+- **Container**: `mx-auto max-w-6xl px-10 py-6` desktop; `px-4 py-4` mobile.
+- **Breadcrumb** (top): existing component reused, muted text-sm.
+- **Hero panel** (NEW): `relative overflow-hidden rounded-2xl border border-primary-100 bg-gradient-to-br from-[#FFF8EE] via-[#FDEED7] to-[#FFE9D0] dark:from-primary-900/30 dark:via-primary-950/30 dark:to-primary-900/20 p-7 mb-7`.
+- **DecorativeMark** (charter §10): NxLogo mark `aria-hidden absolute right-0 top-0 size-72 opacity-[0.18] rotate-[-8deg] translate-x-10 -translate-y-10`, gradient masked.
+- **Hero badges row** `mb-2.5 flex items-center gap-2`:
+  - `<Badge tone="primary" dot size="sm">Pilot</Badge>` (placeholder hardcoded — no schema).
+  - `<Badge tone="success" dot size="sm">Đang chạy</Badge>` (placeholder).
+  - `<span className="text-xs text-muted-foreground">· Sprint 14 · Catalog</span>` (hardcoded).
+- **h1**: `font-display text-[32px] leading-[38px] font-bold tracking-[-0.02em]` = `project.name`.
+- **Subtitle**: `mt-2 text-sm leading-relaxed text-foreground/80 max-w-2xl` = `project.description ?? "Chưa có mô tả · BA và dev sẽ bổ sung context project."` + `· BA: <b>{adminPlaceholder}</b> · Tech lead: <b>{leadPlaceholder}</b>` (placeholder names from createdBy.displayName + hardcoded extra).
+- **MiniStat row** (NEW): `mt-6 flex flex-wrap gap-7` chứa 4 `<MiniStat>` (charter §10):
+  1. **Features**: label "FEATURES", value `{features.length}`, sub `${features.filter(f => f.filledCount===5).length} đã đủ doc`.
+  2. **Sections hoàn thành**: label "SECTIONS HOÀN THÀNH", value `${totalFilled}/${totalSections}` (totalSections = features.length × 5; totalFilled = sum filledCount), tone primary, sub `${pct}% tổng tiến độ`.
+  3. **Đang chỉnh**: label "ĐANG CHỈNH", value `—`, sub muted "v2 — đang phát triển" (placeholder).
+  4. **Cập nhật cuối**: label "CẬP NHẬT CUỐI", value `${RelativeTime(maxUpdatedAt)}`, sub `· @${maxUpdater ?? "—"}` (compute từ max updatedAt across features).
+- **Action cluster** (NEW): hero footer `mt-7 flex flex-wrap items-center gap-2`:
+  - `<Button variant="outline" size="sm">⭐ Theo dõi</Button>` placeholder click → toast "Tính năng đang phát triển".
+  - `<Button variant="outline" size="sm">[Code icon] Repo</Button>` placeholder click → toast.
+  - `<CreateFeatureDialog>` author-gated, primary "+ Thêm feature".
+  - Existing `<ProjectActionsMenu>` admin overflow `[⋯]` (US-004) ở phải.
+
+### Tabs (NEW — placeholder)
+
+- Container: `mb-6 flex items-center gap-2 border-b border-border`.
+- Items per `<TabBar>` charter §10:
+  - **Catalog** (active): `<button role="tab" aria-selected="true" className="px-4 py-3.5 -mb-px border-b-2 border-primary text-primary font-ui font-semibold text-sm flex items-center gap-1.5">Catalog<span className="bg-primary text-white text-[10px] font-bold rounded-full px-1.5 py-0.5">{features.length}</span></button>`.
+  - **Activity / Members / Settings** (idle placeholder): `<button role="tab" aria-selected="false" className="px-4 py-3.5 border-b-2 border-transparent text-muted-foreground hover:text-foreground font-ui font-semibold text-sm">{label}</button>`. Click switches to placeholder panel: `<EmptyState icon={Wrench} title="Đang phát triển trong v2" description="Tính năng {label.toLowerCase()} sẽ có ở milestone tiếp theo." />`.
+
+### Feature cards grid (REDESIGN)
+
+- Grid: `grid gap-3.5 sm:grid-cols-1 lg:grid-cols-2`.
+- **FeatureCard layout** (`group rounded-xl border border-border bg-card p-4.5 flex flex-col gap-3.5 hover:border-primary/30 hover:shadow-md transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-ring`, wraps `<Link>`):
+  - **Top row** `flex items-center gap-3`:
+    - **Icon plate 36×36**: `rounded-lg flex items-center justify-center bg-{statusBg}` — `success-50` if `filledCount === 5`, `primary-50` if `1..4`, `neutral-100` if `0`. Inside `<FileText className="size-4.5 text-{statusFg}">` matching tone (success-500 / primary-600 / muted-foreground).
+    - **Body** flex-1 min-w-0:
+      - Title: `<h2>` `font-display text-sm leading-tight font-bold line-clamp-1` = `feature.title`.
+      - Status row `mt-1 flex items-center gap-2`: `<Badge tone={statusColor} dot size="sm">{statusLabel}</Badge>` ("Đủ doc" success / "Đang viết" primary / "Draft" neutral) + `<span className="text-[11px] text-muted-foreground">· {RelativeTime}</span>`.
+    - **Chevron** `size-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition`.
+  - **Progress block**:
+    - Label row `flex justify-between mb-1.5`: left `font-ui font-semibold text-xs text-foreground/80` "{filled}/5 sections"; right `font-ui font-medium text-xs text-muted-foreground` "{pct}%".
+    - `<ProgressBar value={pct} />` 6px primary.
+  - **Footer** `pt-2.5 border-t border-border flex items-center justify-between`:
+    - Left: `<AvatarStack ids={[updatedByName, ...placeholders]} size="sm">` size-6 ring-2 ring-background. Khi không có `updatedByName` → hide stack.
+    - Right: `<SectionDots filled={filledCount} />` charter §10 — 5 dots size-2 rounded-full gap-1.5 (filled = primary-500, empty = neutral-200), `aria-label="${filled}/5 sections có nội dung"`.
+
+### "Tạo feature mới" tile (last cell, author-gated)
+
+`min-h-[140px] rounded-xl border-2 border-dashed border-border hover:border-primary/40 hover:bg-primary-50/30 cursor-pointer transition-all flex items-center justify-center gap-2.5 text-muted-foreground hover:text-primary font-ui font-semibold text-sm`. Plus icon trong primary-50 size-8 rounded-full circle. Click mở existing `<CreateFeatureDialog>`.
+
+### Tokens & typography
+
+- Hero badges: existing `<Badge>` tone primary/success size sm với dot.
+- h1: `font-display text-[32px] leading-[38px] font-bold tracking-[-0.02em]`.
+- Subtitle: `font-body text-sm leading-relaxed text-foreground/80`.
+- MiniStat label: `font-ui text-[11px] uppercase tracking-[0.08em] text-muted-foreground font-medium`.
+- MiniStat value: `font-display text-[22px] leading-none font-bold` (primary tone for stat 2).
+- MiniStat sub: `font-body text-xs text-muted-foreground mt-1`.
+- Tab label: `font-ui text-sm font-semibold`.
+- Card title: `font-display text-sm font-bold leading-tight`.
+- Card progress label: `font-ui text-xs font-semibold`.
+
+### Spacing
+
+- Hero panel: p-7, internal gap-6 (between blocks). Hero → tabs: mb-6. Tabs → grid: mb-6. Card grid gap: 3.5.
 
 ## Error / empty / loading states
 
-- **Loading**: 3 skeleton card render (same size as real card, `bg-muted animate-pulse` khối). Container `aria-busy="true"`.
-- **Empty** (AC-4): giữa trang, 1 column — icon `AlertCircle` → `text-base` copy "Chưa có feature nào trong project này" → muted sub-copy "Admin/BA sẽ thêm feature sớm." Không CTA v1 (US-002 sẽ add).
+- **Loading**: hero renders text static với MiniStat values "—" placeholder; tabs render với count "?". Below: 3 feature card skeletons match new shape (icon plate 36×36 + 2 text bars + progress bar + footer with avatar circles + dot row). Container `aria-busy="true"`.
+- **Empty** (AC-4): replace grid với centered state — `<FolderPlus size-16 text-primary/40 mx-auto>` + h2 `font-display text-xl font-semibold mt-6` "Chưa có feature nào" + sub "Project mới được tạo. Bắt đầu thêm feature đầu tiên để team document." + author CTA `<CreateFeatureDialog />` mt-6.
 - **Error 404** (AC via PROJECT_NOT_FOUND): replace main với panel:
   ```
   Không tìm thấy project "<slug>"
@@ -214,18 +270,28 @@ Mobile (< 640px): "Thêm feature" full-width button, `⋯` ở top-right cạnh 
 
 ## Implementation
 
-- **Task**: [T9](../stories/US-001/tasks.md#t9--landing--feature-detail-pages)
-- **Page component**: `apps/web/src/pages/ProjectLandingPage.tsx`
-- **Queries**: `apps/web/src/queries/projects.ts` — `useProject(slug)` (TanStack Query, key `["project", slug]`)
-- **Sub-components** (mới land T9):
-  - `apps/web/src/components/ui/card.tsx` — Card primitive
-  - `apps/web/src/components/features/FeatureCard.tsx`
-  - `apps/web/src/components/features/SectionBadge.tsx`
-  - `apps/web/src/components/common/RelativeTime.tsx`
-  - `apps/web/src/components/common/EmptyState.tsx`
-- **Shared helpers**:
-  - `apps/web/src/lib/relativeTime.ts` — wrap `formatDistanceToNow(date, { addSuffix: true, locale: vi })` từ date-fns.
-- **Response type**: `ProjectResponse + FeatureListItem[]` từ [@onboarding/shared/schemas/feature.ts](../../packages/shared/src/schemas/feature.ts).
+- **Tasks**:
+  - Initial: [T9](../stories/US-001/tasks.md#t9--landing--feature-detail-pages) `879b15b`.
+  - Admin actions: [US-004 / T7](../stories/US-004/tasks.md#t7--projectactionsmenu-fe--archive-wire) `904e9c8`.
+  - UI uplift refresh: CR-002 / Phase 2-2 (TBD hash).
+- **Page component**: `apps/web/src/pages/ProjectLandingPage.tsx` — refactor: breadcrumb + hero panel (badges + h1 + subtitle + mini-stats + actions) + tabs + feature grid + author "Tạo feature" tile.
+- **Queries**: `useProject(slug)` — unchanged. v1 derive total/filled sections client-side từ `features[].filledCount`.
+- **Sub-components**:
+  - **NEW**: `apps/web/src/components/projects/ProjectHero.tsx` — hero panel với decorative mark + badges + h1 + subtitle + mini-stats + action cluster.
+  - **NEW**: `apps/web/src/components/projects/ProjectTabs.tsx` — TabBar với placeholder panels.
+  - **NEW**: `apps/web/src/components/common/MiniStat.tsx` (charter §10).
+  - **NEW**: `apps/web/src/components/common/DecorativeMark.tsx` — NxLogo mark wrapper for hero corners.
+  - **NEW**: `apps/web/src/components/common/SectionDots.tsx` (charter §10) — 5 dots row.
+  - **UPDATE**: `apps/web/src/components/features/FeatureCard.tsx` — redesign per spec (icon plate + status badge + progress + section dots footer).
+  - **REUSE**: `Breadcrumb`, `RelativeTime`, `EmptyState`, `Badge`, `Button`, `ProjectActionsMenu` (US-004), `CreateFeatureDialog`, `AvatarStack` (NEW từ Home spec), `ProgressBar` (NEW từ Home spec).
+- **Hardcoded/dummy data v1** (skeleton-UI policy charter v2):
+  - Hero badges "Pilot" / "Đang chạy" / "Sprint 14 · Catalog" → hardcoded strings.
+  - Subtitle BA / Tech lead names → use `project.createdBy.displayName` + hardcoded second name.
+  - "Đang chỉnh" mini-stat → render "—" muted với sub "v2 — đang phát triển".
+  - Theo dõi / Repo buttons → click handler shows toast "Tính năng đang phát triển trong v2".
+  - Tabs Activity / Members / Settings → empty state placeholder.
+- **lucide icons**: `Wrench` (placeholder tabs), `Star` (Theo dõi), `Code` or `GitBranch` (Repo), `MoreHorizontal`, `Plus`, `FileText`, `FolderPlus`, `ChevronRight`.
+- **Response type**: `ProjectResponse + FeatureListItem[]` từ [@onboarding/shared/schemas/feature.ts](../../packages/shared/src/schemas/feature.ts) — unchanged shape v1.
 
 ### US-004 admin actions additions
 
