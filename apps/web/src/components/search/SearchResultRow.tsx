@@ -1,10 +1,10 @@
 import { ChevronRight, FolderOpen } from "lucide-react";
 import { Link } from "react-router-dom";
-import type { SearchHit } from "@onboarding/shared";
+import type { FeatureHit } from "@onboarding/shared";
 import { sanitizeSnippet } from "@/lib/sanitize";
 
 export interface SearchResultRowProps {
-  hit: SearchHit;
+  hit: FeatureHit;
 }
 
 /**

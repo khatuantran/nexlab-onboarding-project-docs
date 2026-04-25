@@ -152,16 +152,23 @@ describe("GET /projects/:slug/features/:featureSlug", () => {
 });
 
 describe("GET /search", () => {
-  it("returns a hit with <mark> snippet for a term in seeded content", async () => {
+  it("returns a feature hit with <mark> snippet for a term in seeded content (US-005 v2)", async () => {
     const agent = await authedAgent();
     const res = await agent.get("/api/v1/search").query({ q: "đăng" });
 
     expect(res.status).toBe(200);
-    expect(Array.isArray(res.body.data)).toBe(true);
-    expect(res.body.data.length).toBeGreaterThan(0);
-    const top = res.body.data[0];
-    expect(top.featureSlug).toBe("login-with-email");
-    expect(top.snippet).toMatch(/<mark>.*<\/mark>/);
+    expect(res.body.data).toMatchObject({
+      projects: expect.any(Array),
+      features: expect.any(Array),
+      sections: expect.any(Array),
+      authors: expect.any(Array),
+      uploads: expect.any(Array),
+    });
+    const feature = res.body.data.features.find(
+      (f: { featureSlug: string }) => f.featureSlug === "login-with-email",
+    );
+    expect(feature).toBeDefined();
+    expect(feature.snippet).toMatch(/<mark>.*<\/mark>/);
   });
 
   it("returns 400 SEARCH_QUERY_EMPTY when q is missing", async () => {
@@ -172,11 +179,17 @@ describe("GET /search", () => {
     expect(res.body.error.code).toBe("SEARCH_QUERY_EMPTY");
   });
 
-  it("returns 200 with empty array for a query that matches nothing", async () => {
+  it("returns 200 with all-empty groups for a query that matches nothing (US-005 v2)", async () => {
     const agent = await authedAgent();
     const res = await agent.get("/api/v1/search").query({ q: "zzzzzzzzunmatch" });
 
     expect(res.status).toBe(200);
-    expect(res.body.data).toEqual([]);
+    expect(res.body.data).toEqual({
+      projects: [],
+      features: [],
+      sections: [],
+      authors: [],
+      uploads: [],
+    });
   });
 });

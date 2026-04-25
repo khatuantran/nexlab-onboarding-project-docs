@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
 import { screen, within } from "@testing-library/react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import type { SearchHit } from "@onboarding/shared";
+import type { FeatureHit, SearchResultsV2 } from "@onboarding/shared";
 import { SearchPage } from "@/pages/SearchPage";
 import { renderWithRouter } from "../lib/test-utils";
 import { server, http, HttpResponse, BASE } from "../lib/msw";
@@ -28,13 +28,15 @@ function renderSearch(initialPath: string) {
   );
 }
 
-const sampleHits: SearchHit[] = [
+const sampleHits: FeatureHit[] = [
   {
     projectSlug: "demo",
     featureSlug: "login-with-email",
     title: "Đăng nhập bằng email",
     snippet: "user <mark>login</mark> với email + password",
     rank: 0.9,
+    updatedAt: "2026-04-25T00:00:00.000Z",
+    filledSectionCount: 5,
   },
   {
     projectSlug: "demo",
@@ -42,8 +44,22 @@ const sampleHits: SearchHit[] = [
     title: "Tìm kiếm feature",
     snippet: "tìm <mark>login</mark> kết quả",
     rank: 0.5,
+    updatedAt: "2026-04-24T00:00:00.000Z",
+    filledSectionCount: 3,
   },
 ];
+
+function groupedResponse(features: FeatureHit[]): SearchResultsV2 {
+  return {
+    projects: [],
+    features,
+    sections: [],
+    authors: [],
+    uploads: [],
+  };
+}
+
+const EMPTY_RESULTS: SearchResultsV2 = groupedResponse([]);
 
 describe("SearchPage", () => {
   it("renders empty-placeholder when q is missing, does not call API", async () => {
@@ -51,7 +67,7 @@ describe("SearchPage", () => {
     server.use(
       http.get(`${BASE}/search`, () => {
         apiSpy();
-        return HttpResponse.json({ data: [] });
+        return HttpResponse.json({ data: EMPTY_RESULTS });
       }),
     );
 
@@ -62,7 +78,9 @@ describe("SearchPage", () => {
   });
 
   it("renders hits with breadcrumb, title, sanitized <mark> snippet", async () => {
-    server.use(http.get(`${BASE}/search`, () => HttpResponse.json({ data: sampleHits })));
+    server.use(
+      http.get(`${BASE}/search`, () => HttpResponse.json({ data: groupedResponse(sampleHits) })),
+    );
 
     renderSearch("/search?q=login");
 
@@ -80,12 +98,12 @@ describe("SearchPage", () => {
     server.use(
       http.get(`${BASE}/search`, () =>
         HttpResponse.json({
-          data: [
+          data: groupedResponse([
             {
-              ...sampleHits[0],
+              ...sampleHits[0]!,
               snippet: "<script>alert(1)</script><mark>login</mark> attempt",
             },
-          ],
+          ]),
         }),
       ),
     );
@@ -108,7 +126,9 @@ describe("SearchPage", () => {
   });
 
   it("click row navigates to /projects/:slug/features/:featureSlug", async () => {
-    server.use(http.get(`${BASE}/search`, () => HttpResponse.json({ data: sampleHits })));
+    server.use(
+      http.get(`${BASE}/search`, () => HttpResponse.json({ data: groupedResponse(sampleHits) })),
+    );
 
     const user = userEvent.setup();
     renderSearch("/search?q=login");
@@ -125,7 +145,7 @@ describe("SearchPage", () => {
         const url = new URL(request.url);
         const hasScope = url.searchParams.has("projectSlug");
         return HttpResponse.json({
-          data: hasScope ? [sampleHits[0]!] : sampleHits,
+          data: groupedResponse(hasScope ? [sampleHits[0]!] : sampleHits),
         });
       }),
     );

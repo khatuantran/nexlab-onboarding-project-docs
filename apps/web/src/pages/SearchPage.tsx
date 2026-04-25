@@ -32,7 +32,8 @@ export function SearchPage(): JSX.Element {
   const q = params.get("q")?.trim() ?? "";
   const projectSlug = params.get("projectSlug") ?? undefined;
 
-  const { data: hits, isLoading, isError } = useSearch({ q, projectSlug });
+  const { data, isLoading, isError } = useSearch({ q, projectSlug });
+  const hits = data?.features ?? [];
 
   const removeScope = (): void => {
     const next = new URLSearchParams(params);
@@ -85,7 +86,7 @@ export function SearchPage(): JSX.Element {
             <span>Đang tìm...</span>
           ) : (
             <>
-              <span className="font-semibold text-foreground">{`${hits?.length ?? 0} feature`}</span>
+              <span className="font-semibold text-foreground">{`${hits.length} feature`}</span>
               <span>· {projectSlug ? `trong project ${projectSlug}` : "trong toàn workspace"}</span>
             </>
           )}
@@ -145,7 +146,7 @@ export function SearchPage(): JSX.Element {
         </p>
       )}
 
-      {!isLoading && !isError && hits && hits.length === 0 && (
+      {!isLoading && !isError && hits.length === 0 && (
         <div className="mx-auto max-w-md py-12 text-center">
           <SearchX className="mx-auto size-16 text-primary/40" aria-hidden="true" />
           <h2 className="mt-6 font-display text-xl font-semibold text-foreground">
@@ -168,7 +169,7 @@ export function SearchPage(): JSX.Element {
         </div>
       )}
 
-      {!isLoading && !isError && hits && hits.length > 0 && (
+      {!isLoading && !isError && hits.length > 0 && (
         <ul className="space-y-3.5">
           {hits.map((hit) => (
             <li key={`${hit.projectSlug}/${hit.featureSlug}`}>
