@@ -4,13 +4,13 @@
 
 > Retroactive spec: shipped ở T8 (`5e90753`). File này reverse-engineer trạng thái code hiện tại để user review. Nếu user muốn đổi layout/copy sau review → follow-up commit `fix(web): align LoginPage with .specs/ui/login.md`.
 
-Referenced tokens, icons, components từ [design-system.md](design-system.md).
+Referenced tokens, icons, components từ [design-system.md](design-system.md). Visual quality bar per [visual-language.md](visual-language.md) charter (CR-002).
 
 ## Screen metadata
 
 - **Screen ID**: `login`
-- **Status**: Implemented
-- **Last updated**: 2026-04-23
+- **Status**: Implemented (T8 `5e90753`) · UI uplift draft v2 Workspace 2-pane (CR-002 / Phase 1B-5, 2026-04-25)
+- **Last updated**: 2026-04-25
 
 ## Route
 
@@ -61,53 +61,138 @@ idle
 - **Focus ring**: dùng token `--ring` (xem design-system §1).
 - **Contrast**: theo token (4.5:1 đảm bảo).
 
-## Wire-level description
+## Wire-level description (UI uplift v2 — Workspace 2-pane — CR-002)
 
-```
-┌─────────────────────────────────────────┐
-│  (trang centered vertical, no header)   │
-│                                         │
-│         ╔══════════════════════╗        │
-│         ║ Đăng nhập            ║  h1    │
-│         ║ Dùng tài khoản nội…  ║  muted │
-│         ║                      ║        │
-│         ║ Email                ║  label │
-│         ║ [______________]     ║  input │
-│         ║                      ║        │
-│         ║ Mật khẩu             ║  label │
-│         ║ [______________]     ║  input │
-│         ║                      ║        │
-│         ║ [Error banner khi có]║  alert │
-│         ║                      ║        │
-│         ║ [   Đăng nhập   ]    ║  btn   │
-│         ╚══════════════════════╝        │
-│                                         │
-└─────────────────────────────────────────┘
+### Desktop (≥ 1280px)
+
+```text
+┌────────────────────────────────────────────────────────────────────────────────┐
+│ ┌────────────────────────────┬──────────────────────────────────────────────┐  │
+│ │ LEFT — FORM (540px white)  │ RIGHT — BRAND PANEL (gradient + collage)     │  │
+│ │ py-15 px-16                 │ primary-50 → 100 → 200                        │  │
+│ │                             │ position relative overflow-hidden             │  │
+│ │ [NxLogo lockup 32]          │                                                │  │
+│ │                             │  ┌─NxLogo MARK watermark abs top-right        │  │
+│ │ flex-1 center, max-w-sm     │  │ size-[520px] opacity-0.18 rotate-[-8deg]   │  │
+│ │                             │  └─                                            │  │
+│ │ ONBOARDING PORTAL eyebrow   │                                                │  │
+│ │                             │  ┌─FloatStat 1 (top-30 left-14)──────┐         │  │
+│ │ Chào mừng quay lại 👋       │  │ 📁 Active projects                  │         │  │
+│ │ ↑ h2 38/44 bold tracking    │  │ 42                                  │         │  │
+│ │                             │  │ +3 tuần này (primary)               │         │  │
+│ │ Dùng tài khoản nội bộ…      │  └─                                              │  │
+│ │ ↑ subtitle 15/24 muted      │                                                │  │
+│ │                             │  ┌─FloatStat 2 (top-75 left-72)──────┐         │  │
+│ │ ┌─────────────────────────┐ │  │ 👥 Engineers onboarded             │         │  │
+│ │ │ Email                   │ │  │ 18 (info indigo)                   │         │  │
+│ │ │ [📧 ten.ban@nexlab.vn]  │ │  └─                                              │  │
+│ │ │ height 48 rounded 10    │ │                                                │  │
+│ │ └─────────────────────────┘ │  ┌─FloatStat 3 (top-125 left-20)─────┐         │  │
+│ │                             │  │ ✓ Tỉ lệ feature có doc             │         │  │
+│ │ ┌─────────────────────────┐ │  │ 86% (success green)                │         │  │
+│ │ │ Mật khẩu      Quên?     │ │  │ +12% so với Q1                     │         │  │
+│ │ │ [🔒 ••••••••]           │ │  └─                                              │  │
+│ │ └─────────────────────────┘ │                                                │  │
+│ │                             │  ┌─FloatStat 4 (top-155 left-80)─────┐         │  │
+│ │ ☑ Ghi nhớ tôi 7 ngày        │  │ ⏱ Time-to-onboard                   │         │  │
+│ │                             │  │ 2.3h (warning amber)                │         │  │
+│ │ ┌─────────────────────────┐ │  │ ↓ 45 phút                           │         │  │
+│ │ │   Đăng nhập         →   │ │  └─                                              │  │
+│ │ │ primary 48 shadow       │ │                                                │  │
+│ │ └─────────────────────────┘ │  ┌─TESTIMONIAL CARD bottom-9 px-14──┐         │  │
+│ │                             │  │ glassmorphism rgba(255,255,255,0.78)│         │  │
+│ │ ───── hoặc ─────            │  │ backdrop-blur-md ring border        │         │  │
+│ │                             │  │                                     │         │  │
+│ │ ┌─────────────────────────┐ │  │ [NL] Ngọc Linh · Senior Dev        │         │  │
+│ │ │ G  Tiếp tục với Google  │ │  │      Onboard 14/03/2026             │         │  │
+│ │ │   Workspace             │ │  │                                     │         │  │
+│ │ │ outline 44              │ │  │ italic "Trang này giúp mình hiểu    │         │  │
+│ │ └─────────────────────────┘ │  │ nghiệp vụ trong 2 ngày — trước     │         │  │
+│ │                             │  │ đây mất cả tuần đi hỏi từng người." │         │  │
+│ │ Chưa có tài khoản? Liên hệ  │  └─                                              │  │
+│ │ → quản trị viên link        │                                                │  │
+│ └────────────────────────────┴──────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-- **Layout**: 1-col centered. Container `max-w-sm` (384px). Padding `px-6 py-12`. Min-height full viewport (`min-h-screen`) + `flex flex-col justify-center` để card căn giữa dọc.
-- **Responsive**: mobile 375px — container giữ `max-w-sm` nhưng padding `px-6` vẫn thoáng; không breakpoint-specific override.
-- **Key components** (từ design-system §5):
-  - `Button` variant `default`, size `default`, `type="submit"`.
-  - `Input` (2×: email, password).
-  - `Label` (2×).
-- **Key tokens** (từ design-system §1):
-  - `bg-background` trên `<main>`.
-  - `text-foreground` cho heading + input text.
-  - `text-muted-foreground` cho sub-copy "Dùng tài khoản nội bộ…".
-  - `text-destructive` cho inline validation errors + server error banner.
-  - Focus ring `ring-ring`.
-- **Typography** (design-system §2):
-  - NxLogo lockup (size 48) centered phía trên heading (Nexlab DS, ADR-003).
-  - Heading: `font-display text-3xl font-bold tracking-tight` (Inter, Nexlab — was `text-2xl font-semibold`).
-  - Sub-copy: `text-sm text-muted-foreground`.
-  - Input body: `text-sm`.
-  - Validation error: `text-xs` cho per-field, `text-sm` cho server banner.
-- **Spacing**:
-  - Form vertical gap: `gap-4`.
-  - Label → input gap: `gap-1`.
-  - Heading → sub-copy gap: `mt-1`.
-  - Sub-copy → form gap: `mt-6`.
+### Mobile / Tablet (<1280px) — brand pane hidden, form full-width centered
+
+### Layout primitives
+
+- **Page container**: `min-h-screen flex overflow-hidden`. No AppHeader (login is pre-auth).
+- **2-pane split** xl breakpoint:
+  - Left form pane: `flex-shrink-0 w-[540px] flex flex-col py-15 px-16 bg-background`.
+  - Right brand pane: `hidden xl:flex flex-1 relative overflow-hidden bg-gradient-to-br from-[#FFF8EE] via-[#FDEED7] to-[#FBDAAD] dark:from-primary-950/40 dark:via-primary-900/30 dark:to-primary-800/30`.
+
+### Left pane — Form
+
+- **NxLogo** lockup variant size-32 (height 32px) top-aligned, click → noop.
+- **Form block** flex-1 center, max-w-sm:
+  - Eyebrow: `font-ui text-xs font-semibold uppercase tracking-[0.16em] text-primary-600` "ONBOARDING PORTAL".
+  - h2 (was h1): `font-display text-[38px] leading-[44px] font-bold tracking-[-0.02em] text-foreground mt-3.5 mb-2` "Chào mừng quay lại 👋".
+  - Subtitle: `font-body text-[15px] leading-6 text-muted-foreground mb-8` "Dùng tài khoản nội bộ để xem và đóng góp tài liệu onboarding cho các feature đang phát triển."
+  - **Field stack** `flex flex-col gap-4`:
+    - **Email** field 48px height, leading icon `<Mail size-4 text-muted-foreground>`, placeholder "ten.ban@nexlab.vn", autoComplete="username".
+    - **Mật khẩu** field 48px height, leading icon `<Lock>`, type="password", autoComplete="current-password", right-link "Quên?" — `font-ui text-xs font-semibold text-primary-600` placeholder click → toast "Đặt lại mật khẩu liên hệ admin trong v1".
+    - Field container: `border border-border rounded-lg focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/12` with input transparent inside.
+  - **Remember me checkbox** `mt-4.5 flex items-center gap-2.5 font-ui text-[13px] font-medium text-foreground/80`:
+    - Custom checkbox: 18×18 `rounded-md transition-all` (active: `bg-primary` với `<Check size-3 text-white strokeWidth=2.4>`; idle: `border border-border bg-background`).
+    - Label: "Ghi nhớ tôi 7 ngày".
+  - **Submit button** `mt-7 h-12 rounded-lg bg-primary text-primary-foreground font-ui font-bold text-sm shadow-[0_4px_12px_rgba(226,99,20,0.32),inset_0_1px_0_rgba(255,255,255,0.2)] active:scale-[0.98] hover:brightness-105 flex items-center justify-center gap-2 transition-all`: "Đăng nhập" + `<ArrowRight size-4>`. Loading state: disabled + copy "Đang đăng nhập…" + spinner.
+  - **Divider** `my-7 flex items-center gap-3.5`: `flex-1 h-px bg-border` + `font-ui text-xs text-muted-foreground` "hoặc" + `flex-1 h-px bg-border`.
+  - **Google button** `h-11 w-full rounded-lg border border-border bg-background hover:bg-muted font-ui font-semibold text-sm flex items-center justify-center gap-2.5 transition-all`: "G" badge (18×18 white border rounded-sm bold) + "Tiếp tục với Google Workspace". v1 placeholder click → toast "SSO đang phát triển trong v2".
+  - **Footer help text** `mt-7 font-body text-xs text-muted-foreground` "Chưa có tài khoản? Liên hệ <a className=\"text-primary-600 font-semibold\">quản trị viên</a> để được cấp quyền truy cập." Link → `mailto:admin@nexlab.vn` hoặc placeholder toast.
+
+### Right pane — Brand panel (xl only)
+
+- **DecorativeMark** abs `top-[-60px] right-[-60px] size-[520px] opacity-[0.18] rotate-[-8deg]`, NxLogo mark variant gradient-masked với primary tone. `aria-hidden`.
+- **4 FloatStat cards** (charter §10) positioned absolutely với offsets:
+  1. **Active projects** — `top-30 left-14`, primary tone, value "42", delta "+3 tuần này".
+  2. **Engineers onboarded** — `top-75 left-72`, info tone, value "18", delta "2 đang làm việc".
+  3. **Tỉ lệ feature có doc** — `top-125 left-20`, success tone, value "86%", delta "+12% so với Q1".
+  4. **Time-to-onboard** — `top-155 left-80`, warning tone, value "2.3h", delta "↓ 45 phút".
+- **FloatStat container**: `absolute w-60 p-4.5 rounded-2xl bg-white/92 dark:bg-card/90 backdrop-blur-md shadow-[0_12px_32px_rgba(149,59,23,0.16),0_0_0_1px_rgba(255,255,255,0.6)] flex flex-col gap-2.5`. Inside:
+  - Top row: icon plate 36×36 `rounded-lg bg-{tone}/10%` + lucide icon size-4.5 + label `font-ui text-xs leading-snug text-muted-foreground`.
+  - Value: `font-display text-[28px] leading-none font-bold tracking-[-0.02em]`.
+  - Delta: `font-ui text-xs font-medium text-{tone}-600 dark:text-{tone}-400`.
+- **Testimonial card** abs `bottom-9 left-14 right-14 p-6 rounded-2xl bg-white/78 dark:bg-card/85 backdrop-blur-md ring-1 ring-white/60 dark:ring-border`:
+  - Header `flex items-center gap-3 mb-2.5`: `<Avatar size="md">` 40×40 với "NL" gradient + stack: `font-ui text-[13px] font-semibold` "Ngọc Linh · Senior Dev" + sub `font-ui text-[11px] leading-snug text-muted-foreground mt-1` "Onboard ngày 14/03/2026".
+  - Quote: `font-body italic text-sm leading-[20px] text-foreground/80` "Trang này giúp mình hiểu nghiệp vụ trong 2 ngày — trước đây mất cả tuần đi hỏi từng người."
+
+### Out of scope v1 / placeholder
+
+- 4 FloatStat numbers all hardcoded (42 / 18 / 86% / 2.3h) — no admin dashboard query yet.
+- Testimonial card hardcoded (Ngọc Linh persona, fixed copy).
+- "Quên?" link → toast.
+- Google SSO button → toast "SSO đang phát triển v2".
+- "Liên hệ quản trị viên" link → mailto / toast.
+- "Ghi nhớ tôi 7 ngày" checkbox: cosmetic v1 (session cookie default behavior; not actually extending TTL).
+- Brand panel hidden on tablet/mobile breakpoints (<1280px).
+
+### Components introduced/reused
+
+- **NEW**: `LoginBrandPanel` (right pane wrapper với decorative mark + 4 FloatStats + testimonial card).
+- **NEW**: `FloatStat` (charter §10 — 4-tone variant glassmorphism card).
+- **NEW**: `Avatar` size="md" 40×40 extension of existing avatar primitive.
+- **REUSE**: existing form (Input/Label/Button), `NxLogo` (lockup variant), checkbox primitive.
+- **lucide**: `Mail`, `Lock`, `Check`, `ArrowRight`, `FolderOpen`, `Users`, `CheckCircle`, `Clock`.
+
+### Tokens & typography
+
+- Eyebrow: `text-[12px] font-semibold uppercase tracking-[0.16em] text-primary-600`.
+- h2: `font-display text-[38px] leading-[44px] font-bold tracking-[-0.02em]`.
+- Subtitle: `font-body text-[15px] leading-6 text-muted-foreground`.
+- Field label: `font-ui text-xs font-semibold text-foreground/80`.
+- Submit button: `font-ui text-sm font-bold`.
+- FloatStat value: `font-display text-[28px] font-bold tracking-[-0.02em]`.
+- Testimonial quote: `font-body italic text-sm leading-[20px]`.
+- Brand panel gradient (light): `from-[#FFF8EE] via-[#FDEED7] to-[#FBDAAD]`.
+
+### Spacing
+
+- Form pane: `py-15 px-16` (60/64px).
+- Form block max-w-sm: heading→subtitle mb-8, fields gap-4, fields→checkbox mt-4.5, checkbox→submit mt-7, submit→divider my-7, Google btn→footer mt-7.
+- Brand pane: FloatStats positioned via absolute offsets (collage feel). Testimonial bottom-9, p-6.
 
 ## Error / empty / loading states
 
