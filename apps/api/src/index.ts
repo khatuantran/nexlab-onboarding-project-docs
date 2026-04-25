@@ -11,6 +11,7 @@ import { createProjectsRouter } from "./routes/projects.js";
 import { createFeaturesRouter } from "./routes/features.js";
 import { createSectionsRouter } from "./routes/sections.js";
 import { createSearchRouter } from "./routes/search.js";
+import { createUsersRouter } from "./routes/users.js";
 import { createUploadsReadRouter, createUploadsRouter } from "./routes/uploads.js";
 import { createUserRepo } from "./repos/userRepo.js";
 import { createProjectRepo } from "./repos/projectRepo.js";
@@ -48,6 +49,7 @@ const app = createApp({
   featuresRouter: createFeaturesRouter({ featureRepo, projectRepo, requireAuth }),
   sectionsRouter: createSectionsRouter({ sectionRepo, requireAuth }),
   searchRouter: createSearchRouter({ searchRepo, requireAuth }),
+  usersRouter: createUsersRouter({ userRepo, requireAuth }),
   uploadsRouter: createUploadsRouter({
     uploadRepo,
     featureRepo,
