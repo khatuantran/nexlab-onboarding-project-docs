@@ -31,18 +31,21 @@ Mỗi FR có:
 
 ## FR Summary Table
 
-| ID                                                            | Area    | Summary                                       | Priority | Maps to                |
-| ------------------------------------------------------------- | ------- | --------------------------------------------- | -------- | ---------------------- |
-| [FR-AUTH-001](#fr-auth-001--emailpassword-auth)               | Auth    | Email + password login/logout, session cookie | P0       | US-001, US-002, US-003 |
-| [FR-PROJ-001](#fr-proj-001--project-crud-minimal)             | Project | Admin tạo project + liệt kê non-archived      | P0       | US-002, US-004         |
-| [FR-PROJ-002](#fr-proj-002--project-metadata-edit--archive)   | Project | Admin rename metadata + archive soft-delete   | P0       | US-004                 |
-| [FR-FEAT-001](#fr-feat-001--feature-crud-within-project)      | Feature | Tạo / sửa / list feature trong project        | P0       | US-002                 |
-| [FR-FEAT-002](#fr-feat-002--5-section-template)               | Feature | Feature có template cố định 5 section         | P0       | US-001, US-002, US-003 |
-| [FR-FEAT-003](#fr-feat-003--per-section-multi-author)         | Feature | Multi-author theo từng section                | P0       | US-002, US-003         |
-| [FR-EMBED-001](#fr-embed-001--external-link-embed)            | Embed   | Paste Jira/Figma/GitHub URL → preview card    | P0       | US-003                 |
-| [FR-SEARCH-001](#fr-search-001--full-text-search)             | Search  | FTS feature theo title + section content      | P0       | US-001                 |
-| [FR-READ-001](#fr-read-001--project-landing--feature-index)   | Read    | Project landing page có feature index         | P0       | US-001                 |
-| [FR-UPLOAD-001](#fr-upload-001--image-upload-for-screenshots) | Upload  | Upload image file → volume, trả stable URL    | P0       | US-003                 |
+| ID                                                            | Area    | Summary                                               | Priority | Maps to                |
+| ------------------------------------------------------------- | ------- | ----------------------------------------------------- | -------- | ---------------------- |
+| [FR-AUTH-001](#fr-auth-001--emailpassword-auth)               | Auth    | Email + password login/logout, session cookie         | P0       | US-001, US-002, US-003 |
+| [FR-PROJ-001](#fr-proj-001--project-crud-minimal)             | Project | Admin tạo project + liệt kê non-archived              | P0       | US-002, US-004         |
+| [FR-PROJ-002](#fr-proj-002--project-metadata-edit--archive)   | Project | Admin rename metadata + archive soft-delete           | P0       | US-004                 |
+| [FR-FEAT-001](#fr-feat-001--feature-crud-within-project)      | Feature | Tạo / sửa / list feature trong project                | P0       | US-002                 |
+| [FR-FEAT-002](#fr-feat-002--5-section-template)               | Feature | Feature có template cố định 5 section                 | P0       | US-001, US-002, US-003 |
+| [FR-FEAT-003](#fr-feat-003--per-section-multi-author)         | Feature | Multi-author theo từng section                        | P0       | US-002, US-003         |
+| [FR-EMBED-001](#fr-embed-001--external-link-embed)            | Embed   | Paste Jira/Figma/GitHub URL → preview card            | P0       | US-003                 |
+| [FR-SEARCH-001](#fr-search-001--full-text-search)             | Search  | FTS feature theo title + section content              | P0       | US-001                 |
+| [FR-SEARCH-002](#fr-search-002--multi-entity-search)          | Search  | Search grouped: project/feature/section/author/upload | P1       | US-005                 |
+| [FR-SEARCH-003](#fr-search-003--search-filters)               | Search  | Filter section-type / time / author / status          | P1       | US-005                 |
+| [FR-READ-001](#fr-read-001--project-landing--feature-index)   | Read    | Project landing page có feature index                 | P0       | US-001                 |
+| [FR-UPLOAD-001](#fr-upload-001--image-upload-for-screenshots) | Upload  | Upload image file → volume, trả stable URL            | P0       | US-003                 |
+| [FR-USER-001](#fr-user-001--user-list-endpoint)               | User    | List user (read) cho author filter dropdown           | P1       | US-005                 |
 
 Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 
@@ -222,6 +225,79 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 
 ---
 
+## FR-SEARCH-002 — Multi-entity search
+
+**Statement (Event-driven):**
+
+- When an authenticated user submits a non-empty search query, the system shall return matched results grouped by entity type — `projects`, `features`, `sections`, `authors`, `uploads` — with up to 5 hits per group ranked by relevance.
+- The system shall return an empty array per group when no matches exist, rather than omitting the key.
+
+**Rationale**: V1 search (FR-SEARCH-001) chỉ cover features. Khi catalog mở rộng, BA / Dev cần tìm theo tên project, theo author đã touch feature, theo nội dung section riêng (đặc biệt `user-flow` cho business flow lookup), và theo screenshot caption. Group-by-entity giúp người dùng phân biệt nhanh "đây là project" vs "đây là section" thay vì 1 list flat phẳng. Limit 5 / group v1 vì pagination per-group defer.
+
+**Maps to**: US-005 (Search v2). Personas: P1 (Reader), P2 (BA Author), P3 (Senior Dev).
+
+**Acceptance hints**:
+
+- Response shape: `{ data: { projects: ProjectHit[], features: FeatureHit[], sections: SectionHit[], authors: AuthorHit[], uploads: UploadHit[] } }`. Mọi key luôn xuất hiện.
+- Project hit: `{ slug, name, snippet (highlighted name+desc), featureCount, updatedAt, rank }`.
+- Feature hit: keep current shape `{ projectSlug, featureSlug, title, snippet, rank }` + thêm `updatedAt`, `filledSectionCount`.
+- Section hit: `{ projectSlug, featureSlug, featureTitle, sectionType, snippet (highlighted body), updatedBy?, updatedAt, rank }`. Deep-link target: `/projects/:projectSlug/features/:featureSlug#section-{sectionType}`.
+- Author hit: `{ id, displayName, role, touchedFeatureCount, rank }`. Click → defer (placeholder anchor v1).
+- Upload hit: `{ id, filename, caption?, projectSlug, featureSlug, featureTitle, uploadedByName?, createdAt, rank }`.
+- Snippet sanitize giữ chỉ `<mark>` (DOMPurify allow-list).
+- 5 entity queries chạy song song (`Promise.all`).
+- Archived project → loại khỏi mọi group (FR-PROJ-002 consistency).
+- Empty query / quá dài → reuse `SEARCH_QUERY_EMPTY` / `SEARCH_QUERY_TOO_LONG` (FR-SEARCH-001).
+
+---
+
+## FR-SEARCH-003 — Search filters
+
+**Statement (State-driven + Event-driven):**
+
+- While viewing search results, the user shall be able to apply filters for: section type (multi-select trong 5 enum), last-updated time window (24h / 7d / 30d / all), author (single user), and feature filled-status (`filled` / `partial` / `empty`).
+- When any filter changes, the system shall return results scoped to the active filter combination, applied per-entity where relevant.
+
+**Rationale**: BA tìm "business flow" cần narrow đến section-type `user-flow`. Dev xem ai đang viết tích cực cần lọc theo author + last 7 ngày. Reader tìm feature đã hoàn chỉnh đọc onboard nên filter status `filled`. Filter combination giảm noise khi corpus lớn.
+
+**Maps to**: US-005. Personas: P1, P2, P3.
+
+**Acceptance hints**:
+
+- Query params: `sectionTypes` (CSV trong 5 enum), `authorId` (UUID), `updatedSince` (ISO date), `status` (`filled` | `partial` | `empty`). Tất cả optional.
+- `sectionTypes` áp dụng vào `sections` group + filter `features` group (chỉ giữ feature có ít nhất 1 section type khớp). Không áp dụng vào `projects` / `authors` / `uploads`.
+- `authorId` áp dụng vào `sections.updated_by`, `features` (qua join sections), `uploads.uploaded_by`. Không áp dụng `projects` / `authors`.
+- `updatedSince` áp dụng vào tất cả entity dùng cột `updated_at` / `created_at` tương ứng.
+- `status` áp dụng vào `features` + `sections` (qua filledSectionCount join). Không áp dụng `projects` / `authors` / `uploads`.
+- `filled` = 5/5 sections non-empty; `partial` = 1-4; `empty` = 0.
+- Invalid filter value → 400 `VALIDATION_ERROR` (Zod).
+- URL state FE: chỉ serialize filter khác default (giảm độ dài URL).
+
+---
+
+## FR-USER-001 — User list endpoint
+
+**Statement (Ubiquitous):**
+
+- The system shall expose a list endpoint that returns active users (id, displayName, role) to any authenticated user, optionally filtered by role and free-text query against `display_name`.
+
+**Rationale**: Author filter dropdown trong Search v2 (FR-SEARCH-003) cần list user. V1 không có membership/per-project ACL (FR-PROJ-001 access model) → list public cho mọi authenticated user. Search-as-type giúp scale lên ~100 users mà không cần pagination.
+
+**Maps to**: US-005 (author filter dropdown). Personas: indirect P1/P2/P3.
+
+**Acceptance hints**:
+
+- Endpoint: `GET /api/v1/users?q=<text?>&role=<admin|author?>`.
+- Auth: requireAuth (any role).
+- Response: `{ data: User[] }` với `User = { id, displayName, role }`. **Không** trả `email`, `passwordHash`, `createdAt`.
+- `q` ILIKE `%<q>%` trên `display_name`, case-insensitive.
+- `role` exact match.
+- Sort `display_name` asc.
+- Limit hard 50 (no pagination v1).
+- Empty result → `{ data: [] }`, không 404.
+
+---
+
 ## FR-READ-001 — Project landing + feature index
 
 **Statement (Event-driven + Ubiquitous):**
@@ -344,6 +420,7 @@ Format theo [templates/01-non-functional-requirements-template.md](../templates/
 | SSO (Google/Azure AD)                                                 | Local email/password đủ cho internal + solo maintain | Company mandates SSO                   |
 | 2-way sync Jira/Figma/GitHub                                          | OAuth + webhook infra tốn                            | User pain > embed card                 |
 | Advanced search (fuzzy, typo tolerance)                               | Postgres FTS đủ v1                                   | Corpus > 10k hoặc p95 > 500ms          |
+| Search autocomplete / saved searches / cross-project ACL              | Defer v2 (xem US-005 Scope out)                      | Pilot feedback                         |
 | Server-side rate limit toàn bộ API                                    | Chỉ auth endpoint v1                                 | Traffic pattern thực tế cho thấy abuse |
 | Automated backup                                                      | Manual pg_dump v1                                    | Có > 1 người maintain                  |
 

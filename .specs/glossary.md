@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-*Last updated: 2026-04-22*
+_Last updated: 2026-04-22_
 
 Thuật ngữ nội bộ. Khi thêm term mới, **update ở đây đầu tiên** — các doc khác link về.
 
@@ -16,17 +16,20 @@ Thuật ngữ nội bộ. Khi thêm term mới, **update ở đây đầu tiên*
 - **Section** — Một trong 5 phần cố định của Feature. Thứ tự render cố định.
 - **Section type** — Enum ID, **5 giá trị**: `business`, `user-flow`, `business-rules`, `tech-notes`, `screenshots`. Dùng làm DB enum + API param + FE constant `SECTION_ORDER` (export từ `packages/shared`).
 
-  | ID | Tên hiển thị | Owner kỳ vọng |
-  |---|---|---|
-  | `business` | Business | BA/PM |
-  | `user-flow` | User Flow | BA/PM |
-  | `business-rules` | Business Rules | BA/PM |
-  | `tech-notes` | Tech Notes | Dev |
-  | `screenshots` | Screenshots | cả hai |
+  | ID               | Tên hiển thị   | Owner kỳ vọng |
+  | ---------------- | -------------- | ------------- |
+  | `business`       | Business       | BA/PM         |
+  | `user-flow`      | User Flow      | BA/PM         |
+  | `business-rules` | Business Rules | BA/PM         |
+  | `tech-notes`     | Tech Notes     | Dev           |
+  | `screenshots`    | Screenshots    | cả hai        |
 
-- **Section owner** — Role *kỳ vọng* (khuyến nghị, không enforce v1) là người viết section. V1 mọi authenticated user đều edit được mọi section.
+- **Section owner** — Role _kỳ vọng_ (khuyến nghị, không enforce v1) là người viết section. V1 mọi authenticated user đều edit được mọi section.
 - **Embed** — Link ngoài (Jira / Figma / GitHub) render thành preview card khi hostname khớp whitelist `*.atlassian.net` / `figma.com` / `github.com`. Xem [FR-EMBED-001](02-requirements.md#fr-embed-001--external-link-embed).
 - **Upload** — File ảnh (png/jpg/webp ≤ 5 MiB) gửi qua `POST /api/v1/features/:id/uploads`, lưu Docker volume, serve qua `GET /uploads/:id`. Xem [FR-UPLOAD-001](02-requirements.md#fr-upload-001--image-upload-for-screenshots).
+- **Upload caption** — Mô tả ngắn (optional `caption text`) đi kèm Upload, lưu cùng row `uploads`. Dùng cho FTS qua [FR-SEARCH-002](02-requirements.md#fr-search-002--multi-entity-search). UI editor caption defer v2.
+- **Section hit** — Một search result entry kiểu section riêng lẻ (đối lập feature hit aggregate). Trả từ search v2 group `sections`, deep-link `/projects/:p/features/:f#section-{type}`. Xem [FR-SEARCH-002](02-requirements.md#fr-search-002--multi-entity-search).
+- **Business flow** — Trong context onboarding portal, "business flow" = nội dung trong Section type `user-flow` (BA mô tả luồng nghiệp vụ). Search filter "business flow" map vào `sectionTypes=user-flow`. Không phải entity DB riêng.
 
 ---
 
@@ -42,12 +45,12 @@ Thuật ngữ nội bộ. Khi thêm term mới, **update ở đây đầu tiên*
 
 Cột `users.role` là enum **2 giá trị**:
 
-| Value | Quyền thêm so với baseline |
-|---|---|
-| `author` | Baseline — đọc/ghi mọi project + feature + section. |
-| `admin` | `author` + tạo project (FR-PROJ-001) + invite user (FR-AUTH-001). |
+| Value    | Quyền thêm so với baseline                                        |
+| -------- | ----------------------------------------------------------------- |
+| `author` | Baseline — đọc/ghi mọi project + feature + section.               |
+| `admin`  | `author` + tạo project (FR-PROJ-001) + invite user (FR-AUTH-001). |
 
-V1 không có role `reader`/`viewer`; "Reader" là hành vi, không phải role. Mọi authenticated user đều đọc được. "Business author" vs "Tech author" là *kỳ vọng*, không phải role DB.
+V1 không có role `reader`/`viewer`; "Reader" là hành vi, không phải role. Mọi authenticated user đều đọc được. "Business author" vs "Tech author" là _kỳ vọng_, không phải role DB.
 
 ---
 

@@ -32,9 +32,10 @@ Ký hiệu **Auth**: ❌ không yêu cầu · 🔐 session required · 👑 admi
 
 ### Users (admin invite)
 
-| Method | Path     | Auth | Request                        | Response                                    | Errors                                                   | FR          | Task              |
-| ------ | -------- | ---- | ------------------------------ | ------------------------------------------- | -------------------------------------------------------- | ----------- | ----------------- |
-| POST   | `/users` | 👑   | `{ email, displayName, role }` | 201 `{ data: { user, temporaryPassword } }` | 403 `FORBIDDEN`; 409 email-taken; 400 `VALIDATION_ERROR` | FR-AUTH-001 | US-002 task (TBD) |
+| Method | Path              | Auth | Request                                                   | Response                                                                                                         | Errors                                                   | FR                                                                | Task                                                                        |
+| ------ | ----------------- | ---- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| POST   | `/users`          | 👑   | `{ email, displayName, role }`                            | 201 `{ data: { user, temporaryPassword } }`                                                                      | 403 `FORBIDDEN`; 409 email-taken; 400 `VALIDATION_ERROR` | FR-AUTH-001                                                       | US-002 task (TBD)                                                           |
+| GET    | `/users?q=&role=` | 🔐   | query `q?` ILIKE displayName, `role?` (`admin`\|`author`) | 200 `{ data: User[] }` (id, displayName, role; sort displayName asc; limit 50; **không** trả email/passwordHash) | 400 `VALIDATION_ERROR`                                   | [FR-USER-001](02-requirements.md#fr-user-001--user-list-endpoint) | [US-005 T5](stories/US-005/tasks.md#t5--get-users-endpoint--user-list-repo) |
 
 ### Projects
 
@@ -69,9 +70,9 @@ Ký hiệu **Auth**: ❌ không yêu cầu · 🔐 session required · 👑 admi
 
 ### Search
 
-| Method | Path                      | Auth | Request                                         | Response                             | Errors                                            | FR                                                                  | Task |
-| ------ | ------------------------- | ---- | ----------------------------------------------- | ------------------------------------ | ------------------------------------------------- | ------------------------------------------------------------------- | ---- |
-| GET    | `/search?q=&projectSlug=` | 🔐   | query `q` (1-200 chars), optional `projectSlug` | 200 `{ data: SearchHit[] }` (top 20) | 400 `SEARCH_QUERY_EMPTY`, `SEARCH_QUERY_TOO_LONG` | [FR-SEARCH-001](02-requirements.md#fr-search-001--full-text-search) | T7   |
+| Method | Path                                                                    | Auth | Request                                                                                                                                                         | Response                                                                                                                                                                                                                                                                       | Errors                                                                | FR                                                                                                                                                                                                             | Task                                                                                                                                 |
+| ------ | ----------------------------------------------------------------------- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| GET    | `/search?q=&projectSlug=&sectionTypes=&authorId=&updatedSince=&status=` | 🔐   | `q` (1-200 chars), `projectSlug?`, `sectionTypes?` (CSV trong 5 enum), `authorId?` (UUID), `updatedSince?` (ISO date), `status?` (`filled`\|`partial`\|`empty`) | **v2 (US-005, breaking)** 200 `{ data: { projects: ProjectHit[], features: FeatureHit[], sections: SectionHit[], authors: AuthorHit[], uploads: UploadHit[] } }` (≤5 hits/group, ranked desc); **v1 (US-001, deprecated cùng PR US-005)** 200 `{ data: SearchHit[] }` (top 20) | 400 `SEARCH_QUERY_EMPTY`, `SEARCH_QUERY_TOO_LONG`, `VALIDATION_ERROR` | [FR-SEARCH-001](02-requirements.md#fr-search-001--full-text-search), [FR-SEARCH-002](02-requirements.md#fr-search-002--multi-entity-search), [FR-SEARCH-003](02-requirements.md#fr-search-003--search-filters) | [US-001 T7](stories/US-001/tasks.md#t7--read-api--search-api), [US-005 T4](stories/US-005/tasks.md#t4--search-route-v2-with-filters) |
 
 ---
 
@@ -88,7 +89,6 @@ Ký hiệu **Auth**: ❌ không yêu cầu · 🔐 session required · 👑 admi
 
 ## Not yet in v1 (deferred)
 
-- `GET /users` (admin list users)
 - `DELETE /users/:id` (admin disable user)
 - `DELETE /projects/:slug`, `DELETE /features/:id`
 - `DELETE /uploads/:id`
