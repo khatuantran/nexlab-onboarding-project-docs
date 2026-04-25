@@ -2,13 +2,13 @@
 
 <!-- template: 02-ui-spec-template.md@0.1 -->
 
-Referenced tokens / icons / components từ [design-system.md](design-system.md).
+Referenced tokens / icons / components từ [design-system.md](design-system.md). Visual quality bar per [visual-language.md](visual-language.md) charter (CR-002).
 
 ## Screen metadata
 
 - **Screen ID**: `search`
-- **Status**: Implemented (T10 `5ca8e49`)
-- **Last updated**: 2026-04-23
+- **Status**: Implemented (T10 `5ca8e49`) · UI uplift draft v2 Workspace (CR-002 / Phase 1B-4, 2026-04-25)
+- **Last updated**: 2026-04-25
 
 ## Route
 
@@ -65,88 +65,156 @@ q present → loading
 - **Chip scope**: button `aria-label="Remove filter: search trong project <name>"`.
 - **Contrast**: `<mark>` background phải ≥ 3:1 với `bg-background` cả light + dark; sẽ add token mới (`--highlight` → design-system.md).
 
-## Wire-level description
+## Wire-level description (UI uplift v2 — Workspace style — CR-002)
 
-### Desktop (≥ 768px)
+### Desktop (≥ 1024px)
 
+```text
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ AppHeader (search input đã có ở top)                                          │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ max-w-5xl, px-10, py-7                                                        │
+│                                                                               │
+│  HERO BLOCK (flat — no panel)                                                 │
+│   TÌM KIẾM ← eyebrow text-xs uppercase tracking-wide primary-600              │
+│   Kết quả cho "đăng nhập"   ← h1 32/38 bold + query inline primary highlight │
+│   18 kết quả · trong toàn workspace   ← stats text-base muted                 │
+│                                                                               │
+│  ┌──────────────────────────────────────────────────────────────────────┐    │
+│  │ FILTER ROW (rounded-xl bg-muted/40 border px-4 py-3)                 │    │
+│  │  PHẠM VI: [Toàn workspace] [Project: Pilot ✕] [Loại: Tất cả ▾]      │    │
+│  │  Sắp xếp: [Liên quan nhất ▾]                  18 kết quả             │    │
+│  └──────────────────────────────────────────────────────────────────────┘    │
+│                                                                               │
+│  ┌──────────────────────────────────────────────────────────────────────┐    │
+│  │ ┌──┐ Đăng nhập bằng email           [Đủ doc]              →         │    │
+│  │ │📁│ Pilot Project › login-with-email                                │    │
+│  │ └──┘ context breadcrumb muted xs                                     │    │
+│  │                                                                       │    │
+│  │  …<mark>Đăng nhập</mark> bằng email + password. Người dùng nhập       │    │
+│  │  email vào input và nhấn nút submit để gửi yêu cầu xác thực…         │    │
+│  │  ↑ snippet sanitized HTML, prose, line-clamp-3                       │    │
+│  │ ─────────────────────────────────────────────────────────────────── │    │
+│  │ Section: 🏷 Nghiệp vụ · @TríMinh · 2 giờ trước                       │    │
+│  └──────────────────────────────────────────────────────────────────────┘    │
+│  ┌──────────────────────────────────────────────────────────────────────┐    │
+│  │ ┌──┐ Webhook Momo                                  [Đang viết]  →    │    │
+│  │ │📁│ Pilot Project › webhook-momo                                     │    │
+│  │ └──┘                                                                   │    │
+│  │  …flow xác thực <mark>đăng nhập</mark> SSO đi qua Momo gateway…       │    │
+│  │ ─────────────────────────────────────────────────────────────────── │    │
+│  │ Section: 🔧 Tech notes · @NgọcLinh · 1 ngày trước                    │    │
+│  └──────────────────────────────────────────────────────────────────────┘    │
+└──────────────────────────────────────────────────────────────────────────────┘
 ```
-┌────────────────────────────────────────────────────────────┐
-│ AppHeader                                                   │
-│ ┌──────────────────────────────────────────────────────┐    │
-│ │ Logo  [🔍 Tìm kiếm...____________]  ThemeToggle  ⚙  │    │
-│ └──────────────────────────────────────────────────────┘    │
-├────────────────────────────────────────────────────────────┤
-│  max-w-3xl, px-6, py-8                                      │
-│                                                             │
-│  Kết quả cho "login"               [× Trong Demo]           │
-│  3 feature                                                  │
-│                                                             │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │ Demo › Login with email                              │    │
-│  │ Đăng nhập bằng email                                 │    │
-│  │ ...user <mark>login</mark> với email + password...   │    │
-│  └─────────────────────────────────────────────────────┘    │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │ Demo › Search features                               │    │
-│  │ ...                                                  │    │
-│  └─────────────────────────────────────────────────────┘    │
-└────────────────────────────────────────────────────────────┘
-```
 
-### Empty-placeholder (không q)
+### Idle state (no `q` in URL)
 
-```
-┌────────────────────────────┐
-│         🔍 (size-12)        │
-│                             │
-│  Nhập từ khoá để tìm        │
-│       feature               │
-│                             │
-│  VD: "login", "upload"      │
-└────────────────────────────┘
-```
-
-### Mobile (< 768px)
-
-```
+```text
 ┌──────────────────────┐
-│ AppHeader            │
-│ [🔍________]  ☰      │
-├──────────────────────┤
-│ Kết quả cho "login"  │
-│ [× Trong Demo]       │
-│ 3 feature            │
-│                      │
-│ ┌──────────────────┐ │
-│ │ Demo › Login...  │ │
-│ │ ...<mark>login</mark>... │ │
-│ └──────────────────┘ │
+│       🔍 size-16      │
+│   text-primary/40     │
+│                       │
+│  Tìm trong workspace  │
+│  ↑ font-display xl    │
+│                       │
+│  Nhập từ khóa vào...  │
+│                       │
+│  ┌─────────────────┐  │
+│  │ ⓘ MẸO TÌM KIẾM │  │
+│  │ • Tìm theo title  │
+│  │ • Bao "..." cho  │
+│  │   exact phrase   │
+│  │ • Click chip để  │
+│  │   filter project │
+│  └─────────────────┘  │
 └──────────────────────┘
 ```
 
-- **Layout**:
-  - Page container: `max-w-3xl px-6 py-8`.
-  - Header block (heading + chip + count): `flex items-center justify-between gap-4 mb-6`.
-  - Result list: `space-y-3` (stack, không grid).
-  - Empty placeholder: flex center `min-h-[60vh]`.
-- **Key components** (design-system §5):
-  - `SearchInput` (mới) — input + submit icon button. Reuse trong AppHeader + optional page-level (không v1).
-  - `SearchResultRow` (mới) — `<a>` wrap breadcrumb + title + sanitized snippet HTML.
-  - `FilterChip` (mới) — pill với X button, `bg-muted`, `text-foreground`.
-  - `EmptyState` (từ T9) — reuse cho empty-placeholder + empty-result variants.
-- **Key icons** (design-system §4):
-  - `Search` — input prefix icon (`size-4 text-muted-foreground`); empty placeholder (`size-12`).
-  - `X` — chip remove button (`size-3.5`).
-  - `ChevronRight` — breadcrumb separator (đã có trong T9).
-- **Key tokens**:
-  - `bg-background` main.
-  - `bg-muted` chip + input bg.
-  - `text-foreground` title.
-  - `text-muted-foreground` breadcrumb + snippet + count.
-  - `ring-ring` focus input + card.
-  - `--highlight` (new token, xem §design-system change below) cho `<mark>` bg.
-- **Typography**:
-  - Heading "Kết quả cho …": `font-display text-2xl font-bold tracking-tight` (Inter, Nexlab ADR-003).
+### Zero-result state (q valid, results empty)
+
+```text
+┌──────────────────────────────┐
+│   🔍❌ SearchX size-16        │
+│   text-primary/40             │
+│                               │
+│  Không tìm thấy kết quả nào  │
+│                               │
+│  Không có feature match...    │
+│                               │
+│  [Bỏ filter project]          │
+│  [Quay về catalog]            │
+└──────────────────────────────┘
+```
+
+### Mobile (< 768px) — 1-col, hero stacks, filter row scrolls horizontally
+
+### Layout primitives
+
+- **Container**: `mx-auto max-w-5xl px-10 py-7`. Mobile: `px-4`.
+- **Hero block** (flat, no panel charter §3):
+  - Eyebrow `text-xs font-semibold uppercase tracking-[0.16em] text-primary-600 mb-2` "TÌM KIẾM".
+  - h1: `font-display text-[32px] leading-[38px] font-bold tracking-[-0.02em]` "Kết quả cho \"<query>\"" với `<query>` rendered inline `text-primary` để emphasize.
+  - Stats line `mt-2 text-base text-muted-foreground` = `{count} kết quả · {scope}` (scope = "trong project <projectName>" nếu có projectSlug filter, else "trong toàn workspace").
+- **Filter row** (NEW): `mt-6 mb-6 rounded-xl bg-muted/40 border border-border px-4 py-3 flex flex-col gap-3`:
+  - Top row: label "PHẠM VI:" + filter chip group (Toàn workspace / Project chip removable / Loại dropdown placeholder).
+  - Bottom row: "Sắp xếp:" + dropdown placeholder + count right.
+
+### Filter chips (REDESIGN existing FilterChip)
+
+- Active scope chip ("Toàn workspace" or "Project: <name>"): `inline-flex items-center gap-1.5 h-7 px-3 rounded-md font-ui text-xs font-semibold bg-card shadow-sm text-foreground`.
+- Idle: `text-muted-foreground hover:text-foreground hover:bg-muted/50`.
+- Removable chip: append `<X size-3>` button với `aria-label="Bỏ filter project {name}"`.
+- "Loại" dropdown chip: same pill shape + `<ChevronDown size-3>` — disabled v1, click → toast.
+- Sort dropdown: `font-ui font-semibold text-xs h-7 px-2.5 rounded-md border bg-card flex items-center gap-1.5` "Liên quan nhất ▾" — placeholder v1.
+
+### Result card (REDESIGN — replaces SearchResultRow)
+
+- Container: semantic `<Link>` `group rounded-xl border border-border bg-card p-5 flex flex-col gap-3.5 hover:border-primary/30 hover:shadow-md transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-ring`.
+- **Top row** `flex items-start gap-3`:
+  - **Icon plate 36×36**: `rounded-lg bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center shrink-0` chứa `<FolderOpen className="size-4.5 text-primary-600">`.
+  - **Body** flex-1 min-w-0:
+    - Title row `flex items-center gap-2`: `<h2 className="font-display text-lg leading-tight font-bold line-clamp-1 flex-1">{feature.title}</h2>` + `<Badge tone={statusTone} size="sm" dot>{statusLabel}</Badge>` (chỉ render nếu hit có filledCount; v1 skip if missing).
+    - Context breadcrumb `mt-1 font-ui text-xs text-muted-foreground line-clamp-1 flex items-center gap-1.5`: project name (fallback projectSlug) + `<ChevronRight size-3>` + featureSlug.
+  - Chevron `size-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition shrink-0`.
+- **Snippet block**: `font-body text-sm leading-relaxed text-foreground/90 line-clamp-3`. HTML sanitized via existing markdown pipeline (snippet contains `<mark>` from tsvector ts_headline). DOMPurify whitelist `<mark>` already; style: `bg-primary-100 dark:bg-primary-900/40 text-primary-900 dark:text-primary-100 px-0.5 rounded`.
+- **Footer** `pt-3 border-t border-border flex items-center gap-2 font-ui text-xs text-muted-foreground`:
+  - Section icon size-3.5 + label "Section: <strong className='text-foreground/80'>{sectionLabel}</strong>" (placeholder if `sectionType` not in SearchHit response — show "—" instead).
+  - Separator `·`.
+  - Author `@{updatedByName ?? "—"}` (placeholder fallback).
+  - Separator `·`.
+  - `<RelativeTime>` (placeholder if missing).
+
+### Idle state (no query)
+
+Centered `py-16 px-6 max-w-md mx-auto flex flex-col items-center text-center`:
+
+- Icon: `<Search className="size-16 text-primary/40">`.
+- Heading: `font-display text-xl font-semibold mt-6` "Tìm trong workspace".
+- Description: `mt-2 text-sm text-muted-foreground` "Nhập từ khóa vào search box ở thanh top để tìm features. FTS hỗ trợ tiếng Việt có dấu."
+- Tips card NEW `mt-6 rounded-lg bg-info-50 dark:bg-info-950/30 border border-info-200 dark:border-info-800 p-4 text-left w-full`:
+  - Header `flex items-center gap-2 mb-2`: `<Info size-3.5 text-info-500>` + `font-ui text-xs font-bold text-info-700 dark:text-info-300` "MẸO TÌM KIẾM".
+  - Bullet list `font-body text-xs leading-relaxed text-foreground/80 list-disc list-inside space-y-1`:
+    - "Tìm theo title hoặc nội dung section."
+    - "Bao quanh cụm từ với <code>\"...\"</code> để match exact phrase."
+    - "Filter theo project bằng cách click chip <strong>Project: ...</strong> trên kết quả."
+
+### Zero-result state
+
+Centered `py-16 px-6 max-w-md mx-auto flex flex-col items-center text-center`:
+
+- Icon: `<SearchX className="size-16 text-primary/40">`.
+- Heading: `font-display text-xl font-semibold mt-6` "Không tìm thấy kết quả nào".
+- Description: `mt-2 text-sm text-muted-foreground` "Không có feature nào match với từ khóa <strong>\"{query}\"</strong>{scope}. Thử từ khóa khác hoặc bỏ filter project."
+- Actions `mt-6 flex flex-wrap gap-3 justify-center`:
+  - `<Button variant="outline" size="sm">Bỏ filter project</Button>` (chỉ render nếu projectSlug filter active) — click removes scope, refetches.
+  - `<Button variant="default" size="sm">Quay về catalog</Button>` → navigate `/`.
+
+### Loading / error
+
+- **Loading**: hero static, count = "—" placeholder; filter row visible nhưng disabled. Below: 3 result card skeletons match shape (icon plate 36×36 + 2 text bars + 3-line snippet skeleton + footer line). `aria-busy="true"` trên `<main>`.
+- **Error 5xx**: charter §5 banner `role="alert"` above results area. Filter row + hero giữ.
+- **Error 400 (query empty/too long)**: inline hint dưới search input trong header (existing behavior preserved).
   - Count sub: `text-sm text-muted-foreground`.
   - Row title: `font-display text-base font-semibold`.
   - Row breadcrumb: `text-xs text-muted-foreground`.
