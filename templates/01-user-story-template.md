@@ -52,6 +52,7 @@ Metadata có thể dạng **bullet-top** (ngay sau title, không có heading) HO
 ## Acceptance criteria
 
 ### AC-1 — <short name>
+
 **Given** <precondition>
 **When** <action>
 **Then** <outcome>

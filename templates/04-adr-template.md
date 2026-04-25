@@ -34,6 +34,7 @@ required_sections:
 ## 1. Context
 
 <Vấn đề cần quyết định. Bao gồm:>
+
 - <Constraint hiện tại: team size, timeline, budget, scale target>
 - <Tại sao phải quyết bây giờ, không defer>
 - <Option space — bao nhiêu hướng đi hợp lý>
@@ -48,18 +49,18 @@ Viết đủ để 6 tháng sau đọc lại hiểu ngay, không cần context c
 
 ### 2.1 Sub-decisions (nếu nhiều layer)
 
-| Concern | Choice | Lý do ngắn |
-|---|---|---|
-| <area> | <choice> | <rationale> |
+| Concern | Choice   | Lý do ngắn  |
+| ------- | -------- | ----------- |
+| <area>  | <choice> | <rationale> |
 
 ---
 
 ## 3. Alternatives considered
 
-| Option | Pros | Cons | Lý do không chọn |
-|---|---|---|---|
-| <Option A> | ... | ... | ... |
-| <Option B> | ... | ... | ... |
+| Option     | Pros | Cons | Lý do không chọn |
+| ---------- | ---- | ---- | ---------------- |
+| <Option A> | ...  | ...  | ...              |
+| <Option B> | ...  | ...  | ...              |
 
 Tối thiểu 2 alternative. "Chỉ có 1 lựa chọn" = chưa nghĩ đủ.
 
@@ -68,21 +69,24 @@ Tối thiểu 2 alternative. "Chỉ có 1 lựa chọn" = chưa nghĩ đủ.
 ## 4. Consequences
 
 ### Positive
+
 - <benefit>
 
 ### Negative / trade-off
+
 - <cost>
 
 ### Neutral
+
 - <ambiguous>
 
 ---
 
 ## 5. Risks & mitigations
 
-| Risk | Impact | Mitigation |
-|---|---|---|
-| <risk> | High/Med/Low | <how> |
+| Risk   | Impact       | Mitigation |
+| ------ | ------------ | ---------- |
+| <risk> | High/Med/Low | <how>      |
 
 ---
 

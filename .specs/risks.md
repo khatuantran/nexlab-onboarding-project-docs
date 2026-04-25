@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-*Last updated: 2026-04-22 · Owner: @khatuantran11*
+_Last updated: 2026-04-22 · Owner: @khatuantran11_
 
 Consolidate risks + assumption rải rác trong ADR, vision, stories vào 1 file. Mỗi entry có trạng thái + mitigation status + review cadence.
 
@@ -126,13 +126,13 @@ Consolidate risks + assumption rải rác trong ADR, vision, stories vào 1 file
 
 ## Assumptions
 
-| # | Assumption | If wrong |
-|---|---|---|
-| A1 | Internal portal, không expose public internet | Security model cần revisit (rate limit, DDoS protection, CSRF stricter) |
-| A2 | Pilot scale ≤ 10 project, ≤ 100 user, ≤ 500 feature/project | Postgres FTS + single VPS có thể không đủ |
-| A3 | BA+Dev sẵn lòng fill 5 section đầy đủ | Portal trở thành "ghost town" như Confluence — cần change management, không chỉ tool |
-| A4 | Dev mới chủ động đọc portal trước khi hỏi | Cần training process + onboarding checklist phối hợp từ HR/Tech Lead |
-| A5 | Owner solo đủ thời gian maintain 2-3h/tuần sau launch | Nếu không maintain → bug rot, schema drift, trust giảm |
+| #   | Assumption                                                  | If wrong                                                                             |
+| --- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| A1  | Internal portal, không expose public internet               | Security model cần revisit (rate limit, DDoS protection, CSRF stricter)              |
+| A2  | Pilot scale ≤ 10 project, ≤ 100 user, ≤ 500 feature/project | Postgres FTS + single VPS có thể không đủ                                            |
+| A3  | BA+Dev sẵn lòng fill 5 section đầy đủ                       | Portal trở thành "ghost town" như Confluence — cần change management, không chỉ tool |
+| A4  | Dev mới chủ động đọc portal trước khi hỏi                   | Cần training process + onboarding checklist phối hợp từ HR/Tech Lead                 |
+| A5  | Owner solo đủ thời gian maintain 2-3h/tuần sau launch       | Nếu không maintain → bug rot, schema drift, trust giảm                               |
 
 ---
 

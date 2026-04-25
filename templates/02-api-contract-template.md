@@ -28,15 +28,15 @@ required_sections:
 
 ### Path params
 
-| Name | Type | Notes |
-|---|---|---|
+| Name     | Type                    | Notes                      |
+| -------- | ----------------------- | -------------------------- |
 | `<name>` | `uuid` / `string` / ... | <constraint regex, length> |
 
 ### Query params
 
-| Name | Type | Required | Notes |
-|---|---|---|---|
-| `q` | `string` | yes | 1-200 chars |
+| Name | Type     | Required | Notes       |
+| ---- | -------- | -------- | ----------- |
+| `q`  | `string` | yes      | 1-200 chars |
 
 ### Body (Zod shape)
 
@@ -63,13 +63,13 @@ required_sections:
 
 ## Response (errors)
 
-| HTTP | Code | When |
-|---|---|---|
-| 400 | `VALIDATION_ERROR` | Zod parse fail |
-| 401 | `UNAUTHENTICATED` | Không session |
-| 403 | `FORBIDDEN` | Thiếu role |
-| 404 | `<RESOURCE>_NOT_FOUND` | Không tồn tại |
-| 409 | `<RESOURCE>_<CONFLICT>` | Duplicate / conflict |
+| HTTP | Code                    | When                 |
+| ---- | ----------------------- | -------------------- |
+| 400  | `VALIDATION_ERROR`      | Zod parse fail       |
+| 401  | `UNAUTHENTICATED`       | Không session        |
+| 403  | `FORBIDDEN`             | Thiếu role           |
+| 404  | `<RESOURCE>_NOT_FOUND`  | Không tồn tại        |
+| 409  | `<RESOURCE>_<CONFLICT>` | Duplicate / conflict |
 
 Full error code definitions: [.specs/error-codes.md](../.specs/error-codes.md).
 

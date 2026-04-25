@@ -39,29 +39,31 @@ required_sections:
 <Concrete proposal. Files/specs/code areas affected. Before vs after.>
 
 ### Before
+
 <current state>
 
 ### After
+
 <proposed state>
 
 ## Impact
 
-| Area | Effect |
-|---|---|
-| FRs | <list of FRs added / changed / removed> |
-| User stories | <affected US IDs> |
-| Architecture | <ADR impact> |
-| Code areas | `<path>`, `<path>` |
-| Migrations | yes / no |
-| Breaking? | yes / no — <if yes, migration plan> |
-| Timeline | <effort estimate> |
+| Area         | Effect                                  |
+| ------------ | --------------------------------------- |
+| FRs          | <list of FRs added / changed / removed> |
+| User stories | <affected US IDs>                       |
+| Architecture | <ADR impact>                            |
+| Code areas   | `<path>`, `<path>`                      |
+| Migrations   | yes / no                                |
+| Breaking?    | yes / no — <if yes, migration plan>     |
+| Timeline     | <effort estimate>                       |
 
 ## Alternatives
 
 | Option | Pros | Cons | Lý do không chọn |
-|---|---|---|---|
-| <A> | ... | ... | ... |
-| <B> | ... | ... | ... |
+| ------ | ---- | ---- | ---------------- |
+| <A>    | ...  | ...  | ...              |
+| <B>    | ...  | ...  | ...              |
 
 ## Decision
 

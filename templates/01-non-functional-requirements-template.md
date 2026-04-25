@@ -10,7 +10,7 @@ required_sections:
 
 <!-- template: 01-non-functional-requirements-template.md@0.1 -->
 
-*Last updated: <YYYY-MM-DD>*
+_Last updated: <YYYY-MM-DD>_
 
 ---
 

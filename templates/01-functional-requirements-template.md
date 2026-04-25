@@ -12,7 +12,7 @@ required_sections:
 
 <!-- template: 01-functional-requirements-template.md@0.1 -->
 
-*Last updated: <YYYY-MM-DD>*
+_Last updated: <YYYY-MM-DD>_
 
 ---
 
@@ -20,14 +20,14 @@ required_sections:
 
 Mỗi FR viết theo EARS (Easy Approach to Requirements Syntax):
 
-| Dạng | Template |
-|---|---|
-| Ubiquitous | `The <system> shall <response>.` |
-| Event-driven | `When <event>, the <system> shall <response>.` |
-| State-driven | `While <state>, the <system> shall <response>.` |
-| Optional | `Where <feature present>, the <system> shall <response>.` |
-| Unwanted | `If <trigger>, then the <system> shall <response>.` |
-| Complex | Kết hợp các dạng trên. |
+| Dạng         | Template                                                  |
+| ------------ | --------------------------------------------------------- |
+| Ubiquitous   | `The <system> shall <response>.`                          |
+| Event-driven | `When <event>, the <system> shall <response>.`            |
+| State-driven | `While <state>, the <system> shall <response>.`           |
+| Optional     | `Where <feature present>, the <system> shall <response>.` |
+| Unwanted     | `If <trigger>, then the <system> shall <response>.`       |
+| Complex      | Kết hợp các dạng trên.                                    |
 
 Mỗi FR có: **ID** · **Statement (EARS)** · **Rationale** · **Maps to** · **Acceptance hints**.
 
@@ -35,9 +35,9 @@ Mỗi FR có: **ID** · **Statement (EARS)** · **Rationale** · **Maps to** · 
 
 ## FR summary table
 
-| ID | Area | Summary | Priority | Maps to |
-|---|---|---|---|---|
-| FR-<AREA>-001 | <area> | <one-line> | P0/P1 | <US/persona> |
+| ID            | Area   | Summary    | Priority | Maps to      |
+| ------------- | ------ | ---------- | -------- | ------------ |
+| FR-<AREA>-001 | <area> | <one-line> | P0/P1    | <US/persona> |
 
 ---
 
@@ -48,6 +48,7 @@ Copy block dưới cho mỗi FR mới:
 ### FR-<AREA>-NNN — <short title>
 
 **Statement (<EARS type>):**
+
 - <EARS sentence 1>.
 - <EARS sentence 2 if multi-clause>.
 
@@ -56,6 +57,7 @@ Copy block dưới cho mỗi FR mới:
 **Maps to**: <US-NNN>, <US-NNN>. Personas: <P1/P2/P3>.
 
 **Acceptance hints**:
+
 - <hint 1 — tín hiệu viết test>
 - <hint 2>
 - <error code reference nếu có>

@@ -24,14 +24,15 @@ required_sections:
 
 ## Fields
 
-| Column | Type | Nullable | Default | Notes |
-|---|---|---|---|---|
-| `id` | `uuid` | no | `gen_random_uuid()` | Primary key |
-| `created_at` | `timestamptz` | no | `now()` | |
-| `updated_at` | `timestamptz` | no | `now()` | Update trigger hoặc app-level |
-| `<name>` | `text` / `int` / `jsonb` / ... | yes/no | | <constraint> |
+| Column       | Type                           | Nullable | Default             | Notes                         |
+| ------------ | ------------------------------ | -------- | ------------------- | ----------------------------- |
+| `id`         | `uuid`                         | no       | `gen_random_uuid()` | Primary key                   |
+| `created_at` | `timestamptz`                  | no       | `now()`             |                               |
+| `updated_at` | `timestamptz`                  | no       | `now()`             | Update trigger hoặc app-level |
+| `<name>`     | `text` / `int` / `jsonb` / ... | yes/no   |                     | <constraint>                  |
 
 Check constraints:
+
 - `CHECK (<expr>)` — <why>
 
 ## Relationships
@@ -46,8 +47,8 @@ Check constraints:
 
 ## Indexes
 
-| Name | Columns | Type | Why |
-|---|---|---|---|
+| Name                | Columns   | Type                 | Why             |
+| ------------------- | --------- | -------------------- | --------------- |
 | `<table>_<col>_idx` | `(<col>)` | btree / gin / unique | <query pattern> |
 
 ## Migration notes

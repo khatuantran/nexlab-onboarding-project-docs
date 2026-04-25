@@ -46,11 +46,11 @@ idle → loading → (success | error | empty)
 
 ## Interactions
 
-| Trigger | Action | Next state | Side effect |
-|---|---|---|---|
-| Page load | Fetch API | `loading` → `success`/`error` | TanStack Query cache |
-| Click `<btn>` | Mutation | `loading` → refetch | Optimistic update? |
-| Submit form | Validate → mutation | | Toast on success |
+| Trigger       | Action              | Next state                    | Side effect          |
+| ------------- | ------------------- | ----------------------------- | -------------------- |
+| Page load     | Fetch API           | `loading` → `success`/`error` | TanStack Query cache |
+| Click `<btn>` | Mutation            | `loading` → refetch           | Optimistic update?   |
+| Submit form   | Validate → mutation |                               | Toast on success     |
 
 ## A11y
 

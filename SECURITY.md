@@ -1,6 +1,6 @@
 # Security
 
-*Last updated: 2026-04-22*
+_Last updated: 2026-04-22_
 
 ## Security posture v1
 

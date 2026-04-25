@@ -2,14 +2,13 @@
 
 <!-- exempt: registry (no template required) -->
 
-*Last updated: 2026-04-22*
+_Last updated: 2026-04-22_
 
 ---
 
 ## P1 — Minh (New Developer)
 
-*Primary reader.*
-
+_Primary reader._
 
 - **Role**: FE / BE / Fullstack Dev.
 - **Seniority**: 0-2 năm kinh nghiệm tổng, **0-4 tuần** tại công ty.
@@ -31,8 +30,7 @@
 
 ## P2 — Lan (BA/PM)
 
-*Primary author — business sections.*
-
+_Primary author — business sections._
 
 - **Role**: BA / PM / Product Owner của project.
 - **Goals**:
@@ -50,8 +48,7 @@
 
 ## P3 — Hùng (Senior Dev / Tech Lead)
 
-*Author — tech sections.*
-
+_Author — tech sections._
 
 - **Role**: Tech Lead / Senior của project.
 - **Goals**:
@@ -74,4 +71,4 @@
 - BA mới từ project khác.
 - Customer Success / Support.
 
-*Các persona này sẽ được thiết kế sau khi validate v1 với persona P1/P2/P3.*
+_Các persona này sẽ được thiết kế sau khi validate v1 với persona P1/P2/P3._

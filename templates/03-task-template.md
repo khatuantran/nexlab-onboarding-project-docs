@@ -37,12 +37,15 @@ required_sections:
 <Test file path + what test asserts>. Chạy → fail vì <expected reason>.
 
 Example:
+
 ```ts
 // apps/api/src/routes/<name>.test.ts
-it('GET /<path> returns 200 with <shape>', async () => {
-  const res = await request(app).get('/<path>');
+it("GET /<path> returns 200 with <shape>", async () => {
+  const res = await request(app).get("/<path>");
   expect(res.status).toBe(200);
-  expect(res.body.data).toMatchObject({ /* ... */ });
+  expect(res.body.data).toMatchObject({
+    /* ... */
+  });
 });
 ```
 

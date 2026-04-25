@@ -18,7 +18,7 @@ required_sections:
 
 <!-- template: 00-vision-template.md@0.1 -->
 
-*Last updated: <YYYY-MM-DD> · Author: @<github-handle>*
+_Last updated: <YYYY-MM-DD> · Author: @<github-handle>_
 
 ---
 
