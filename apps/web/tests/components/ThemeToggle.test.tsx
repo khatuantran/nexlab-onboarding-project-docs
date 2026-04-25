@@ -93,6 +93,35 @@ describe("ThemeProvider + ThemeToggle", () => {
     expect(document.documentElement.classList.contains("dark")).toBe(true);
   });
 
+  it("BUG-002: dark → click → light flips in a single hop when OS prefers dark", async () => {
+    // OS prefers dark, persisted theme is also dark.
+    (window.matchMedia as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+      (query: string) => ({
+        matches: query.includes("dark"),
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+      }),
+    );
+    localStorage.setItem("theme", "dark");
+    mountWithProvider();
+    expect(screen.getByTestId("read").textContent).toBe("dark|dark");
+    expect(document.documentElement.classList.contains("dark")).toBe(true);
+
+    const user = userEvent.setup();
+    const btn = screen.getByRole("button", { name: /chế độ/i });
+    await user.click(btn);
+
+    // Single click must flip to light, not park on `system` (which would
+    // resolve back to dark on a dark-OS host and require a second click).
+    expect(screen.getByTestId("read").textContent).toBe("light|light");
+    expect(document.documentElement.classList.contains("dark")).toBe(false);
+  });
+
   it("resolves `system` to dark when the OS prefers dark", () => {
     (window.matchMedia as unknown as ReturnType<typeof vi.fn>).mockImplementation(
       (query: string) => ({
