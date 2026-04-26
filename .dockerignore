@@ -1,5 +1,6 @@
-# Trim build context for faster Fly deploys.
-# Anything not strictly needed at runtime is excluded.
+# Trim build context for Fly deploys (CR-003 / ADR-002).
+# Build context is the repo root so the Dockerfile can COPY pnpm
+# workspace files. Anything not strictly needed at runtime is excluded.
 
 # Node / pnpm
 node_modules
@@ -48,8 +49,9 @@ README.md
 SECURITY.md
 CONTRIBUTING.md
 
-# Frontend (separate Cloudflare Pages deploy)
+# Frontend (separate Netlify deploy)
 apps/web
+netlify.toml
 
 # Local data
 data

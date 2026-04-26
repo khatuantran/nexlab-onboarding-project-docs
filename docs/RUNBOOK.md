@@ -53,14 +53,13 @@ curl -L https://fly.io/install.sh | sh
 fly auth signup            # or: fly auth login
 ```
 
-Provision the app from the repo root:
+Provision the app — `fly launch` reads `apps/api/fly.toml` but rewrites it with the chosen app name (and may strip our comments). Run from repo root and accept the rewrite, then restore the comments via git diff if needed:
 
 ```bash
-cd apps/api
-fly launch --no-deploy --copy-config        # uses our fly.toml
+fly launch --no-deploy --copy-config --config apps/api/fly.toml
 ```
 
-Pick a unique app name when prompted (default `onboarding-api` may be taken). Confirm:
+Pick a unique app name when prompted (default `onboarding-api` may be taken — Fly will suggest `onboarding-api-<random>`). Confirm:
 
 - Region: **sin**.
 - Postgres: **No** (we use Neon).
@@ -87,10 +86,10 @@ fly secrets set \
   LOG_LEVEL=info
 ```
 
-Deploy:
+Deploy from repo root (the Dockerfile expects workspace files like `pnpm-lock.yaml` and `packages/shared/` so the build context must be the repo root, not `apps/api/`):
 
 ```bash
-fly deploy --remote-only
+fly deploy --remote-only --config apps/api/fly.toml
 ```
 
 The release_command in fly.toml runs `pnpm db:migrate:prod` against Neon before traffic swaps. If it fails, the previous release keeps serving — investigate via `fly logs`.
