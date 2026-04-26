@@ -33,8 +33,27 @@ export type AppDeps = HealthDeps & {
   uploadsReadRouter?: express.Router;
 };
 
+/**
+ * Parse the CORS_ORIGIN env into an allowlist (comma-separated). The
+ * cors middleware accepts a callback that returns boolean per request;
+ * we whitelist exact-match origins and let server-to-server / curl
+ * (no Origin header) through. Production deployment per CR-003 sets
+ * CORS_ORIGIN to the Cloudflare Pages URL.
+ */
+function parseCorsAllowlist(raw: string): string[] {
+  return raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 export function createApp(deps: AppDeps): Express {
   const app = express();
+
+  // Trust the first proxy hop so req.ip + req.protocol reflect the
+  // client behind Fly.io's edge (CR-003 / ADR-002). Required for
+  // express-session cookie `secure` semantics + rate-limit IP keying.
+  app.set("trust proxy", 1);
 
   app.use(
     pinoHttp({
@@ -53,9 +72,15 @@ export function createApp(deps: AppDeps): Express {
     }),
   );
 
+  const corsAllowlist = parseCorsAllowlist(config.CORS_ORIGIN);
   app.use(
     cors({
-      origin: config.CORS_ORIGIN,
+      origin: (origin, cb) => {
+        // Allow same-origin / non-browser clients (no Origin header).
+        if (!origin) return cb(null, true);
+        if (corsAllowlist.includes(origin)) return cb(null, true);
+        return cb(new Error(`CORS: origin ${origin} not allowed`));
+      },
       credentials: true,
     }),
   );
