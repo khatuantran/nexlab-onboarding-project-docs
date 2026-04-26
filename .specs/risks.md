@@ -124,6 +124,32 @@ Consolidate risks + assumption rải rác trong ADR, vision, stories vào 1 file
 
 ---
 
+## R11 — Free-tier policy thay đổi (M3 deployment)
+
+- **Trigger**: Fly.io / Neon / Upstash cắt hoặc giảm free tier (đã từng xảy ra với Heroku 2022, Render Postgres 2024, Fly new-account-only 2024).
+- **Impact**: 🟠 High — pilot phải migrate sang VPS hoặc paid tier giữa chừng.
+- **Likelihood**: 🟠 Possible (12-month horizon)
+- **Status**: 🟡 Open (accept cho pilot)
+- **Mitigation**: ADR-002 ghi sẵn trigger conditions + fallback path Hetzner CX11 €4/mo. Code không lock vào provider-specific feature; migrate ~1 ngày work.
+
+## R12 — Cold start UX (Fly + Neon scale-to-zero)
+
+- **Trigger**: BE + DB cùng cold sau idle 30 phút → request đầu chờ 3-4s.
+- **Impact**: 🟢 Low — chỉ user đầu trong ngày + qua đêm; subsequent requests instant.
+- **Likelihood**: 🟢 Always (mỗi sáng + sau lunch break)
+- **Status**: 🔵 Accepted
+- **Mitigation**: Bật `min_machines_running=1` trên Fly (vẫn miễn phí trong 3 VM allowance) nếu UX feedback xấu. Cron `/health` ping mỗi 5 phút giữ Neon warm trong giờ làm việc.
+
+## R13 — Single region (sin) availability
+
+- **Trigger**: Fly sin region hoặc Neon ap-southeast-1 down.
+- **Impact**: 🟠 High — toàn app down cho đến khi region recover (Fly historic ~1-3h incidents).
+- **Likelihood**: 🟢 Rare
+- **Status**: 🔵 Accepted (pilot không SLA-bound)
+- **Mitigation**: Multi-region defer v2 (Fly free tier không hỗ trợ multi-region). Document trong RUNBOOK status page links để monitor.
+
+---
+
 ## Assumptions
 
 | #   | Assumption                                                  | If wrong                                                                             |

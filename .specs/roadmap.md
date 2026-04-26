@@ -97,19 +97,23 @@ Multi-entity grouped search + filters (project + feature + section + author + up
 - [T6 + T7 + T8 + T9](stories/US-005/tasks.md#t6--frontend-query-hooks-usesearch-v2--useusers) FilterBar + 4 sub-filters + 5 entity cards + grouped SearchPage — ✅ `a9fbf86`.
 - [T10](stories/US-005/tasks.md#t10--tests--e2e--progress-sync) Playwright us-005 + progress sync — ✅ this commit.
 
-### M3 — Pilot launch 🟡 _(target 2026-07-31)_
+### M3 — Pilot launch 🟡 _(target 2026-07-31, free-tier path per [CR-003](changes/CR-003.md) + [ADR-002](adr/ADR-002-deployment-platform.md))_
 
-Deploy lên VPS + pilot với 1 project thật.
+Deploy lên free-tier managed stack ($0/tháng), pilot với ≥ 1 project thật.
 
 - **Deliverable**:
-  - VPS (DO Droplet / Hetzner) chạy Docker Compose prod config.
-  - Nginx reverse proxy + Let's Encrypt cert.
-  - Managed Postgres + Redis (hoặc self-host).
-  - Manual `pg_dump` cron weekly (NFR-DATA-001).
+  - **FE**: Cloudflare Pages auto-build từ `main` → `https://<project>.pages.dev`.
+  - **BE**: Fly.io shared-cpu-1x@256mb region sin + persistent volume 3GB tại `/data/uploads` → `https://onboarding-api.fly.dev`.
+  - **Postgres**: Neon free tier 0.5GB region sin (full Postgres 16, plpgsql + tsvector).
+  - **Redis**: Upstash free tier 10k cmd/day region ap-southeast-1 (session store + rate limit).
+  - **CI/CD**: GitHub Actions cho BE (`flyctl deploy --remote-only` on push main). Cloudflare Pages auto-build cho FE.
+  - **Hardening**: API Dockerfile multi-stage, Neon SSL pooler, Upstash TLS, CORS strict allowlist, cookie secure, db:migrate:prod via `fly.toml release_command`.
+  - **Backup**: Neon PITR free 7 days + manual `fly ssh -C "pg_dump"` weekly (defer cron đến v2).
+  - **Operations**: `docs/RUNBOOK.md` cover deploy / rollback / logs / restart / secret rotate.
   - Pilot project có ≥ 10 feature với 5 section filled bởi BA+Dev thật.
   - ≥ 3 dev mới onboard qua portal, survey feedback week 2.
-- **Exit criteria**: success metric trong [Vision §7](00-vision.md#7-success-metric-placeholder--sẽ-chốt-ở-m3-pilot-launch) được đo + chốt.
-- **Blocker nếu**: bugs P0 từ M1/M2 → fix trước launch.
+- **Exit criteria**: success metric trong [Vision §7](00-vision.md#7-success-metric-placeholder--sẽ-chốt-ở-m3-pilot-launch) được đo + chốt; không vượt free quota nào.
+- **Blocker nếu**: bugs P0 từ M1/M2 → fix trước launch; free tier policy đổi unfavorably → fallback Hetzner CX11 €4/mo (xem ADR-002 §6).
 
 ### M4 — Post-pilot iteration 🟡 _(target 2026-09-30+)_
 
