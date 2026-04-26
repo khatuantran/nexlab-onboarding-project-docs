@@ -1,0 +1,56 @@
+# Deploy the API service to Fly.io on every push to `main` that
+# touches BE code (or shared schemas, the Dockerfile, or this workflow).
+# CR-003 / ADR-002. Runbook: docs/RUNBOOK.md.
+
+name: Deploy BE to Fly
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/api/**"
+      - "packages/shared/**"
+      - ".github/workflows/deploy-be.yml"
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-be
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: flyctl deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Verify Fly app config exists
+        run: test -f apps/api/fly.toml
+
+      - name: Deploy to Fly
+        working-directory: apps/api
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          if [ -z "${FLY_API_TOKEN:-}" ]; then
+            echo "FLY_API_TOKEN secret missing — set it via 'fly tokens create deploy' (see docs/RUNBOOK.md §1.6)" >&2
+            exit 1
+          fi
+          flyctl deploy --remote-only
+
+      - name: Smoke health endpoint
+        if: success()
+        run: |
+          for i in 1 2 3 4 5; do
+            if curl -sSf https://onboarding-api.fly.dev/api/v1/health > /dev/null; then
+              echo "✓ /health green"
+              exit 0
+            fi
+            echo "Attempt $i: /health not ready yet, sleeping 5s..."
+            sleep 5
+          done
+          echo "✗ /health did not respond after 25s" >&2
+          exit 1
