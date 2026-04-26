@@ -38,7 +38,7 @@ export type AppDeps = HealthDeps & {
  * cors middleware accepts a callback that returns boolean per request;
  * we whitelist exact-match origins and let server-to-server / curl
  * (no Origin header) through. Production deployment per CR-003 sets
- * CORS_ORIGIN to the Cloudflare Pages URL.
+ * CORS_ORIGIN to the Netlify site URL.
  */
 function parseCorsAllowlist(raw: string): string[] {
   return raw

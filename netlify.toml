@@ -1,0 +1,24 @@
+# Netlify build config — onboarding portal FE (apps/web).
+# Repo is a pnpm monorepo (CR-001); FE is the only Netlify-hosted app.
+# Refs: CR-003, ADR-002, docs/RUNBOOK.md §1.3.
+#
+# Triggered on every push to `main` (and PRs as deploy previews) when
+# anything in apps/web/** changes. Build settings here override the
+# Netlify dashboard so the repo stays the source of truth.
+
+[build]
+  base = ""
+  command = "pnpm install --frozen-lockfile && pnpm --filter @onboarding/web build"
+  publish = "apps/web/dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+  PNPM_VERSION = "9.15.0"
+
+# SPA fallback: every unknown path serves index.html so React Router
+# handles client-side routing. Without this, deep-links (e.g. /projects/x)
+# 404 on hard refresh — Cloudflare Pages auto-handled this; Netlify does not.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
