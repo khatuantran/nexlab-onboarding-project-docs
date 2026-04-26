@@ -29,6 +29,7 @@
     "db:generate": "pnpm --filter @onboarding/api db:generate",
     "db:migrate": "pnpm --filter @onboarding/api db:migrate",
     "db:migrate:test": "pnpm --filter @onboarding/api db:migrate:test",
+    "db:migrate:prod": "pnpm --filter @onboarding/api db:migrate:prod",
     "db:check": "pnpm --filter @onboarding/api db:check",
     "db:seed": "pnpm --filter @onboarding/api db:seed",
     "db:seed:test": "pnpm --filter @onboarding/api db:seed:test",
