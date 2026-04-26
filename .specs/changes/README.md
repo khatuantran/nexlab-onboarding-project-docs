@@ -16,6 +16,7 @@ Related: [CLAUDE.md §When a request comes in](../../CLAUDE.md#when-a-request-co
 | ------ | ------------------------------------------------------ | ----------- | ------------------------- | ---------- | ---------------------- |
 | CR-001 | Split monolithic `.env.local` into per-layer env files | tech-change | Approved (impl `bcf8512`) | 2026-04-23 | [CR-001.md](CR-001.md) |
 | CR-002 | UI Quality Uplift v1 (5 screens)                       | spec-change | Approved (impl `a2b347d`) | 2026-04-25 | [CR-002.md](CR-002.md) |
+| CR-003 | Free-tier pilot deployment (replace VPS path of M3)    | tech-change | Approved (impl pending)   | 2026-04-26 | [CR-003.md](CR-003.md) |
 
 ---
 
