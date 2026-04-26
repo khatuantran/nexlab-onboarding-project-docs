@@ -48,6 +48,12 @@ EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s \
   CMD wget --quiet --spider http://localhost:3001/api/v1/health || exit 1
 
+# Run from apps/api so Node's --import resolves `tsx` from
+# apps/api/node_modules/tsx (pnpm symlinks devDeps per-package, not at
+# the workspace root). Also resolves `@onboarding/shared` via the
+# workspace symlink at apps/api/node_modules/@onboarding/shared.
+WORKDIR /app/apps/api
+
 # tsx loader keeps shared/src/*.ts importable at runtime without a
 # separate compile step.
-CMD ["node", "--import", "tsx", "apps/api/src/index.ts"]
+CMD ["node", "--import", "tsx", "src/index.ts"]
