@@ -1,0 +1,45 @@
+# Fly.io application config — onboarding portal API.
+# Region SIN (Singapore, ap-southeast-1) keeps latency < 50ms for
+# Vietnam users. Volume + Neon + Upstash all live in the same region.
+#
+# Refs: CR-003, ADR-002, docs/RUNBOOK.md.
+# Bring up: `fly launch --copy-config` (one-time) then `fly deploy`.
+
+app = "onboarding-api"
+primary_region = "sin"
+
+[build]
+  dockerfile = "Dockerfile"
+
+# Apply pending migrations against the production database before the
+# new release takes traffic. Failure here aborts the deploy — old
+# release keeps serving. Drizzle reads DATABASE_URL from Fly secrets.
+[deploy]
+  release_command = "pnpm --filter @onboarding/api db:migrate:prod"
+
+[[mounts]]
+  source = "uploads_volume"
+  destination = "/data/uploads"
+
+[http_service]
+  internal_port = 3001
+  force_https = true
+  # Free tier: scale to zero after idle (~30s). First request after
+  # idle pays ~1-2s wake. Acceptable per CR-003 gate decision; bump to
+  # min_machines_running = 1 if pilot UX feedback demands always-on.
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+  [[http_service.checks]]
+    grace_period = "15s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/api/v1/health"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 256
