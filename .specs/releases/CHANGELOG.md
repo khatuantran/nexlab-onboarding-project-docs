@@ -37,6 +37,7 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 
 ### Changed
 
+- **FE host: Cloudflare Pages → Netlify** ([CR-003](../changes/CR-003.md) / [ADR-002](../adr/ADR-002-deployment-platform.md), 2026-04-26) — Netlify replaces Cloudflare Pages for the FE static deploy. Cloudflare merged Pages into the Workers UI in early 2026, and the default project type ran `wrangler deploy` at the repo root, which fails on a pnpm monorepo. New repo-root [`netlify.toml`](../../netlify.toml) pins build (`pnpm install --frozen-lockfile && pnpm --filter @onboarding/web build`), publish dir (`apps/web/dist`), Node 20 + pnpm 9.15.0, and the SPA `/* → /index.html` 200 redirect (Netlify does not auto-handle SPA fallback like Cloudflare did). BE stack (Fly.io + Neon + Upstash) unchanged. Vercel evaluated but skipped — Hobby ToS restricts commercial use. RUNBOOK §1.3 / §2.2 / §3 / §4 / §6 swapped accordingly.
 - ADR-001 + ADR-002 updated với Related links to ADR-003 (font stack + dark palette source superseded by Nexlab DS adoption).
 
 ### Deprecated

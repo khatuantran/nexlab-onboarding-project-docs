@@ -1,4 +1,4 @@
-# ADR-002 — Deployment platform: Cloudflare Pages + Fly.io + Neon + Upstash
+# ADR-002 — Deployment platform: Netlify + Fly.io + Neon + Upstash
 
 <!-- template: 04-adr-template.md@0.2 -->
 
@@ -33,35 +33,39 @@ Ràng buộc kỹ thuật blocker:
 
 ## 2. Decision
 
-**Decision**: Pilot deploy lên **Cloudflare Pages (FE) + Fly.io (BE) + Neon (Postgres) + Upstash (Redis)** trong region Singapore. File uploads dùng Fly persistent volume 3GB. CI/CD qua GitHub Actions cho BE; Cloudflare Pages auto-build cho FE.
+**Decision**: Pilot deploy lên **Netlify (FE) + Fly.io (BE) + Neon (Postgres) + Upstash (Redis)** trong region Singapore. File uploads dùng Fly persistent volume 3GB. CI/CD qua GitHub Actions cho BE; Netlify auto-build cho FE (config in repo-root [`netlify.toml`](../../netlify.toml)).
+
+> **2026-04-26 revision** — initial pick là Cloudflare Pages, reverted same-day. Cloudflare đã gộp Pages vào Workers UI gây user click nhầm tạo Worker → `wrangler deploy` fail trên pnpm monorepo. Swap sang Netlify (commercial OK, monorepo UI rõ, SPA redirect rule trong `netlify.toml`). Vercel xét nhưng skipped vì Hobby ToS chỉ personal/non-commercial. BE stack giữ nguyên.
 
 ### 2.1 Sub-decisions
 
-| Concern       | Choice                                                                    | Lý do ngắn                                                                                                     |
-| ------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| FE host       | Cloudflare Pages                                                          | Unlimited bandwidth + 500 builds/mo + global edge + GitHub auto-deploy zero-config. SPA static fit hoàn hảo    |
-| BE host       | Fly.io shared-cpu-1x@256mb                                                | Always-on miễn phí trong 3 VM allowance; persistent volume 3GB; region sin sát users                           |
-| Postgres      | Neon free tier (0.5GB)                                                    | Permanent free, full Postgres 16 (plpgsql + tsvector OK), branching cho preview env, autoscale, no CC required |
-| Redis         | Upstash free tier (10k cmd/day)                                           | Permanent free, REST + native protocol, ap-southeast-1 region, fit session + rate-limit pilot scale            |
-| File uploads  | Fly persistent volume 3GB                                                 | Code path không đổi (vẫn ghi `./data/uploads`); migrate sang R2 nếu vượt                                       |
-| CI/CD         | GitHub Actions (private 2000 min/mo) cho BE; Cloudflare auto-build cho FE | Đủ cho ~30-50 deploys/tháng                                                                                    |
-| Custom domain | Không có v1 — `*.pages.dev` + `*.fly.dev`                                 | Defer khi pilot proves; tiết kiệm 1 step DNS + SSL                                                             |
+| Concern       | Choice                                                                 | Lý do ngắn                                                                                                                       |
+| ------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| FE host       | Netlify                                                                | 100 GB BW/mo + 300 build min/mo + global edge + GitHub auto-deploy + monorepo-friendly UI + `netlify.toml` SPA redirects in-repo |
+| BE host       | Fly.io shared-cpu-1x@256mb                                             | Always-on miễn phí trong 3 VM allowance; persistent volume 3GB; region sin sát users                                             |
+| Postgres      | Neon free tier (0.5GB)                                                 | Permanent free, full Postgres 16 (plpgsql + tsvector OK), branching cho preview env, autoscale, no CC required                   |
+| Redis         | Upstash free tier (10k cmd/day)                                        | Permanent free, REST + native protocol, ap-southeast-1 region, fit session + rate-limit pilot scale                              |
+| File uploads  | Fly persistent volume 3GB                                              | Code path không đổi (vẫn ghi `./data/uploads`); migrate sang R2 nếu vượt                                                         |
+| CI/CD         | GitHub Actions (private 2000 min/mo) cho BE; Netlify auto-build cho FE | Đủ cho ~30-50 deploys/tháng                                                                                                      |
+| Custom domain | Không có v1 — `*.netlify.app` + `*.fly.dev`                            | Defer khi pilot proves; tiết kiệm 1 step DNS + SSL                                                                               |
 
 ---
 
 ## 3. Alternatives considered
 
-| Option                             | Pros                                                        | Cons                                                                                                                                                 | Lý do không chọn                                         |
-| ---------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| **VPS DO/Hetzner $4-6/mo** (M3 cũ) | Single VM, full control, predictable cost                   | $48-72/năm, ops effort cao (Nginx, Let's Encrypt cron, OS update, backup)                                                                            | Không free; pilot scope không cần full control           |
-| **Render**                         | Zero-config, GitHub auto-deploy, simple                     | Postgres free **90 ngày** rồi $7/mo; web service sleep 15min                                                                                         | Postgres free expires → KHÔNG permanent free             |
-| **Railway**                        | DX xuất sắc, all-in-one                                     | $5 credit/tháng → effective paid sau ~1 tháng                                                                                                        | Không free vĩnh viễn                                     |
-| **Vercel + Supabase**              | Vercel cho SPA tốt; Supabase free Postgres + Auth + Storage | BE serverless functions không fit Express + connect-redis (cold start mỗi function call); Supabase free pause **toàn project** sau 7 ngày inactivity | Express + Redis session lỗi pattern serverless           |
-| **Fly Postgres thay Neon**         | 3GB volume always-on, colocate cùng region (zero latency)   | Chiếm 1 trong 3 VM free → BE còn 2 VM; Neon branching mất                                                                                            | Trigger fallback nếu Neon 0.5GB chật                     |
-| **Supabase Postgres**              | All-in-one (DB + Auth + Storage + Realtime)                 | Pause toàn project sau 7 ngày; 0.5GB; cần Upstash Redis riêng dù sao                                                                                 | Pause inactivity unsafe cho pilot daily-use intermittent |
-| **CockroachDB Serverless 5GB**     | Free 5GB, Postgres wire-compat                              | Không support plpgsql functions + một số tsvector edge cases → migrations 0001 + 0004 sẽ vỡ                                                          | Schema incompat                                          |
-| **Heroku**                         | DX kinh điển                                                | Đã cắt free tier hoàn toàn 2022                                                                                                                      | Không miễn phí                                           |
-| **Koyeb / Deta / Glitch**          | Free tier permanent                                         | Postgres không có / ephemeral / quá nhỏ                                                                                                              | Không đáp ứng FTS persistence                            |
+| Option                             | Pros                                                        | Cons                                                                                                                                                 | Lý do không chọn                                          |
+| ---------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| **VPS DO/Hetzner $4-6/mo** (M3 cũ) | Single VM, full control, predictable cost                   | $48-72/năm, ops effort cao (Nginx, Let's Encrypt cron, OS update, backup)                                                                            | Không free; pilot scope không cần full control            |
+| **Cloudflare Pages**               | Unlimited BW + 500 builds/mo + commercial OK                | Workers/Pages UI hợp nhất 2026 gây user click nhầm tạo Worker → `wrangler deploy` fail trên pnpm monorepo                                            | Initial pick 2026-04-26, reverted same-day do UI friction |
+| **Vercel Hobby**                   | UI nhanh, monorepo support tốt                              | Hobby ToS chỉ personal/non-commercial — pilot công ty technically vi phạm; Pro $20/mo phá free-tier mục tiêu                                         | ToS không cho commercial use                              |
+| **Render**                         | Zero-config, GitHub auto-deploy, simple                     | Postgres free **90 ngày** rồi $7/mo; web service sleep 15min                                                                                         | Postgres free expires → KHÔNG permanent free              |
+| **Railway**                        | DX xuất sắc, all-in-one                                     | $5 credit/tháng → effective paid sau ~1 tháng                                                                                                        | Không free vĩnh viễn                                      |
+| **Vercel + Supabase**              | Vercel cho SPA tốt; Supabase free Postgres + Auth + Storage | BE serverless functions không fit Express + connect-redis (cold start mỗi function call); Supabase free pause **toàn project** sau 7 ngày inactivity | Express + Redis session lỗi pattern serverless            |
+| **Fly Postgres thay Neon**         | 3GB volume always-on, colocate cùng region (zero latency)   | Chiếm 1 trong 3 VM free → BE còn 2 VM; Neon branching mất                                                                                            | Trigger fallback nếu Neon 0.5GB chật                      |
+| **Supabase Postgres**              | All-in-one (DB + Auth + Storage + Realtime)                 | Pause toàn project sau 7 ngày; 0.5GB; cần Upstash Redis riêng dù sao                                                                                 | Pause inactivity unsafe cho pilot daily-use intermittent  |
+| **CockroachDB Serverless 5GB**     | Free 5GB, Postgres wire-compat                              | Không support plpgsql functions + một số tsvector edge cases → migrations 0001 + 0004 sẽ vỡ                                                          | Schema incompat                                           |
+| **Heroku**                         | DX kinh điển                                                | Đã cắt free tier hoàn toàn 2022                                                                                                                      | Không miễn phí                                            |
+| **Koyeb / Deta / Glitch**          | Free tier permanent                                         | Postgres không có / ephemeral / quá nhỏ                                                                                                              | Không đáp ứng FTS persistence                             |
 
 ---
 
@@ -73,7 +77,7 @@ Ràng buộc kỹ thuật blocker:
 - **Ops effort thấp**: provider lo OS / SSL / backup / scaling. Solo dev tập trung product.
 - **Setup trong 1-2h**: signup 4 platform + 1 deploy command.
 - **Teardown trong vài phút**: xoá projects, không có tài sản orphan.
-- **Cloudflare Pages PR preview**: mỗi branch tự động có preview URL — DX tốt cho review.
+- **Netlify deploy preview**: mỗi PR tự động có preview URL — DX tốt cho review.
 - **Neon branching**: có thể clone DB cho preview env mà không tốn tiền.
 
 ### Negative / trade-off
@@ -87,7 +91,7 @@ Ràng buộc kỹ thuật blocker:
 
 ### Neutral
 
-- **Secrets ở 4 nơi** (GitHub, Cloudflare, Fly, Neon): rotate process cần document trong RUNBOOK.
+- **Secrets ở 4 nơi** (GitHub, Netlify, Fly, Neon): rotate process cần document trong RUNBOOK.
 - **Logs** chỉ 7 days retention free trên Fly. Acceptable cho pilot.
 
 ---
@@ -128,5 +132,5 @@ Trigger condition cho việc giữ ADR này:
 - [Fly.io free tier 2026](https://fly.io/docs/about/pricing/)
 - [Neon free plan 2026](https://neon.com/docs/introduction/plans) — 0.5GB / 100 CU-hours / autosuspend
 - [Upstash Redis pricing](https://upstash.com/pricing) — 10k cmd/day free
-- [Cloudflare Pages limits](https://developers.cloudflare.com/pages/platform/limits/)
+- [Netlify free plan limits](https://www.netlify.com/pricing/)
 - Internal: [CR-003](../changes/CR-003.md) (parent change request); [ADR-001 tech stack](ADR-001-tech-stack.md) (foundation); [Roadmap M3](../roadmap.md)

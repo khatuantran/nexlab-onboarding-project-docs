@@ -126,7 +126,7 @@ Consolidate risks + assumption rải rác trong ADR, vision, stories vào 1 file
 
 ## R11 — Free-tier policy thay đổi (M3 deployment)
 
-- **Trigger**: Fly.io / Neon / Upstash cắt hoặc giảm free tier (đã từng xảy ra với Heroku 2022, Render Postgres 2024, Fly new-account-only 2024).
+- **Trigger**: Netlify / Fly.io / Neon / Upstash cắt hoặc giảm free tier (đã từng xảy ra với Heroku 2022, Render Postgres 2024, Fly new-account-only 2024, Netlify giảm build min từ 300 sang 100 trong vài account 2024).
 - **Impact**: 🟠 High — pilot phải migrate sang VPS hoặc paid tier giữa chừng.
 - **Likelihood**: 🟠 Possible (12-month horizon)
 - **Status**: 🟡 Open (accept cho pilot)

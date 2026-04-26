@@ -85,20 +85,20 @@ Monorepo tool: **pnpm workspaces**. Lý do xem [ADR-001 §2.1](adr/ADR-001-tech-
 
 | Env     | Dev                                                                                                            | Prod (v1 free-tier per [CR-003](changes/CR-003.md) + [ADR-002](adr/ADR-002-deployment-platform.md)) | Prod (v2 — paid / VPS)         |
 | ------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------ |
-| Web     | Vite dev server :5173                                                                                          | Cloudflare Pages (`*.pages.dev`)                                                                    | Same / custom domain           |
+| Web     | Vite dev server :5173                                                                                          | Netlify (`*.netlify.app`)                                                                           | Same / custom domain           |
 | API     | `tsx watch` :3001                                                                                              | Fly.io shared-cpu-1x@256mb region sin (`onboarding-api.fly.dev`)                                    | Hetzner CX11 €4/mo / K8s       |
 | DB      | Docker Compose `postgres:16-alpine`                                                                            | Neon Postgres 0.5GB region sin                                                                      | Aiven / Supabase Pro / managed |
 | Redis   | Docker Compose `redis:7-alpine`                                                                                | Upstash Redis 10k cmd/day region ap-southeast-1                                                     | Upstash paid / DO Redis        |
 | Uploads | Local FS `./data/uploads`                                                                                      | Fly persistent volume 3GB tại `/data/uploads`                                                       | Cloudflare R2 / S3             |
-| Secrets | Per-layer `.env*` files — `infra/docker/.env`, `apps/api/.env`, `apps/web/.env.local` (all gitignored; CR-001) | Platform env vars (Fly secrets, Cloudflare Pages env, GitHub repo secrets)                          | K8s Secret (sealed/SOPS)       |
+| Secrets | Per-layer `.env*` files — `infra/docker/.env`, `apps/api/.env`, `apps/web/.env.local` (all gitignored; CR-001) | Platform env vars (Fly secrets, Netlify site env, GitHub repo secrets)                              | K8s Secret (sealed/SOPS)       |
 
 ### 4.2 Deployment topology (v1 free-tier)
 
 ```text
                 ┌──────────────────────────┐
-                │  Cloudflare Pages (FE)   │
+                │  Netlify (FE)            │
                 │  React + Vite SPA bundle │
-                │  https://*.pages.dev     │
+                │  https://*.netlify.app   │
                 └────────────┬─────────────┘
                              │  HTTPS, CORS
                              ▼
@@ -116,7 +116,7 @@ Monorepo tool: **pnpm workspaces**. Lý do xem [ADR-001 §2.1](adr/ADR-001-tech-
             └─────────────────┘  └──────────────────┘
 ```
 
-CI/CD: GitHub Actions deploy BE to Fly on push `main` (`apps/api/**` paths); Cloudflare Pages auto-build FE on push. Migrations run via `fly.toml release_command` before traffic swap.
+CI/CD: GitHub Actions deploy BE to Fly on push `main` (`apps/api/**` paths); Netlify auto-build FE on push (config in repo-root `netlify.toml`). Migrations run via `fly.toml release_command` before traffic swap.
 
 Chi tiết: [ADR-001 §2.6](adr/ADR-001-tech-stack.md#26-infrastructure) (dev infra), [ADR-002](adr/ADR-002-deployment-platform.md) (prod platform), [CR-003](changes/CR-003.md) (rationale). Setup cục bộ: [docs/SETUP.md](../docs/SETUP.md). Operations: `docs/RUNBOOK.md` (pending).
 

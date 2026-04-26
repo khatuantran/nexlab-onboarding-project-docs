@@ -2,7 +2,7 @@
 
 > Operational guide for the M3 free-tier deployment per [CR-003](../.specs/changes/CR-003.md) + [ADR-002](../.specs/adr/ADR-002-deployment-platform.md).
 
-Stack: **Cloudflare Pages** (FE) + **Fly.io** (BE) + **Neon** (Postgres) + **Upstash** (Redis) + **Fly persistent volume** (uploads). Region SIN for everything but Cloudflare (global edge).
+Stack: **Netlify** (FE) + **Fly.io** (BE) + **Neon** (Postgres) + **Upstash** (Redis) + **Fly persistent volume** (uploads). Region SIN for everything but Netlify (global edge).
 
 ---
 
@@ -29,19 +29,20 @@ Done once per environment. After this, deploys flow through CI/CD (Section 3).
 3. After provisioning: Details → copy the **rediss://** connection URL (TLS).
 4. Save the URL.
 
-### 1.3 Cloudflare Pages (FE)
+### 1.3 Netlify (FE)
 
-1. Sign up at <https://dash.cloudflare.com>.
-2. Workers & Pages → Pages → **Create application** → **Connect to Git** → select the GitHub repo.
-3. Build configuration:
-   - **Framework preset**: None.
-   - **Build command**: `pnpm install --frozen-lockfile && pnpm --filter @onboarding/web build`
-   - **Build output directory**: `apps/web/dist`
-   - **Root directory**: `/`
-4. Environment variables (Production + Preview):
-   - `NODE_VERSION` = `20`
-   - `VITE_API_BASE_URL` = `https://onboarding-api.fly.dev/api/v1` (update after Fly app exists)
-5. Save → first build runs automatically. URL: `https://<project>.pages.dev`.
+1. Sign up at <https://app.netlify.com> (auth via GitHub).
+2. **Add new site** → **Import an existing project** → **Deploy with GitHub** → authorize → pick this repo.
+3. Branch to deploy: `main`. Build settings auto-pull from repo-root [`netlify.toml`](../netlify.toml):
+   - Base directory: (blank)
+   - Build command: `pnpm install --frozen-lockfile && pnpm --filter @onboarding/web build`
+   - Publish directory: `apps/web/dist`
+   - Node 20 + pnpm 9.15.0 set via `[build.environment]`.
+   - SPA `[[redirects]]` rule already in `netlify.toml` so React Router deep-links don't 404.
+4. **Site settings → Build & deploy → Environment variables**:
+   - `VITE_API_BASE_URL` = `https://onboarding-api.fly.dev/api/v1` (update after Fly app exists).
+5. Click **Deploy site** → first build runs automatically. URL: `https://<random-slug>.netlify.app`.
+6. (Optional) **Site settings → Site information → Change site name** to `onboarding-portal` (or similar) for a stable subdomain.
 
 ### 1.4 Fly.io (BE)
 
@@ -80,7 +81,7 @@ fly secrets set \
   SESSION_SECRET="$(openssl rand -hex 32)" \
   SESSION_COOKIE_NAME=sid \
   COOKIE_SECURE=true \
-  CORS_ORIGIN="https://<project>.pages.dev" \
+  CORS_ORIGIN="https://<netlify-slug>.netlify.app" \
   UPLOAD_DIR=/data/uploads \
   NODE_ENV=production \
   LOG_LEVEL=info
@@ -136,7 +137,7 @@ fly logs -a onboarding-api                      # streaming
 fly logs -a onboarding-api --no-tail | tail -200 # last 200 lines
 ```
 
-Cloudflare Pages: dashboard → Pages → project → Deployments → click a build → View logs.
+Netlify: dashboard → site → **Deploys** → click a deploy → **Deploy log**. Build logs streamable while running.
 
 ### 2.2 Rollback BE
 
@@ -145,7 +146,7 @@ fly releases -a onboarding-api                  # list versions
 fly releases rollback v<N> -a onboarding-api    # roll forward to a prior good version
 ```
 
-Rollback FE: Cloudflare Pages → Deployments → click an older successful deploy → **Rollback to this deployment**.
+Rollback FE: Netlify → site → **Deploys** → click an older successful deploy → **Publish deploy**. Takes effect within seconds (CDN purge).
 
 ### 2.3 Restart BE
 
@@ -198,12 +199,12 @@ fly ssh console -a onboarding-api -C 'node --import tsx apps/api/src/db/seed.ts'
 
 ## 3. CI/CD flow
 
-| Push to `main` touches…                      | Triggers                                            | Result                                 |
-| -------------------------------------------- | --------------------------------------------------- | -------------------------------------- |
-| `apps/web/**`                                | Cloudflare Pages auto-build                         | New FE deploy live in ~2 min           |
-| `apps/api/**` or `packages/shared/**`        | GitHub Actions `deploy-be.yml`                      | Fly deploy + release_command (migrate) |
-| `apps/api/Dockerfile` or `apps/api/fly.toml` | Same as above                                       | Same                                   |
-| Other branches                               | Cloudflare preview deploys; no Fly preview (manual) | Preview URL on Pages dashboard         |
+| Push to `main` touches…                      | Triggers                                        | Result                                 |
+| -------------------------------------------- | ----------------------------------------------- | -------------------------------------- |
+| `apps/web/**` or `netlify.toml`              | Netlify auto-build                              | New FE deploy live in ~2 min           |
+| `apps/api/**` or `packages/shared/**`        | GitHub Actions `deploy-be.yml`                  | Fly deploy + release_command (migrate) |
+| `apps/api/Dockerfile` or `apps/api/fly.toml` | Same as above                                   | Same                                   |
+| Other branches / PRs                         | Netlify deploy preview; no Fly preview (manual) | Preview URL posted as PR check         |
 
 ---
 
@@ -216,7 +217,7 @@ fly ssh console -a onboarding-api -C 'node --import tsx apps/api/src/db/seed.ts'
 | Neon storage             | 0.5 GB                         | 0.4 GB → migrate to Fly Postgres or upgrade |
 | Neon compute             | 100 CU-hours/mo                | Watch dashboard, opt scale-to-zero          |
 | Upstash Redis            | 10k commands/day               | 7k → consider in-process session cache      |
-| Cloudflare Pages         | 500 builds/mo                  | 400 → coalesce CI                           |
+| Netlify                  | 100 GB BW/mo, 300 build min/mo | 80 GB / 240 min → coalesce CI               |
 | GitHub Actions (private) | 2000 min/mo                    | 1500 → cache pnpm store                     |
 
 Status pages to bookmark:
@@ -224,7 +225,7 @@ Status pages to bookmark:
 - <https://status.fly.io>
 - <https://status.neon.tech>
 - <https://status.upstash.com>
-- <https://www.cloudflarestatus.com>
+- <https://www.netlifystatus.com>
 
 ---
 
@@ -248,7 +249,7 @@ Fallback path documented in ADR-002 §5: Hetzner CX11 €4/mo + Aiven Postgres o
 A. Cold start: Fly machine wake (~1-2s) + Neon compute resume (~500ms-2s). Mitigation per [risks.md R12](../.specs/risks.md): bump `min_machines_running = 1` in `fly.toml` (still inside free 3 VM allowance) and/or run a cron `/health` ping every 5 min during business hours.
 
 **Q. Login succeeds but every request 401s.**  
-A. Cookie `sameSite` issue. Verify `NODE_ENV=production` is set in Fly secrets — production path forces `sameSite: "none"` + `secure: true` for cross-site `pages.dev` ↔ `fly.dev` cookies. See [CR-003 / Phase 2 T5 commit](#) `683e1c3`.
+A. Cookie `sameSite` issue. Verify `NODE_ENV=production` is set in Fly secrets — production path forces `sameSite: "none"` + `secure: true` for cross-site `netlify.app` ↔ `fly.dev` cookies. See [CR-003 / Phase 2 T5 commit](#) `683e1c3`.
 
 **Q. Migration fails on deploy.**  
 A. release_command failure aborts the swap; previous release keeps serving. Inspect via `fly logs`. Fix migration, push, retry.
