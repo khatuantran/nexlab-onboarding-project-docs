@@ -1,0 +1,56 @@
+# Trim build context for faster Fly deploys.
+# Anything not strictly needed at runtime is excluded.
+
+# Node / pnpm
+node_modules
+**/node_modules
+.pnpm-store
+
+# Build output (we run via tsx, no compiled dist)
+dist
+**/dist
+
+# Local env files (secrets injected via Fly secrets at runtime)
+.env
+.env.local
+.env.test
+.env.*.local
+**/.env
+**/.env.local
+**/.env.test
+**/.env.*.local
+
+# Tests + e2e (not needed in prod image)
+**/tests
+**/__tests__
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+e2e
+playwright.config.ts
+playwright-report
+test-results
+
+# Tooling
+.git
+.github
+.husky
+.vscode
+.specs
+docs
+templates
+scripts
+**/coverage
+**/*.log
+*.md
+README.md
+SECURITY.md
+CONTRIBUTING.md
+
+# Frontend (separate Cloudflare Pages deploy)
+apps/web
+
+# Local data
+data
+infra/docker/data
