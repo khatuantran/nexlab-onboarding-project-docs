@@ -40,7 +40,11 @@ jobs:
           fi
           # Deploy from repo root so the Docker build context includes
           # pnpm workspace files (pnpm-lock.yaml, packages/shared/...).
-          flyctl deploy --remote-only --config apps/api/fly.toml
+          # `--dockerfile` is CWD-relative, unlike `[build] dockerfile`
+          # in fly.toml which would resolve relative to fly.toml.
+          flyctl deploy --remote-only \
+            --config apps/api/fly.toml \
+            --dockerfile apps/api/Dockerfile
 
       - name: Smoke health endpoint
         if: success()

@@ -5,15 +5,15 @@
 # Refs: CR-003, ADR-002, docs/RUNBOOK.md.
 #
 # Deploy from repo root so the Docker build context can see workspace
-# files (pnpm-lock.yaml, packages/shared, etc.):
-#   fly deploy --remote-only --config apps/api/fly.toml
-# The `dockerfile` path below is therefore relative to the repo root.
+# files (pnpm-lock.yaml, packages/shared, etc.). The `--dockerfile`
+# flag is passed at the CLI level (it is CWD-relative, while the
+# `[build] dockerfile` key in fly.toml is fly.toml-relative — using
+# the flag avoids a confusing nested path):
+#   fly deploy --remote-only --config apps/api/fly.toml \
+#       --dockerfile apps/api/Dockerfile
 
 app = "onboarding-api-cool-waterfall-8568"
 primary_region = "sin"
-
-[build]
-  dockerfile = "apps/api/Dockerfile"
 
 # Apply pending migrations against the production database before the
 # new release takes traffic. Failure here aborts the deploy — old

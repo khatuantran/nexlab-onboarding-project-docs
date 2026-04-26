@@ -86,10 +86,12 @@ fly secrets set \
   LOG_LEVEL=info
 ```
 
-Deploy from repo root (the Dockerfile expects workspace files like `pnpm-lock.yaml` and `packages/shared/` so the build context must be the repo root, not `apps/api/`):
+Deploy from repo root (the Dockerfile expects workspace files like `pnpm-lock.yaml` and `packages/shared/` so the build context must be the repo root, not `apps/api/`). Pass `--dockerfile` on the CLI (CWD-relative) instead of using `[build] dockerfile` in fly.toml (which is fly.toml-relative and would resolve to `apps/api/apps/api/Dockerfile`):
 
 ```bash
-fly deploy --remote-only --config apps/api/fly.toml
+fly deploy --remote-only \
+  --config apps/api/fly.toml \
+  --dockerfile apps/api/Dockerfile
 ```
 
 The release_command in fly.toml runs `pnpm db:migrate:prod` against Neon before traffic swaps. If it fails, the previous release keeps serving — investigate via `fly logs`.
