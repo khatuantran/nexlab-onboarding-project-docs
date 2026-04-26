@@ -27,10 +27,14 @@ RUN corepack enable
 # Volume mountpoint expected by Fly.io for persistent uploads.
 RUN mkdir -p /data/uploads && chown -R node:node /data
 
-# Hoisted node_modules from the deps stage (pnpm symlinks resolve from
-# both the workspace root and per-package locations).
+# pnpm per-package node_modules. The workspace root holds the .pnpm
+# virtual store (real package contents); each package's node_modules
+# is just a directory of symlinks pointing into .pnpm. We need every
+# package whose source we run at runtime — apps/api (entry point) AND
+# packages/shared (imported by api via tsx, brings its own zod symlink).
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/api/node_modules ./apps/api/node_modules
+COPY --from=deps /app/packages/shared/node_modules ./packages/shared/node_modules
 
 # Source. shared package loads via tsx at runtime so we keep its src.
 COPY --chown=node:node pnpm-workspace.yaml package.json tsconfig.base.json ./
