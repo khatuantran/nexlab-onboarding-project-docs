@@ -43,6 +43,7 @@ Mỗi FR có:
 | [FR-SEARCH-001](#fr-search-001--full-text-search)             | Search  | FTS feature theo title + section content              | P0       | US-001                 |
 | [FR-SEARCH-002](#fr-search-002--multi-entity-search)          | Search  | Search grouped: project/feature/section/author/upload | P1       | US-005                 |
 | [FR-SEARCH-003](#fr-search-003--search-filters)               | Search  | Filter section-type / time / author / status          | P1       | US-005                 |
+| [FR-SEARCH-004](#fr-search-004--query-semantics)              | Search  | Prefix + accent-insensitive + fuzzy match semantics   | P1       | US-006                 |
 | [FR-READ-001](#fr-read-001--project-landing--feature-index)   | Read    | Project landing page có feature index                 | P0       | US-001                 |
 | [FR-UPLOAD-001](#fr-upload-001--image-upload-for-screenshots) | Upload  | Upload image file → volume, trả stable URL            | P0       | US-003                 |
 | [FR-USER-001](#fr-user-001--user-list-endpoint)               | User    | List user (read) cho author filter dropdown           | P1       | US-005                 |
@@ -272,6 +273,31 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 - `filled` = 5/5 sections non-empty; `partial` = 1-4; `empty` = 0.
 - Invalid filter value → 400 `VALIDATION_ERROR` (Zod).
 - URL state FE: chỉ serialize filter khác default (giảm độ dài URL).
+
+---
+
+## FR-SEARCH-004 — Query semantics
+
+**Statement (Event-driven + Ubiquitous):**
+
+- When an authenticated user submits a search query of length ≥ 1, the system shall match using **prefix-token semantics** so a partial token (e.g. `"a"`) matches longer tokens that start with it (e.g. `"a3solutions"`).
+- The system shall normalize Vietnamese diacritics so an unaccented query (`"dang nhap"`) matches accented content (`"Đăng nhập"`) and vice versa.
+- When a query produces zero exact-prefix matches against short fields (project name, feature title, author display name, upload filename), the system shall fall back to **trigram similarity ≥ 0.3** to surface near-matches (e.g. `"ondoarding"` → `"onboarding"`).
+
+**Rationale**: Pilot feedback 2026-04-26 — user gõ partial token mong list-as-you-type behavior. Vietnamese teams gõ không dấu nhanh hơn → query "dang nhap" cần match. Typo tolerance giảm zero-result frustration. Postgres-only stack (`unaccent` + `pg_trgm` extensions, không Meilisearch) giữ $0 infra constraint per ADR-002.
+
+**Maps to**: US-006 (Search v2.1: prefix + accent-insensitive + fuzzy). Personas: P1, P2, P3.
+
+**Acceptance hints**:
+
+- Backend: `to_tsquery('simple', '<unaccented_token>:*')` per token, joined `&`. Sanitize input to alphanumerics only trước append `:*`.
+- Generated tsvector columns rebuild với `immutable_unaccent()` wrapper (Postgres `unaccent` is `STABLE`, cần wrap immutable cho generated columns).
+- Trigram fallback áp dụng ON: `projects.name`, `features.title`, `users.display_name`, `uploads.filename`. **Không** áp dụng vào `sections.body` (long text → trigram noise + index bloat).
+- Ranking: combine `ts_rank(...)` với `similarity(...)` qua `greatest()`; tsquery hits luôn rank > trgm fallback hits ở mức tie.
+- `ts_headline` vẫn dùng tsquery cùng config để highlight đúng.
+- Response shape không đổi (giữ FR-SEARCH-002).
+- Error codes không đổi (giữ `SEARCH_QUERY_EMPTY` / `SEARCH_QUERY_TOO_LONG`).
+- Performance: target ≤ 500ms p95 unchanged (NFR-PERF-001); benchmark trong T5.
 
 ---
 
