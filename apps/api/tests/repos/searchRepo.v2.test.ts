@@ -177,6 +177,85 @@ describe("searchAll — filters", () => {
     }
   });
 
+  it("US-006 / AC-1 — prefix matches project name from a single character", async () => {
+    const slug = `t2-prefix-${Date.now()}`;
+    const [demo] = await db.select().from(projects).where(eq(projects.slug, "demo")).limit(1);
+    const [tmp] = await db
+      .insert(projects)
+      .values({
+        slug,
+        name: "A3Solutions",
+        description: "Pilot tenant for prefix-match smoke test.",
+        createdBy: demo!.createdBy,
+      })
+      .returning();
+    try {
+      const result = await repo.searchAll("a");
+      const hit = result.projects.find((p) => p.slug === slug);
+      expect(hit).toBeDefined();
+      expect(hit?.name).toBe("A3Solutions");
+    } finally {
+      await db.delete(projects).where(eq(projects.id, tmp!.id));
+    }
+  });
+
+  it("US-006 / AC-2 — prefix matches feature title", async () => {
+    // Demo seed has feature 'Đăng nhập bằng email' — querying 'đăn' should hit it.
+    const result = await repo.searchAll("đăn");
+    const hit = result.features.find((f) => f.featureSlug === "login-with-email");
+    expect(hit).toBeDefined();
+  });
+
+  it("US-006 / AC-3a — accent-insensitive query matches accented project name", async () => {
+    const slug = `t2-accent-${Date.now()}`;
+    const [demo] = await db.select().from(projects).where(eq(projects.slug, "demo")).limit(1);
+    const [tmp] = await db
+      .insert(projects)
+      .values({
+        slug,
+        name: "Đăng nhập SSO",
+        createdBy: demo!.createdBy,
+      })
+      .returning();
+    try {
+      const result = await repo.searchAll("dang nhap");
+      const hit = result.projects.find((p) => p.slug === slug);
+      expect(hit).toBeDefined();
+    } finally {
+      await db.delete(projects).where(eq(projects.id, tmp!.id));
+    }
+  });
+
+  it("US-006 / AC-3b — accented query matches unaccented stored name", async () => {
+    const slug = `t2-accent-rev-${Date.now()}`;
+    const [demo] = await db.select().from(projects).where(eq(projects.slug, "demo")).limit(1);
+    const [tmp] = await db
+      .insert(projects)
+      .values({
+        slug,
+        name: "Dang nhap SSO",
+        createdBy: demo!.createdBy,
+      })
+      .returning();
+    try {
+      const result = await repo.searchAll("đăng nhập");
+      const hit = result.projects.find((p) => p.slug === slug);
+      expect(hit).toBeDefined();
+    } finally {
+      await db.delete(projects).where(eq(projects.id, tmp!.id));
+    }
+  });
+
+  it("US-006 / AC-7 — sanitizes tsquery input with special chars", async () => {
+    // Should not raise to_tsquery syntax error; treats as alphanumeric tokens.
+    await expect(repo.searchAll("foo&|!()bar")).resolves.toBeDefined();
+    await expect(repo.searchAll(":*!|&")).resolves.toBeDefined();
+    // Pure-symbol input should return empty groups, not error.
+    const empty = await repo.searchAll("!!!");
+    expect(empty.projects).toHaveLength(0);
+    expect(empty.features).toHaveLength(0);
+  });
+
   it("excludes archived projects from every group", async () => {
     const slug = `t2-archived-${Date.now()}`;
     const [demo] = await db.select().from(projects).where(eq(projects.slug, "demo")).limit(1);

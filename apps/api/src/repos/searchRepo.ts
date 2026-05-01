@@ -12,6 +12,15 @@ import type {
   UploadHit,
 } from "@onboarding/shared";
 import { HITS_PER_GROUP } from "@onboarding/shared";
+import { buildTsQuery } from "./search/buildTsQuery.js";
+
+const EMPTY_RESULTS: SearchResultsV2 = {
+  projects: [],
+  features: [],
+  sections: [],
+  authors: [],
+  uploads: [],
+};
 
 /**
  * SearchRepo (US-005 / FR-SEARCH-002 + FR-SEARCH-003).
@@ -59,6 +68,8 @@ function statusClauseForFeature(filledColumn: SQL, status: FeatureStatus): SQL {
 export function createSearchRepo(db: Db): SearchRepo {
   return {
     async search(q, projectSlug) {
+      const tsq = buildTsQuery(q);
+      if (tsq === null) return [];
       const projectFilter = projectSlug ? sql`AND p.slug = ${projectSlug}` : sql``;
       const result = await db.execute<SearchHitRow>(sql`
         SELECT
@@ -68,14 +79,14 @@ export function createSearchRepo(db: Db): SearchRepo {
           ts_headline(
             'simple_unaccent',
             coalesce(f.title, '') || ' ' || coalesce(string_agg(s.body, ' '), ''),
-            plainto_tsquery('simple_unaccent', ${q}),
+            to_tsquery('simple_unaccent', ${tsq}),
             ${HEADLINE_OPTS}
           ) AS "snippet",
-          ts_rank(f.search_vector, plainto_tsquery('simple_unaccent', ${q})) AS "rank"
+          ts_rank(f.search_vector, to_tsquery('simple_unaccent', ${tsq})) AS "rank"
         FROM features f
         INNER JOIN projects p ON p.id = f.project_id
         LEFT JOIN sections s ON s.feature_id = f.id
-        WHERE f.search_vector @@ plainto_tsquery('simple_unaccent', ${q})
+        WHERE f.search_vector @@ to_tsquery('simple_unaccent', ${tsq})
           AND p.archived_at IS NULL
         ${projectFilter}
         GROUP BY p.slug, f.id
@@ -86,7 +97,9 @@ export function createSearchRepo(db: Db): SearchRepo {
     },
 
     async searchAll(q, opts = {}) {
-      const tsQuery = sql`plainto_tsquery('simple_unaccent', ${q})`;
+      const tsq = buildTsQuery(q);
+      if (tsq === null) return { ...EMPTY_RESULTS };
+      const tsQuery = sql`to_tsquery('simple_unaccent', ${tsq})`;
       const projectScope = opts.projectSlug ? sql`AND p.slug = ${opts.projectSlug}` : sql``;
       const updatedSince = opts.updatedSince
         ? sql`${new Date(opts.updatedSince).toISOString()}::timestamptz`
