@@ -4,7 +4,7 @@
 
 _Story_: [US-006 — Search v2.1: prefix + accent-insensitive + fuzzy](../US-006.md)
 _Total estimate_: ~8-10h (solo, TDD pace)
-_Last updated_: 2026-05-01
+_Last updated_: 2026-05-01 (Done — 5/5 tasks shipped, `648242b..adbdfa3`)
 
 ---
 
@@ -24,13 +24,13 @@ _Last updated_: 2026-05-01
 
 ## Task Summary
 
-| #                                                         | Title                                             | Effort | AC covered             | FR touched | Layer | Status     |
-| --------------------------------------------------------- | ------------------------------------------------- | ------ | ---------------------- | ---------- | ----- | ---------- |
-| [T1](#t1--migration-unaccent--pg_trgm--rebuild-tsvectors) | Migration: unaccent + pg_trgm + rebuild tsvectors | 1.5h   | prereq                 | SEARCH-004 | BE/DB | 🟡 Planned |
-| [T2](#t2--buildtsquery-helper--searchrepo-rewrite)        | buildTsQuery helper + searchRepo prefix/unaccent  | 3h     | AC-1, AC-2, AC-3, AC-7 | SEARCH-004 | BE    | 🟡 Planned |
-| [T3](#t3--trigram-fuzzy-fallback--author-unaccent)        | Trigram fuzzy fallback + author display unaccent  | 2h     | AC-4, AC-5             | SEARCH-004 | BE    | 🟡 Planned |
-| [T4](#t4--unit--integration-tests--regression)            | Unit + integration tests + regression suite       | 1.5h   | AC-1..AC-7, AC-6       | all        | test  | 🟡 Planned |
-| [T5](#t5--e2e-extend--benchmark--progress-sync)           | E2E extend + benchmark + progress sync            | 1.5h   | AC-1 e2e, AC-6         | all        | test  | 🟡 Planned |
+| #                                                         | Title                                             | Effort | AC covered             | FR touched | Layer | Status           |
+| --------------------------------------------------------- | ------------------------------------------------- | ------ | ---------------------- | ---------- | ----- | ---------------- |
+| [T1](#t1--migration-unaccent--pg_trgm--rebuild-tsvectors) | Migration: unaccent + pg_trgm + rebuild tsvectors | 1.5h   | prereq                 | SEARCH-004 | BE/DB | ✅ `648242b`     |
+| [T2](#t2--buildtsquery-helper--searchrepo-rewrite)        | buildTsQuery helper + searchRepo prefix/unaccent  | 3h     | AC-1, AC-2, AC-3, AC-7 | SEARCH-004 | BE    | ✅ `1b0e75e`     |
+| [T3](#t3--trigram-fuzzy-fallback--author-unaccent)        | Trigram fuzzy fallback + author display unaccent  | 2h     | AC-4, AC-5             | SEARCH-004 | BE    | ✅ `630334c`     |
+| [T4](#t4--unit--integration-tests--regression)            | Unit + integration tests + regression suite       | 1.5h   | AC-1..AC-7, AC-6       | all        | test  | ✅ `adbdfa3`     |
+| [T5](#t5--e2e-extend--benchmark--progress-sync)           | E2E extend + benchmark + progress sync            | 1.5h   | AC-1 e2e, AC-6         | all        | test  | ✅ `this commit` |
 
 **Critical path**: T1 → T2 → T3 → T4 → T5.
 **Parallel potential**: T3 (author unaccent) độc lập T2; có thể start sau T1 cùng T2.
@@ -71,10 +71,10 @@ Update `apps/api/src/db/schema.ts` comment hint cho generated `search_vector` (n
 
 ### DoD checklist
 
-- [ ] Migration file landed; `pnpm db:up` clean run.
-- [ ] DB test verify 2 extensions + 1 function + 4 trigram indexes.
-- [ ] Existing US-005 search tests vẫn xanh (smoke regression).
-- [ ] `pnpm lint` + `pnpm typecheck` xanh.
+- [x] Migration file landed; `pnpm db:up` clean run.
+- [x] DB test verify 2 extensions + 1 function + 4 trigram indexes.
+- [x] Existing US-005 search tests vẫn xanh (smoke regression).
+- [x] `pnpm lint` + `pnpm typecheck` xanh.
 
 ### Commit example
 
@@ -128,10 +128,10 @@ feat(api): unaccent + pg_trgm extensions + rebuild tsvectors (US-006 / T1 / FR-S
 
 ### DoD checklist
 
-- [ ] 5 entity prefix tests pass.
-- [ ] AC-7 sanitize test pass.
-- [ ] Existing US-005 AC-1..AC-15 tests vẫn xanh.
-- [ ] `pnpm --filter @onboarding/api test` xanh.
+- [x] 5 entity prefix tests pass.
+- [x] AC-7 sanitize test pass.
+- [x] Existing US-005 AC-1..AC-15 tests vẫn xanh.
+- [x] `pnpm --filter @onboarding/api test` xanh.
 
 ### Commit example
 
@@ -177,10 +177,10 @@ feat(api): prefix + unaccent search query semantics (US-006 / T2 / FR-SEARCH-004
 
 ### DoD checklist
 
-- [ ] Trigram fallback hit cho 4 short fields.
-- [ ] Author unaccent + trgm hit work.
-- [ ] Rank ordering verified (tsquery > trgm fallback).
-- [ ] Tests xanh.
+- [x] Trigram fallback hit cho 4 short fields.
+- [x] Author unaccent + trgm hit work.
+- [x] Rank ordering verified (tsquery > trgm fallback).
+- [x] Tests xanh.
 
 ### Commit example
 
@@ -218,9 +218,9 @@ feat(api): pg_trgm fuzzy fallback + author unaccent (US-006 / T3 / FR-SEARCH-004
 
 ### DoD checklist
 
-- [ ] 2+ integration cases pass.
-- [ ] `pnpm test` toàn workspace xanh.
-- [ ] No `.skip` / `.only` leak.
+- [x] 2+ integration cases pass.
+- [x] `pnpm test` toàn workspace xanh.
+- [x] No `.skip` / `.only` leak.
 
 ### Commit example
 
@@ -260,9 +260,9 @@ test(api): US-006 unit + integration coverage (US-006 / T4)
 
 ### DoD checklist
 
-- [ ] `pnpm test:e2e` xanh (us-005 + extended scenario).
-- [ ] Benchmark documented < 500ms p95.
-- [ ] Progress-sync commit landed.
+- [x] `pnpm test:e2e` xanh (us-005 + extended scenario).
+- [x] Benchmark documented < 500ms p95.
+- [x] Progress-sync commit landed.
 
 ### Commit example
 

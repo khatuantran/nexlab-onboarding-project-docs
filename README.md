@@ -8,6 +8,8 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ✅ **US-005 Search v2 shipped 2026-04-25** — multi-entity grouped search (projects + features + sections + authors + uploads) with section-type / author / time / status filters. FR-SEARCH-002, FR-SEARCH-003, FR-USER-001 all green.
 
+✅ **US-006 Search v2.1 shipped 2026-05-01** — prefix matching (`q=a` → `A3Solutions`), Vietnamese-accent-insensitive (`dang nhap` ↔ `Đăng nhập`), and trigram fuzzy fallback (`ondoarding` → `onboarding`). Postgres-only via `unaccent` + `pg_trgm` extensions; zero infra cost. FR-SEARCH-004 green; 144/144 api + 24 shared + 128 web + e2e tests green.
+
 ## Vấn đề đang giải quyết
 
 - Dự án business phức tạp, tài liệu rải rác hoặc không có.
@@ -91,6 +93,7 @@ Full setup (DB migrate / seed / dev servers / E2E) ở [docs/SETUP.md](docs/SETU
 - [US-003 — Dev adds tech-notes + screenshots](.specs/stories/US-003.md) + [tasks](.specs/stories/US-003/tasks.md) — **Done** (7/7 ✅, 2026-04-24)
 - [US-004 — Project catalog + admin lifecycle](.specs/stories/US-004.md) + [tasks](.specs/stories/US-004/tasks.md) — **Done** (8/8 ✅, 2026-04-24)
 - [US-005 — Search v2 multi-entity + filters](.specs/stories/US-005.md) + [tasks](.specs/stories/US-005/tasks.md) — **Done** (10/10 ✅, 2026-04-25)
+- [US-006 — Search v2.1 prefix + accent-insensitive + fuzzy](.specs/stories/US-006.md) + [tasks](.specs/stories/US-006/tasks.md) — **Done** (5/5 ✅, 2026-05-01)
 
 **Operational**:
 

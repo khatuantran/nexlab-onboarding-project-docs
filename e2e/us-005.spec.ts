@@ -31,3 +31,29 @@ test("US-005 grouped search + section deep-link anchor scroll", async ({ page })
   // At least the Features group renders (seed has login-with-email matching "đăng nhập").
   await expect(page.getByRole("heading", { name: "Features", level: 2 })).toBeVisible();
 });
+
+/**
+ * US-006 — search v2.1 prefix + accent-insensitive coverage on the same
+ * SearchPage flow. AC-2 (feature title prefix) + AC-3 (accent-insensitive).
+ */
+test("US-006 prefix + accent-insensitive header search", async ({ page }) => {
+  await page.goto("/login");
+  await page.getByLabel(/email/i).fill("admin@local");
+  await page.getByLabel(/mật khẩu/i).fill("dev12345");
+  await page.getByRole("button", { name: /đăng nhập/i }).click();
+  await expect(page).toHaveURL("/");
+
+  // Partial token (3 chars, no diacritics): seed has feature 'Đăng nhập bằng
+  // email' — the unaccented prefix 'đăn' should now hit it.
+  const searchbox = page.getByRole("searchbox", { name: /tìm feature/i });
+  await searchbox.fill("đăn");
+  await searchbox.press("Enter");
+  await expect(page).toHaveURL(/\/search\?/);
+  await expect(page.getByRole("heading", { name: "Features", level: 2 })).toBeVisible();
+
+  // Now go back and try the accent-stripped form 'dang' — same hit set.
+  await searchbox.fill("dang");
+  await searchbox.press("Enter");
+  await expect(page).toHaveURL(/\/search\?/);
+  await expect(page.getByRole("heading", { name: "Features", level: 2 })).toBeVisible();
+});
