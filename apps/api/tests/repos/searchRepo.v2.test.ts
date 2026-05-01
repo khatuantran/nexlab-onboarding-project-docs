@@ -246,6 +246,48 @@ describe("searchAll — filters", () => {
     }
   });
 
+  it("US-006 / AC-4 — trigram fuzzy fallback for typo'd project name", async () => {
+    const slug = `t3-fuzzy-${Date.now()}`;
+    const [demo] = await db.select().from(projects).where(eq(projects.slug, "demo")).limit(1);
+    const [tmp] = await db
+      .insert(projects)
+      .values({ slug, name: "onboarding", createdBy: demo!.createdBy })
+      .returning();
+    try {
+      // 'ondoarding' is a single-char typo of 'onboarding' — trigram
+      // similarity between unaccented forms should still return a hit.
+      const result = await repo.searchAll("ondoarding");
+      const hit = result.projects.find((p) => p.slug === slug);
+      expect(hit).toBeDefined();
+    } finally {
+      await db.delete(projects).where(eq(projects.id, tmp!.id));
+    }
+  });
+
+  it("US-006 / AC-5 — author display name matches unaccented prefix", async () => {
+    // Demo seed has admin user 'Admin' (display_name). Create a Vietnamese
+    // user fixture so the unaccented match is observable.
+    const [admin] = await db.select().from(users).where(eq(users.email, "admin@local")).limit(1);
+    const tmpEmail = `t3-author-${Date.now()}@local`;
+    const [tmp] = await db
+      .insert(users)
+      .values({
+        email: tmpEmail,
+        passwordHash: admin!.passwordHash,
+        displayName: "Lê Văn Hùng",
+        role: "author",
+      })
+      .returning();
+    try {
+      const result = await repo.searchAll("hung");
+      const hit = result.authors.find((a) => a.id === tmp!.id);
+      expect(hit).toBeDefined();
+      expect(hit?.displayName).toBe("Lê Văn Hùng");
+    } finally {
+      await db.delete(users).where(eq(users.id, tmp!.id));
+    }
+  });
+
   it("US-006 / AC-7 — sanitizes tsquery input with special chars", async () => {
     // Should not raise to_tsquery syntax error; treats as alphanumeric tokens.
     await expect(repo.searchAll("foo&|!()bar")).resolves.toBeDefined();

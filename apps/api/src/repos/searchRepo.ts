@@ -126,10 +126,16 @@ export function createSearchRepo(db: Db): SearchRepo {
                 ${HEADLINE_OPTS}
               ) AS "snippet",
               p.updated_at AS "updatedAt",
-              ts_rank(p.search_vector, ${tsQuery}) AS "rank",
+              greatest(
+                ts_rank(p.search_vector, ${tsQuery}),
+                similarity(immutable_unaccent(p.name), immutable_unaccent(${q}))
+              ) AS "rank",
               (SELECT count(*)::int FROM features WHERE project_id = p.id) AS "featureCount"
             FROM projects p
-            WHERE p.search_vector @@ ${tsQuery}
+            WHERE (
+                p.search_vector @@ ${tsQuery}
+                OR immutable_unaccent(p.name) % immutable_unaccent(${q})
+              )
               AND p.archived_at IS NULL
               ${projectScope}
               ${updatedSince ? sql`AND p.updated_at >= ${updatedSince}` : sql``}
@@ -153,14 +159,20 @@ export function createSearchRepo(db: Db): SearchRepo {
                 ${tsQuery},
                 ${HEADLINE_OPTS}
               ) AS "snippet",
-              ts_rank(f.search_vector, ${tsQuery}) AS "rank",
+              greatest(
+                ts_rank(f.search_vector, ${tsQuery}),
+                similarity(immutable_unaccent(f.title), immutable_unaccent(${q}))
+              ) AS "rank",
               f.updated_at AS "updatedAt",
               coalesce(max(filled.filled_count), 0) AS "filledSectionCount"
             FROM features f
             INNER JOIN projects p ON p.id = f.project_id AND p.archived_at IS NULL
             LEFT JOIN sections s ON s.feature_id = f.id
             LEFT JOIN filled ON filled.feature_id = f.id
-            WHERE f.search_vector @@ ${tsQuery}
+            WHERE (
+                f.search_vector @@ ${tsQuery}
+                OR immutable_unaccent(f.title) % immutable_unaccent(${q})
+              )
               ${projectScope}
               ${
                 sectionTypeInList
@@ -229,18 +241,23 @@ export function createSearchRepo(db: Db): SearchRepo {
               u.display_name AS "displayName",
               u.role::text AS "role",
               count(DISTINCT f.id)::int AS "touchedFeatureCount",
-              CASE
-                WHEN lower(u.display_name) = lower(${q}) THEN 1.0
-                WHEN lower(u.display_name) LIKE lower(${q}) || '%' THEN 0.8
-                ELSE 0.5
-              END AS "rank"
+              greatest(
+                CASE
+                  WHEN immutable_unaccent(lower(u.display_name)) = immutable_unaccent(lower(${q})) THEN 1.0
+                  WHEN immutable_unaccent(lower(u.display_name)) LIKE immutable_unaccent(lower(${q})) || '%' THEN 0.8
+                  WHEN immutable_unaccent(lower(u.display_name)) LIKE '%' || immutable_unaccent(lower(${q})) || '%' THEN 0.6
+                  ELSE 0.0
+                END,
+                similarity(immutable_unaccent(u.display_name), immutable_unaccent(${q}))
+              ) AS "rank"
             FROM users u
             LEFT JOIN sections s ON s.updated_by = u.id
             LEFT JOIN features f ON f.id = s.feature_id
             LEFT JOIN projects p ON p.id = f.project_id AND p.archived_at IS NULL
-            WHERE u.display_name ILIKE ${"%" + q + "%"}
+            WHERE immutable_unaccent(u.display_name) ILIKE '%' || immutable_unaccent(${q}) || '%'
+              OR immutable_unaccent(u.display_name) % immutable_unaccent(${q})
             GROUP BY u.id
-            ORDER BY "touchedFeatureCount" DESC, "rank" DESC, u.display_name ASC
+            ORDER BY "rank" DESC, "touchedFeatureCount" DESC, u.display_name ASC
             LIMIT ${HITS_PER_GROUP}
           `),
 
@@ -254,12 +271,18 @@ export function createSearchRepo(db: Db): SearchRepo {
               f.title AS "featureTitle",
               uploader.display_name AS "uploadedByName",
               up.created_at AS "createdAt",
-              ts_rank(up.search_vector, ${tsQuery}) AS "rank"
+              greatest(
+                ts_rank(up.search_vector, ${tsQuery}),
+                similarity(immutable_unaccent(up.filename), immutable_unaccent(${q}))
+              ) AS "rank"
             FROM uploads up
             INNER JOIN features f ON f.id = up.feature_id
             INNER JOIN projects p ON p.id = f.project_id AND p.archived_at IS NULL
             LEFT JOIN users uploader ON uploader.id = up.uploaded_by
-            WHERE up.search_vector @@ ${tsQuery}
+            WHERE (
+                up.search_vector @@ ${tsQuery}
+                OR immutable_unaccent(up.filename) % immutable_unaccent(${q})
+              )
               ${projectScope}
               ${opts.authorId ? sql`AND up.uploaded_by = ${opts.authorId}::uuid` : sql``}
               ${updatedSince ? sql`AND up.created_at >= ${updatedSince}` : sql``}
