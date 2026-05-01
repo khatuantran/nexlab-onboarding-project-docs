@@ -11,6 +11,8 @@ import { createRateLimit, type RateLimitClient } from "../../src/middleware/rate
 import { createRequireAuth } from "../../src/middleware/requireAuth.js";
 import { db } from "../../src/db/client.js";
 import { pool } from "../../src/db.js";
+import { eq } from "drizzle-orm";
+import { projects } from "../../src/db/schema.js";
 
 function buildApp() {
   const userRepo = createUserRepo(db);
@@ -138,6 +140,51 @@ describe("GET /api/v1/search (US-005 v2)", () => {
     // Sections array (if any) should all be user-flow.
     for (const s of res.body.data.sections) {
       expect(s.sectionType).toBe("user-flow");
+    }
+  });
+
+  it("US-006 / FR-SEARCH-004 — single-character query prefix-matches project name", async () => {
+    const slug = `t4-prefix-${Date.now()}`;
+    const [demo] = await db.select().from(projects).where(eq(projects.slug, "demo")).limit(1);
+    const [tmp] = await db
+      .insert(projects)
+      .values({
+        slug,
+        name: "A3Solutions",
+        description: "Pilot tenant for prefix smoke",
+        createdBy: demo!.createdBy,
+      })
+      .returning();
+    try {
+      const agent = await loginAs("admin@local");
+      const res = await agent.get("/api/v1/search?q=a");
+      expect(res.status).toBe(200);
+      const hit = res.body.data.projects.find((p: { slug: string }) => p.slug === slug);
+      expect(hit).toBeDefined();
+    } finally {
+      await db.delete(projects).where(eq(projects.id, tmp!.id));
+    }
+  });
+
+  it("US-006 / FR-SEARCH-004 — accent-insensitive query matches accented name", async () => {
+    const slug = `t4-accent-${Date.now()}`;
+    const [demo] = await db.select().from(projects).where(eq(projects.slug, "demo")).limit(1);
+    const [tmp] = await db
+      .insert(projects)
+      .values({
+        slug,
+        name: "Đăng nhập SSO",
+        createdBy: demo!.createdBy,
+      })
+      .returning();
+    try {
+      const agent = await loginAs("admin@local");
+      const res = await agent.get(`/api/v1/search?q=${encodeURIComponent("dang nhap")}`);
+      expect(res.status).toBe(200);
+      const hit = res.body.data.projects.find((p: { slug: string }) => p.slug === slug);
+      expect(hit).toBeDefined();
+    } finally {
+      await db.delete(projects).where(eq(projects.id, tmp!.id));
     }
   });
 
