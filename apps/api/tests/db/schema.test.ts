@@ -73,12 +73,15 @@ describe("FTS trigger features_rebuild_search_vector", () => {
   });
 
   it("matches tsquery for a term present in title", async () => {
+    // Vectors are unaccented after US-006 / FR-SEARCH-004 migration, so the
+    // raw probe term must also be unaccented to match. searchRepo handles the
+    // unaccent translation for callers in production.
     const result = await db.execute<{ slug: string }>(sql`
       SELECT slug FROM features
-      WHERE search_vector @@ plainto_tsquery('simple', 'đăng')
+      WHERE search_vector @@ plainto_tsquery('simple', 'dang')
     `);
     expect(result.rows.length).toBeGreaterThan(0);
-    // Pilot fixtures (Daikin KTV, etc.) also match 'đăng'; assert the demo
+    // Pilot fixtures (Daikin KTV, etc.) also match 'dang'; assert the demo
     // feature is in the result set rather than at position 0.
     expect(result.rows.some((r) => r.slug === "login-with-email")).toBe(true);
   });

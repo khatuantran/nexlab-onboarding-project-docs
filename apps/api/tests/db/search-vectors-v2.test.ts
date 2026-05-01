@@ -142,3 +142,102 @@ describe("GIN indexes", () => {
     expect(result.rows.length).toBeGreaterThan(0);
   });
 });
+
+/**
+ * US-006 T1 — unaccent + pg_trgm extensions, immutable_unaccent helper,
+ * trigram GIN indexes for short fields (FR-SEARCH-004).
+ */
+describe("US-006 T1 — unaccent + pg_trgm + trigram indexes (FR-SEARCH-004)", () => {
+  it("has unaccent + pg_trgm extensions enabled", async () => {
+    const result = await db.execute<{ extname: string }>(sql`
+      SELECT extname FROM pg_extension
+      WHERE extname IN ('unaccent', 'pg_trgm')
+      ORDER BY extname
+    `);
+    expect(result.rows.map((r) => r.extname)).toEqual(["pg_trgm", "unaccent"]);
+  });
+
+  it("exposes immutable_unaccent(text) marked IMMUTABLE", async () => {
+    const result = await db.execute<{ provolatile: string }>(sql`
+      SELECT provolatile FROM pg_proc WHERE proname = 'immutable_unaccent'
+    `);
+    expect(result.rows.length).toBeGreaterThan(0);
+    // 'i' = IMMUTABLE, 's' = STABLE, 'v' = VOLATILE
+    expect(result.rows[0]?.provolatile).toBe("i");
+  });
+
+  it("immutable_unaccent removes Vietnamese diacritics", async () => {
+    const result = await db.execute<{ result: string }>(sql`
+      SELECT immutable_unaccent('Đăng nhập SSO') AS result
+    `);
+    expect(result.rows[0]?.result).toBe("Dang nhap SSO");
+  });
+
+  it("projects.name has a trigram GIN index over immutable_unaccent", async () => {
+    const result = await db.execute<{ indexname: string }>(sql`
+      SELECT indexname FROM pg_indexes
+      WHERE tablename = 'projects'
+        AND indexdef ILIKE '%gin_trgm_ops%'
+        AND indexdef ILIKE '%immutable_unaccent%'
+        AND indexdef ILIKE '%name%'
+    `);
+    expect(result.rows.length).toBeGreaterThan(0);
+  });
+
+  it("features.title has a trigram GIN index over immutable_unaccent", async () => {
+    const result = await db.execute<{ indexname: string }>(sql`
+      SELECT indexname FROM pg_indexes
+      WHERE tablename = 'features'
+        AND indexdef ILIKE '%gin_trgm_ops%'
+        AND indexdef ILIKE '%immutable_unaccent%'
+        AND indexdef ILIKE '%title%'
+    `);
+    expect(result.rows.length).toBeGreaterThan(0);
+  });
+
+  it("users.display_name has a trigram GIN index over immutable_unaccent", async () => {
+    const result = await db.execute<{ indexname: string }>(sql`
+      SELECT indexname FROM pg_indexes
+      WHERE tablename = 'users'
+        AND indexdef ILIKE '%gin_trgm_ops%'
+        AND indexdef ILIKE '%immutable_unaccent%'
+        AND indexdef ILIKE '%display_name%'
+    `);
+    expect(result.rows.length).toBeGreaterThan(0);
+  });
+
+  it("uploads.filename has a trigram GIN index over immutable_unaccent", async () => {
+    const result = await db.execute<{ indexname: string }>(sql`
+      SELECT indexname FROM pg_indexes
+      WHERE tablename = 'uploads'
+        AND indexdef ILIKE '%gin_trgm_ops%'
+        AND indexdef ILIKE '%immutable_unaccent%'
+        AND indexdef ILIKE '%filename%'
+    `);
+    expect(result.rows.length).toBeGreaterThan(0);
+  });
+
+  it("projects.search_vector contains unaccented lexemes after rebuild", async () => {
+    // Use a throwaway project to verify the rebuild fn includes immutable_unaccent.
+    const [demo] = await db.select().from(projects).where(eq(projects.slug, "demo")).limit(1);
+    const createdBy = demo!.createdBy;
+    const slug = `t1-unaccent-${Date.now()}`;
+
+    const [tmp] = await db
+      .insert(projects)
+      .values({ slug, name: "Đăng nhập SSO", createdBy })
+      .returning();
+
+    try {
+      // Query by unaccented term: "dang" should match "Đăng" once unaccented.
+      const result = await db.execute<{ slug: string }>(sql`
+        SELECT slug FROM projects
+        WHERE search_vector @@ to_tsquery('simple', 'dang:*')
+          AND id = ${tmp!.id}
+      `);
+      expect(result.rows.some((r) => r.slug === slug)).toBe(true);
+    } finally {
+      await db.delete(projects).where(eq(projects.id, tmp!.id));
+    }
+  });
+});

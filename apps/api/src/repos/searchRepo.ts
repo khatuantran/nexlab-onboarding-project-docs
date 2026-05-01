@@ -66,16 +66,16 @@ export function createSearchRepo(db: Db): SearchRepo {
           f.slug AS "featureSlug",
           f.title AS "title",
           ts_headline(
-            'simple',
+            'simple_unaccent',
             coalesce(f.title, '') || ' ' || coalesce(string_agg(s.body, ' '), ''),
-            plainto_tsquery('simple', ${q}),
+            plainto_tsquery('simple_unaccent', ${q}),
             ${HEADLINE_OPTS}
           ) AS "snippet",
-          ts_rank(f.search_vector, plainto_tsquery('simple', ${q})) AS "rank"
+          ts_rank(f.search_vector, plainto_tsquery('simple_unaccent', ${q})) AS "rank"
         FROM features f
         INNER JOIN projects p ON p.id = f.project_id
         LEFT JOIN sections s ON s.feature_id = f.id
-        WHERE f.search_vector @@ plainto_tsquery('simple', ${q})
+        WHERE f.search_vector @@ plainto_tsquery('simple_unaccent', ${q})
           AND p.archived_at IS NULL
         ${projectFilter}
         GROUP BY p.slug, f.id
@@ -86,7 +86,7 @@ export function createSearchRepo(db: Db): SearchRepo {
     },
 
     async searchAll(q, opts = {}) {
-      const tsQuery = sql`plainto_tsquery('simple', ${q})`;
+      const tsQuery = sql`plainto_tsquery('simple_unaccent', ${q})`;
       const projectScope = opts.projectSlug ? sql`AND p.slug = ${opts.projectSlug}` : sql``;
       const updatedSince = opts.updatedSince
         ? sql`${new Date(opts.updatedSince).toISOString()}::timestamptz`
@@ -107,7 +107,7 @@ export function createSearchRepo(db: Db): SearchRepo {
               p.slug AS "slug",
               p.name AS "name",
               ts_headline(
-                'simple',
+                'simple_unaccent',
                 coalesce(p.name, '') || ' ' || coalesce(p.description, ''),
                 ${tsQuery},
                 ${HEADLINE_OPTS}
@@ -135,7 +135,7 @@ export function createSearchRepo(db: Db): SearchRepo {
               f.slug AS "featureSlug",
               f.title AS "title",
               ts_headline(
-                'simple',
+                'simple_unaccent',
                 coalesce(f.title, '') || ' ' || coalesce(string_agg(s.body, ' '), ''),
                 ${tsQuery},
                 ${HEADLINE_OPTS}
@@ -187,16 +187,16 @@ export function createSearchRepo(db: Db): SearchRepo {
               f.slug AS "featureSlug",
               f.title AS "featureTitle",
               s.type::text AS "sectionType",
-              ts_headline('simple', s.body, ${tsQuery}, ${HEADLINE_OPTS}) AS "snippet",
+              ts_headline('simple_unaccent', s.body, ${tsQuery}, ${HEADLINE_OPTS}) AS "snippet",
               s.updated_at AS "updatedAt",
               u.display_name AS "updatedByName",
-              ts_rank(to_tsvector('simple', s.body), ${tsQuery}) AS "rank"
+              ts_rank(to_tsvector('simple_unaccent', s.body), ${tsQuery}) AS "rank"
             FROM sections s
             INNER JOIN features f ON f.id = s.feature_id
             INNER JOIN projects p ON p.id = f.project_id AND p.archived_at IS NULL
             LEFT JOIN users u ON u.id = s.updated_by
             LEFT JOIN filled ON filled.feature_id = f.id
-            WHERE to_tsvector('simple', s.body) @@ ${tsQuery}
+            WHERE to_tsvector('simple_unaccent', s.body) @@ ${tsQuery}
               ${projectScope}
               ${sectionTypeInList ? sql`AND s.type::text IN (${sectionTypeInList})` : sql``}
               ${opts.authorId ? sql`AND s.updated_by = ${opts.authorId}::uuid` : sql``}
