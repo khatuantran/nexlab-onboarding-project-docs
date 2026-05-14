@@ -21,9 +21,11 @@ primary_region = "sin"
 [deploy]
   release_command = "pnpm --filter @onboarding/api db:migrate:prod"
 
-[[mounts]]
-  source = "uploads_volume"
-  destination = "/data/uploads"
+# uploads_volume mount removed 2026-05-14 per CR-004 Phase 1.
+# Upload route's writeFile now lands in ephemeral container fs
+# (mkdir -p /data/uploads still runs in Dockerfile); files survive
+# only until the next machine restart. Phase 2 moves storage to
+# Cloudinary CDN — re-add a [[mounts]] block here ONLY if reverting.
 
 [http_service]
   internal_port = 3001
