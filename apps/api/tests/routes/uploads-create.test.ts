@@ -1,6 +1,3 @@
-import { mkdtemp, readdir, readFile, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import path from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import session from "express-session";
 import request from "supertest";
@@ -19,6 +16,7 @@ import { createRequireAuth } from "../../src/middleware/requireAuth.js";
 import { db } from "../../src/db/client.js";
 import { pool } from "../../src/db.js";
 import { projects, uploads } from "../../src/db/schema.js";
+import type { CloudinaryClient } from "../../src/lib/cloudinary.js";
 
 // Minimal 1×1 transparent PNG — magic bytes verified by file-type.
 const PNG_1x1_BASE64 =
@@ -31,7 +29,40 @@ const gifBuf = Buffer.from("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIB
 // PDF magic disguised as .png Content-Type → 415 via magic-byte sniff.
 const pdfBuf = Buffer.from("%PDF-1.4\n%âãÏÓ\n1 0 obj\n<<>>\nendobj\n");
 
-let TEST_UPLOAD_DIR = "";
+interface FakeCloudinaryState {
+  configured: boolean;
+  shouldFail: boolean;
+  calls: Array<{ publicId: string; bytes: number; filename?: string }>;
+}
+
+function createFakeCloudinary(state: FakeCloudinaryState): CloudinaryClient {
+  return {
+    isConfigured: () => state.configured,
+    async uploadImage(input) {
+      state.calls.push({
+        publicId: input.publicId,
+        bytes: input.buffer.length,
+        filename: input.filename,
+      });
+      if (state.shouldFail) {
+        throw new Error("simulated cloudinary outage");
+      }
+      return {
+        publicId: input.publicId,
+        secureUrl: `https://res.cloudinary.com/test/image/upload/v1/${input.publicId}.png`,
+        bytes: input.buffer.length,
+        format: "png",
+        version: 1,
+      };
+    },
+  };
+}
+
+const cloudinaryState: FakeCloudinaryState = {
+  configured: true,
+  shouldFail: false,
+  calls: [],
+};
 
 function buildApp() {
   const userRepo = createUserRepo(db);
@@ -68,7 +99,8 @@ function buildApp() {
       uploadRepo,
       featureRepo,
       requireAuth,
-      uploadDir: TEST_UPLOAD_DIR,
+      cloudinary: createFakeCloudinary(cloudinaryState),
+      cloudinaryFolder: "onboarding-portal/test",
     }),
   });
 }
@@ -84,7 +116,6 @@ const projectSlug = `t2-host-${Date.now()}`;
 let featureId = "";
 
 beforeAll(async () => {
-  TEST_UPLOAD_DIR = await mkdtemp(path.join(tmpdir(), "uploads-test-"));
   const admin = await loginAs("admin@local");
   await admin.post("/api/v1/projects").send({ slug: projectSlug, name: "T2 Host" });
   const feat = await admin
@@ -97,11 +128,15 @@ afterAll(async () => {
   await db.delete(uploads).where(eq(uploads.featureId, featureId));
   await db.delete(projects).where(inArray(projects.slug, [projectSlug]));
   await pool.end();
-  await rm(TEST_UPLOAD_DIR, { recursive: true, force: true });
 });
 
 describe("POST /api/v1/features/:featureId/uploads", () => {
-  it("returns 201 with valid png for author + writes file + inserts row", async () => {
+  it("CR-004 / Phase 2 — streams to Cloudinary + returns absolute secure_url + inserts row", async () => {
+    // Reset Cloudinary state for this test.
+    cloudinaryState.configured = true;
+    cloudinaryState.shouldFail = false;
+    cloudinaryState.calls = [];
+
     const agent = await loginAs("dev@local");
     const res = await agent
       .post(`/api/v1/features/${featureId}/uploads`)
@@ -113,21 +148,54 @@ describe("POST /api/v1/features/:featureId/uploads", () => {
       mimeType: "image/png",
     });
     expect(res.body.data.id).toMatch(/^[0-9a-f-]{36}$/i);
-    expect(res.body.data.url).toBe(`/api/v1/uploads/${res.body.data.id}`);
-    expect(res.body.data.createdAt).toBeDefined();
+    // URL is now Cloudinary's absolute secure URL, not /api/v1/uploads/:id.
+    expect(res.body.data.url).toMatch(/^https:\/\/res\.cloudinary\.com\//);
+    expect(res.body.data.url).toContain(`onboarding-portal/test/${res.body.data.id}`);
 
-    const files = await readdir(TEST_UPLOAD_DIR);
-    const saved = files.find((f) => f.startsWith(res.body.data.id));
-    expect(saved).toBeDefined();
-    expect(saved!.endsWith(".png")).toBe(true);
-
-    const stored = await readFile(path.join(TEST_UPLOAD_DIR, saved!));
-    expect(stored.equals(realPng)).toBe(true);
+    // Cloudinary client was invoked exactly once with the right public_id.
+    expect(cloudinaryState.calls).toHaveLength(1);
+    expect(cloudinaryState.calls[0]!.publicId).toBe(`onboarding-portal/test/${res.body.data.id}`);
+    expect(cloudinaryState.calls[0]!.bytes).toBe(realPng.length);
+    expect(cloudinaryState.calls[0]!.filename).toBe("shot.png");
 
     const [row] = await db.select().from(uploads).where(eq(uploads.id, res.body.data.id));
     expect(row?.filename).toBe("shot.png");
     expect(row?.mimeType).toBe("image/png");
     expect(row?.uploadedBy).toBeTruthy();
+    expect(row?.cloudinaryPublicId).toBe(`onboarding-portal/test/${res.body.data.id}`);
+  });
+
+  it("CR-004 / Phase 2 — 503 UPLOADS_DISABLED when Cloudinary not configured", async () => {
+    cloudinaryState.configured = false;
+    cloudinaryState.shouldFail = false;
+    cloudinaryState.calls = [];
+
+    const agent = await loginAs("admin@local");
+    const res = await agent
+      .post(`/api/v1/features/${featureId}/uploads`)
+      .attach("file", realPng, { filename: "a.png", contentType: "image/png" });
+
+    expect(res.status).toBe(503);
+    expect(res.body.error.code).toBe("UPLOADS_DISABLED");
+    expect(cloudinaryState.calls).toHaveLength(0);
+  });
+
+  it("CR-004 / Phase 2 — 502 UPLOAD_PROVIDER_ERROR when Cloudinary throws", async () => {
+    cloudinaryState.configured = true;
+    cloudinaryState.shouldFail = true;
+    cloudinaryState.calls = [];
+
+    const agent = await loginAs("admin@local");
+    const res = await agent
+      .post(`/api/v1/features/${featureId}/uploads`)
+      .attach("file", realPng, { filename: "b.png", contentType: "image/png" });
+
+    expect(res.status).toBe(502);
+    expect(res.body.error.code).toBe("UPLOAD_PROVIDER_ERROR");
+    expect(cloudinaryState.calls).toHaveLength(1);
+
+    // Reset for downstream tests.
+    cloudinaryState.shouldFail = false;
   });
 
   it("returns 413 FILE_TOO_LARGE for 6 MiB upload", async () => {
@@ -180,7 +248,11 @@ describe("POST /api/v1/features/:featureId/uploads", () => {
     expect(res.body.error.code).toBe("UNAUTHENTICATED");
   });
 
-  it("stores file under UUID filename (no path traversal)", async () => {
+  it("CR-004 / Phase 2 — original filename never appears in Cloudinary public_id (traversal-safe)", async () => {
+    cloudinaryState.configured = true;
+    cloudinaryState.shouldFail = false;
+    cloudinaryState.calls = [];
+
     const agent = await loginAs("admin@local");
     const res = await agent.post(`/api/v1/features/${featureId}/uploads`).attach("file", realPng, {
       filename: "../../etc/passwd.png",
@@ -188,10 +260,9 @@ describe("POST /api/v1/features/:featureId/uploads", () => {
     });
 
     expect(res.status).toBe(201);
-    const files = await readdir(TEST_UPLOAD_DIR);
-    const escape = files.find((f) => f.includes(".."));
-    expect(escape).toBeUndefined();
-    const saved = files.find((f) => f.startsWith(res.body.data.id));
-    expect(saved).toBeDefined();
+    expect(cloudinaryState.calls).toHaveLength(1);
+    // public_id only contains folder + uuid, not the malicious original.
+    expect(cloudinaryState.calls[0]!.publicId).not.toContain("..");
+    expect(cloudinaryState.calls[0]!.publicId).toMatch(/^onboarding-portal\/test\/[0-9a-f-]{36}$/);
   });
 });

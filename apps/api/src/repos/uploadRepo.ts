@@ -9,6 +9,8 @@ export interface InsertUploadInput {
   mimeType: string;
   sizeBytes: number;
   filename: string;
+  /** CR-004 Phase 2: `<folder>/<uuid>` set by Cloudinary on successful upload. */
+  cloudinaryPublicId?: string;
 }
 
 export interface UploadRepo {

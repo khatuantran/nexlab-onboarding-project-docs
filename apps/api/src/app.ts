@@ -30,7 +30,6 @@ export type AppDeps = HealthDeps & {
   searchRouter?: express.Router;
   usersRouter?: express.Router;
   uploadsRouter?: express.Router;
-  uploadsReadRouter?: express.Router;
 };
 
 /**
@@ -107,9 +106,6 @@ export function createApp(deps: AppDeps): Express {
   }
   if (deps.uploadsRouter) {
     v1.use("/features", deps.uploadsRouter);
-  }
-  if (deps.uploadsReadRouter) {
-    v1.use("/uploads", deps.uploadsReadRouter);
   }
   if (deps.searchRouter) {
     v1.use("/search", deps.searchRouter);

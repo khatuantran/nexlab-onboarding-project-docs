@@ -20,6 +20,8 @@ const MESSAGES: Record<ErrorCode, string> = {
   SEARCH_QUERY_TOO_LONG: "Từ khoá quá dài",
   FILE_TOO_LARGE: "File quá lớn (max 5 MiB)",
   UNSUPPORTED_MEDIA_TYPE: "Chỉ chấp nhận png, jpg, webp",
+  UPLOADS_DISABLED: "Upload tạm thời không khả dụng",
+  UPLOAD_PROVIDER_ERROR: "Lỗi từ dịch vụ lưu ảnh, thử lại sau",
   VALIDATION_ERROR: "Dữ liệu không hợp lệ",
   INTERNAL_ERROR: "Có lỗi xảy ra, thử lại",
   NOT_FOUND: "Không tìm thấy",
