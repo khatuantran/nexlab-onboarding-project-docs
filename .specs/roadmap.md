@@ -70,7 +70,7 @@ Implement US-002 rồi US-003.
 - **Progress** (US-003, 7 tasks, in progress):
   - [T1](stories/US-003/tasks.md#t1--uploads-migration--shared-schemas) uploads table migration + shared schemas + file-type dep — ✅ `b285b99` (2026-04-24).
   - [T2](stories/US-003/tasks.md#t2--post-uploads-endpoint) POST /features/:id/uploads endpoint (multer + magic-byte sniff) — ✅ `b082416` (2026-04-24).
-  - [T3](stories/US-003/tasks.md#t3--get-uploads-id-static-serve) GET /uploads/:id session-protected static serve — ✅ `4690b8e` (2026-04-24).
+  - [T3](stories/US-003/tasks.md#t3--get-uploads-id-static-serve) GET /uploads/:id session-protected static serve — ✅ `4690b8e` (2026-04-24); auth gate dropped [BUG-003 `db94afc`](bugs/BUG-003.md) (2026-05-14); **route deleted entirely [CR-004 Phase 2 `7eb3617`](changes/CR-004.md)** (2026-05-14) — Cloudinary CDN serves binaries.
   - [T4](stories/US-003/tasks.md#t4--embed-parser--embedcard-component) embed parser + EmbedCard HTML post-process — ✅ `a262cf3` (2026-04-24).
   - [T5](stories/US-003/tasks.md#t5--sectioneditor-upload-toolbar) SectionEditor upload toolbar + useUpload + cursor insert — ✅ `f75f75a` (2026-04-24).
   - [T6](stories/US-003/tasks.md#t6--section-editable-gate--ownership) Enable 5-section edit + per-section ownership UI — ✅ `dd1c213` (2026-04-24).
@@ -103,7 +103,7 @@ Deploy lên free-tier managed stack ($0/tháng), pilot với ≥ 1 project thậ
 
 - **Deliverable**:
   - **FE**: Cloudflare Pages auto-build từ `main` → `https://<project>.pages.dev`.
-  - **BE**: Fly.io shared-cpu-1x@256mb region sin + persistent volume 3GB tại `/data/uploads` → `https://onboarding-api-cool-waterfall-8568.fly.dev`.
+  - **BE**: Fly.io shared-cpu-1x@256mb region sin → `https://onboarding-api-cool-waterfall-8568.fly.dev`. (Persistent volume removed [CR-004 Phase 1 `dbbf195`](changes/CR-004.md), 2026-05-14 — image storage moved to Cloudinary CDN in Phase 2.)
   - **Postgres**: Neon free tier 0.5GB region sin (full Postgres 16, plpgsql + tsvector).
   - **Redis**: Upstash free tier 10k cmd/day region ap-southeast-1 (session store + rate limit).
   - **CI/CD**: GitHub Actions cho BE (`flyctl deploy --remote-only` on push main). Cloudflare Pages auto-build cho FE.

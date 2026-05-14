@@ -177,8 +177,9 @@ Chi tiết: [ADR-001 §2.6](adr/ADR-001-tech-stack.md#26-infrastructure) (dev in
 │ updated_at              │   │ created_at            │
 │ UNIQUE(feature_id, type)│   └───────────────────────┘
 └─────────────────────────┘          (binary lives on
-   (5 rows per feature)               UPLOAD_DIR volume,
-                                      not in DB)
+   (5 rows per feature)               Cloudinary CDN — DB
+                                      keeps cloudinary_public_id
+                                      only; CR-004 Phase 2)
 
 sections.type enum: business | user-flow | business-rules | tech-notes | screenshots
 ```
@@ -188,7 +189,7 @@ sections.type enum: business | user-flow | business-rules | tech-notes | screens
 - Mỗi `feature` luôn có đúng 5 `sections` — enforce ở service layer + seed (không DB-level CHECK để migration đơn giản).
 - `sections.type` enum cố định 5 giá trị, ref [glossary.md §Section type](glossary.md).
 - `features.search_vector` update qua trigger khi `features.title` hoặc `sections.body` đổi. Chi tiết SQL trigger chốt ở [US-001 T3](stories/US-001/tasks.md#t3--db-schema--migration--seed).
-- `uploads` row là metadata; file nhị phân nằm ở `UPLOAD_DIR/:featureId/:uploadId.:ext` (mount Docker volume).
+- `uploads` row là metadata; file nhị phân nằm ở **Cloudinary CDN** (per [CR-004](changes/CR-004.md) Phase 2). DB cột `cloudinary_public_id` = `<folder>/<uuid>` reference cho audit/migration; binary serve qua absolute `https://res.cloudinary.com/...` URL trả từ POST response.
 - Cascade delete: xoá `feature` → cascade `sections` + `uploads`. Xoá `project` → cascade `features`. Users không cascade (khi xoá user, set `updated_by`/`uploaded_by` = NULL hoặc reject). Decide cụ thể ở T3.
 
 Migrations ở `apps/api/src/db/migrations/` — sinh bằng `drizzle-kit generate` (never hand-edit).

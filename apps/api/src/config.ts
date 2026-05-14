@@ -8,7 +8,6 @@ const schema = z.object({
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("info"),
   SESSION_SECRET: z.string().min(16).default("dev-secret-change-me-min-16chars"),
   CORS_ORIGIN: z.string().default("http://localhost:5173"),
-  UPLOAD_DIR: z.string().default("./data/uploads"),
   // CR-004 Phase 2: Cloudinary storage. Format:
   //   cloudinary://<api_key>:<api_secret>@<cloud_name>
   // Empty string keeps boot working in dev/test before the user provides

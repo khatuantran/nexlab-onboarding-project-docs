@@ -65,11 +65,7 @@ Pick a unique app name when prompted (default `onboarding-api` may be taken — 
 - Postgres: **No** (we use Neon).
 - Redis: **No** (we use Upstash).
 
-Create the persistent volume for uploads:
-
-```bash
-fly volumes create uploads_volume --region sin --size 3
-```
+> **Note**: Persistent volume `uploads_volume` was used before CR-004 (Fly volume) — destroyed 2026-05-14 in Phase 1 (`dbbf195`). Phase 2 (`7eb3617`) moved image storage to **Cloudinary CDN**. Do NOT recreate the volume. Skip the `fly volumes create` step.
 
 Set secrets (one-shot — values won't show in logs):
 
@@ -81,10 +77,12 @@ fly secrets set \
   SESSION_COOKIE_NAME=sid \
   COOKIE_SECURE=true \
   CORS_ORIGIN="https://<netlify-slug>.netlify.app" \
-  UPLOAD_DIR=/data/uploads \
+  CLOUDINARY_URL="cloudinary://<key>:<secret>@<cloud_name>" \
   NODE_ENV=production \
   LOG_LEVEL=info
 ```
+
+The `CLOUDINARY_URL` value comes from Cloudinary Dashboard → "Account Details" → "API environment variable" (copy-pastable). Without it, the upload route returns `503 UPLOADS_DISABLED` so the FE shows a maintenance toast instead of crashing.
 
 Deploy from repo root (the Dockerfile expects workspace files like `pnpm-lock.yaml` and `packages/shared/` so the build context must be the repo root, not `apps/api/`). Pass `--dockerfile` on the CLI (CWD-relative) instead of using `[build] dockerfile` in fly.toml (which is fly.toml-relative and would resolve to `apps/api/apps/api/Dockerfile`):
 

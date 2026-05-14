@@ -7,7 +7,7 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `feature-detail`
-- **Status**: Implemented (read T9 `879b15b`; edit T7 `03c83ba`; US-003 embed+upload+ownership T4-T6 `a262cf3`/`f75f75a`/`dd1c213`; E2E T7 `c6c57fc`; UI uplift v2 Workspace CR-002 / Phase 2-3 `2a0caad`)
+- **Status**: Implemented (read T9 `879b15b`; edit T7 `03c83ba`; US-003 embed+upload+ownership T4-T6 `a262cf3`/`f75f75a`/`dd1c213`; E2E T7 `c6c57fc`; UI uplift v2 Workspace CR-002 / Phase 2-3 `2a0caad`; **upload URL absolute** [CR-004 Phase 2 `7eb3617`](../changes/CR-004.md), 2026-05-14)
 - **Last updated**: 2026-04-25
 
 ## Route
@@ -400,7 +400,7 @@ US-003 layers 3 capabilities trên existing edit-in-place flow mà không tách 
 ### US-003 scope additions
 
 - **Sections enabled for edit**: `tech-notes` + `screenshots` (previously deferred). Flow identical to 3 business sections (US-002 T7) — thêm upload toolbar only.
-- **Upload widget**: toolbar button trong SectionEditor footer cho 2 sections. Max 5 MiB; png / jpg / webp only. Auto-insert markdown `![filename](/uploads/:id)` tại cursor position.
+- **Upload widget**: toolbar button trong SectionEditor footer cho 2 sections. Max 5 MiB; png / jpg / webp only. Auto-insert markdown `![filename](<cloudinary-secure-url>)` tại cursor position (post-[CR-004 Phase 2](../changes/CR-004.md), URL là absolute `https://res.cloudinary.com/...`).
 - **Embed card render**: inline trong MarkdownView read view + preview pane. URL matching 3 whitelisted hostnames → render `EmbedCard`; else → plain `<a target="_blank" rel="noopener noreferrer">`.
 - **Per-section ownership**: subtitle under section h2 — "Cập nhật bởi \<displayName\>, N trước" dùng `RelativeTime`. Renders for both read + edit modes (meta persist during save).
 
@@ -429,7 +429,7 @@ US-003 layers 3 capabilities trên existing edit-in-place flow mà không tách 
   1. Click → OS file picker (`accept="image/png,image/jpeg,image/webp"`).
   2. File chosen → POST `/api/v1/features/:featureId/uploads` multipart.
   3. While uploading: button disabled + spinner thay Upload icon.
-  4. 201 → response `{ id, url, sizeBytes, mimeType }` → insert `![filename](/uploads/:id)\n` tại textarea `selectionStart` → cursor advances → preview debounces update.
+  4. 201 → response `{ id, url, sizeBytes, mimeType }` (where `url` = absolute `https://res.cloudinary.com/...` post-CR-004 Phase 2) → insert `![filename](<url>)\n` tại textarea `selectionStart` → cursor advances → preview debounces update.
   5. Toast success: sonner `"Đã upload <filename>"` 2s.
 - **Error handling**:
   - 413 `FILE_TOO_LARGE` → sonner destructive `"File quá lớn (max 5 MiB)"` + markdown không đổi (AC-5).
@@ -487,15 +487,15 @@ cập nhật bởi @hùng, 2 phút trước     ← meta line, muted xs
 
 ### US-003 interactions additions
 
-| Trigger                                     | Action                                                       | Next state          | Side effect                      |
-| ------------------------------------------- | ------------------------------------------------------------ | ------------------- | -------------------------------- |
-| Click "Upload ảnh" (tech-notes/screenshots) | Open OS file picker                                          | editing             | —                                |
-| File chosen (valid)                         | POST `/features/:id/uploads` multipart                       | editing → uploading | Button disabled + spinner        |
-| 201                                         | Insert `![filename](/uploads/:id)` at cursor; toast success  | uploading → editing | Preview re-renders with `<img>`  |
-| 413                                         | Toast destructive "File quá lớn (max 5 MiB)"                 | uploading → editing | Markdown unchanged               |
-| 415                                         | Toast destructive "Chỉ chấp nhận png, jpg, webp"             | uploading → editing | Markdown unchanged               |
-| Read view render sees whitelisted URL       | Replace `<a>` với `EmbedCard` inline                         | —                   | `<a target="_blank">` wraps card |
-| Read view render sees non-whitelist URL     | Plain anchor `<a target="_blank" rel="noopener noreferrer">` | —                   | —                                |
+| Trigger                                     | Action                                                          | Next state          | Side effect                                                |
+| ------------------------------------------- | --------------------------------------------------------------- | ------------------- | ---------------------------------------------------------- |
+| Click "Upload ảnh" (tech-notes/screenshots) | Open OS file picker                                             | editing             | —                                                          |
+| File chosen (valid)                         | POST `/features/:id/uploads` multipart                          | editing → uploading | Button disabled + spinner                                  |
+| 201                                         | Insert `![filename](<cloudinary-url>)` at cursor; toast success | uploading → editing | Preview re-renders with `<img>` pointing at Cloudinary CDN |
+| 413                                         | Toast destructive "File quá lớn (max 5 MiB)"                    | uploading → editing | Markdown unchanged                                         |
+| 415                                         | Toast destructive "Chỉ chấp nhận png, jpg, webp"                | uploading → editing | Markdown unchanged                                         |
+| Read view render sees whitelisted URL       | Replace `<a>` với `EmbedCard` inline                            | —                   | `<a target="_blank">` wraps card                           |
+| Read view render sees non-whitelist URL     | Plain anchor `<a target="_blank" rel="noopener noreferrer">`    | —                   | —                                                          |
 
 ### US-003 A11y additions
 
@@ -512,7 +512,7 @@ cập nhật bởi @hùng, 2 phút trước     ← meta line, muted xs
 4. [x] **Upload validation = magic bytes via `file-type` lib**: server reads first bytes → detect real MIME. Chặn spoof `evil.exe → evil.png` per story §Risks.
 5. [x] **Embed card inline render**: URL match → card replaces `<a>` tại vị trí gốc trong markdown flow. "Related links" block-at-end deferred.
 6. [x] **Per-section ownership visible**: subtitle "cập nhật bởi @X, N trước" dưới section h2. API T6 extends SectionResponse với `updatedByName`.
-7. [x] **File serve session-protected**: `GET /uploads/:id` requires `sid` cookie (401 if missing). Same-origin `<img>` tag gửi cookie auto.
+7. [x] **File serve session-protected**: `GET /uploads/:id` requires `sid` cookie (401 if missing). Same-origin `<img>` tag gửi cookie auto. **Reversed [BUG-003](../bugs/BUG-003.md) → [CR-004 Phase 2](../changes/CR-004.md)**: auth dropped then route removed entirely; files now served by Cloudinary CDN (UUIDv4 trong public_id là unguessable token).
 
 ## Maps US
 

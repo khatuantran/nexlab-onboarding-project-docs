@@ -6,6 +6,8 @@ _Story_: [US-003 — Dev bổ sung tech-notes + screenshots](../US-003.md)
 _Total estimate_: ~12-14h (solo, TDD pace)
 _Last updated_: 2026-04-24 (T1-T7 ✅ — 7/7 shipped, US-003 Done)
 
+> **Note (2026-05-14)**: T2 + T3 storage details (`UPLOAD_DIR` filesystem write, `GET /uploads/:id` route) are historical — superseded by [CR-004](../../changes/CR-004.md) Phase 2 (`7eb3617`): POST streams to Cloudinary, GET route deleted. Task bodies below preserved as-is for audit trail.
+
 ---
 
 ## Conventions

@@ -105,14 +105,14 @@ Consolidate risks + assumption rải rác trong ADR, vision, stories vào 1 file
 ## R9 — Path traversal / MIME spoof upload
 
 - **Source**: [US-003](stories/US-003.md) Risks
-- **Impact**: 🔴 High (RCE / file write ngoài volume)
-- **Likelihood**: 🟠 Possible
-- **Status**: 🟡 Open (sẽ mitigate ở US-003 upload task)
+- **Impact**: 🟡 Medium (post-CR-004 Phase 2: no local writeFile path; risk surface is Cloudinary public_id collision / overwrite)
+- **Likelihood**: 🟢 Low
+- **Status**: 🟢 Mitigated post-CR-004 Phase 2 (`7eb3617`)
 - **Mitigation**:
-  - Validate MIME qua magic bytes (`file-type` lib), không trust `Content-Type` header.
-  - Filename sanitize: dùng uploadId UUID, không giữ original name trong filesystem path.
-  - Path join qua `path.resolve` + verify start với `UPLOAD_DIR` prefix.
-- **Revisit**: Post-US-003 verify.
+  - Validate MIME qua magic bytes (`file-type` lib), không trust `Content-Type` header (BE fails-fast 415 before Cloudinary call).
+  - public_id = `onboarding-portal/<NODE_ENV>/<uuid>` server-side; original filename không xuất hiện trong path (CR-004 traversal-safe test).
+  - Cloudinary upload với `overwrite: false` ngăn ghi đè trùng public_id.
+- **Revisit**: Nếu chuyển provider khác (R2 / S3) trong M4+.
 
 ## R10 — Lost work khi Redis clear session
 

@@ -39,15 +39,15 @@ Ràng buộc kỹ thuật blocker:
 
 ### 2.1 Sub-decisions
 
-| Concern       | Choice                                                                 | Lý do ngắn                                                                                                                       |
-| ------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| FE host       | Netlify                                                                | 100 GB BW/mo + 300 build min/mo + global edge + GitHub auto-deploy + monorepo-friendly UI + `netlify.toml` SPA redirects in-repo |
-| BE host       | Fly.io shared-cpu-1x@256mb                                             | Always-on miễn phí trong 3 VM allowance; persistent volume 3GB; region sin sát users                                             |
-| Postgres      | Neon free tier (0.5GB)                                                 | Permanent free, full Postgres 16 (plpgsql + tsvector OK), branching cho preview env, autoscale, no CC required                   |
-| Redis         | Upstash free tier (10k cmd/day)                                        | Permanent free, REST + native protocol, ap-southeast-1 region, fit session + rate-limit pilot scale                              |
-| File uploads  | Fly persistent volume 3GB                                              | Code path không đổi (vẫn ghi `./data/uploads`); migrate sang R2 nếu vượt                                                         |
-| CI/CD         | GitHub Actions (private 2000 min/mo) cho BE; Netlify auto-build cho FE | Đủ cho ~30-50 deploys/tháng                                                                                                      |
-| Custom domain | Không có v1 — `*.netlify.app` + `*.fly.dev`                            | Defer khi pilot proves; tiết kiệm 1 step DNS + SSL                                                                               |
+| Concern       | Choice                                                                                                     | Lý do ngắn                                                                                                                                                                               |
+| ------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FE host       | Netlify                                                                                                    | 100 GB BW/mo + 300 build min/mo + global edge + GitHub auto-deploy + monorepo-friendly UI + `netlify.toml` SPA redirects in-repo                                                         |
+| BE host       | Fly.io shared-cpu-1x@256mb                                                                                 | Always-on miễn phí trong 3 VM allowance; persistent volume 3GB; region sin sát users                                                                                                     |
+| Postgres      | Neon free tier (0.5GB)                                                                                     | Permanent free, full Postgres 16 (plpgsql + tsvector OK), branching cho preview env, autoscale, no CC required                                                                           |
+| Redis         | Upstash free tier (10k cmd/day)                                                                            | Permanent free, REST + native protocol, ap-southeast-1 region, fit session + rate-limit pilot scale                                                                                      |
+| File uploads  | **Cloudinary CDN free tier (25 GB)** — superseded Fly volume per [CR-004](../changes/CR-004.md) 2026-05-14 | Stops $0.26/mo volume line; adds global CDN + image transforms; sidesteps cross-origin `<img>` cookie fragility (BUG-003 root cause). 25 GB free no-CC quota; pilot expected < 1% usage. |
+| CI/CD         | GitHub Actions (private 2000 min/mo) cho BE; Netlify auto-build cho FE                                     | Đủ cho ~30-50 deploys/tháng                                                                                                                                                              |
+| Custom domain | Không có v1 — `*.netlify.app` + `*.fly.dev`                                                                | Defer khi pilot proves; tiết kiệm 1 step DNS + SSL                                                                                                                                       |
 
 ---
 
