@@ -360,7 +360,7 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 - Endpoint: `POST /api/v1/features/:id/uploads`, multipart/form-data, field `file`.
 - Response: `{ data: { id, url, sizeBytes, mimeType, createdAt } }`.
 - File lưu tại `UPLOAD_DIR/:featureId/:uploadId.:ext` (env `UPLOAD_DIR`, default `./data/uploads`).
-- Static serve qua `GET /uploads/:id` — verify file thuộc feature authenticated user access được (luôn pass v1 vì all-access).
+- Static serve qua `GET /uploads/:id` — **public read** (no session required). UUIDv4 (~122-bit entropy) acts as unguessable token; matches FR-PROJ-001 v1 access model (every authenticated user already sees every upload's referencing feature) and unblocks cross-origin `<img>` rendering in prod (Netlify FE + Fly BE per CR-003). See [BUG-003](../bugs/BUG-003.md). MIME whitelist + path-traversal guard remain in force.
 - Filename sanitize: dùng uploadId, không giữ original filename trong URL (chỉ lưu DB metadata).
 - Không resize/optimize server-side v1 — client responsibility nếu cần.
 

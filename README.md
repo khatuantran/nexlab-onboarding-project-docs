@@ -10,6 +10,8 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ✅ **US-006 Search v2.1 shipped 2026-05-01** — prefix matching (`q=a` → `A3Solutions`), Vietnamese-accent-insensitive (`dang nhap` ↔ `Đăng nhập`), and trigram fuzzy fallback (`ondoarding` → `onboarding`). Postgres-only via `unaccent` + `pg_trgm` extensions; zero infra cost. FR-SEARCH-004 green; 144/144 api + 24 shared + 128 web + e2e tests green.
 
+✅ **BUG-003 fixed 2026-05-14** — uploaded images now render in production. FE rewrites relative `/api/v1/uploads/:id` to absolute API origin in markdown; BE serves the binary publicly (UUIDv4 as token, matches FR-PROJ-001 v1 access model). Tests: 132/132 web + 144/144 api green.
+
 ## Vấn đề đang giải quyết
 
 - Dự án business phức tạp, tài liệu rải rác hoặc không có.

@@ -12,6 +12,10 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Uploaded images render broken in production** ([BUG-003](../bugs/BUG-003.md), 2026-05-14) — Pilot prod (Netlify FE + Fly BE per [CR-003](../changes/CR-003.md)) returned broken-image icons for every markdown body that embedded `![alt](/api/v1/uploads/:id)`. Two-layer cause: (1) relative URL resolved against the Netlify origin → SPA fallback `index.html` instead of binary; (2) `GET /uploads/:id` required `requireAuth`, which cross-origin `<img>` requests cannot reliably satisfy (third-party cookie blocked in Safari + post-2026 Chrome). **Fix**: FE rewrites `/api/v1/uploads/:id` and legacy `/uploads/:id` img src to absolute `${VITE_API_BASE_URL origin}/api/v1/uploads/:id` at sanitize-hook time (zero markdown migration — handles existing DB rows); BE drops `requireAuth` on the read route, falling back to UUIDv4 (~122 bits) as the unguessable token (matches FR-PROJ-001 v1 access model). MIME whitelist + path-traversal guard remain. FR-UPLOAD-001 acceptance hint amended to document public-read contract. Tests: 4 new green (1 BE + 3 FE) — full 144 api + 132 web + 24 shared green. Commits: `ba0645f` (spec) → `0c3b753` (failing tests) → `db94afc` (fix) → this commit (progress sync).
+
 ### Changed
 
 - **Search v2.1 — prefix + accent-insensitive + fuzzy matching** ([US-006](../stories/US-006.md), 2026-05-01) — Catalog search now matches by **token prefix** (`q=a` hits `A3Solutions`, `q=đăn` hits `Đăng nhập`), strips **Vietnamese diacritics** transparently (`q=dang nhap` ↔ `Đăng nhập`), and falls back to **trigram fuzzy match** when the user typo's a short field (`q=ondoarding` still finds `onboarding`). Postgres-only (`unaccent` + `pg_trgm` extensions + `simple_unaccent` text-search config); zero new infra cost per [ADR-002](../adr/ADR-002-deployment-platform.md). Response shape unchanged — fully backward-compatible with US-005 callers; no FE change required.
