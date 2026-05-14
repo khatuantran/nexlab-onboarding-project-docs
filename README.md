@@ -10,7 +10,9 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ✅ **US-006 Search v2.1 shipped 2026-05-01** — prefix matching (`q=a` → `A3Solutions`), Vietnamese-accent-insensitive (`dang nhap` ↔ `Đăng nhập`), and trigram fuzzy fallback (`ondoarding` → `onboarding`). Postgres-only via `unaccent` + `pg_trgm` extensions; zero infra cost. FR-SEARCH-004 green; 144/144 api + 24 shared + 128 web + e2e tests green.
 
-✅ **BUG-003 fixed 2026-05-14** — uploaded images now render in production. FE rewrites relative `/api/v1/uploads/:id` to absolute API origin in markdown; BE serves the binary publicly (UUIDv4 as token, matches FR-PROJ-001 v1 access model). Tests: 132/132 web + 144/144 api green.
+✅ **BUG-003 fixed + deployed 2026-05-14** — uploaded images now render in production. FE rewrites relative `/api/v1/uploads/:id` to absolute API origin in markdown; BE serves the binary publicly (UUIDv4 as token, matches FR-PROJ-001 v1 access model). Tests: 132/132 web + 144/144 api green. Shipped to prod via manual `fly deploy --image` (commit `db94afc`).
+
+🟡 **CR-004 Phase 1 shipped 2026-05-14** — Fly `uploads_volume` destroyed to stop $0.26/mo line. Upload route now writes to ephemeral container fs (files vanish on machine restart) until Phase 2 wires Cloudinary CDN. Pre-existing 3 volume files (2.7 MB) lost per CR-004 §Decision (none ever rendered on prod per BUG-003).
 
 ## Vấn đề đang giải quyết
 

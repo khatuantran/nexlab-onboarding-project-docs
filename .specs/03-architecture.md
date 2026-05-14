@@ -83,14 +83,14 @@ Monorepo tool: **pnpm workspaces**. Lý do xem [ADR-001 §2.1](adr/ADR-001-tech-
 
 ## 4. Environments
 
-| Env     | Dev                                                                                                            | Prod (v1 free-tier per [CR-003](changes/CR-003.md) + [ADR-002](adr/ADR-002-deployment-platform.md)) | Prod (v2 — paid / VPS)         |
-| ------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------ |
-| Web     | Vite dev server :5173                                                                                          | Netlify (`*.netlify.app`)                                                                           | Same / custom domain           |
-| API     | `tsx watch` :3001                                                                                              | Fly.io shared-cpu-1x@256mb region sin (`onboarding-api-cool-waterfall-8568.fly.dev`)                | Hetzner CX11 €4/mo / K8s       |
-| DB      | Docker Compose `postgres:16-alpine`                                                                            | Neon Postgres 0.5GB region sin                                                                      | Aiven / Supabase Pro / managed |
-| Redis   | Docker Compose `redis:7-alpine`                                                                                | Upstash Redis 10k cmd/day region ap-southeast-1                                                     | Upstash paid / DO Redis        |
-| Uploads | Local FS `./data/uploads`                                                                                      | Fly persistent volume 3GB tại `/data/uploads`                                                       | Cloudflare R2 / S3             |
-| Secrets | Per-layer `.env*` files — `infra/docker/.env`, `apps/api/.env`, `apps/web/.env.local` (all gitignored; CR-001) | Platform env vars (Fly secrets, Netlify site env, GitHub repo secrets)                              | K8s Secret (sealed/SOPS)       |
+| Env     | Dev                                                                                                            | Prod (v1 free-tier per [CR-003](changes/CR-003.md) + [ADR-002](adr/ADR-002-deployment-platform.md))                                                     | Prod (v2 — paid / VPS)         |
+| ------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| Web     | Vite dev server :5173                                                                                          | Netlify (`*.netlify.app`)                                                                                                                               | Same / custom domain           |
+| API     | `tsx watch` :3001                                                                                              | Fly.io shared-cpu-1x@256mb region sin (`onboarding-api-cool-waterfall-8568.fly.dev`)                                                                    | Hetzner CX11 €4/mo / K8s       |
+| DB      | Docker Compose `postgres:16-alpine`                                                                            | Neon Postgres 0.5GB region sin                                                                                                                          | Aiven / Supabase Pro / managed |
+| Redis   | Docker Compose `redis:7-alpine`                                                                                | Upstash Redis 10k cmd/day region ap-southeast-1                                                                                                         | Upstash paid / DO Redis        |
+| Uploads | Local FS `./data/uploads`                                                                                      | **Ephemeral container fs** `/data/uploads` (volume destroyed 2026-05-14 per CR-004 Phase 1; files vanish on machine restart). Phase 2 → Cloudinary CDN. | Cloudflare R2 / S3             |
+| Secrets | Per-layer `.env*` files — `infra/docker/.env`, `apps/api/.env`, `apps/web/.env.local` (all gitignored; CR-001) | Platform env vars (Fly secrets, Netlify site env, GitHub repo secrets)                                                                                  | K8s Secret (sealed/SOPS)       |
 
 ### 4.2 Deployment topology (v1 free-tier)
 
@@ -105,7 +105,7 @@ Monorepo tool: **pnpm workspaces**. Lý do xem [ADR-001 §2.1](adr/ADR-001-tech-
                 ┌──────────────────────────┐
                 │  Fly.io (BE)  region=sin │
                 │  Express :3001           │
-                │  Volume → /data/uploads  │
+                │  No volume (CR-004 P1)   │
                 │  https://*.fly.dev       │
                 └─────┬───────────────┬────┘
                       │               │
