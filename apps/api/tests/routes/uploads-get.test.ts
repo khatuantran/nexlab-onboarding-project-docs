@@ -65,7 +65,6 @@ function buildApp() {
     }),
     uploadsReadRouter: createUploadsReadRouter({
       uploadRepo,
-      requireAuth,
       uploadDir: TEST_UPLOAD_DIR,
     }),
   });

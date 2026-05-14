@@ -58,7 +58,6 @@ const app = createApp({
   }),
   uploadsReadRouter: createUploadsReadRouter({
     uploadRepo,
-    requireAuth,
     uploadDir: config.UPLOAD_DIR,
   }),
 });

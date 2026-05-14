@@ -99,8 +99,10 @@ describe("renderMarkdown — upload URL rewrite (BUG-003)", () => {
     expect(html).toContain('src="https://cdn.example.com/x.png"');
   });
 
-  it("still drops unsafe img src (data:, javascript:) via sanitizer", () => {
+  it("does not emit an <img> when src has an unsafe scheme", () => {
+    // markdown-it refuses to materialize ![x](javascript:…); even if it did,
+    // the sanitizer hook strips any non-http(s) / non-upload src.
     const html = renderMarkdown("![x](javascript:alert(1))");
-    expect(html).not.toMatch(/javascript:/iu);
+    expect(html).not.toMatch(/<img[^>]*javascript:/iu);
   });
 });

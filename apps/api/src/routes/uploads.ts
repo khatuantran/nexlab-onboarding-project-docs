@@ -136,12 +136,11 @@ export function createUploadsRouter(deps: UploadsRouterDeps): ExpressRouter {
 
 export interface UploadsReadRouterDeps {
   uploadRepo: UploadRepo;
-  requireAuth: RequestHandler;
   uploadDir: string;
 }
 
 export function createUploadsReadRouter(deps: UploadsReadRouterDeps): ExpressRouter {
-  const { uploadRepo, requireAuth, uploadDir } = deps;
+  const { uploadRepo, uploadDir } = deps;
   const router = Router();
   const baseDir = path.resolve(uploadDir);
 
@@ -172,7 +171,13 @@ export function createUploadsReadRouter(deps: UploadsReadRouterDeps): ExpressRou
     }
   };
 
-  router.get("/:id", requireAuth, get);
+  // Public read by design (BUG-003): UUIDv4 acts as the unguessable token so
+  // that <img> tags can fetch cross-origin without relying on third-party
+  // cookies, which prod browsers (Safari + post-2026 Chrome) refuse to send.
+  // Matches FR-PROJ-001 v1 access model: any authenticated user already sees
+  // every upload's referencing feature, so gating the binary by session adds
+  // no defense — see .specs/bugs/BUG-003.md §Fix approach.
+  router.get("/:id", get);
 
   return router;
 }

@@ -3,6 +3,26 @@ import DOMPurify from "dompurify";
 import { embedFromUrl, type EmbedDescriptor } from "./embed";
 
 /**
+ * Origin of the BE API (https://onboarding-api.fly.dev in prod, http://localhost:3001
+ * in dev). Reused from VITE_API_BASE_URL so the FE has a single source of
+ * truth — see apps/web/src/lib/api.ts.
+ *
+ * In prod the FE and BE are on different origins (Netlify FE + Fly BE per
+ * CR-003), so an `<img src="/api/v1/uploads/:id">` written into a markdown
+ * body would resolve against the Netlify origin and hit the SPA fallback
+ * instead of the upload binary. We rewrite relative upload paths to the
+ * absolute API origin at sanitize time. See BUG-003.
+ */
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3001/api/v1";
+const API_ORIGIN = (() => {
+  try {
+    return new URL(API_BASE_URL).origin;
+  } catch {
+    return "";
+  }
+})();
+
+/**
  * Markdown pipeline per .specs/ui/design-system.md §6.1:
  * - markdown-it with `html: false` (no raw HTML passthrough).
  * - DOMPurify with explicit whitelist — strips <script>, on* handlers,
@@ -89,7 +109,13 @@ export function renderMarkdown(source: string): string {
     }
     if (node.tagName === "IMG") {
       const src = node.getAttribute("src") ?? "";
-      if (!/^(https?:|\/api\/v1\/uploads\/|\/uploads\/)/u.test(src)) {
+      if (/^\/api\/v1\/uploads\//u.test(src)) {
+        // Relative upload path → prefix with API origin (BUG-003).
+        node.setAttribute("src", API_ORIGIN + src);
+      } else if (/^\/uploads\//u.test(src)) {
+        // Legacy alias: rewrite to canonical /api/v1/uploads/:id under API origin.
+        node.setAttribute("src", API_ORIGIN + "/api/v1" + src);
+      } else if (!/^https?:/u.test(src)) {
         node.removeAttribute("src");
       }
     }
