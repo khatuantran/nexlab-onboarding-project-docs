@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-_Last updated: 2026-04-23 · Index of reported faults. BUG-001 opened._
+_Last updated: 2026-05-14 · Index of reported faults._
 
 Mỗi file `BUG-NNN.md` clone từ [templates/05-bug-template.md](../../templates/05-bug-template.md). TDD rule: failing regression test commit trước fix.
 
@@ -16,6 +16,7 @@ Related: [CLAUDE.md §When a request comes in](../../CLAUDE.md#when-a-request-co
 | ------- | ----------------------------------------------- | --------- | ------ | --------- | ------------------------ |
 | BUG-001 | `pnpm docker:*` scripts không load `.env.local` | 🟡 Medium | Fixed  | `908c37e` | [BUG-001.md](BUG-001.md) |
 | BUG-002 | Theme toggle cần 2 click để chuyển dark → light | 🟡 Medium | Fixed  | `51d0543` | [BUG-002.md](BUG-002.md) |
+| BUG-003 | Uploaded images render broken in production     | 🟠 High   | Open   | —         | [BUG-003.md](BUG-003.md) |
 
 ---
 
