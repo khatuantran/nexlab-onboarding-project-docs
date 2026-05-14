@@ -251,6 +251,24 @@ VD: trước khi tạo `.specs/stories/US-004.md`, tôi Read `templates/01-user-
 
 ---
 
+## Deploy policy
+
+- **FE (Netlify)** — auto-build on `git push origin main` qua Netlify GitHub App. Không cần thao tác gì.
+- **BE (Fly.io)** — **manual only**. GitHub Actions workflow đã disable `push:` trigger (2026-05-14). Khi user nói "deploy" / "deploy BE" / "push deploy" → chạy từ repo root:
+
+  ```bash
+  fly deploy --remote-only \
+    --config apps/api/fly.toml \
+    --dockerfile apps/api/Dockerfile \
+    --app onboarding-api-cool-waterfall-8568
+  ```
+
+  Sau khi xong, smoke check `curl -sS https://onboarding-api-cool-waterfall-8568.fly.dev/api/v1/health` và báo kết quả.
+
+- **Không tự deploy** khi user chưa nói "deploy". Push code lên main chỉ trigger Netlify (FE) — BE đứng yên cho tới khi user yêu cầu.
+
+---
+
 ## Ambiguity policy — hỏi trước khi làm
 
 Khi prompt của user có chỗ chưa rõ — scope mơ hồ, intent có nhiều cách hiểu, lựa chọn kỹ thuật không khớp pattern hiện có, hoặc decision có blast radius rộng — **KHÔNG** đoán rồi làm. Dừng lại, liệt kê interpretation, hỏi 1 câu hỏi gọn (≤ 3 lựa chọn), chờ user confirm.
