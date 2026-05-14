@@ -3,7 +3,7 @@ import DOMPurify from "dompurify";
 import { embedFromUrl, type EmbedDescriptor } from "./embed";
 
 /**
- * Origin of the BE API (https://onboarding-api.fly.dev in prod, http://localhost:3001
+ * Origin of the BE API (https://onboarding-api-cool-waterfall-8568.fly.dev in prod, http://localhost:3001
  * in dev). Reused from VITE_API_BASE_URL so the FE has a single source of
  * truth — see apps/web/src/lib/api.ts.
  *

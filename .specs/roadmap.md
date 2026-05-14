@@ -103,7 +103,7 @@ Deploy lên free-tier managed stack ($0/tháng), pilot với ≥ 1 project thậ
 
 - **Deliverable**:
   - **FE**: Cloudflare Pages auto-build từ `main` → `https://<project>.pages.dev`.
-  - **BE**: Fly.io shared-cpu-1x@256mb region sin + persistent volume 3GB tại `/data/uploads` → `https://onboarding-api.fly.dev`.
+  - **BE**: Fly.io shared-cpu-1x@256mb region sin + persistent volume 3GB tại `/data/uploads` → `https://onboarding-api-cool-waterfall-8568.fly.dev`.
   - **Postgres**: Neon free tier 0.5GB region sin (full Postgres 16, plpgsql + tsvector).
   - **Redis**: Upstash free tier 10k cmd/day region ap-southeast-1 (session store + rate limit).
   - **CI/CD**: GitHub Actions cho BE (`flyctl deploy --remote-only` on push main). Cloudflare Pages auto-build cho FE.

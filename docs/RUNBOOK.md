@@ -40,7 +40,7 @@ Done once per environment. After this, deploys flow through CI/CD (Section 3).
    - Node 20 + pnpm 9.15.0 set via `[build.environment]`.
    - SPA `[[redirects]]` rule already in `netlify.toml` so React Router deep-links don't 404.
 4. **Site settings → Build & deploy → Environment variables**:
-   - `VITE_API_BASE_URL` = `https://onboarding-api.fly.dev/api/v1` (update after Fly app exists).
+   - `VITE_API_BASE_URL` = `https://onboarding-api-cool-waterfall-8568.fly.dev/api/v1` (update after Fly app exists).
 5. Click **Deploy site** → first build runs automatically. URL: `https://<random-slug>.netlify.app`.
 6. (Optional) **Site settings → Site information → Change site name** to `onboarding-portal` (or similar) for a stable subdomain.
 
@@ -99,7 +99,7 @@ The release_command in fly.toml runs `pnpm db:migrate:prod` against Neon before 
 Once green, hit the health endpoint:
 
 ```bash
-curl https://onboarding-api.fly.dev/api/v1/health
+curl https://onboarding-api-cool-waterfall-8568.fly.dev/api/v1/health
 # {"status":"ok","db":"ok","redis":"ok","version":"0.1.0"}
 ```
 
