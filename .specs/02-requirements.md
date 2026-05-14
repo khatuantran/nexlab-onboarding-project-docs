@@ -347,22 +347,26 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 
 **Statement (Event-driven + Unwanted):**
 
-- When an authenticated user uploads an image file (MIME type `image/png`, `image/jpeg`, or `image/webp`, size ≤ 5 MiB) scoped to an existing feature, the system shall persist the file to the server-side upload volume, associate it with the feature, and respond with a stable URL of the form `/uploads/:id`.
+- When an authenticated user uploads an image file (MIME type `image/png`, `image/jpeg`, or `image/webp`, size ≤ 5 MiB) scoped to an existing feature, the system shall stream the file to **Cloudinary CDN** (per [CR-004](../changes/CR-004.md)), associate the resulting `public_id` + secure URL with the feature, and respond with an absolute HTTPS URL pointing at Cloudinary.
 - If the upload exceeds 5 MiB, then the system shall respond with HTTP 413 and error code `FILE_TOO_LARGE` without persisting the partial payload.
 - If the upload MIME type is outside the allow-list, then the system shall respond with HTTP 415 and error code `UNSUPPORTED_MEDIA_TYPE`.
 
-**Rationale**: `screenshots` section cần upload được để không phụ thuộc CDN/Figma ngoài. V1 lưu Docker volume (đã chốt ADR-001 §2.4); v2 chuyển S3-compatible. Scope file-per-upload cho đơn giản; multi-file defer.
+**Rationale**: `screenshots` section cần upload được để không phụ thuộc CDN/Figma ngoài. V1 lưu Docker volume (ADR-001 §2.4); CR-003 chuyển sang Fly persistent volume; CR-004 Phase 2 (this revision) chuyển sang Cloudinary CDN để bỏ volume cost ($0.26/mo) + sidestep cross-origin `<img>` cookie fragility (BUG-003 root cause) + có sẵn image transforms (resize / WebP / quality auto).
 
 **Maps to**: US-003 (Hùng upload screenshot vào feature của Lan). Persona: P3.
 
 **Acceptance hints**:
 
-- Endpoint: `POST /api/v1/features/:id/uploads`, multipart/form-data, field `file`.
-- Response: `{ data: { id, url, sizeBytes, mimeType, createdAt } }`.
-- File lưu tại `UPLOAD_DIR/:featureId/:uploadId.:ext` (env `UPLOAD_DIR`, default `./data/uploads`).
-- Static serve qua `GET /uploads/:id` — **public read** (no session required). UUIDv4 (~122-bit entropy) acts as unguessable token; matches FR-PROJ-001 v1 access model (every authenticated user already sees every upload's referencing feature) and unblocks cross-origin `<img>` rendering in prod (Netlify FE + Fly BE per CR-003). See [BUG-003](../bugs/BUG-003.md). MIME whitelist + path-traversal guard remain in force.
-- Filename sanitize: dùng uploadId, không giữ original filename trong URL (chỉ lưu DB metadata).
-- Không resize/optimize server-side v1 — client responsibility nếu cần.
+- **Endpoint**: `POST /api/v1/features/:id/uploads`, `multipart/form-data`, field `file`. Auth: `requireAuthor`.
+- **Storage**: stream multer memory buffer through `cloudinary.uploader.upload_stream({ folder: 'onboarding-portal/<env>', public_id: <uuid> })`. No local filesystem write.
+- **Response**: `{ data: { id, url, sizeBytes, mimeType, createdAt } }` where `url` = Cloudinary `secure_url` (absolute `https://res.cloudinary.com/<cloud>/image/upload/v.../<folder>/<uuid>.<ext>`).
+- **DB**: `uploads` row stores `cloudinary_public_id` (string), `mime_type`, `size_bytes`, `filename` (original), `uploaded_by` FK, `feature_id` FK. Migration 0006 adds the column.
+- **Read path**: **no BE route**. FE renders `<img src="<cloudinary-url>">` directly; Cloudinary CDN serves binary. The legacy `GET /api/v1/uploads/:id` route is removed (replaced by Cloudinary URL in DB).
+- **Env**: `CLOUDINARY_URL=cloudinary://<api_key>:<api_secret>@<cloud_name>` set as Fly secret in prod, `apps/api/.env` in dev. SDK auto-reads this var.
+- **Filename sanitize**: dùng uploadId (UUIDv4) làm Cloudinary `public_id`; original filename giữ ở DB cột `filename` cho UI hiển thị, không xuất hiện trong URL.
+- **Validation**: MIME whitelist (`image/png` | `image/jpeg` | `image/webp`) + magic-byte sniff (`file-type` lib) trước khi upload Cloudinary — kể cả Cloudinary có check, BE vẫn validate để fail-fast + giữ contract với 415 error code.
+- **Transforms**: response trả `secure_url` raw, không pre-bake transform. FE có thể append `f_auto,q_auto,w_<N>` segment khi render nếu cần. Defer.
+- **Migration của data cũ**: KHÔNG migrate. 3 file đã ở Fly volume bị destroy trong Phase 1; markdown links tới `/api/v1/uploads/<uuid>` còn trong DB sẽ 404. Acceptable per CR-004 §Decision.
 
 ---
 
