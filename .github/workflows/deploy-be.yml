@@ -1,20 +1,20 @@
-# Deploy the API service to Fly.io.
+# Deploy the API service to Fly.io on every push to `main` that
+# touches BE code (or shared schemas, the Dockerfile, or this workflow).
 # CR-003 / ADR-002. Runbook: docs/RUNBOOK.md.
 #
-# Auto-push trigger is disabled (2026-05-14): user runs `fly deploy`
-# manually from a local shell so deploys only happen when explicitly
-# requested. Re-enable by uncommenting the `push:` block below + ensuring
-# FLY_API_TOKEN repo secret is set (fly tokens create deploy …).
+# Auto-deploy requires the FLY_API_TOKEN repo secret. Create one via:
+#   fly tokens create deploy -a onboarding-api-cool-waterfall-8568
+# then add at Settings → Secrets and variables → Actions.
 
 name: Deploy BE to Fly
 
 on:
-  # push:
-  #   branches: [main]
-  #   paths:
-  #     - "apps/api/**"
-  #     - "packages/shared/**"
-  #     - ".github/workflows/deploy-be.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/api/**"
+      - "packages/shared/**"
+      - ".github/workflows/deploy-be.yml"
   workflow_dispatch: {}
 
 concurrency:

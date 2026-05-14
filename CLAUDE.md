@@ -254,18 +254,22 @@ VD: trước khi tạo `.specs/stories/US-004.md`, tôi Read `templates/01-user-
 ## Deploy policy
 
 - **FE (Netlify)** — auto-build on `git push origin main` qua Netlify GitHub App. Không cần thao tác gì.
-- **BE (Fly.io)** — **manual only**. GitHub Actions workflow đã disable `push:` trigger (2026-05-14). Khi user nói "deploy" / "deploy BE" / "push deploy" → chạy từ repo root:
+- **BE (Fly.io)** — 2 đường, ưu tiên auto khi có:
+  - **Auto (preferred)**: workflow [.github/workflows/deploy-be.yml](.github/workflows/deploy-be.yml) trigger trên push tới `apps/api/**`, `packages/shared/**`, hoặc workflow file. Yêu cầu repo secret `FLY_API_TOKEN`. Public repo → 0$ Action minutes.
+  - **Manual**: khi auto fail (e.g. token missing/expired) hoặc user nói "deploy" / "deploy BE" / "push deploy" cho one-off, chạy từ repo root:
 
-  ```bash
-  fly deploy --remote-only \
-    --config apps/api/fly.toml \
-    --dockerfile apps/api/Dockerfile \
-    --app onboarding-api-cool-waterfall-8568
-  ```
+    ```bash
+    fly deploy --local-only \
+      --config apps/api/fly.toml \
+      --dockerfile apps/api/Dockerfile \
+      --app onboarding-api-cool-waterfall-8568
+    ```
 
-  Sau khi xong, smoke check `curl -sS https://onboarding-api-cool-waterfall-8568.fly.dev/api/v1/health` và báo kết quả.
+    Dùng `--local-only` (không `--remote-only`) vì Fly depot remote builder yêu cầu credit; local build qua Docker daemon thì free. Yêu cầu Docker daemon chạy local.
 
-- **Không tự deploy** khi user chưa nói "deploy". Push code lên main chỉ trigger Netlify (FE) — BE đứng yên cho tới khi user yêu cầu.
+  Sau khi xong (auto hoặc manual), smoke check `curl -sS https://onboarding-api-cool-waterfall-8568.fly.dev/api/v1/health` và báo kết quả.
+
+- **Không tự `fly deploy`** khi user chưa explicit yêu cầu. Push code lên main → auto workflow tự chạy (đó là contract); nhưng KHÔNG chạy `fly deploy` manual nếu user chưa nói "deploy".
 
 ---
 
