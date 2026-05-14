@@ -43,6 +43,8 @@ Mọi error response tuân theo format:
 | `SEARCH_QUERY_TOO_LONG`  | 400  | Search query > 200 chars.                                                  | FR-SEARCH-001                                                                   | T7                          |
 | `FILE_TOO_LARGE`         | 413  | Upload > 5 MiB.                                                            | [FR-UPLOAD-001](02-requirements.md#fr-upload-001--image-upload-for-screenshots) | T7 (US-003)                 |
 | `UNSUPPORTED_MEDIA_TYPE` | 415  | Upload MIME ngoài `image/png`, `image/jpeg`, `image/webp`.                 | FR-UPLOAD-001                                                                   | T7 (US-003)                 |
+| `UPLOADS_DISABLED`       | 503  | `CLOUDINARY_URL` env var missing — upload feature temporarily unavailable. | FR-UPLOAD-001                                                                   | CR-004 Phase 2 (`7eb3617`)  |
+| `UPLOAD_PROVIDER_ERROR`  | 502  | Cloudinary upload stream rejected (network / quota / invalid response).    | FR-UPLOAD-001                                                                   | CR-004 Phase 2 (`7eb3617`)  |
 | `VALIDATION_ERROR`       | 400  | Zod parse fail. `details.issues` chứa ZodIssue[].                          | cross-cutting                                                                   | T3 (middleware)             |
 | `INTERNAL_ERROR`         | 500  | Unexpected exception. `details` không leak stack.                          | cross-cutting                                                                   | T2 ✅                       |
 

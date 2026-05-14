@@ -12,7 +12,9 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ✅ **BUG-003 fixed + deployed 2026-05-14** — uploaded images now render in production. FE rewrites relative `/api/v1/uploads/:id` to absolute API origin in markdown; BE serves the binary publicly (UUIDv4 as token, matches FR-PROJ-001 v1 access model). Tests: 132/132 web + 144/144 api green. Shipped to prod via manual `fly deploy --image` (commit `db94afc`).
 
-🟡 **CR-004 Phase 1 shipped 2026-05-14** — Fly `uploads_volume` destroyed to stop $0.26/mo line. Upload route now writes to ephemeral container fs (files vanish on machine restart) until Phase 2 wires Cloudinary CDN. Pre-existing 3 volume files (2.7 MB) lost per CR-004 §Decision (none ever rendered on prod per BUG-003).
+🟡 **CR-004 Phase 1 shipped 2026-05-14** — Fly `uploads_volume` destroyed to stop $0.26/mo line. Upload route writes to ephemeral container fs (files vanish on machine restart) until Phase 2 wires Cloudinary CDN. Pre-existing 3 volume files (2.7 MB) lost per CR-004 §Decision (none ever rendered on prod per BUG-003).
+
+🟡 **CR-004 Phase 2 code shipped 2026-05-14, deploy pending** — Upload route now streams to Cloudinary CDN via `cloudinary.uploader.upload_stream`; response returns absolute `https://res.cloudinary.com/...` URL. Read route `GET /uploads/:id` removed. New env `CLOUDINARY_URL` + Fly secret required before prod deploy unlocks the feature (503 `UPLOADS_DISABLED` until then). 147/147 api tests with FakeCloudinary mock green.
 
 ## Vấn đề đang giải quyết
 

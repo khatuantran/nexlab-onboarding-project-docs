@@ -24,8 +24,9 @@ FROM node:20-alpine AS runtime
 WORKDIR /app
 RUN corepack enable
 
-# Volume mountpoint expected by Fly.io for persistent uploads.
-RUN mkdir -p /data/uploads && chown -R node:node /data
+# CR-004 Phase 2: image storage moved to Cloudinary CDN. The
+# /data/uploads volume + local writeFile path are gone. Keep this
+# stage clean — no mountpoint expectations remain.
 
 # pnpm per-package node_modules. The workspace root holds the .pnpm
 # virtual store (real package contents); each package's node_modules
