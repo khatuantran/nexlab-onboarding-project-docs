@@ -1,51 +1,30 @@
-# Fly.io application config — onboarding portal API.
-# Region SIN (Singapore, ap-southeast-1) keeps latency < 50ms for
-# Vietnam users. Volume + Neon + Upstash all live in the same region.
+# fly.toml app configuration file generated for onboarding-api-cool-waterfall-8568 on 2026-05-14T22:45:43+07:00
 #
-# Refs: CR-003, ADR-002, docs/RUNBOOK.md.
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
-# Deploy from repo root so the Docker build context can see workspace
-# files (pnpm-lock.yaml, packages/shared, etc.). The `--dockerfile`
-# flag is passed at the CLI level (it is CWD-relative, while the
-# `[build] dockerfile` key in fly.toml is fly.toml-relative — using
-# the flag avoids a confusing nested path):
-#   fly deploy --remote-only --config apps/api/fly.toml \
-#       --dockerfile apps/api/Dockerfile
 
-app = "onboarding-api-cool-waterfall-8568"
-primary_region = "sin"
+app = 'onboarding-api-cool-waterfall-8568'
+primary_region = 'sin'
 
-# Apply pending migrations against the production database before the
-# new release takes traffic. Failure here aborts the deploy — old
-# release keeps serving. Drizzle reads DATABASE_URL from Fly secrets.
 [deploy]
-  release_command = "pnpm --filter @onboarding/api db:migrate:prod"
-
-# uploads_volume mount removed 2026-05-14 per CR-004 Phase 1.
-# Upload route's writeFile now lands in ephemeral container fs
-# (mkdir -p /data/uploads still runs in Dockerfile); files survive
-# only until the next machine restart. Phase 2 moves storage to
-# Cloudinary CDN — re-add a [[mounts]] block here ONLY if reverting.
+  release_command = 'pnpm --filter @onboarding/api db:migrate:prod'
 
 [http_service]
   internal_port = 3001
   force_https = true
-  # Free tier: scale to zero after idle (~30s). First request after
-  # idle pays ~1-2s wake. Acceptable per CR-003 gate decision; bump to
-  # min_machines_running = 1 if pilot UX feedback demands always-on.
-  auto_stop_machines = "stop"
+  auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0
-  processes = ["app"]
+  processes = ['app']
 
   [[http_service.checks]]
-    grace_period = "15s"
-    interval = "30s"
-    method = "GET"
-    timeout = "5s"
-    path = "/api/v1/health"
+    interval = '30s'
+    timeout = '5s'
+    grace_period = '15s'
+    method = 'GET'
+    path = '/api/v1/health'
 
 [[vm]]
-  cpu_kind = "shared"
+  memory = '256mb'
   cpus = 1
-  memory = "256mb"
+  memory_mb = 256
