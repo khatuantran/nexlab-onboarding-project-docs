@@ -24,6 +24,7 @@
   "dependencies": {
     "@onboarding/shared": "workspace:*",
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.10.0",
     "connect-redis": "^8.0.1",
     "cors": "^2.8.5",
     "dotenv": "^17.4.2",

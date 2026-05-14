@@ -9,6 +9,11 @@ const schema = z.object({
   SESSION_SECRET: z.string().min(16).default("dev-secret-change-me-min-16chars"),
   CORS_ORIGIN: z.string().default("http://localhost:5173"),
   UPLOAD_DIR: z.string().default("./data/uploads"),
+  // CR-004 Phase 2: Cloudinary storage. Format:
+  //   cloudinary://<api_key>:<api_secret>@<cloud_name>
+  // Empty string keeps boot working in dev/test before the user provides
+  // creds; the upload route returns 503 SERVICE_UNAVAILABLE in that case.
+  CLOUDINARY_URL: z.string().default(""),
 });
 
 export type Config = z.infer<typeof schema>;
