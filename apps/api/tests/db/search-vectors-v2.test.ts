@@ -86,6 +86,22 @@ describe("uploads.caption + uploads.search_vector (FR-SEARCH-002)", () => {
     });
   });
 
+  it("CR-004 / Phase 2 — uploads.cloudinary_public_id is a nullable text column", async () => {
+    const result = await db.execute<{
+      column_name: string;
+      data_type: string;
+      is_nullable: string;
+    }>(sql`
+      SELECT column_name, data_type, is_nullable FROM information_schema.columns
+      WHERE table_name = 'uploads' AND column_name = 'cloudinary_public_id'
+    `);
+    expect(result.rows[0]).toMatchObject({
+      column_name: "cloudinary_public_id",
+      data_type: "text",
+      is_nullable: "YES",
+    });
+  });
+
   it("populates uploads.search_vector from filename + caption", async () => {
     const [demoFeature] = await db
       .select()

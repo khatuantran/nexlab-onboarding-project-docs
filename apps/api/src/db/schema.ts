@@ -87,6 +87,11 @@ export const uploads = pgTable("uploads", {
   // FR-SEARCH-002: optional human-readable caption searched via FTS.
   // UI editor for caption defers to a later milestone.
   caption: text("caption"),
+  // CR-004 Phase 2: Cloudinary public_id (folder/uuid). Null for rows
+  // created before the Cloudinary migration shipped — those rows point
+  // at a destroyed Fly volume and will 404 on read. New uploads MUST
+  // populate this column.
+  cloudinaryPublicId: text("cloudinary_public_id"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
