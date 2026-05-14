@@ -251,6 +251,38 @@ VD: trước khi tạo `.specs/stories/US-004.md`, tôi Read `templates/01-user-
 
 ---
 
+## Ambiguity policy — hỏi trước khi làm
+
+Khi prompt của user có chỗ chưa rõ — scope mơ hồ, intent có nhiều cách hiểu, lựa chọn kỹ thuật không khớp pattern hiện có, hoặc decision có blast radius rộng — **KHÔNG** đoán rồi làm. Dừng lại, liệt kê interpretation, hỏi 1 câu hỏi gọn (≤ 3 lựa chọn), chờ user confirm.
+
+**Trigger cụ thể** (không exhaustive — judgment-based):
+
+- User nói "fix bug này" / "thêm tính năng này" nhưng prompt không nêu file/endpoint/AC cụ thể → hỏi.
+- Có ≥ 2 implementation approach hợp lý với trade-off khác nhau (VD: drop auth vs proxy vs crossorigin) → hỏi user pick approach trước khi viết code.
+- User dùng từ generic ("update X", "improve Y") trong khi codebase có nhiều X / Y candidate → hỏi target cụ thể.
+- Action sẽ chạm prod (push, deploy, secrets, force-push, schema migration không reversible) → confirm 1 lần dù đã có context.
+- Decision sẽ ghi vào spec (CR, ADR, FR amend) → confirm trước khi commit, vì spec khó undo.
+
+**Định dạng câu hỏi** (dùng `AskUserQuestion` tool nếu có ≤ 4 lựa chọn rõ ràng, ngược lại text bullet):
+
+```text
+Trước khi làm, confirm 1 chỗ:
+- A) <option 1 ngắn gọn>
+- B) <option 2 ngắn gọn>
+- C) Khác — bạn mô tả.
+Recommend A vì <1 dòng lý do>.
+```
+
+**Không hỏi** khi:
+
+- Task rõ ràng, single-path, low blast radius (VD: fix typo, rename internal var, format file).
+- User đã confirm trong cùng turn / plan đã được approve qua `ExitPlanMode`.
+- Hỏi thêm sẽ chậm flow hơn chi phí của bug (cost-benefit judgment).
+
+Nếu lỡ làm rồi mới thấy chỗ mơ hồ → dừng, flag rõ "tôi đã làm X dựa trên giả định Y, nếu sai bạn cho biết để revert" — không silently push tiếp.
+
+---
+
 ## Hard DO NOTs
 
 - Do NOT create documentation files outside `.specs/` or `docs/` unless the user explicitly asks.
