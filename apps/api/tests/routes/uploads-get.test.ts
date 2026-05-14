@@ -118,9 +118,13 @@ describe("GET /api/v1/uploads/:id", () => {
     expect(res.status).toBe(404);
   });
 
-  it("returns 401 UNAUTHENTICATED for no session", async () => {
-    const res = await request(buildApp()).get(`/api/v1/uploads/${uploadId}`);
-    expect(res.status).toBe(401);
-    expect(res.body.error.code).toBe("UNAUTHENTICATED");
+  it("BUG-003 — serves the binary even when no session cookie is attached", async () => {
+    // Reproduces the cross-origin `<img src="…/api/v1/uploads/:id">` case in prod
+    // where the browser does not forward third-party cookies. UUIDv4 acts as the
+    // unguessable token (matches FR-PROJ-001 v1 access model — see BUG-003 §Fix).
+    const res = await request(buildApp()).get(`/api/v1/uploads/${uploadId}`).buffer(true);
+    expect(res.status).toBe(200);
+    expect(res.headers["content-type"]).toBe("image/png");
+    expect(Buffer.compare(res.body, realPng)).toBe(0);
   });
 });

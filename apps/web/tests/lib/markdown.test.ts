@@ -73,3 +73,34 @@ describe("renderMarkdown", () => {
     expect(html).toContain("const x = 1;");
   });
 });
+
+describe("renderMarkdown — upload URL rewrite (BUG-003)", () => {
+  // In prod the FE is on a different origin than the BE, so relative
+  // `/api/v1/uploads/:id` paths must be rewritten to the absolute API
+  // origin before reaching the browser's `<img>` resolver.
+  it("rewrites relative /api/v1/uploads/:id img src to an absolute URL", () => {
+    const html = renderMarkdown("![cap](/api/v1/uploads/abc-123)");
+    const match = html.match(/<img[^>]+src="([^"]+)"/);
+    expect(match).not.toBeNull();
+    const src = match![1]!;
+    expect(src).toMatch(/^https?:\/\//u);
+    expect(src.endsWith("/api/v1/uploads/abc-123")).toBe(true);
+  });
+
+  it("rewrites legacy /uploads/:id alias the same way", () => {
+    const html = renderMarkdown("![cap](/uploads/abc-123)");
+    const match = html.match(/<img[^>]+src="([^"]+)"/);
+    expect(match).not.toBeNull();
+    expect(match![1]!).toMatch(/^https?:\/\//u);
+  });
+
+  it("leaves absolute http(s) external image URLs untouched", () => {
+    const html = renderMarkdown("![ext](https://cdn.example.com/x.png)");
+    expect(html).toContain('src="https://cdn.example.com/x.png"');
+  });
+
+  it("still drops unsafe img src (data:, javascript:) via sanitizer", () => {
+    const html = renderMarkdown("![x](javascript:alert(1))");
+    expect(html).not.toMatch(/javascript:/iu);
+  });
+});
