@@ -28,4 +28,9 @@ export interface AuthUser {
   email: string;
   displayName: string;
   role: "admin" | "author";
+  // US-009 — Cloudinary secure_url. null = fallback initials gradient on FE.
+  avatarUrl: string | null;
+  // US-009 — informational fields surfaced by GET /me self-profile.
+  lastLoginAt: string | null;
+  createdAt: string;
 }

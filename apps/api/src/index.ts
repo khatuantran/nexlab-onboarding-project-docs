@@ -14,6 +14,7 @@ import { createSectionsRouter } from "./routes/sections.js";
 import { createSearchRouter } from "./routes/search.js";
 import { createUsersRouter } from "./routes/users.js";
 import { createUploadsRouter } from "./routes/uploads.js";
+import { createMeRouter } from "./routes/me.js";
 import { createUserRepo } from "./repos/userRepo.js";
 import { createProjectRepo } from "./repos/projectRepo.js";
 import { createFeatureRepo } from "./repos/featureRepo.js";
@@ -36,6 +37,7 @@ const searchRepo = createSearchRepo(db);
 const uploadRepo = createUploadRepo(db);
 const cloudinary = createCloudinaryClient(config.CLOUDINARY_URL);
 const cloudinaryFolder = `onboarding-portal/${config.NODE_ENV}`;
+const cloudinaryAvatarsFolder = `${cloudinaryFolder}/avatars`;
 const loginRateLimit = createRateLimit({
   redis,
   keyFn: (req) => `login:${req.ip}`,
@@ -65,6 +67,13 @@ const app = createApp({
     requireAuth,
     cloudinary,
     cloudinaryFolder,
+  }),
+  meRouter: createMeRouter({
+    userRepo,
+    requireAuth,
+    redis,
+    cloudinary,
+    cloudinaryAvatarsFolder,
   }),
 });
 

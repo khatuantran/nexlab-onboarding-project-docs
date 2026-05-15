@@ -19,6 +19,20 @@ export async function purgeSessionsForUser(
   redis: Pick<Redis, "scan" | "get" | "del">,
   userId: string,
 ): Promise<number> {
+  return purgeSessionsForUserExcept(redis, userId, null);
+}
+
+/**
+ * US-009 — self-service password change. Same SCAN logic, but skip the
+ * `sess:<exceptSid>` key so the current session (the one that triggered
+ * the change) stays logged in. Pass `null` for the admin-reset path.
+ */
+export async function purgeSessionsForUserExcept(
+  redis: Pick<Redis, "scan" | "get" | "del">,
+  userId: string,
+  exceptSid: string | null,
+): Promise<number> {
+  const exceptKey = exceptSid ? `${SESSION_PREFIX}${exceptSid}` : null;
   let cursor = "0";
   let deleted = 0;
   do {
@@ -26,6 +40,7 @@ export async function purgeSessionsForUser(
     cursor = next;
     if (keys.length === 0) continue;
     for (const key of keys) {
+      if (key === exceptKey) continue;
       const raw = await redis.get(key);
       if (!raw) continue;
       try {

@@ -33,6 +33,8 @@ export const users = pgTable("users", {
   archivedAt: timestamp("archived_at", { withTimezone: true }),
   // US-007 / T1 — informational, updated on successful login. NULL = never logged in.
   lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
+  // US-009 / T1 — Cloudinary secure_url của ảnh đại diện. NULL = fallback initials.
+  avatarUrl: text("avatar_url"),
 });
 
 export const projects = pgTable("projects", {

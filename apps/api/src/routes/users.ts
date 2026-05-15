@@ -44,6 +44,7 @@ export function toAdminUser(row: AdminUserRow): AdminUser {
     email: row.email,
     displayName: row.displayName,
     role: row.role,
+    avatarUrl: row.avatarUrl,
     archivedAt: row.archivedAt ? row.archivedAt.toISOString() : null,
     lastLoginAt: row.lastLoginAt ? row.lastLoginAt.toISOString() : null,
     createdAt: row.createdAt.toISOString(),

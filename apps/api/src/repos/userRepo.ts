@@ -35,6 +35,8 @@ export interface AdminUserRow extends UserListItem {
   archivedAt: Date | null;
   lastLoginAt: Date | null;
   createdAt: Date;
+  /** US-009 — Cloudinary secure_url or null. */
+  avatarUrl: string | null;
 }
 
 export interface CreateUserInput {
@@ -61,6 +63,8 @@ export interface UserRepo {
   updatePasswordHash(id: string, passwordHash: string): Promise<AdminUserRow | null>;
   touchLastLogin(id: string): Promise<void>;
   countActiveAdmins(): Promise<number>;
+  /** US-009 — update only the avatar_url column. */
+  updateAvatarUrl(id: string, avatarUrl: string | null): Promise<AdminUserRow | null>;
 }
 
 const LIST_LIMIT = 100;
@@ -74,6 +78,7 @@ function toAdminRow(r: User): AdminUserRow {
     archivedAt: r.archivedAt ?? null,
     lastLoginAt: r.lastLoginAt ?? null,
     createdAt: r.createdAt,
+    avatarUrl: r.avatarUrl ?? null,
   };
 }
 
@@ -182,6 +187,11 @@ export function createUserRepo(db: Db): UserRepo {
         .from(users)
         .where(and(eq(users.role, "admin"), isNull(users.archivedAt)));
       return Number(rows[0]?.n ?? 0);
+    },
+    async updateAvatarUrl(id, avatarUrl) {
+      const rows = await db.update(users).set({ avatarUrl }).where(eq(users.id, id)).returning();
+      const r = rows[0];
+      return r ? toAdminRow(r) : null;
     },
   };
 }

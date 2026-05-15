@@ -12,7 +12,15 @@ export interface AuthRouterDeps {
 }
 
 function toAuthUser(u: User): AuthUser {
-  return { id: u.id, email: u.email, displayName: u.displayName, role: u.role };
+  return {
+    id: u.id,
+    email: u.email,
+    displayName: u.displayName,
+    role: u.role,
+    avatarUrl: u.avatarUrl ?? null,
+    lastLoginAt: u.lastLoginAt ? u.lastLoginAt.toISOString() : null,
+    createdAt: u.createdAt.toISOString(),
+  };
 }
 
 /**

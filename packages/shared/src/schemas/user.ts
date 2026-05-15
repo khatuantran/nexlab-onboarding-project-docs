@@ -35,6 +35,8 @@ export interface AdminUser extends UserPublic {
   archivedAt: string | null;
   lastLoginAt: string | null;
   createdAt: string;
+  /** US-009 — surface avatar on admin pages too (read-only). */
+  avatarUrl: string | null;
 }
 
 export const inviteUserRequestSchema = z.object({
@@ -69,3 +71,27 @@ export interface InviteUserResponse {
   user: AdminUser;
   tempPassword: string;
 }
+
+/**
+ * US-009 — self-service profile mutations. Always scoped to the session
+ * user (`req.session.userId`); never accept `:id` URL param.
+ */
+export const updateMyProfileRequestSchema = z
+  .object({
+    displayName: displayNameSchema,
+  })
+  .strict();
+
+export type UpdateMyProfileRequest = z.infer<typeof updateMyProfileRequestSchema>;
+
+export const changePasswordRequestSchema = z
+  .object({
+    oldPassword: z.string().min(1, "Bắt buộc nhập mật khẩu cũ").max(200),
+    newPassword: z
+      .string()
+      .min(8, "Mật khẩu mới tối thiểu 8 ký tự")
+      .max(200, "Mật khẩu mới tối đa 200 ký tự"),
+  })
+  .strict();
+
+export type ChangePasswordRequest = z.infer<typeof changePasswordRequestSchema>;
