@@ -36,6 +36,7 @@ Mục đích: khi đổi 1 FR biết ngay tác động tới story + task nào. 
 | G1                                 | [FR-SEARCH-003](02-requirements.md#fr-search-003--search-filters)               | [US-005](stories/US-005.md)                                                           | [US-005 T2, T4, T7, T9](stories/US-005/tasks.md)                                                                                                                                                                                                                         | US-005 AC-6, AC-7, AC-8, AC-9, AC-13, AC-14      | ✅ US-005 `3de57a5..a9fbf86`                 |
 | G1                                 | [FR-USER-001](02-requirements.md#fr-user-001--user-list-endpoint)               | [US-005](stories/US-005.md), [US-007](stories/US-007.md)                              | [US-005 T5, T6](stories/US-005/tasks.md), [US-007 T2](stories/US-007/tasks.md#t2--get-users-list-extend--get-usersid)                                                                                                                                                    | US-005 AC-11; US-007 AC-1, AC-2                  | ✅ US-005 `df8d877` / ✅ US-007 T2 `c0c4ede` |
 | G5 (admin ops không SSH DB)        | [FR-USER-002](02-requirements.md#fr-user-002--admin-user-lifecycle)             | [US-007](stories/US-007.md)                                                           | [US-007 T1..T7](stories/US-007/tasks.md)                                                                                                                                                                                                                                 | US-007 AC-1..AC-8                                | ✅ US-007 `b4e8a92..da67d63`                 |
+| G5 (self-service)                  | [FR-USER-003](02-requirements.md#fr-user-003--self-service-profile-management)  | [US-009](stories/US-009.md)                                                           | [US-009 T1..T6](stories/US-009/tasks.md)                                                                                                                                                                                                                                 | US-009 AC-1..AC-10                               | 🟡 Planned                                   |
 | G1 (typo + accent + prefix)        | [FR-SEARCH-004](02-requirements.md#fr-search-004--query-semantics)              | [US-006](stories/US-006.md)                                                           | [US-006 T1-T5](stories/US-006/tasks.md)                                                                                                                                                                                                                                  | US-006 AC-1..AC-7                                | ✅ US-006 `648242b..adbdfa3`                 |
 
 ---
@@ -105,6 +106,17 @@ Mục đích: khi đổi 1 FR biết ngay tác động tới story + task nào. 
 | [T5](stories/US-007/tasks.md#t5--reset-password-endpoint--session-invalidate) | USER-002                 | AC-7                | ✅ `f4b1af0` |
 | [T6](stories/US-007/tasks.md#t6--admin-users-fe-page)                         | all USER FRs             | AC-1..AC-7 UI       | ✅ `da67d63` |
 | [T7](stories/US-007/tasks.md#t7--e2e--progress-sync)                          | all                      | all AC end-to-end   | ✅ this sync |
+
+### US-009 tasks
+
+| Task                                                               | Primary FR | AC covered (US-009)    | Status     |
+| ------------------------------------------------------------------ | ---------- | ---------------------- | ---------- |
+| [T1](stories/US-009/tasks.md#t1--migration--shared-schemas)        | USER-003   | prereq                 | 🟡 Planned |
+| [T2](stories/US-009/tasks.md#t2--get--patch-me)                    | USER-003   | AC-2, AC-3, AC-10      | 🟡 Planned |
+| [T3](stories/US-009/tasks.md#t3--password--avatar-endpoints)       | USER-003   | AC-4, AC-5, AC-7..AC-9 | 🟡 Planned |
+| [T4](stories/US-009/tasks.md#t4--mutation-hooks--avatar-component) | —          | AC-3, AC-7             | 🟡 Planned |
+| [T5](stories/US-009/tasks.md#t5--profilepage--usermenu-wire)       | —          | AC-1..AC-8             | 🟡 Planned |
+| [T6](stories/US-009/tasks.md#t6--e2e--progress-sync)               | all        | AC-1, AC-3, AC-4, AC-7 | 🟡 Planned |
 
 ### US-008 tasks
 

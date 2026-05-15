@@ -262,6 +262,11 @@ US-008 adds (✅ landed `a03c345`):
 
 - `FeatureActionsMenu` — overflow `⋯` dropdown trên `FeatureCard`, admin-only. Single item "Lưu trữ feature" (Archive icon, destructive tone). Native `window.confirm` → POST `/projects/:slug/features/:fSlug/archive` → toast + invalidate cache. Mirror [`ProjectActionsMenu`](../../apps/web/src/components/projects/ProjectActionsMenu.tsx) pattern. Props: `projectSlug: string`, `feature: { slug, title }`.
 
+US-009 adds (planned):
+
+- `ProfilePage` — `/profile` dedicated screen với 3 section card (Profile / Security / Avatar). Reuse `Avatar` (extended với `imageUrl`), `Button`, `Input`, `Label`, `DropdownMenu` (UserMenu link). Mount under ProtectedLayout. See [profile.md](profile.md).
+- `Avatar` extended — optional prop `imageUrl?: string | null`. Nếu set, render `<img src>` với alt = name; fallback initials gradient (existing). Áp dụng cho UserMenu trigger + ProfilePage avatar large.
+
 ---
 
 ## 6. A11y floor (áp dụng mọi screen)
@@ -312,6 +317,7 @@ Thêm row khi đổi token, icon registry, component inventory. Breaking change 
 | 2026-05-15 | **AppHeader v2 implemented** — `Kbd` primitive, `NavLinks`, `NotificationBell`, `UserMenu`, `BreadcrumbBar` land. `AppHeader` rewired 2-row sticky chrome (max-w-6xl, backdrop-blur). RequireAuth + CreateProjectDialog tests updated to traverse the new UserMenu dropdown / Row 2 admin CTA.                                                                                                                                                                                                                                                                                   | AppHeader v2 ship                           |
 | 2026-05-15 | **US-008 Gate 1 scaffold** — `FeatureActionsMenu` registered §5.3 (admin overflow ⋯ trên FeatureCard, single item "Lưu trữ feature"). Mirror `ProjectActionsMenu` pattern. Status `(planned)` cho tới khi US-008 T5 ship.                                                                                                                                                                                                                                                                                                                                                        | US-008 Gate 1 (spec only)                   |
 | 2026-05-15 | **US-008 implemented** — `FeatureActionsMenu` ships + wired vào `FeatureCard` (admin overlay top-right, hide chevron khi admin per BUG-004). `useArchiveFeature` mutation hook lands cùng FE commit. E2E happy path covers archive → list refresh → direct URL 404.                                                                                                                                                                                                                                                                                                              | US-008 ship `a03c345`                       |
+| 2026-05-15 | **US-009 Gate 1 scaffold** — `ProfilePage` registered §5.3 + planned `Avatar` extension (`imageUrl` prop). Spec only — implementation lands T2-T5.                                                                                                                                                                                                                                                                                                                                                                                                                               | US-009 Gate 1 (spec only)                   |
 
 ---
 

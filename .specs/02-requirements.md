@@ -48,6 +48,7 @@ Mỗi FR có:
 | [FR-UPLOAD-001](#fr-upload-001--image-upload-for-screenshots) | Upload  | Upload image file → volume, trả stable URL            | P0       | US-003                 |
 | [FR-USER-001](#fr-user-001--user-list-endpoint)               | User    | List user (read) cho author filter dropdown           | P1       | US-005, US-007         |
 | [FR-USER-002](#fr-user-002--admin-user-lifecycle)             | User    | Admin invite / edit role / archive / reset password   | P1       | US-007                 |
+| [FR-USER-003](#fr-user-003--self-service-profile-management)  | User    | View / edit displayName / change password / avatar    | P1       | US-009                 |
 
 Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 
@@ -360,6 +361,32 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 - Response shape: `{ data: { user: AdminUser, tempPassword: string } }` cho invite + reset; `{ data: AdminUser }` cho patch + archive + unarchive.
 - Audit: `pino.info({event:"user.<verb>", actorId, targetId, ...})` mỗi mutation. Không lưu DB v1.
 - Idempotent archive/unarchive: gọi lại thao tác đã thực hiện không lỗi (no-op + cùng response).
+
+---
+
+## FR-USER-003 — Self-service profile management
+
+**Statement (Event-driven + Unwanted):**
+
+- When an authenticated user fetches their own profile (`GET /api/v1/me`), the system shall return `id`, `email`, `displayName`, `role`, `avatarUrl`, `lastLoginAt`, `createdAt` from the user's own row (read by `req.session.userId`).
+- When an authenticated user submits a display-name update (`PATCH /api/v1/me`), the system shall persist the new `displayName` against the session user (`req.session.userId`) only — never accept `:id` URL param so a forged path cannot escalate to another user (anti-IDOR).
+- When an authenticated user submits a password change (`POST /api/v1/me/password`) with `{ oldPassword, newPassword }`, the system shall verify `oldPassword` against the stored bcrypt hash; on success persist the bcrypt hash of `newPassword`, purge all other Redis sessions for that user (current session preserved via its sid), and return 204.
+- If the supplied `oldPassword` does not match, the system shall respond 401 `INVALID_CREDENTIALS` (no information leak about whether the user exists or the format of the stored hash).
+- When an authenticated user uploads an avatar image (`POST /api/v1/me/avatar`, multipart `file` ≤ 2 MB, png/jpg/webp), the system shall stream the bytes through Cloudinary into folder `onboarding-portal/<env>/avatars/`, persist the returned `secure_url` on `users.avatar_url`, and return `{ data: { avatarUrl } }`. Previous avatar URL is overwritten (no Cloudinary orphan cleanup v1 — accept storage drift).
+
+**Rationale**: Users hiện không có cách nào đổi displayName hay password (admin reset password cho người khác qua US-007 nhưng không có self-flow). Avatar gradient initials đủ pilot nhưng user request branding cá nhân. Self-service giảm load admin (mọi PW change phải qua admin reset → friction).
+
+**Maps to**: US-009 (self-service profile). Personas: P1 (Minh), P2 (Lan), P3 (Hùng) — universal.
+
+**Acceptance hints**:
+
+- All endpoints `requireAuth` only — no admin gate. Backend always trust `req.session.userId`, never URL param.
+- `PATCH /api/v1/me` body: `{ displayName: string 1-120 }`. No `email` / `role` field accepted (silently stripped by Zod schema or rejected with VALIDATION_ERROR if extras).
+- `POST /api/v1/me/password` body: `{ oldPassword: string 1-200, newPassword: string 8-200 }`. New password ≥ 8 chars; reuse `BCRYPT_COST = 12`.
+- Session purge: extend `purgeSessionsForUser` with an `exceptSid` parameter so the user stays logged in on the device that triggered the change (matches GitHub/GitLab UX).
+- Avatar upload: reuse `cloudinary.uploadImage` (CR-004 Phase 2) with `folder = "${cloudinaryFolder}/avatars"`. Magic-byte mime sniff via `file-type` (same pattern as `/uploads`). Rejected mime → 415 `UNSUPPORTED_MEDIA_TYPE`; > 2 MB → 413 `FILE_TOO_LARGE`; Cloudinary down → 502 `UPLOAD_PROVIDER_ERROR`; SDK unconfigured → 503 `UPLOADS_DISABLED`.
+- Response shape after update: PATCH/password mutations may return `{ data: AuthUser }` (with refreshed avatarUrl) so FE invalidates `authKeys.me` and the header avatar updates in one round-trip.
+- No audit log v1; pino `info({event:"profile.updated", userId})` per mutation is enough.
 
 ---
 
