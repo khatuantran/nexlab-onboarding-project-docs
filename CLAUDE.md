@@ -159,6 +159,18 @@ Phạm vi cover:
 
 Nếu user prompt đụng action không khớp SDD flow, **KHÔNG** im lặng làm theo. Dừng lại, flag rõ, đề xuất quy trình đúng, chờ user confirm.
 
+### Pre-flight self-check (mandatory trước MỌI Edit/Write/Bash commit)
+
+Trước khi gọi tool đầu tiên có side-effect (Edit, Write, Bash với `git commit`/`pnpm install`/`fly deploy`/...), phải answer 3 câu sau **bằng văn bản trong tin nhắn user-facing** (không chỉ nội tâm). Default mode: trả lời rõ rồi mới tool-call. Skip pre-flight = vi phạm SDD.
+
+1. **Trigger type?** Prompt user thuộc loại nào: feature mới (cần FR + US) / bug report (cần BUG-NNN + failing test) / refactor / spec edit / progress sync / chore. Bug report signals: screenshot kèm "lỗi/sai/fix/bị đè/không chạy/...", description "X không work", "tại sao Y", "Y bị Z". **Screenshot + động từ fix = bug**, không phải feature tweak.
+2. **Spec / paperwork đã đủ chưa?** Match với hàng tương ứng ở §Common violations bên dưới. Nếu thiếu BUG-NNN / US-NNN / CR-NNN / UI spec / template-version → list ra cụ thể cái nào thiếu.
+3. **Order?** Đúng thứ tự là gì: BUG/CR/US file trước → failing test commit → fix commit → progress sync commit. Hay UI spec trước → FE code? Viết ra sequence sẽ chạy.
+
+Nếu 1 trong 3 câu lộ ra deviation → STOP, dùng §Response format khi flag để hỏi user override hay theo đúng quy trình. **Không tự quyết "small fix nên skip được"** — chính category đó là mode failure hay gặp nhất.
+
+**Counter-example (đã xảy ra 2026-05-15, BUG-004)**: user gửi screenshot "2 icon đè lên nhau, hãy fix" → tôi parse là UI tweak nhỏ → Edit ProjectCard ngay → commit `1adc157` không có BUG-004.md, không có failing test. Đúng phải là: pre-flight trả lời "bug report → cần BUG-004 + regression test trước" → ship paperwork trước rồi mới fix. Failure mode: bỏ qua pre-flight với lý do "fix obviously đúng".
+
 ### Common violations + response
 
 | Trigger từ user                                                                                     | Rule bị vi phạm                               | Đề xuất                                                                                                                                                         |
