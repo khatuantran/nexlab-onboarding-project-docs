@@ -12,7 +12,7 @@ export function LoginBrandPanel(): JSX.Element {
   return (
     <aside
       aria-hidden="true"
-      className="relative hidden flex-1 overflow-hidden bg-gradient-to-br from-[#FFF8EE] via-[#FDEED7] to-[#FBDAAD] xl:flex dark:from-primary-950/40 dark:via-primary-900/30 dark:to-primary-800/30"
+      className="relative hidden flex-1 overflow-hidden bg-gradient-to-br from-[#FFF8EE] via-[#FDEED7] to-[#FBDAAD] xl:flex dark:from-primary-100/45 dark:via-primary-50/55 dark:to-primary-200/35"
     >
       <DecorativeMark size={520} className="absolute -right-16 -top-16" />
 
