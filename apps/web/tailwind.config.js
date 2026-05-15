@@ -35,6 +35,18 @@ export default {
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
+          blue: "hsl(var(--accent-blue))",
+          "blue-bg": "hsl(var(--accent-blue-bg))",
+          green: "hsl(var(--accent-green))",
+          "green-bg": "hsl(var(--accent-green-bg))",
+          purple: "hsl(var(--accent-purple))",
+          "purple-bg": "hsl(var(--accent-purple-bg))",
+          pink: "hsl(var(--accent-pink))",
+          "pink-bg": "hsl(var(--accent-pink-bg))",
+          cyan: "hsl(var(--accent-cyan))",
+          "cyan-bg": "hsl(var(--accent-cyan-bg))",
+          amber: "hsl(var(--accent-amber))",
+          "amber-bg": "hsl(var(--accent-amber-bg))",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
