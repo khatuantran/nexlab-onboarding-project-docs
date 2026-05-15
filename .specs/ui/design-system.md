@@ -183,6 +183,11 @@ Library: [`lucide-react`](https://lucide.dev/). Đã trong `apps/web/package.jso
 | `Github` (custom SVG) | EmbedCard icon cho github.com URLs (US-003)                        | decor (kèm URL text, aria-hidden) |
 | `Figma` (custom SVG)  | EmbedCard icon cho figma.com URLs (US-003)                         | decor (kèm URL text, aria-hidden) |
 | `Jira` (custom SVG)   | EmbedCard icon cho atlassian.net URLs (US-003)                     | decor (kèm URL text, aria-hidden) |
+| `Bell`                | NotificationBell (AppHeader v2 placeholder)                        | "Thông báo (sắp ra mắt)"          |
+| `ChevronDown`         | UserMenu trigger affordance (AppHeader v2)                         | decor (aria-hidden)               |
+| `User`                | UserMenu item "Hồ sơ của tôi" (AppHeader v2)                       | decor (kèm text, aria-hidden)     |
+| `Settings`            | UserMenu item "Cài đặt" (AppHeader v2)                             | decor (kèm text, aria-hidden)     |
+| `Home`                | NavLinks "Trang chủ" (AppHeader v2)                                | decor (kèm text, aria-hidden)     |
 
 **Brand logo** — Nexlab wordmark SVG (không dùng lucide):
 
@@ -209,6 +214,7 @@ Mọi component dùng lại phải listed ở đây. Không variant mới / copy
 | `Textarea`     | —                                                                                                                        | `min-h-32`, `text-sm font-mono` cho markdown editor | `textarea.tsx` (US-002)                     |
 | `Toaster`      | sonner mount at app root — `success` / `error` / `info` variants theme-aware                                             | —                                                   | `toaster.tsx` (US-002)                      |
 | `DropdownMenu` | shadcn wrapper around Radix `@radix-ui/react-dropdown-menu` (Trigger / Content / Item / Separator / Label)               | default `min-w-40`                                  | `dropdown-menu.tsx` (US-004 / T4 `54b276c`) |
+| `Kbd`          | Inline keyboard hint `<kbd>` với border + bg-muted; visual only                                                          | `text-[10px] px-1.5 py-0.5`                         | `kbd.tsx` (AppHeader v2)                    |
 
 Thêm variant / component mới:
 
@@ -218,21 +224,25 @@ Thêm variant / component mới:
 
 ### 5.2 Layout components ([apps/web/src/components/layout/](../../apps/web/src/components/layout/))
 
-| Component       | Purpose                                                                          | Land ở                 |
-| --------------- | -------------------------------------------------------------------------------- | ---------------------- |
-| `ErrorBoundary` | Catch render errors → fallback UI                                                | T4                     |
-| `RequireAuth`   | Gate route subtree behind `useMe()` session                                      | T8                     |
-| `AppHeader`     | App chrome: logo, user name, logout, ThemeToggle                                 | T8 + T8.5 ✅ `51802c0` |
-| `ThemeToggle`   | Tri-state button cycle light/dark/system (§1.2)                                  | T8.5 ✅ `51802c0`      |
-| `Breadcrumb`    | "Demo / Login" link trail cho feature detail                                     | T9 (planned)           |
-| `FeatureCard`   | Card grid item: title + filledCount badge + relative time (ProjectLanding)       | T9 (planned)           |
-| `SectionBadge`  | "3/5" pill hiển thị filledCount                                                  | T9 (planned)           |
-| `RelativeTime`  | `<time>` với `title=ISO`, text "2 giờ trước" (date-fns vi locale)                | T9 (planned)           |
-| `MarkdownView`  | Render markdown (markdown-it) + sanitize (DOMPurify), chỉ allow whitelisted tags | T9 (planned)           |
-| `SectionToc`    | Sticky left sidebar (desktop) / top dropdown (mobile) với 5 anchor link          | T9 (planned)           |
-| `EmptyState`    | Icon + copy + optional CTA cho trường hợp empty (no features, empty section)     | T9 (planned)           |
-| `SearchInput`   | AppHeader persistent search field; Enter submit → `/search?q=...&projectSlug=?`  | T10 (planned)          |
-| `FilterChip`    | Pill "× Trong Demo" cho scope filter remove                                      | T10 (planned)          |
+| Component          | Purpose                                                                                                                                                                                                    | Land ở                     |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| `ErrorBoundary`    | Catch render errors → fallback UI                                                                                                                                                                          | T4                         |
+| `RequireAuth`      | Gate route subtree behind `useMe()` session                                                                                                                                                                | T8                         |
+| `AppHeader`        | App chrome v2: 2-row (Row 1: logo + NavLinks + SearchInput + NotificationBell + ThemeToggle + UserMenu; Row 2: Breadcrumb + admin CTA). Replaces inline username + logout button + admin shortcut buttons. | AppHeader v2 (post US-007) |
+| `ThemeToggle`      | Tri-state button cycle light/dark/system (§1.2)                                                                                                                                                            | T8.5 ✅ `51802c0`          |
+| `UserMenu`         | Avatar + ChevronDown trigger → DropdownMenu (Hồ sơ / Cài đặt / Quản lý user [admin] / Đăng xuất). Header label hiển thị displayName + email + role badge.                                                  | AppHeader v2               |
+| `NavLinks`         | Primary nav pill row: Trang chủ / Tìm kiếm (react-router NavLink active-state)                                                                                                                             | AppHeader v2               |
+| `NotificationBell` | Ghost icon button placeholder (disabled, tooltip "Sắp ra mắt")                                                                                                                                             | AppHeader v2               |
+| `BreadcrumbBar`    | Row 2 wrapper: parses `useLocation()` segments (project name via `useProject`) + slot bên phải cho admin CTA                                                                                               | AppHeader v2               |
+| `Breadcrumb`       | "Demo / Login" link trail cho feature detail                                                                                                                                                               | T9 (planned)               |
+| `FeatureCard`      | Card grid item: title + filledCount badge + relative time (ProjectLanding)                                                                                                                                 | T9 (planned)               |
+| `SectionBadge`     | "3/5" pill hiển thị filledCount                                                                                                                                                                            | T9 (planned)               |
+| `RelativeTime`     | `<time>` với `title=ISO`, text "2 giờ trước" (date-fns vi locale)                                                                                                                                          | T9 (planned)               |
+| `MarkdownView`     | Render markdown (markdown-it) + sanitize (DOMPurify), chỉ allow whitelisted tags                                                                                                                           | T9 (planned)               |
+| `SectionToc`       | Sticky left sidebar (desktop) / top dropdown (mobile) với 5 anchor link                                                                                                                                    | T9 (planned)               |
+| `EmptyState`       | Icon + copy + optional CTA cho trường hợp empty (no features, empty section)                                                                                                                               | T9 (planned)               |
+| `SearchInput`      | AppHeader persistent search field; Enter submit → `/search?q=...&projectSlug=?`                                                                                                                            | T10 (planned)              |
+| `FilterChip`       | Pill "× Trong Demo" cho scope filter remove                                                                                                                                                                | T10 (planned)              |
 
 ### 5.3 Feature components ([apps/web/src/components/features/](../../apps/web/src/components/features/))
 
@@ -294,6 +304,7 @@ Thêm row khi đổi token, icon registry, component inventory. Breaking change 
 | 2026-04-24 | US-004 Gate 1 scaffold: add `Check` (retroactive, US-002 T7 ship), `MoreHorizontal`, `Archive` icons + `DropdownMenu` primitive (req dep `@radix-ui/react-dropdown-menu`). Cho overflow menu admin actions trên project-landing. Status `(planned)` cho tới khi US-004 ship.                                                                                                                                                                                                                                                                                                     | US-004 Gate 1                               |
 | 2026-04-24 | US-003 Gate 1 scaffold: add `Upload` + `Image` + `ExternalLink` lucide icons + `Github` + `Figma` + `Jira` custom SVG brand icons. Add `UploadButton` + `EmbedCard` feature components. Req dep `file-type` (BE). Status `(planned)` cho tới khi US-003 ship.                                                                                                                                                                                                                                                                                                                    | US-003 Gate 1                               |
 | 2026-04-24 | **Nexlab DS adopted** ([ADR-003](../adr/ADR-003-nexlab-design-system.md)). Full token rewrite: primary orange `27 88% 51%` (was shadcn neutral `222 47% 11%`), secondary gold, new semantic tokens (success/warning/info/accent/popover/card + secondary-bg/text), primary ramp 50-900 exposed. Self-host Roboto + Inter via `@fontsource` (Latin + Vietnamese subsets). `NxLogo` brand component registered. Tailwind config: colors/borderRadius/boxShadow/fontFamily rewritten. Dark variants derived từ Nexlab palette. Supersede shadcn-neutral tokens + system font stack. | T-DS-1..4 `3e32743` / `96a1251` / `87b9827` |
+| 2026-05-15 | **AppHeader v2** — full chrome redesign. 5 icon rows mới (`Bell`, `ChevronDown`, `User`, `Settings`, `Home`). 5 component rows mới: `Kbd` primitive + `UserMenu` (Avatar dropdown 4-item, admin gate inside), `NavLinks`, `NotificationBell`, `BreadcrumbBar`. `AppHeader` row description rewritten — old fields (inline username + logout button + admin outline button) collapsed into UserMenu; Row 2 hiển thị breadcrumb + admin CTA. Layout: 2-row, max-w-6xl. Visual rules giữ §3 (primary orange chỉ trên CTA).                                                          | AppHeader v2 (post US-007)                  |
 
 ---
 

@@ -15,8 +15,9 @@
 - **Auth**: 👑 admin
 - **Redirect on unauth**: client-side `<Navigate to="/" replace />` khi role ≠ admin. BE `GET /api/v1/users?status=*` cũng trả 403 cho non-admin → defense in depth.
 - **Entry points**:
-  - **Primary**: link "Quản lý user" trong [AppHeader](home.md) (admin gate, icon Users, đứng ngay trước CTA "Tạo project").
+  - **Primary** (AppHeader v2, 2026-05-15): item "Quản lý user" trong `<UserMenu>` dropdown (admin-only row, icon Users, đứng giữa "Cài đặt" và separator "Đăng xuất"). UserMenu trigger là Avatar + ChevronDown ở góc phải header.
   - **Direct URL**: gõ tay `/admin/users` (bookmarkable).
+  - **Legacy** (replaced 2026-05-15): inline outline button "Quản lý user" trong AppHeader v1 — gỡ trong AppHeader v2 redesign.
   - **Future**: HomePage admin section dashed-tile (deferred, BL-NNN).
 
 ## State machine
