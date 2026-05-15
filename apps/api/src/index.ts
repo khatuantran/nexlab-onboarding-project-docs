@@ -9,6 +9,7 @@ import { createSessionMiddleware } from "./middleware/session.js";
 import { createAuthRouter } from "./routes/auth.js";
 import { createProjectsRouter } from "./routes/projects.js";
 import { createFeaturesRouter } from "./routes/features.js";
+import { requireAdmin } from "./middleware/requireAdmin.js";
 import { createSectionsRouter } from "./routes/sections.js";
 import { createSearchRouter } from "./routes/search.js";
 import { createUsersRouter } from "./routes/users.js";
@@ -50,7 +51,7 @@ const app = createApp({
   sessionMiddleware: createSessionMiddleware(),
   authRouter: createAuthRouter({ userRepo, loginRateLimit }),
   projectsRouter: createProjectsRouter({ projectRepo, requireAuth }),
-  featuresRouter: createFeaturesRouter({ featureRepo, projectRepo, requireAuth }),
+  featuresRouter: createFeaturesRouter({ featureRepo, projectRepo, requireAuth, requireAdmin }),
   sectionsRouter: createSectionsRouter({ sectionRepo, requireAuth }),
   searchRouter: createSearchRouter({ searchRepo, requireAuth }),
   usersRouter: createUsersRouter({

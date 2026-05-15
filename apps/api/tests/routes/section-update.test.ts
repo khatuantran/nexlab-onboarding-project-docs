@@ -13,6 +13,7 @@ import { createFeatureRepo } from "../../src/repos/featureRepo.js";
 import { createSectionRepo } from "../../src/repos/sectionRepo.js";
 import { createRateLimit, type RateLimitClient } from "../../src/middleware/rateLimit.js";
 import { createRequireAuth } from "../../src/middleware/requireAuth.js";
+import { requireAdmin } from "../../src/middleware/requireAdmin.js";
 import { db } from "../../src/db/client.js";
 import { pool } from "../../src/db.js";
 import { features, projects, sections } from "../../src/db/schema.js";
@@ -47,7 +48,7 @@ function buildApp() {
     sessionMiddleware,
     authRouter: createAuthRouter({ userRepo, loginRateLimit }),
     projectsRouter: createProjectsRouter({ projectRepo, requireAuth }),
-    featuresRouter: createFeaturesRouter({ featureRepo, projectRepo, requireAuth }),
+    featuresRouter: createFeaturesRouter({ featureRepo, projectRepo, requireAuth, requireAdmin }),
     sectionsRouter: createSectionsRouter({ sectionRepo, requireAuth }),
   });
 }

@@ -61,6 +61,9 @@ export const features = pgTable(
     title: text("title").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+    // Soft-delete timestamp (US-008, FR-FEAT-001 amend). NULL = active.
+    // listFeatures + findByProjectAndSlug filter WHERE archived_at IS NULL.
+    archivedAt: timestamp("archived_at", { withTimezone: true }),
   },
   (table) => [uniqueIndex("features_project_slug_uidx").on(table.projectId, table.slug)],
 );

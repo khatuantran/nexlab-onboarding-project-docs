@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { SECTION_ORDER } from "@onboarding/shared";
 import type { Db } from "../db/client.js";
 import { features, projects, sections, users, type Feature, type Section } from "../db/schema.js";
@@ -25,6 +25,13 @@ export interface FeatureRepo {
   ): Promise<{ feature: Feature; sections: SectionWithAuthor[] } | null>;
   findById(id: string): Promise<Feature | null>;
   create(input: CreateFeatureInput): Promise<Feature>;
+  /**
+   * US-008: soft-delete a feature by setting `archived_at = NOW()`.
+   * Idempotent — calling on an already-archived row still resolves true
+   * (mirror `projectRepo.archive` semantics). Returns false if the
+   * (projectSlug, featureSlug) pair doesn't match any row.
+   */
+  archive(projectSlug: string, featureSlug: string): Promise<boolean>;
 }
 
 export function createFeatureRepo(db: Db): FeatureRepo {
@@ -34,7 +41,14 @@ export function createFeatureRepo(db: Db): FeatureRepo {
         .select({ feature: features })
         .from(features)
         .innerJoin(projects, eq(projects.id, features.projectId))
-        .where(and(eq(projects.slug, projectSlug), eq(features.slug, featureSlug)))
+        .where(
+          and(
+            eq(projects.slug, projectSlug),
+            eq(features.slug, featureSlug),
+            // US-008: archived features hidden from direct GET → 404.
+            isNull(features.archivedAt),
+          ),
+        )
         .limit(1);
       const row = rows[0];
       if (!row) return null;
@@ -91,6 +105,21 @@ export function createFeatureRepo(db: Db): FeatureRepo {
         }
         throw err;
       }
+    },
+    async archive(projectSlug, featureSlug) {
+      // Resolve project id via subquery so a single statement covers both
+      // the slug pair join + the soft-delete update. No archived-filter
+      // here on purpose — idempotent second call must still return true.
+      const projectIdSub = db
+        .select({ id: projects.id })
+        .from(projects)
+        .where(eq(projects.slug, projectSlug));
+      const rows = await db
+        .update(features)
+        .set({ archivedAt: new Date() })
+        .where(and(eq(features.slug, featureSlug), eq(features.projectId, projectIdSub)))
+        .returning({ id: features.id });
+      return rows.length > 0;
     },
   };
 }

@@ -119,7 +119,9 @@ export function createProjectRepo(db: Db): ProjectRepo {
     },
     async listFeatures(projectId) {
       // Feature list + count of sections with non-empty body (filledCount).
-      // Single query via LEFT JOIN + FILTER to avoid N+1.
+      // Single query via LEFT JOIN + FILTER to avoid N+1. US-008: filter
+      // archived features so soft-deleted rows disappear from the catalog
+      // without losing their sections + uploads.
       const rows = await db
         .select({
           id: features.id,
@@ -130,7 +132,7 @@ export function createProjectRepo(db: Db): ProjectRepo {
         })
         .from(features)
         .leftJoin(sections, eq(sections.featureId, features.id))
-        .where(eq(features.projectId, projectId))
+        .where(and(eq(features.projectId, projectId), isNull(features.archivedAt)))
         .groupBy(features.id)
         .orderBy(desc(features.updatedAt));
       return rows;

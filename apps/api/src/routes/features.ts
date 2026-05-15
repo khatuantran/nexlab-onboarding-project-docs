@@ -20,6 +20,7 @@ export interface FeaturesRouterDeps {
   featureRepo: FeatureRepo;
   projectRepo: ProjectRepo;
   requireAuth: RequestHandler;
+  requireAdmin: RequestHandler;
 }
 
 function toFeatureResponse(row: Feature): FeatureResponse {
@@ -33,7 +34,7 @@ function toFeatureResponse(row: Feature): FeatureResponse {
 }
 
 export function createFeaturesRouter(deps: FeaturesRouterDeps): ExpressRouter {
-  const { featureRepo, projectRepo, requireAuth } = deps;
+  const { featureRepo, projectRepo, requireAuth, requireAdmin } = deps;
   const router = Router({ mergeParams: true });
 
   const getParams = z.object({
@@ -106,6 +107,20 @@ export function createFeaturesRouter(deps: FeaturesRouterDeps): ExpressRouter {
     }
   };
 
+  const archive: RequestHandler = async (req, res, next) => {
+    try {
+      const { slug, featureSlug } = req.params as { slug: string; featureSlug: string };
+      const ok = await featureRepo.archive(slug, featureSlug);
+      if (!ok) {
+        next(new HttpError(404, ErrorCode.FEATURE_NOT_FOUND, "Feature không tồn tại"));
+        return;
+      }
+      res.status(204).end();
+    } catch (err) {
+      next(err);
+    }
+  };
+
   router.post(
     "/",
     requireAuth,
@@ -114,5 +129,12 @@ export function createFeaturesRouter(deps: FeaturesRouterDeps): ExpressRouter {
     create,
   );
   router.get("/:featureSlug", requireAuth, zodValidate({ params: getParams }), get);
+  router.post(
+    "/:featureSlug/archive",
+    requireAuth,
+    requireAdmin,
+    zodValidate({ params: getParams }),
+    archive,
+  );
   return router;
 }
