@@ -22,6 +22,12 @@ const BCRYPT_COST = 12;
 export interface UsersRouterDeps {
   userRepo: UserRepo;
   requireAuth: RequestHandler;
+  /**
+   * Invalidate every active session belonging to a user. Optional so
+   * the test app may pass a no-op fake (Redis not wired in tests).
+   * Production wiring: `purgeSessionsForUser(redis, userId)`.
+   */
+  purgeUserSessions?: (userId: string) => Promise<unknown>;
 }
 
 const querySchema = z.object({
@@ -53,7 +59,7 @@ export function toAdminUser(row: AdminUserRow): AdminUser {
  * Original US-005 / FR-USER-001 contract preserved for non-admin callers.
  */
 export function createUsersRouter(deps: UsersRouterDeps): ExpressRouter {
-  const { userRepo, requireAuth } = deps;
+  const { userRepo, requireAuth, purgeUserSessions } = deps;
   const router = Router();
 
   const list: RequestHandler = async (req, res, next) => {
@@ -279,12 +285,66 @@ export function createUsersRouter(deps: UsersRouterDeps): ExpressRouter {
     zodValidate({ params: idParamSchema }),
     archive,
   );
+  const resetPassword: RequestHandler = async (req, res, next) => {
+    try {
+      const { id } = req.params as { id: string };
+      const actorId = req.user?.id;
+      if (actorId === id) {
+        next(
+          new HttpError(
+            409,
+            ErrorCode.CANNOT_MODIFY_SELF,
+            "Không thể reset mật khẩu của chính tài khoản của bạn",
+          ),
+        );
+        return;
+      }
+      const existing = await userRepo.getAdminById(id);
+      if (!existing) {
+        next(new HttpError(404, ErrorCode.USER_NOT_FOUND, "User không tồn tại"));
+        return;
+      }
+      const tempPassword = generateTempPassword();
+      const passwordHash = await bcrypt.hash(tempPassword, BCRYPT_COST);
+      const updated = await userRepo.updatePasswordHash(id, passwordHash);
+      if (!updated) {
+        next(new HttpError(404, ErrorCode.USER_NOT_FOUND, "User không tồn tại"));
+        return;
+      }
+      // Best-effort session purge — failure logs but does not block the
+      // admin from returning the new credential. Worst case the target
+      // user stays logged in until cookie TTL; they can still authenticate
+      // with the new password on the next explicit login.
+      if (purgeUserSessions) {
+        try {
+          await purgeUserSessions(id);
+        } catch (err) {
+          logger.warn({ err, targetId: id }, "session purge failed during password reset");
+        }
+      }
+      logger.info(
+        { event: "user.password_reset", actorId, targetId: id },
+        "admin reset user password",
+      );
+      res.status(200).json({ data: { user: toAdminUser(updated), tempPassword } });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   router.post(
     "/:id/unarchive",
     requireAuth,
     requireAdmin,
     zodValidate({ params: idParamSchema }),
     unarchive,
+  );
+  router.post(
+    "/:id/reset-password",
+    requireAuth,
+    requireAdmin,
+    zodValidate({ params: idParamSchema }),
+    resetPassword,
   );
   return router;
 }

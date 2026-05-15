@@ -20,6 +20,7 @@ import { createSectionRepo } from "./repos/sectionRepo.js";
 import { createSearchRepo } from "./repos/searchRepo.js";
 import { createUploadRepo } from "./repos/uploadRepo.js";
 import { createCloudinaryClient } from "./lib/cloudinary.js";
+import { purgeSessionsForUser } from "./lib/sessionPurge.js";
 import { createRateLimit } from "./middleware/rateLimit.js";
 import { createRequireAuth } from "./middleware/requireAuth.js";
 import { db } from "./db/client.js";
@@ -52,7 +53,11 @@ const app = createApp({
   featuresRouter: createFeaturesRouter({ featureRepo, projectRepo, requireAuth }),
   sectionsRouter: createSectionsRouter({ sectionRepo, requireAuth }),
   searchRouter: createSearchRouter({ searchRepo, requireAuth }),
-  usersRouter: createUsersRouter({ userRepo, requireAuth }),
+  usersRouter: createUsersRouter({
+    userRepo,
+    requireAuth,
+    purgeUserSessions: (userId) => purgeSessionsForUser(redis, userId),
+  }),
   uploadsRouter: createUploadsRouter({
     uploadRepo,
     featureRepo,
