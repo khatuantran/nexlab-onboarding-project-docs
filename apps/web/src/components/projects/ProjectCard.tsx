@@ -1,10 +1,12 @@
 import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { ProjectSummary } from "@onboarding/shared";
+import { AdminGate } from "@/components/common/AdminGate";
 import { ProjectAvatar } from "@/components/common/ProjectAvatar";
 import { ProgressBar } from "@/components/common/ProgressBar";
 import { AvatarStack } from "@/components/common/AvatarStack";
 import { RelativeTime } from "@/components/common/RelativeTime";
+import { ProjectActionsMenu } from "@/components/projects/ProjectActionsMenu";
 
 interface ProjectCardProps {
   project: ProjectSummary;
@@ -29,8 +31,18 @@ export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
     <Link
       to={`/projects/${project.slug}`}
       aria-label={`Xem chi tiết project ${project.name}`}
-      className="group flex flex-col gap-4 rounded-xl border border-border bg-card p-5 transition-all hover:border-primary/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="group relative flex flex-col gap-4 rounded-xl border border-border bg-card p-5 transition-all hover:border-primary/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
+      <AdminGate>
+        <div
+          className="absolute right-2 top-2 z-10"
+          // Stop click/keydown so Radix dropdown trigger doesn't navigate via parent Link.
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
+          <ProjectActionsMenu project={project} />
+        </div>
+      </AdminGate>
       {/* Top row: avatar + title/desc + chevron */}
       <div className="flex items-start gap-3.5">
         <ProjectAvatar seed={project.slug} name={project.name} size={44} letters={2} />

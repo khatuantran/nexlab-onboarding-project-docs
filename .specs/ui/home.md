@@ -34,13 +34,14 @@ idle → loading (useProjects fetch)
 
 ## Interactions
 
-| Trigger                                     | Action                                                   | Next state                 | Side effect                                                   |
-| ------------------------------------------- | -------------------------------------------------------- | -------------------------- | ------------------------------------------------------------- |
-| Page mount                                  | `useProjects()` TanStack Query fetch                     | loading → list/empty/error | Cache key `["projects"]`                                      |
-| Click row (or Enter on focused row)         | Navigate `/projects/:slug` (semantic `<a>`)              | unmount                    | SPA push; scroll top on new screen                            |
-| Hover row (desktop)                         | Subtle elevation `hover:shadow-sm` + `hover:bg-muted/30` | —                          | Visual affordance only                                        |
-| Click "Tạo project đầu tiên" (empty, admin) | Mở `CreateProjectDialog` (shared với AppHeader trigger)  | empty (dialog overlay)     | Dialog internal state (independent instance — không conflict) |
-| Click "Thử lại" (error)                     | `refetch()` từ TanStack Query                            | error → loading            | —                                                             |
+| Trigger                                     | Action                                                                                    | Next state                 | Side effect                                                                     |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------- | -------------------------- | ------------------------------------------------------------------------------- |
+| Page mount                                  | `useProjects()` TanStack Query fetch                                                      | loading → list/empty/error | Cache key `["projects"]`                                                        |
+| Click row (or Enter on focused row)         | Navigate `/projects/:slug` (semantic `<a>`)                                               | unmount                    | SPA push; scroll top on new screen                                              |
+| Hover row (desktop)                         | Subtle elevation `hover:shadow-sm` + `hover:bg-muted/30`                                  | —                          | Visual affordance only                                                          |
+| Click "Tạo project đầu tiên" (empty, admin) | Mở `CreateProjectDialog` (shared với AppHeader trigger)                                   | empty (dialog overlay)     | Dialog internal state (independent instance — không conflict)                   |
+| Click "Thử lại" (error)                     | `refetch()` từ TanStack Query                                                             | error → loading            | —                                                                               |
+| Click ⋯ overflow trên card (admin)          | Mở `ProjectActionsMenu` (Sửa / Lưu trữ); event stopPropagation tránh navigate vào project | list (menu overlay)        | Reuse component từ ProjectLandingPage; lưu trữ invalidates `["projects"]` cache |
 
 ## A11y
 
