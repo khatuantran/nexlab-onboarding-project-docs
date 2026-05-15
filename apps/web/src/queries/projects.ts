@@ -97,6 +97,29 @@ export function useArchiveProject(slug: string): UseMutationResult<void, Error, 
   });
 }
 
+/**
+ * US-008: admin-only soft-delete of a feature inside a project. Mirrors
+ * `useArchiveProject` shape. Invalidate the project detail query so the
+ * feature list refetches and the archived row disappears.
+ */
+export function useArchiveFeature(
+  projectSlug: string,
+  featureSlug: string,
+): UseMutationResult<void, Error, void> {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      await apiFetch<void>(`/projects/${projectSlug}/features/${featureSlug}/archive`, {
+        method: "POST",
+      });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: projectKeys.byId(projectSlug) });
+      qc.invalidateQueries({ queryKey: projectKeys.feature(projectSlug, featureSlug) });
+    },
+  });
+}
+
 export function useFeature(
   slug: string,
   featureSlug: string,

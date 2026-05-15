@@ -6,6 +6,8 @@ import { AvatarStack } from "@/components/common/AvatarStack";
 import { ProgressBar } from "@/components/common/ProgressBar";
 import { RelativeTime } from "@/components/common/RelativeTime";
 import { SectionDots } from "@/components/common/SectionDots";
+import { FeatureActionsMenu } from "@/components/features/FeatureActionsMenu";
+import { useMe } from "@/queries/auth";
 
 interface FeatureCardProps {
   projectSlug: string;
@@ -45,6 +47,8 @@ function deriveStatus(filled: number): Status {
  * Contributors hardcoded ["NL", "PT"] placeholder until BE exposes editors.
  */
 export function FeatureCard({ projectSlug, feature }: FeatureCardProps): JSX.Element {
+  const { data: me } = useMe();
+  const isAdmin = me?.user.role === "admin";
   const status = deriveStatus(feature.filledCount);
   const total = 5;
   const pct = Math.round((feature.filledCount / total) * 100);
@@ -53,9 +57,19 @@ export function FeatureCard({ projectSlug, feature }: FeatureCardProps): JSX.Ele
   return (
     <Link
       to={`/projects/${projectSlug}/features/${feature.slug}`}
-      className="group flex flex-col gap-3.5 rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="group relative flex flex-col gap-3.5 rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       aria-label={`Xem chi tiết feature ${feature.title}`}
     >
+      {isAdmin ? (
+        <div
+          className="absolute right-2 top-2 z-10"
+          // Stop click/keydown so Radix dropdown trigger doesn't bubble into the parent Link.
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
+          <FeatureActionsMenu projectSlug={projectSlug} feature={feature} />
+        </div>
+      ) : null}
       <div className="flex items-center gap-3">
         <span
           aria-hidden="true"
@@ -98,10 +112,12 @@ export function FeatureCard({ projectSlug, feature }: FeatureCardProps): JSX.Ele
             />
           </div>
         </div>
-        <ChevronRight
-          aria-hidden="true"
-          className="size-4 shrink-0 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:text-primary"
-        />
+        {isAdmin ? null : (
+          <ChevronRight
+            aria-hidden="true"
+            className="size-4 shrink-0 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:text-primary"
+          />
+        )}
       </div>
 
       <div>
