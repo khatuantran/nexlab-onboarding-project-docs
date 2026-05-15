@@ -36,7 +36,7 @@ export function ProjectHero({
   const updatedRel = lastUpdatedAt ? formatRelativeVi(lastUpdatedAt) : "—";
 
   return (
-    <section className="relative mb-7 overflow-hidden rounded-2xl border border-primary-100 bg-gradient-to-br from-[#FFF8EE] via-[#FDEED7] to-[#FFE9D0] p-7 dark:border-primary-900/40 dark:from-primary-950/40 dark:via-primary-900/30 dark:to-primary-950/30">
+    <section className="relative mb-7 overflow-hidden rounded-2xl border border-primary-100 bg-gradient-to-br from-[#FFF8EE] via-[#FDEED7] to-[#FFE9D0] p-7 dark:border-primary-200/50 dark:from-primary-100/45 dark:via-primary-50/55 dark:to-primary-100/35">
       <DecorativeMark size={320} className="absolute -right-12 -top-12 hidden md:block" />
 
       <div className="relative">
@@ -57,7 +57,7 @@ export function ProjectHero({
         <h1 className="font-display text-[32px] leading-[38px] font-bold tracking-[-0.02em] text-foreground">
           {name}
         </h1>
-        <p className="mt-2 max-w-2xl font-body text-sm leading-relaxed text-foreground/80">
+        <p className="mt-2 max-w-2xl font-body text-sm leading-relaxed text-foreground/85 dark:text-foreground/95">
           {description ?? "Chưa có mô tả · BA và dev sẽ bổ sung context project."} BA:{" "}
           <strong>Trí Minh</strong> · Tech lead: <strong>Ngọc Linh</strong>.
         </p>

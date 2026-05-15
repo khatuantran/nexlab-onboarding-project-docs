@@ -1,10 +1,11 @@
-import logoLockup from "@/assets/logo-nexlab.svg";
+import logoLockupRaw from "@/assets/logo-nexlab.svg?raw";
 import logoMarkUrl from "@/assets/logo-nexlab-mark.svg";
 import { cn } from "@/lib/cn";
 
 /**
  * Nexlab brand logo (ADR-003 §2.4).
- * - `lockup` (default): full horizontal lockup (bird + wordmark).
+ * - `lockup` (default): inline SVG nên `currentColor` (wordmark) inherit
+ *   `text-foreground` → đọc được cả light & dark mode. Bird vẫn dùng gradient.
  * - `mark`: bird mark only, rendered via SVG mask với orange→peach gradient.
  */
 interface NxLogoProps {
@@ -37,12 +38,18 @@ export function NxLogo({
   }
 
   return (
-    <img
-      src={logoLockup}
-      alt={label}
-      className={cn("block w-auto select-none", className)}
-      style={{ height: size }}
-      draggable={false}
+    <span
+      role="img"
+      aria-label={label}
+      className={cn("inline-block select-none text-foreground", className)}
+      style={{ height: size, aspectRatio: "420/100" }}
+      // SVG markup ships with viewBox + fill="currentColor" on wordmark paths
+      dangerouslySetInnerHTML={{
+        __html: logoLockupRaw.replace(
+          /<svg([^>]*)>/u,
+          `<svg$1 style="height:100%;width:auto;display:block">`,
+        ),
+      }}
     />
   );
 }
