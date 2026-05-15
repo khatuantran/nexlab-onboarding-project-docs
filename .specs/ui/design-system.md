@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-_Last updated: 2026-05-15 · Source of truth for cross-screen UI consistency: tokens, icons, components, a11y floor._
+_Last updated: 2026-04-24 · Source of truth for cross-screen UI consistency: tokens, icons, components, a11y floor._
 
 Mỗi file `.specs/ui/<screen>.md` **must** reference tokens/components ở file này — không redefine colors/fonts/spacing locally. Thêm token/variant/icon mới = update file này trong commit riêng trước khi code.
 
@@ -69,19 +69,6 @@ Primary ramp 50-900 exposed cho tinted surfaces (Tailwind `bg-primary-100` etc.)
 | `--secondary-foreground` | `0 0% 100%`  | `0 0% 15%`   | Text on secondary bg          |
 | `--secondary-bg`         | `39 67% 94%` | `39 20% 22%` | Chip fill, muted gold surface |
 | `--secondary-text`       | `35 45% 46%` | `39 61% 75%` | Text on secondary-bg          |
-
-**Accent palette (v3 — CR-005)** — category / section / status identity. 1 accent per surface; KHÔNG thay primary CTA:
-
-| Token             | Light HSL     | Dark HSL      | Dùng ở                                                     |
-| ----------------- | ------------- | ------------- | ---------------------------------------------------------- |
-| `--accent-blue`   | `217 91% 60%` | `217 91% 70%` | Category identity (e.g. ProjectCard "Tech" projects)       |
-| `--accent-green`  | `142 71% 45%` | `142 71% 55%` | Section type "business" / status "complete"                |
-| `--accent-purple` | `271 76% 60%` | `271 76% 70%` | Section type "rules" / category "Internal"                 |
-| `--accent-pink`   | `336 80% 60%` | `336 80% 70%` | Section type "screenshots" / highlight                     |
-| `--accent-cyan`   | `189 94% 43%` | `189 94% 55%` | Section type "flow" / data viz                             |
-| `--accent-amber`  | `38 92% 50%`  | `38 92% 60%`  | Section type "tech-notes" / warning-adjacent (not warning) |
-
-Mỗi accent có `-bg` variant (10% lightness shift cho tinted surfaces) — derive ở `apps/web/src/styles/index.css` qua `color-mix()` hoặc explicit HSL.
 
 **Semantic (success / warning / info / destructive)**:
 
@@ -257,20 +244,6 @@ Thêm variant / component mới:
 | `SearchInput`      | AppHeader persistent search field; Enter submit → `/search?q=...&projectSlug=?`                                                                                                                            | T10 (planned)                |
 | `FilterChip`       | Pill "× Trong Demo" cho scope filter remove                                                                                                                                                                | T10 (planned)                |
 
-### 5.2.1 Pattern primitives (v3 — CR-005) ([apps/web/src/components/patterns/](../../apps/web/src/components/patterns/))
-
-Geometric SVG / CSS backdrop components cho hero / empty / landing. Charter rule [visual-language.md §10](visual-language.md). Common props: `tone?: AccentTone` (default `primary`), `opacity?: number` (default 0.3), `className?: string`. Pattern luôn `aria-hidden="true"`, absolute / behind content.
-
-| Component      | Type          | Purpose                                                            | File               |
-| -------------- | ------------- | ------------------------------------------------------------------ | ------------------ |
-| `BlobBackdrop` | SVG amorphous | Hero corner / empty state backdrop. Props: `size?: sm/md/lg`.      | `BlobBackdrop.tsx` |
-| `GridPattern`  | SVG dot grid  | Hero subtle texture. Props: `density?: tight/loose`.               | `GridPattern.tsx`  |
-| `GradientMesh` | CSS gradient  | Hero backdrop chính (multi-radial). Props: `tones?: string[] ≤ 3`. | `GradientMesh.tsx` |
-| `WaveDivider`  | SVG wave path | Hero bottom edge transition. Props: `flip?: boolean`.              | `WaveDivider.tsx`  |
-| `DotField`     | SVG scattered | Empty state visual weight. Props: `count?: number`.                | `DotField.tsx`     |
-
-Composition rules: ≤ 2 patterns per viewport tier (hero / empty); KHÔNG stack ≥ 3. Dark mode: opacity giảm 25-40% so với light. Reduced motion: pattern static.
-
 ### 5.3 Feature components ([apps/web/src/components/features/](../../apps/web/src/components/features/))
 
 Empty cho đến T9. Expect: `FeatureList`, `SectionIndicator`, `MarkdownView`, `FeatureSections`.
@@ -346,7 +319,6 @@ Thêm row khi đổi token, icon registry, component inventory. Breaking change 
 | 2026-05-15 | **US-008 implemented** — `FeatureActionsMenu` ships + wired vào `FeatureCard` (admin overlay top-right, hide chevron khi admin per BUG-004). `useArchiveFeature` mutation hook lands cùng FE commit. E2E happy path covers archive → list refresh → direct URL 404.                                                                                                                                                                                                                                                                                                              | US-008 ship `a03c345`                       |
 | 2026-05-15 | **US-009 Gate 1 scaffold** — `ProfilePage` registered §5.3 + planned `Avatar` extension (`imageUrl` prop). Spec only — implementation lands T2-T5.                                                                                                                                                                                                                                                                                                                                                                                                                               | US-009 Gate 1 (spec only)                   |
 | 2026-05-15 | **US-009 implemented** — `ProfilePage` ships ở `/profile`. `Avatar` gains `imageUrl` prop + `lg` size; UserMenu trigger + dropdown header pass `user.avatarUrl`. UserMenu "Hồ sơ của tôi" item enabled qua `asChild <Link to="/profile">`.                                                                                                                                                                                                                                                                                                                                       | US-009 ship `ef3b59a`                       |
-| 2026-05-15 | **CR-005 (v3) — geometric patterns + multi-accent palette** ([visual-language v3](visual-language.md)). Token map §1.1 thêm 6 accent colors (`--accent-blue/green/purple/pink/cyan/amber`) với light + dark variant. §5.2.1 NEW Pattern primitives section — `BlobBackdrop`, `GridPattern`, `GradientMesh`, `WaveDivider`, `DotField`. Status `(planned)` cho tới khi foundation code ship.                                                                                                                                                                                      | CR-005 Gate 1 (spec only)                   |
 
 ---
 

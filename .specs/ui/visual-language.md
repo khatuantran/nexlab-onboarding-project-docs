@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-_Last updated: 2026-05-15 · v3 amendment · Source of truth cho design quality bar across 5 screens. Mọi UI work phải tuân theo._
+_Last updated: 2026-04-25 · v2 amendment · Source of truth cho design quality bar across 5 screens. Mọi UI work phải tuân theo._
 
 Related: [design-system.md](design-system.md) (tokens), [ADR-003](../adr/ADR-003-nexlab-design-system.md) (Nexlab DS adoption), per-screen specs `.specs/ui/<screen>.md`.
 
@@ -33,20 +33,11 @@ Related: [design-system.md](design-system.md) (tokens), [ADR-003](../adr/ADR-003
 | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | **Primary orange** (`primary`, `primary-50..900`)                   | Primary CTA buttons, active state, brand accents (logo, hero gradient), focus ring, hover transitions. |
 | **Secondary gold** (`secondary`, `secondary-bg/text`)               | Achievement / count chips, success-tinted surfaces, "feature count" pills, calm highlight.             |
-| **Accent palette** (`accent-blue/green/purple/pink/cyan/amber`) v3  | Category identity, section type color, status diversity. 1 accent per surface; KHÔNG thay primary CTA. |
 | **Neutral** (`background`, `foreground`, `muted`, `border`, `card`) | Body text, surfaces, dividers, disabled states. Default; use unless brand moment.                      |
 | **Destructive**                                                     | Archive confirms, delete actions, error banners. Sparingly.                                            |
 | **Success / Warning / Info**                                        | Status badges, banners. Single-color rule: 1 semantic color per surface.                               |
 
 **Don't**: mix primary + secondary trong cùng 1 surface (ex: orange button + gold badge cùng card → noise). Pick 1 brand color per surface, neutral for rest.
-
-**Accent palette rules (v3)**:
-
-- Dùng cho **category / section / status identity** — ví dụ ProjectCard accent border-l theo project category, FeatureCard icon plate theo section type (5 section = 5 màu).
-- KHÔNG dùng cho primary CTA (luôn orange) hoặc body text (luôn neutral).
-- 1 accent per surface — không stack 3 accents trong 1 card.
-- Pair với neutral surfaces — accent là spice, không phải background.
-- Dark-mode parity: mọi accent có dark variant đảm bảo 4.5:1 contrast.
 
 ## 3. Surface depth
 
@@ -102,37 +93,12 @@ Related: [design-system.md](design-system.md) (tokens), [ADR-003](../adr/ADR-003
 | Search results                       | 120-140px row          | Title + snippet (line-clamp-3) + meta breadcrumb.                                                                                                          |
 | Auth (Login)                         | Single panel ~440px    | Hero left + form right (xl); stacked on mobile.                                                                                                            |
 
-**Text reduction policy (v3)** — apply per surface tier:
+## 7. Illustration policy
 
-- **Shell / nav / header** (AppHeader, BreadcrumbBar): label-only, no descriptions. Tooltip cho icon-only.
-- **Hero panels** (Home, ProjectLanding, FeatureDetail header, Login brand pane): eyebrow + h1 + **1-dòng** subtitle tối đa (down from 2-4 dòng v2). Pattern backdrop thay thế copy.
-- **Empty states**: heading verb-led + **1-dòng** description (down from 1-2 sentences). Pattern + icon carry visual weight.
-- **Landing / catalog summary chips**: value + 1-từ label (e.g. "12 Project"). Không sub-line.
-- **Content rows / cards body / detail prose**: GIỮ NGUYÊN density target — đây là core value của product, không cắt.
-
-## 7. Illustration policy (v3 — rewritten)
-
-**Allowed (v3)**:
-
-- Hero areas: `bg-gradient-to-br from-primary-50 via-background to-secondary-bg/50` + optional `NxLogo mark variant` 80-120px opacity-5.
-- **Geometric SVG patterns**: blob, grid, gradient mesh, wave, dot pattern. Inline SVG component hoặc CSS gradient (no raster). Opacity ≤ 0.4 default để không lấn content.
-- **GradientMesh** background trên hero panels: multi-color radial gradient (primary + 1-2 accent) via CSS, prefer over SVG cho performance.
-- **Empty states**: pattern decoration (BlobBackdrop / DotField) + lucide icon — không chỉ icon trần như v2.
-- Avatar: deterministic letter-based (slug hash → primary ramp 100..500 hoặc accent palette), font-display bold uppercase. Image upload land US-009.
-
-**Still banned**:
-
-- ❌ Character illustrations (Storyset / unDraw / Lottie character animations) — quá playful cho personas internal tech.
-- ❌ Stock photography (Unsplash / Pexels) — generic, không brand-coherent.
-- ❌ 3D renders / claymorphism (Spline assets) — overkill cho internal tool, asset-heavy.
-- ❌ Hand-drawn / sketch style (Excalidraw) — conflict tone "warmer professional".
-
-**Rules cho pattern usage**:
-
-- Mỗi screen chọn ≤ 2 pattern types (e.g. GradientMesh hero + DotField empty), không stack ≥ 3.
-- Pattern luôn absolute / behind content, `aria-hidden="true"`, không block keyboard nav.
-- Dark-mode variant required: opacity giảm / màu shift để không quá đậm trên dark bg.
-- Reduced motion: pattern static (no animation) trừ khi user opted-in.
+- Hero areas allowed: `bg-gradient-to-br from-primary-50 via-background to-secondary-bg/50` + soft `NxLogo mark variant` 80-120px opacity-5 absolute positioned.
+- No stock illustrations / unDraw / Storyset in v1 — too generic.
+- Empty states use lucide icon only (FolderOpen, Search, etc.), not illustrations.
+- Avatar: deterministic letter-based (slug hash → primary ramp 100/200/300/400/500), font-display bold uppercase. No image upload v1.
 
 ## 8. Accessibility floor
 
@@ -204,23 +170,6 @@ Reusable visual patterns appearing across multiple screens. Implement as shared 
 - Optional count badge sau label: pill 10px primary bg với white number.
 - v1: chỉ Catalog tab active; Activity/Members/Settings render placeholder empty state.
 
-### Pattern primitives (v3 — geometric SVG / CSS backdrop)
-
-Reusable visual decorations cho hero / empty / landing. Implement trong `apps/web/src/components/patterns/`. All accept `tone?: "primary" | "blue" | "green" | "purple" | "pink" | "cyan" | "amber"` (default `primary`) + `opacity?: number` (default 0.3, range 0.1-0.5) + `className?: string` cho positioning.
-
-- **BlobBackdrop**: SVG amorphous blob shape, gradient fill 2-color (tone + neutral). Absolute positioned, scales 240-480px. Use cho hero corners hoặc empty state backdrop. Props: `size?: "sm" | "md" | "lg"`.
-- **GridPattern**: SVG repeating dot grid (16px gap, 1.5px dot). Mask-image gradient để fade ra edges. Use cho hero background subtle texture. Props: `density?: "tight" | "loose"`.
-- **GradientMesh**: CSS-only multi-radial gradient (3-4 color stops, tone + 1-2 accent). No SVG, cheap to render. Use cho hero backdrop chính. Props: `tones?: string[]` (≤ 3 tones).
-- **WaveDivider**: SVG wave path, full-width, 40-80px tall. Use cho hero bottom edge transition vào content. Props: `flip?: boolean`.
-- **DotField**: SVG cluster của 12-20 dots scattered, varying sizes (4-12px). Use cho empty state visual weight. Props: `count?: number`.
-
-**Composition rules**:
-
-- 1 hero panel: chọn 1 (GradientMesh hoặc BlobBackdrop) + tối đa 1 enhancement (GridPattern / WaveDivider).
-- Empty state: chọn 1 (BlobBackdrop hoặc DotField) + lucide icon centered.
-- KHÔNG stack ≥ 3 patterns trong cùng viewport.
-- Dark mode: opacity giảm 25-40% so với light (e.g. light `opacity-30` → dark `opacity-20`).
-
 ### DecorativeMark (used: hero panels Home, Project detail, Login)
 
 - Absolute positioned NxLogo mark variant, gradient masked, opacity 5-18%, rotated -8deg.
@@ -253,4 +202,3 @@ Mọi PR đụng UI:
 | ------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | v1      | 2026-04-25 | Initial charter (CR-002). 5 screens uplift baseline. Hero panel pattern + density rules established.                                                                                                                                                                                                                                                                                                                                     |
 | v2      | 2026-04-25 | Workspace-style amendment: §6 Home density list→grid 2-col 180-220px; §10 NEW component patterns (StatChip, FloatStat, MiniStat, ProgressStrip, SectionDots, AvatarStack, LiveIndicator placeholder, TabBar, DecorativeMark, TemplateRadio, EmptyDashedCard); §11 renumbered. Skeleton-UI policy: build full reference design, dummy/placeholder cho data chưa có (no realtime presence, activity log static, tabs Catalog-only active). |
-| v3      | 2026-05-15 | CR-005 — Geometric patterns + multi-accent. §2 accent palette (blue/green/purple/pink/cyan/amber) — 1 accent/surface. §7 lift illustration ban → allow geometric SVG + CSS gradients (still ban character/stock/3D/sketch). §10 NEW Pattern primitives (BlobBackdrop, GridPattern, GradientMesh, WaveDivider, DotField). §6 Text reduction tier (shell/hero/empty cut; content body preserved).                                          |

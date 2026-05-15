@@ -46,21 +46,6 @@
     --accent: 0 0% 95%;
     --accent-foreground: 240 3% 16%;
 
-    /* Accent palette (CR-005 v3) — category / section / status identity.
-       1 accent per surface; never replace primary CTA. */
-    --accent-blue: 217 91% 60%;
-    --accent-blue-bg: 217 91% 95%;
-    --accent-green: 142 71% 45%;
-    --accent-green-bg: 142 71% 94%;
-    --accent-purple: 271 76% 60%;
-    --accent-purple-bg: 271 76% 95%;
-    --accent-pink: 336 80% 60%;
-    --accent-pink-bg: 336 80% 95%;
-    --accent-cyan: 189 94% 43%;
-    --accent-cyan-bg: 189 94% 93%;
-    --accent-amber: 38 92% 50%;
-    --accent-amber-bg: 38 92% 94%;
-
     /* Muted */
     --muted: 0 0% 95%;
     --muted-foreground: 0 0% 55%;
@@ -121,20 +106,6 @@
     /* Accent */
     --accent: 0 0% 22%;
     --accent-foreground: 0 0% 98%;
-
-    /* Accent palette (CR-005 v3) — lighter values for dark mode contrast */
-    --accent-blue: 217 91% 70%;
-    --accent-blue-bg: 217 30% 22%;
-    --accent-green: 142 71% 55%;
-    --accent-green-bg: 142 30% 20%;
-    --accent-purple: 271 76% 70%;
-    --accent-purple-bg: 271 30% 22%;
-    --accent-pink: 336 80% 70%;
-    --accent-pink-bg: 336 30% 22%;
-    --accent-cyan: 189 94% 55%;
-    --accent-cyan-bg: 189 30% 20%;
-    --accent-amber: 38 92% 60%;
-    --accent-amber-bg: 38 30% 22%;
 
     /* Muted */
     --muted: 0 0% 22%;
