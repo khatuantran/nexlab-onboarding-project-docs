@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-_Last updated: 2026-04-24 · Source of truth for cross-screen UI consistency: tokens, icons, components, a11y floor._
+_Last updated: 2026-05-16 · Source of truth for cross-screen UI consistency: tokens, icons, components, a11y floor._
 
 Mỗi file `.specs/ui/<screen>.md` **must** reference tokens/components ở file này — không redefine colors/fonts/spacing locally. Thêm token/variant/icon mới = update file này trong commit riêng trước khi code.
 
@@ -60,6 +60,23 @@ Primary ramp 50-900 exposed cho tinted surfaces (Tailwind `bg-primary-100` etc.)
 | 700  | `22 82% 40%` | rgb(187, 74, 19)       |
 | 800  | `17 73% 34%` | rgb(149, 59, 23)       |
 | 900  | `15 69% 28%` | rgb(120, 51, 22)       |
+
+**Warm canvas + Sage (v3 — CR-006)** — warm page bg variant + sage secondary accent for graphics-rich Notion direction:
+
+| Token               | Light HSL     | Dark HSL      | Dùng ở                                                        |
+| ------------------- | ------------- | ------------- | ------------------------------------------------------------- |
+| `--canvas`          | `35 30% 97%`  | `0 0% 15%`    | Warm off-white page bg (override `bg-background` page-level)  |
+| `--canvas-muted`    | `35 25% 93%`  | `0 0% 18%`    | Hero / card subtle warm tint                                  |
+| `--sage`            | `145 30% 50%` | `145 30% 60%` | Sage secondary CTA bg + filled banner alt + stat box #2 plate |
+| `--sage-foreground` | `0 0% 100%`   | `0 0% 15%`    | Text on sage solid bg                                         |
+| `--sage-bg`         | `145 30% 94%` | `145 20% 22%` | Sage tinted surface (pill chips, hover)                       |
+| `--sage-text`       | `145 30% 35%` | `145 30% 70%` | Text on sage-bg tint                                          |
+
+Usage rules (per [visual-language §2 + §10](visual-language.md)):
+
+- `--canvas` overrides `--background` ở page-level via `<main className="bg-canvas">`. Không touch global body để minimize ripple.
+- `--sage` primary pair với orange `--primary` (chosen pairing). KHÔNG mix gold `--secondary` + sage cùng surface.
+- 1 accent per surface — sage cho stat box #2-3, không stack ≥ 2 accents trong 1 card.
 
 **Secondary — Nexlab gold** (default button bg per Nexlab convention):
 
@@ -319,6 +336,7 @@ Thêm row khi đổi token, icon registry, component inventory. Breaking change 
 | 2026-05-15 | **US-008 implemented** — `FeatureActionsMenu` ships + wired vào `FeatureCard` (admin overlay top-right, hide chevron khi admin per BUG-004). `useArchiveFeature` mutation hook lands cùng FE commit. E2E happy path covers archive → list refresh → direct URL 404.                                                                                                                                                                                                                                                                                                              | US-008 ship `a03c345`                       |
 | 2026-05-15 | **US-009 Gate 1 scaffold** — `ProfilePage` registered §5.3 + planned `Avatar` extension (`imageUrl` prop). Spec only — implementation lands T2-T5.                                                                                                                                                                                                                                                                                                                                                                                                                               | US-009 Gate 1 (spec only)                   |
 | 2026-05-15 | **US-009 implemented** — `ProfilePage` ships ở `/profile`. `Avatar` gains `imageUrl` prop + `lg` size; UserMenu trigger + dropdown header pass `user.avatarUrl`. UserMenu "Hồ sơ của tôi" item enabled qua `asChild <Link to="/profile">`.                                                                                                                                                                                                                                                                                                                                       | US-009 ship `ef3b59a`                       |
+| 2026-05-16 | **CR-006 (v3) — warm canvas + sage tokens** ([visual-language v3](visual-language.md)). Add `--canvas` + `--canvas-muted` + `--sage` + `--sage-bg/-text/-foreground` (light + dark). Drops CR-005 reverted accent palette. Used for Notion warm direction: warm page bg variant + sage secondary CTA/banner per [§10 Filled button + banner](visual-language.md#10-component-patterns).                                                                                                                                                                                          | CR-006 Gate 1 (spec only)                   |
 
 ---
 
