@@ -4,8 +4,10 @@ import bcrypt from "bcryptjs";
 import {
   ErrorCode,
   inviteUserRequestSchema,
+  updateUserRequestSchema,
   type AdminUser,
   type InviteUserRequest,
+  type UpdateUserRequest,
   type UserPublic,
 } from "@onboarding/shared";
 import { HttpError } from "../errors.js";
@@ -125,6 +127,135 @@ export function createUsersRouter(deps: UsersRouterDeps): ExpressRouter {
     }
   };
 
+  /**
+   * Last-admin guard. Returns true when archiving/demoting `targetId`
+   * would leave zero active admins. Skips the count when `targetId` is
+   * not currently an admin (cheap fast-path).
+   */
+  async function wouldOrphanAdmins(targetId: string): Promise<boolean> {
+    const target = await userRepo.getAdminById(targetId);
+    if (!target || target.role !== "admin" || target.archivedAt !== null) return false;
+    const remaining = await userRepo.countActiveAdmins();
+    return remaining <= 1;
+  }
+
+  const patch: RequestHandler = async (req, res, next) => {
+    try {
+      const { id } = req.params as { id: string };
+      const body = req.body as UpdateUserRequest;
+      const actorId = req.user?.id;
+      if (actorId === id) {
+        next(
+          new HttpError(
+            409,
+            ErrorCode.CANNOT_MODIFY_SELF,
+            "Không thể thực hiện thao tác này lên chính tài khoản của bạn",
+          ),
+        );
+        return;
+      }
+      const existing = await userRepo.getAdminById(id);
+      if (!existing) {
+        next(new HttpError(404, ErrorCode.USER_NOT_FOUND, "User không tồn tại"));
+        return;
+      }
+      // Demoting the last admin → block.
+      if (body.role && body.role !== "admin" && (await wouldOrphanAdmins(id))) {
+        next(
+          new HttpError(
+            409,
+            ErrorCode.LAST_ADMIN_PROTECTED,
+            "Không thể demote admin cuối cùng trong hệ thống",
+          ),
+        );
+        return;
+      }
+      const updated = await userRepo.updateUser(id, body);
+      if (!updated) {
+        next(new HttpError(404, ErrorCode.USER_NOT_FOUND, "User không tồn tại"));
+        return;
+      }
+      logger.info(
+        { event: "user.updated", actorId, targetId: id, patch: body },
+        "admin updated user",
+      );
+      res.status(200).json({ data: toAdminUser(updated) });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  const archive: RequestHandler = async (req, res, next) => {
+    try {
+      const { id } = req.params as { id: string };
+      const actorId = req.user?.id;
+      if (actorId === id) {
+        next(
+          new HttpError(
+            409,
+            ErrorCode.CANNOT_MODIFY_SELF,
+            "Không thể disable chính tài khoản của bạn",
+          ),
+        );
+        return;
+      }
+      const existing = await userRepo.getAdminById(id);
+      if (!existing) {
+        next(new HttpError(404, ErrorCode.USER_NOT_FOUND, "User không tồn tại"));
+        return;
+      }
+      // Idempotent — re-archiving an already-archived user just returns it.
+      if (existing.archivedAt !== null) {
+        res.status(200).json({ data: toAdminUser(existing) });
+        return;
+      }
+      if (await wouldOrphanAdmins(id)) {
+        next(
+          new HttpError(
+            409,
+            ErrorCode.LAST_ADMIN_PROTECTED,
+            "Không thể disable admin cuối cùng trong hệ thống",
+          ),
+        );
+        return;
+      }
+      const updated = await userRepo.setArchived(id, true);
+      if (!updated) {
+        next(new HttpError(404, ErrorCode.USER_NOT_FOUND, "User không tồn tại"));
+        return;
+      }
+      logger.info({ event: "user.archived", actorId, targetId: id }, "admin archived user");
+      res.status(200).json({ data: toAdminUser(updated) });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  const unarchive: RequestHandler = async (req, res, next) => {
+    try {
+      const { id } = req.params as { id: string };
+      const actorId = req.user?.id;
+      const existing = await userRepo.getAdminById(id);
+      if (!existing) {
+        next(new HttpError(404, ErrorCode.USER_NOT_FOUND, "User không tồn tại"));
+        return;
+      }
+      if (existing.archivedAt === null) {
+        res.status(200).json({ data: toAdminUser(existing) });
+        return;
+      }
+      const updated = await userRepo.setArchived(id, false);
+      if (!updated) {
+        next(new HttpError(404, ErrorCode.USER_NOT_FOUND, "User không tồn tại"));
+        return;
+      }
+      logger.info({ event: "user.unarchived", actorId, targetId: id }, "admin unarchived user");
+      res.status(200).json({ data: toAdminUser(updated) });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   router.get("/", requireAuth, zodValidate({ query: querySchema }), list);
   router.post(
     "/",
@@ -134,5 +265,26 @@ export function createUsersRouter(deps: UsersRouterDeps): ExpressRouter {
     invite,
   );
   router.get("/:id", requireAuth, requireAdmin, zodValidate({ params: idParamSchema }), getById);
+  router.patch(
+    "/:id",
+    requireAuth,
+    requireAdmin,
+    zodValidate({ params: idParamSchema, body: updateUserRequestSchema }),
+    patch,
+  );
+  router.post(
+    "/:id/archive",
+    requireAuth,
+    requireAdmin,
+    zodValidate({ params: idParamSchema }),
+    archive,
+  );
+  router.post(
+    "/:id/unarchive",
+    requireAuth,
+    requireAdmin,
+    zodValidate({ params: idParamSchema }),
+    unarchive,
+  );
   return router;
 }

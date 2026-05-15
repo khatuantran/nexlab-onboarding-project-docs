@@ -40,7 +40,9 @@ export function createRequireAuth(userRepo: UserRepo): RequestHandler {
         return;
       }
       const user = await userRepo.findById(userId);
-      if (!user) {
+      // US-007 — kick disabled users off the session (admin archived them
+      // between requests). Treat the same as a deleted user from FE's view.
+      if (!user || user.archivedAt !== null) {
         req.session.destroy(() => undefined);
         next(new HttpError(401, ErrorCode.UNAUTHENTICATED, "Bạn cần đăng nhập"));
         return;

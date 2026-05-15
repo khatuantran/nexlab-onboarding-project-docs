@@ -41,5 +41,11 @@ export default defineConfig({
     exclude: ["**/node_modules/**", "**/dist/**", "**/e2e/**"],
     reporters: ["default"],
     env: loadTestEnv(),
+    // Integration tests share `onboardingdb_test`; running files in
+    // parallel races user/project mutations (US-007 invite/archive
+    // tests against the seed-data assertions). Serialise file
+    // execution — the suite is small enough that wall-clock cost is
+    // negligible (~5 s total).
+    fileParallelism: false,
   },
 });

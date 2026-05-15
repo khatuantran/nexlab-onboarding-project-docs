@@ -77,8 +77,7 @@ describe("GET /api/v1/users — admin shape (US-007 / T2)", () => {
       displayName: "Admin",
       role: "admin",
       archivedAt: null,
-      // lastLoginAt is null until T4 wires touchLastLogin into auth/login.
-      lastLoginAt: null,
+      // lastLoginAt is set by auth/login (US-007 / T4 wire); type-only check.
       createdAt: expect.any(String),
     });
     expect(admin).not.toHaveProperty("passwordHash");

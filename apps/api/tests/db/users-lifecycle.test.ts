@@ -18,15 +18,14 @@ afterAll(async () => {
 });
 
 describe("users lifecycle columns (US-007 / T1)", () => {
-  it("exposes archived_at + last_login_at on every user row", async () => {
-    const result = await db.execute<{ archived_at: string | null; last_login_at: string | null }>(
-      sql`SELECT archived_at, last_login_at FROM users LIMIT 1`,
-    );
-    const row = result.rows[0];
-    expect(row).toBeDefined();
-    // Both columns start NULL for the seed admin + author.
-    expect(row?.archived_at).toBeNull();
-    expect(row?.last_login_at).toBeNull();
+  it("exposes archived_at + last_login_at columns on the users table", async () => {
+    const result = await db.execute<{ column_name: string }>(sql`
+      SELECT column_name FROM information_schema.columns
+      WHERE table_name = 'users' AND column_name IN ('archived_at', 'last_login_at')
+      ORDER BY column_name
+    `);
+    const cols = result.rows.map((r) => r.column_name);
+    expect(cols).toEqual(["archived_at", "last_login_at"]);
   });
 
   it("has a partial index over active rows (archived_at IS NULL)", async () => {

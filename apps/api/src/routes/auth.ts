@@ -39,7 +39,19 @@ export function createAuthRouter(deps: AuthRouterDeps): ExpressRouter {
         return;
       }
 
+      // US-007 — disabled accounts cannot start a new session. Done AFTER
+      // password verification so a wrong password on a disabled account
+      // still returns INVALID_CREDENTIALS (no enumeration via 403).
+      if (user.archivedAt !== null) {
+        next(
+          new HttpError(403, ErrorCode.USER_DISABLED, "Tài khoản đã bị vô hiệu hoá, liên hệ admin"),
+        );
+        return;
+      }
+
       req.session.userId = user.id;
+      // Fire-and-forget; failure to stamp last_login_at should not block login.
+      void userRepo.touchLastLogin(user.id).catch(() => undefined);
       res.status(200).json({ data: { user: toAuthUser(user) } });
     } catch (err) {
       next(err);
@@ -65,7 +77,7 @@ export function createAuthRouter(deps: AuthRouterDeps): ExpressRouter {
         return;
       }
       const user = await userRepo.findById(userId);
-      if (!user) {
+      if (!user || user.archivedAt !== null) {
         req.session.destroy(() => undefined);
         next(new HttpError(401, ErrorCode.UNAUTHENTICATED, "Bạn cần đăng nhập"));
         return;
