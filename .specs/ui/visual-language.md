@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-_Last updated: 2026-04-25 · v2 amendment · Source of truth cho design quality bar across 5 screens. Mọi UI work phải tuân theo._
+_Last updated: 2026-05-16 · v3 amendment (CR-006) · Source of truth cho design quality bar across screens. Mọi UI work phải tuân theo._
 
 Related: [design-system.md](design-system.md) (tokens), [ADR-003](../adr/ADR-003-nexlab-design-system.md) (Nexlab DS adoption), per-screen specs `.specs/ui/<screen>.md`.
 
@@ -33,11 +33,13 @@ Related: [design-system.md](design-system.md) (tokens), [ADR-003](../adr/ADR-003
 | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | **Primary orange** (`primary`, `primary-50..900`)                   | Primary CTA buttons, active state, brand accents (logo, hero gradient), focus ring, hover transitions. |
 | **Secondary gold** (`secondary`, `secondary-bg/text`)               | Achievement / count chips, success-tinted surfaces, "feature count" pills, calm highlight.             |
+| **Warm canvas** (`canvas`) v3                                       | Page bg variant warm off-white. Headers + hero sections. Override page-level via `bg-canvas`.          |
+| **Sage** (`sage`, `sage-bg/text`) v3                                | Secondary accent (calmer than orange). Stat boxes #2-3, secondary CTAs, calm chips. Pair with primary. |
 | **Neutral** (`background`, `foreground`, `muted`, `border`, `card`) | Body text, surfaces, dividers, disabled states. Default; use unless brand moment.                      |
 | **Destructive**                                                     | Archive confirms, delete actions, error banners. Sparingly.                                            |
 | **Success / Warning / Info**                                        | Status badges, banners. Single-color rule: 1 semantic color per surface.                               |
 
-**Don't**: mix primary + secondary trong cùng 1 surface (ex: orange button + gold badge cùng card → noise). Pick 1 brand color per surface, neutral for rest.
+**Don't**: mix primary + secondary (gold) trong cùng 1 surface (orange button + gold badge cùng card → noise). Primary + sage OK (chosen pairing). Pick 1 brand color per surface, neutral for rest.
 
 ## 3. Surface depth
 
@@ -64,13 +66,13 @@ Related: [design-system.md](design-system.md) (tokens), [ADR-003](../adr/ADR-003
 
 ## 5. Empty / loading / error patterns
 
-### Empty state
+### Empty state (v3 — graphics-rich CR-006)
 
 - Container: centered flex column, `py-16 px-6 max-w-md mx-auto`.
-- Icon: 64×64 `text-primary/40` (lucide icon, không background plate).
-- Heading: `font-display text-xl font-semibold` Vietnamese verb-led ("Chưa có project nào").
-- Description: 1-2 sentences `text-sm text-muted-foreground`.
-- Action: 1 primary CTA (admin-only roles get inline create dialog).
+- **Visual**: prominent emoji 4xl (📁 📄 ✨ 👥 etc.) HOẶC lucide icon 56-72px filled bg plate (`size-16 rounded-2xl bg-primary text-white`). No `/40%` tinted icon — v3 dùng solid fill.
+- Heading: `font-display text-xl font-semibold` với emoji inline OK ("Chưa có dự án nào ✨").
+- Description: **OMIT** by default (v3 "ít chữ" rule). CTA text carries action context.
+- Action: 1 primary solid-filled CTA (admin-only roles get inline create dialog).
 
 ### Loading state
 
@@ -85,20 +87,50 @@ Related: [design-system.md](design-system.md) (tokens), [ADR-003](../adr/ADR-003
 
 ## 6. Density rules per screen type
 
-| Screen type                          | Row/Card height target | Notes                                                                                                                                                      |
-| ------------------------------------ | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Catalog grid (Home)                  | 180-220px card, 2-col  | Avatar + name + tag + description + progress bar + avatar stack + activity meta. Revised 2026-04-25 from list to grid for richer per-project info density. |
-| Card grid (Project landing features) | 132-180px card, 2-col  | Icon plate + title + status badge + section progress (bar + dot row) + avatar stack.                                                                       |
-| Detail prose                         | max 65ch read width    | Center column, sidebar TOC fixed at xl breakpoint.                                                                                                         |
-| Search results                       | 120-140px row          | Title + snippet (line-clamp-3) + meta breadcrumb.                                                                                                          |
-| Auth (Login)                         | Single panel ~440px    | Hero left + form right (xl); stacked on mobile.                                                                                                            |
+| Screen type                          | Row/Card height target  | Notes                                                                                                                               |
+| ------------------------------------ | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Catalog grid (Home) v3               | 200-240px card, 2-3-col | Filled banner top 64-80px + body title + 2 metric chips. NO description paragraph (v3 "ít chữ" rule). 3-col xl, 2-col lg, 1-col sm. |
+| Card grid (Project landing features) | 132-180px card, 2-col   | Icon plate + title + status badge + section progress. (Pre-v3 — unchanged this pilot scope.)                                        |
+| Detail prose                         | max 65ch read width     | Center column, sidebar TOC fixed at xl breakpoint.                                                                                  |
+| Search results                       | 120-140px row           | Title + snippet (line-clamp-3) + meta breadcrumb.                                                                                   |
+| Auth (Login)                         | Single panel ~440px     | Hero left + form right (xl); stacked on mobile.                                                                                     |
 
-## 7. Illustration policy
+### Ít chữ nhiều hình (v3 — CR-006)
 
-- Hero areas allowed: `bg-gradient-to-br from-primary-50 via-background to-secondary-bg/50` + soft `NxLogo mark variant` 80-120px opacity-5 absolute positioned.
-- No stock illustrations / unDraw / Storyset in v1 — too generic.
-- Empty states use lucide icon only (FolderOpen, Search, etc.), not illustrations.
-- Avatar: deterministic letter-based (slug hash → primary ramp 100/200/300/400/500), font-display bold uppercase. No image upload v1.
+User constraint: design phải ưu tiên icon + color block over text. Apply per surface:
+
+- **Hero**: title (with emoji OK) ONLY. Drop subtitle paragraph by default. Add subtitle ≤ 1 dòng chỉ khi cần context không thay được bằng visual.
+- **Stat boxes**: icon plate (size 48 solid filled) + value (big font-display 32px) + 1-từ label uppercase. KHÔNG sub-line, KHÔNG description.
+- **Card grid items**: filled banner top + title + 2-3 metric chips. KHÔNG description paragraph (v2 đã có thì v3 drop).
+- **Empty state**: emoji 4xl HOẶC large filled icon + heading + solid CTA. KHÔNG description paragraph.
+- **Buttons**: label ngắn + optional icon prefix. KHÔNG button "Click here to do X" — verb ngắn.
+
+Exception: **content body** (FeatureDetail 5-section prose, MarkdownView) giữ density cao như cũ — đó là core value.
+
+## 7. Illustration & icon policy (v3 — CR-006 graphics-rich)
+
+**Graphics-rich principles** (user constraint 2026-05-16):
+
+- **Icons prominent**: lucide-react ở size **24-48px** cho hero / empty / card primary action; 16-20px chỉ cho inline body. Stroke-width 2 default. Tránh dùng icon nhỏ khi có chỗ cho icon lớn.
+- **Emoji as visual accent**: cho phép emoji decoration trong hero title + empty state + CTA labels (e.g. 📁 📄 👥 ⭐ 👋 ✨ ➕). Pair với text, không thay chữ entirely. Vietnamese friendly tone.
+- **Color-filled icon plates**: icon ngồi trong rounded square `size-10` to `size-14` với **solid accent bg** (`bg-primary text-white`, `bg-sage text-white`) — không phải `/10%` tinted như CR-002.
+- **Filled banner / hero block**: cards có thể có banner top `h-16` to `h-20` solid filled, chứa icon + text white. Visual reward.
+
+**Allowed**:
+
+- Hero areas: warm canvas bg + optional NxLogo mark watermark.
+- Filled banner top trên card grid items.
+- Emoji decoration inline trong heading + CTA + empty state.
+- Solid filled icon plates (no tint).
+
+**Still banned**:
+
+- ❌ Character illustrations (Storyset / unDraw).
+- ❌ Stock photography (Unsplash / Pexels).
+- ❌ 3D renders / claymorphism.
+- ❌ Geometric SVG patterns (blob, mesh, dot field) — those were CR-005 reverted; reintroduce only nếu need với careful discipline.
+
+Avatar: deterministic letter-based (slug hash → primary ramp), font-display bold uppercase. Image upload land US-009.
 
 ## 8. Accessibility floor
 
@@ -170,6 +202,32 @@ Reusable visual patterns appearing across multiple screens. Implement as shared 
 - Optional count badge sau label: pill 10px primary bg với white number.
 - v1: chỉ Catalog tab active; Activity/Members/Settings render placeholder empty state.
 
+### Filled button + banner pattern (v3 — CR-006)
+
+Reusable filled-color patterns across screens for graphics-rich + warm feel.
+
+**Buttons** (replaces shadcn outline/ghost as default):
+
+- **Primary**: `bg-primary text-primary-foreground hover:bg-primary-600 active:scale-[0.98]`. Use cho main CTA per page (e.g. "+ Tạo dự án mới", "Lưu thay đổi").
+- **Secondary**: `bg-sage text-sage-foreground hover:bg-sage-600`. Use cho secondary action (e.g. "Xem thêm", "Mở filter").
+- **Outline**: `bg-card border border-border hover:bg-muted/50`. Chỉ cho tertiary actions như "Lọc", "Hủy".
+- **Ghost**: `hover:bg-muted/50`. Chỉ cho inline icon buttons (overflow menu, close).
+- **Destructive solid**: `bg-destructive text-destructive-foreground` cho confirm dialogs.
+
+Default mode trong app: **solid filled**. KHÔNG dùng outline cho main CTA — gãy visual hierarchy.
+
+**Banner / hero block**:
+
+- **Card banner top**: `h-16` to `h-20` solid filled `bg-primary` hoặc `bg-sage`, chứa icon (size 28-32 text-white) + project letters (font-display text-xl text-white). Use cho ProjectCard, FeatureCard graphics-rich variant.
+- **Stat box**: `rounded-2xl p-5` với icon plate solid filled `size-12 bg-{tone} text-white` + value 32px + label uppercase. Use cho HomePage hero stats.
+- **Empty state hero**: emoji 4xl hoặc large filled icon `size-16 bg-primary rounded-2xl text-white` + heading + solid CTA.
+
+**Don't**:
+
+- ❌ Mix outline + solid buttons trong 1 group — pick one variant.
+- ❌ Subtle tinted bg (`bg-primary/10`) cho buttons — that's v1/v2 pattern, v3 dùng solid.
+- ❌ Banner màu fade hoặc gradient — v3 dùng flat color block.
+
 ### DecorativeMark (used: hero panels Home, Project detail, Login)
 
 - Absolute positioned NxLogo mark variant, gradient masked, opacity 5-18%, rotated -8deg.
@@ -188,7 +246,23 @@ Reusable visual patterns appearing across multiple screens. Implement as shared 
 - Icon circle (32 round bg-primary-50) + heading + sub + (optional) inline action.
 - Khác standard EmptyState ở chỗ inline (in-flow, không centered page).
 
-## 11. Compliance
+## 11. Tone & copy (v3 — CR-006)
+
+Friendly welcoming + minimal Vietnamese natural. Examples:
+
+- Hero: "Góc onboarding 👋", "Chào mừng trở lại", "Sẵn sàng làm việc thôi ✨".
+- CTA: "+ Tạo dự án mới", "Bắt đầu thôi 🚀", "Xem chi tiết →".
+- Empty state: "Chưa có dự án nào ✨", "Trống trơn 🍃 — tạo một cái đầu tiên".
+- Section header: "Dự án", "Hoạt động gần đây", "Đang theo dõi".
+
+Avoid:
+
+- ❌ Long sentences explaining purpose ("Tất cả tài liệu onboarding cho các sprint đang chạy..." → cut, replace bằng visual).
+- ❌ Formal stiff ("Vui lòng chọn dự án để xem chi tiết" → "Chọn 1 dự án →").
+- ❌ Eyebrow + h1 + subtitle stack ở hero — chỉ h1, subtitle optional ≤ 1 dòng.
+- ❌ Generic "Click here", "Submit" — luôn verb cụ thể tiếng Việt.
+
+## 12. Compliance
 
 Mọi PR đụng UI:
 
@@ -202,3 +276,4 @@ Mọi PR đụng UI:
 | ------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | v1      | 2026-04-25 | Initial charter (CR-002). 5 screens uplift baseline. Hero panel pattern + density rules established.                                                                                                                                                                                                                                                                                                                                     |
 | v2      | 2026-04-25 | Workspace-style amendment: §6 Home density list→grid 2-col 180-220px; §10 NEW component patterns (StatChip, FloatStat, MiniStat, ProgressStrip, SectionDots, AvatarStack, LiveIndicator placeholder, TabBar, DecorativeMark, TemplateRadio, EmptyDashedCard); §11 renumbered. Skeleton-UI policy: build full reference design, dummy/placeholder cho data chưa có (no realtime presence, activity log static, tabs Catalog-only active). |
+| v3      | 2026-05-16 | CR-006 — Notion warm + graphics-rich. §2 add canvas + sage groups. §5 empty state filled icon / 4xl emoji + drop description. §6 NEW Ít chữ nhiều hình rule. §7 rewrite icon policy: prominent 24-48px + emoji + filled plates. §10 NEW Filled button + banner pattern. §11 NEW Tone & copy friendly minimal.                                                                                                                            |
