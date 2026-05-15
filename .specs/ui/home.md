@@ -7,8 +7,74 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `home`
-- **Status**: Implemented (US-004 / T5 `6981c07`; UI uplift v2 Workspace CR-002 / Phase 2-1 `1d76919`)
-- **Last updated**: 2026-04-25
+- **Status**: v2 Workspace shipped (CR-002 / Phase 2-1 `1d76919`); **v3 Notion warm + graphics-rich pending (CR-006 — supersedes v2 Wire-level + ProjectCard sections)**
+- **Last updated**: 2026-05-16
+
+## v3 amendments (CR-006 pilot — Notion warm + graphics-rich) — supersedes Wire-level + ProjectCard sections below
+
+Pilot scope per [CR-006](../changes/CR-006.md) + charter v3 [visual-language.md](visual-language.md). Replaces v2 Workspace wire (CR-002). State machine + Interactions + A11y + Maps US unchanged.
+
+### Hero (replaces Wire §HERO ROW + Tokens.hero subtitle)
+
+- **Layout**: compact `py-8 mb-6`. KHÔNG hero panel rounded-2xl. Plain `bg-canvas` page bg.
+- **Title**: h1 "Góc onboarding 👋" (emoji inline). `font-display text-[36px] leading-10 font-bold tracking-[-0.02em]`. **Drop eyebrow** "Workspace của bạn".
+- **Subtitle**: **OMIT** by default (v3 "ít chữ" rule). Visual carries context — stat boxes + project cards thay vì copy.
+
+### Stat row (replaces v2 StatChip cluster)
+
+- 3-col grid `grid sm:grid-cols-3 gap-4 mb-8`. Each card `rounded-2xl border border-border bg-card p-5 flex items-center gap-4`.
+- Layout per card:
+  - **Icon plate** `size-12 rounded-xl bg-{tone} text-white flex items-center justify-center shrink-0`. Icon size-6. **Solid filled** (không tinted /10% như v2).
+  - **Value + label** stack: value `font-display text-[32px] leading-none font-bold tabular-nums` + label `mt-1 font-ui text-[11px] uppercase tracking-wide text-muted-foreground`.
+- **Tones**: card 1 primary (Project active, FolderOpen icon) · card 2 sage (Feature đủ doc, CheckCircle2 icon) · card 3 sage (Đang đóng góp, Users icon). Sage cho 2 cards — không multi-accent.
+
+### Section header (NEW — replaces filter pill row)
+
+- `flex items-center justify-between gap-3 mb-5`.
+- **Left**: h2 "Dự án" `font-display text-[20px] font-semibold text-foreground`.
+- **Right cluster**:
+  - "Lọc" outline button: `Button variant="outline"` + Filter icon size-3.5 + label. Click → ProjectFilterMenu dropdown (4 options Tất cả / Đang viết / Cần bổ sung).
+  - Admin: **"+ Tạo dự án mới" solid filled primary CTA** (`Button` default variant). KHÔNG eyebrow / pre-text.
+
+### Project card grid (replaces v2 ProjectCard list with graphics-rich banner cards)
+
+- Grid `grid gap-4 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3`. Each card 200-240px tall.
+- **Card structure** (rewrite from v2):
+  - Container: `group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-md hover:scale-[1.01] focus-visible:ring-2 focus-visible:ring-ring`. Wrapped in semantic `<Link>`.
+  - **Filled banner top** `h-20 flex items-center justify-center gap-3` với solid `bg-{tone}` (deterministic from slug hash → 2 tones only: `primary` hoặc `sage`):
+    - **Icon prominent** `size-7 text-white` (chọn từ lucide: BookOpen / FolderKanban / Layers / GitBranch — deterministic theo hash thứ 2).
+    - **Project initials letter** `font-display text-2xl font-bold text-white` (2 chữ cái uppercase). Sits next to icon.
+  - **Body** `p-5 flex flex-col gap-3`:
+    - **Title** h3 `font-display text-[16px] leading-tight font-semibold line-clamp-1 text-foreground`.
+    - **Metric chips row** `flex flex-wrap items-center gap-2`:
+      - Pill 1: `inline-flex items-center gap-1.5 rounded-full bg-sage-bg px-2.5 py-1 text-xs font-semibold text-sage-text` — content "📄 {N} features" hoặc "📄 1 feature".
+      - Pill 2: `inline-flex items-center gap-1.5 rounded-full border border-border bg-canvas px-2.5 py-1 text-xs font-medium text-muted-foreground` — content "⏱ {RelativeTime}".
+    - **KHÔNG description paragraph** (v3 "ít chữ" rule).
+  - **Admin overflow menu** (existing ProjectActionsMenu): absolute top-3 right-3 z-10 trên banner, white/95 backdrop chip cho contrast.
+- **Hover**: card scale + shadow elevate; banner color unchanged.
+
+### Admin Create tile (admin only, last cell)
+
+- Dashed border tile: `flex min-h-[200px] flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-border bg-canvas hover:border-primary/40 hover:bg-primary/5 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-ring`.
+- **Icon prominent**: `size-12 rounded-2xl bg-primary text-white flex items-center justify-center` chứa Plus icon size-6.
+- Label: "Tạo dự án mới" `font-display text-[16px] font-semibold text-foreground`.
+- **KHÔNG sub-line** (cắt per "ít chữ" rule).
+- Click → CreateProjectDialog (existing component, customTrigger).
+
+### Empty state (replaces v2 EmptyState)
+
+- Container: `flex flex-col items-center gap-4 py-16 px-6 max-w-md mx-auto text-center`.
+- **Visual**: emoji 4xl "📁" hoặc large filled icon `size-16 rounded-2xl bg-primary text-white flex items-center justify-center` với FolderOpen size-7. Pick emoji-led cho warmer feel.
+- **Heading**: "Chưa có dự án nào ✨" `font-display text-xl font-semibold`.
+- **Description**: **OMIT** (v3 rule).
+- **Action**: admin solid-filled CTA "+ Tạo dự án đầu tiên" (Button default) · author không CTA.
+
+### Tokens & typography (v3)
+
+- Page bg: `<main className="bg-canvas">` (warm off-white) — override page-level only.
+- Card surface: `bg-card`. Card banner top: `bg-primary` hoặc `bg-sage` solid.
+- Buttons: primary solid filled · "Lọc" outline · ghost cho admin overflow.
+- Border-radius: cards `rounded-2xl` (bumped từ rounded-xl v2).
 
 ## Route
 
