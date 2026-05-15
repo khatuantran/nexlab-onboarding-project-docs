@@ -53,11 +53,9 @@ async function loginAs(email: string, password = "dev12345") {
   return agent;
 }
 
-async function inviteUser(
-  agent: request.SuperAgentTest,
-  email: string,
-  role: "admin" | "author" = "author",
-) {
+type Agent = ReturnType<typeof request.agent>;
+
+async function inviteUser(agent: Agent, email: string, role: "admin" | "author" = "author") {
   const res = await agent
     .post("/api/v1/users")
     .send({ email, displayName: "Test " + email.split("@")[0], role });
