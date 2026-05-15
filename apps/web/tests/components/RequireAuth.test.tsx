@@ -78,7 +78,10 @@ describe("AppHeader logout", () => {
     );
 
     const user = userEvent.setup();
-    const btn = await screen.findByRole("button", { name: /đăng xuất/i });
+    // AppHeader v2 collapses Đăng xuất into UserMenu dropdown.
+    const trigger = await screen.findByRole("button", { name: /tài khoản admin/i });
+    await user.click(trigger);
+    const btn = await screen.findByRole("menuitem", { name: /đăng xuất/i });
     await user.click(btn);
 
     await waitFor(() => {
