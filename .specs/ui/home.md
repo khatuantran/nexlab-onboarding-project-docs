@@ -10,36 +10,60 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 - **Status**: Implemented (US-004 / T5 `6981c07`; UI uplift v2 Workspace CR-002 / Phase 2-1 `1d76919`) · CR-005 v3 pilot pending (geometric patterns + accent palette + text reduction)
 - **Last updated**: 2026-05-15
 
-## v3 amendments (CR-005 pilot) — supersede sections marked below
+## v3 amendments (CR-005 pilot — iteration v2) — supersede sections marked below
 
-Pilot scope per [CR-005](../changes/CR-005.md) + charter v3 [visual-language.md](visual-language.md). Apply on top of existing v2 Wire-level + ProjectCard sections (rest of spec unchanged).
+Pilot scope per [CR-005](../changes/CR-005.md) + charter v3 [visual-language.md](visual-language.md). v2 iteration sau user-provided mockup 2026-05-15 (v1 attempt heavy GradientMesh + left-border rejected). Apply on top of existing CR-002 Wire-level + ProjectCard sections (rest of spec unchanged).
 
 ### Hero block (supersedes Wire §HERO ROW + Tokens.hero subtitle)
 
-- **Background**: `GradientMesh` (primary + accent-amber tones, opacity 0.25) absolute behind text + 1 `BlobBackdrop` (tone `primary`, size `lg`, opacity 0.2) top-right corner. Pattern wraps trong hero row container, `aria-hidden`.
-- **Copy reduction**: drop subtitle paragraph. Keep eyebrow + h1 only. **Optional** 1-dòng micro-tagline ngắn (≤ 60 char) bên dưới h1 nếu thực sự cần context — default: omit.
-- **StatChips** giữ nguyên (3 chips horizontal) — đây là landing summary, không phải prose.
+- **Backdrop**: **clean** — không pattern dominant. Optional very-subtle `GradientMesh` opacity ≤ 0.08 nếu cần warmth (default: omit). Background = `bg-background` plain.
+- **Layout**: stacked text on top (left-align), stat row below (3 chips horizontal). Container `mx-auto max-w-6xl px-6 py-8 lg:px-10`.
+- **Title**: `font-display text-[36px] leading-10 font-bold tracking-[-0.02em]` — copy: **"Workspace"** (single word, drop eyebrow).
+- **Subtitle**: `font-body text-[15px] leading-[22px] text-muted-foreground max-w-2xl mt-2` — 1 dòng: "Chào mừng bạn trở lại! Dưới đây là tổng quan về hoạt động và tiến độ các dự án đang diễn ra của bạn."
+- **Stat row**: 3 `StatChip` cards horizontal, `gap-4`, full-width on desktop (each `flex-1` hoặc fixed min-width). Tones: orange (primary) / blue / pink. Each card has **top accent strip 3-4px** colored theo tone. Layout per card: icon plate 40-48px square (`bg-{tone}` solid, white icon) bên trái + value 28-32px `font-display font-bold` + label `text-[11px] uppercase tracking-wide muted` bên dưới.
 
-### ProjectCard accent identity (supersedes ProjectCard §Container + Top row description)
+### Section header (NEW — replaces filter pill row)
 
-- **Accent mapping** (deterministic từ `project.slug` hash → 1 trong 6 accent tones): `accent-blue` / `accent-green` / `accent-purple` / `accent-pink` / `accent-cyan` / `accent-amber`. Stable across renders.
-- **Border-l 4px** colored theo accent: `border-l-4 border-l-{accent}-500`. Default border (`border border-border`) còn lại 3 sides.
-- **Avatar gradient** chuyển từ primary ramp → accent-tone ramp tương ứng (e.g. project accent = `accent-purple` → avatar `from-accent-purple-200 to-accent-purple-400`).
-- **Tag badge** giữ nguyên status logic (Đủ doc / Đang viết / Cần bổ sung / Draft) nhưng background dùng accent tone của project (subtle bg tint 10%).
-- **Hover**: shadow + border-l intensify (hơi đậm hơn), không đổi accent.
+Row bên dưới hero, trước project grid:
 
-### Empty state (supersedes "Empty" subsection)
+- **Layout**: `flex items-center justify-between gap-4 mb-5`.
+- **Left**: small grid icon (`LayoutGrid` 18px, `text-primary`) + `font-display text-[17px] font-semibold` "Dự án của bạn".
+- **Right cluster**: `ProjectFilterMenu` (dropdown trigger "Lọc" với Filter icon, opens 4 options) + `CreateProjectDialog` primary CTA "+ Dự án mới" (admin only).
+- KHÔNG có pill row (filter chips), KHÔNG có sort dropdown, KHÔNG có count text — đơn giản hóa.
 
-- **Backdrop**: `DotField` count=14, tone `primary`, opacity 0.25 — absolute centered behind icon + heading.
-- **Icon**: `FolderOpen` 56×56 (giảm từ 64) `text-primary/50`, centered trên DotField.
-- **Heading**: giữ "Chưa có project nào" font-display text-xl semibold.
-- **Description**: **1 dòng** ngắn ≤ 80 char (down from 1-2 sentences). Admin: "Tạo project đầu tiên để team bắt đầu document." · Author: "Liên hệ admin để tạo project đầu tiên."
-- **Action**: admin CTA giữ nguyên (`CreateProjectDialog` trigger).
+### ProjectCard (supersedes ProjectCard §Container + Top row + Footer)
+
+- **Accent identity** (deterministic slug hash → 1 trong 6 accent tones): `blue / green / purple / pink / cyan / amber`. Stable across renders.
+- **Container**: `relative rounded-xl border border-border bg-card p-5 pt-6 overflow-hidden`. Border đều 4 cạnh neutral.
+- **Top accent strip**: absolute top-0 left-0 right-0 height 4-5px, `bg-{accent}` solid, rounded-t inherit. Visually "tab" feel.
+- **Top row** (`flex gap-3.5 items-start`):
+  - ProjectAvatar 44×44 `rounded-lg` với **accent gradient** (override primary-ramp): linear-gradient từ accent-300 → accent-500 stops.
+  - Body: h2 title `font-display text-[15px] font-bold line-clamp-1` + description `text-[13px] muted line-clamp-1 mt-1` (giữ nguyên v2 spec).
+  - Chevron / overflow menu (admin) — giữ nguyên v2.
+- **Progress block** — giữ nguyên v2 (label row + bar).
+- **Footer row** (`pt-3 border-t border-border flex items-center justify-between`):
+  - Left: **pill "N feature"** — `inline-flex items-center gap-1.5 rounded-full bg-accent-{tone}-bg text-accent-{tone} px-2.5 py-0.5 text-[11px] font-semibold`. Icon optional (Users 12px).
+  - Right: `RelativeTime` muted (existing).
+  - AvatarStack — defer (mockup not show; existing logic giữ optional).
+- **Hover**: `hover:shadow-md hover:border-primary/30` — không đổi accent.
+
+### Create tile (admin only)
+
+- Dashed border tile, last cell trong grid. Layout vertical `flex flex-col items-center justify-center gap-2 min-h-[180px]`.
+- Icon: Plus 18px trong primary-50 circle 32×32.
+- Heading: `font-ui font-semibold text-sm` "Tạo dự án mới".
+- Sub-line: `text-xs text-muted-foreground` "Bắt đầu một không gian làm việc mới".
+- Click → `CreateProjectDialog` (giữ component, customTrigger).
+
+### Empty state (giữ từ v1 — chưa visible trong mockup)
+
+- `DotField` backdrop count=14 opacity 0.22 + `FolderOpen` 56×56 + heading "Chưa có project nào" + 1-dòng description + admin CTA. Không đổi.
 
 ### Dark mode
 
-- GradientMesh opacity giảm 0.25 → 0.18; BlobBackdrop 0.2 → 0.14; DotField 0.25 → 0.18.
-- Accent border-l: dùng dark variant tokens (e.g. `border-l-accent-blue-400` thay vì `-500`).
+- Top accent strip: vẫn dùng accent-500 light. Nếu contrast quá thấp trên dark bg `0 0% 15%` → switch sang accent-400 (đã có trong tokens). Stat card icon plate solid: dark-mode dùng accent-400.
+- ProjectAvatar accent gradient: dark variant dùng accent-400 → accent-600 stops.
+- Pill footer bg dark: dùng accent-{tone}-bg dark variant (đã định nghĩa `30% lightness shift` trong index.css).
 
 ## Route
 
