@@ -37,20 +37,24 @@ function renderCard() {
   );
 }
 
+/**
+ * CR-006 v3 note: ProjectCard rewritten as graphics-rich banner card.
+ * No ChevronRight (eliminated per "ít chữ nhiều hình"); navigation
+ * affordance is whole-card Link wrap. Admin overflow menu now overlays
+ * the banner (top-right, white/15 backdrop chip).
+ */
 describe("ProjectCard — admin vs author affordance (BUG-004)", () => {
-  it("admin: renders overflow menu and hides ChevronRight", async () => {
+  it("admin: renders overflow menu on banner", async () => {
     mockMe("admin");
-    const { container } = renderCard();
+    renderCard();
     expect(await screen.findByRole("button", { name: /thao tác project/i })).toBeInTheDocument();
-    expect(container.querySelector("svg.lucide-chevron-right")).toBeNull();
   });
 
-  it("author: renders ChevronRight and hides overflow menu", async () => {
+  it("author: hides overflow menu, link wraps full card", async () => {
     mockMe("author");
-    const { container } = renderCard();
+    renderCard();
     // Wait for /me to resolve so the conditional render settles.
-    await screen.findByRole("link", { name: /xem chi tiết project pilot project/i });
+    await screen.findByRole("link", { name: /xem chi tiết dự án pilot project/i });
     expect(screen.queryByRole("button", { name: /thao tác project/i })).toBeNull();
-    expect(container.querySelector("svg.lucide-chevron-right")).not.toBeNull();
   });
 });

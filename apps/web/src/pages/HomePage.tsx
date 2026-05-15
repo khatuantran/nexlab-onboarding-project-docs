@@ -3,33 +3,53 @@ import { CheckCircle2, FolderOpen, Plus, Users } from "lucide-react";
 import { useMe } from "@/queries/auth";
 import { useProjects } from "@/queries/projects";
 import { ProjectCard } from "@/components/projects/ProjectCard";
-import { ProjectFilterPills, type ProjectFilter } from "@/components/projects/ProjectFilterPills";
+import { ProjectFilterMenu, type ProjectFilter } from "@/components/projects/ProjectFilterMenu";
 import { CreateProjectDialog } from "@/components/projects/CreateProjectDialog";
-import { EmptyState } from "@/components/common/EmptyState";
-import { StatChip } from "@/components/common/StatChip";
 import { Button } from "@/components/ui/button";
+
+interface StatBoxProps {
+  icon: typeof FolderOpen;
+  tone: "primary" | "sage";
+  value: string | number;
+  label: string;
+}
+
+const STAT_TONE_PLATE: Record<StatBoxProps["tone"], string> = {
+  primary: "bg-primary text-primary-foreground",
+  sage: "bg-sage text-sage-foreground",
+};
+
+function StatBox({ icon: Icon, tone, value, label }: StatBoxProps): JSX.Element {
+  return (
+    <div className="flex items-center gap-4 rounded-2xl border border-border bg-card p-5">
+      <span
+        aria-hidden="true"
+        className={`inline-flex size-12 shrink-0 items-center justify-center rounded-xl ${STAT_TONE_PLATE[tone]}`}
+      >
+        <Icon className="size-6" />
+      </span>
+      <div className="flex min-w-0 flex-col">
+        <span className="font-display text-[32px] font-bold leading-none tabular-nums text-foreground">
+          {value}
+        </span>
+        <span className="mt-1 font-ui text-[11px] uppercase tracking-wide text-muted-foreground">
+          {label}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 function ProjectCardSkeleton(): JSX.Element {
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-5">
-      <div className="flex items-start gap-3.5">
-        <div className="size-11 shrink-0 animate-pulse rounded-lg bg-muted" />
-        <div className="flex-1 space-y-2">
-          <div className="h-4 w-3/4 animate-pulse rounded bg-muted" />
-          <div className="h-3 w-full animate-pulse rounded bg-muted" />
+    <div className="overflow-hidden rounded-2xl border border-border bg-card">
+      <div className="h-20 animate-pulse bg-muted" />
+      <div className="flex flex-col gap-3 p-5">
+        <div className="h-5 w-3/4 animate-pulse rounded bg-muted" />
+        <div className="flex gap-2 pt-2">
+          <div className="h-6 w-24 animate-pulse rounded-full bg-muted" />
+          <div className="h-6 w-20 animate-pulse rounded-full bg-muted" />
         </div>
-        <div className="size-5 animate-pulse rounded bg-muted" />
-      </div>
-      <div className="space-y-1.5">
-        <div className="h-3 w-1/2 animate-pulse rounded bg-muted" />
-        <div className="h-1.5 w-full animate-pulse rounded-full bg-muted" />
-      </div>
-      <div className="flex items-center justify-between border-t border-border pt-3">
-        <div className="flex gap-1">
-          <div className="size-7 animate-pulse rounded-full bg-muted" />
-          <div className="size-7 animate-pulse rounded-full bg-muted" />
-        </div>
-        <div className="h-3 w-16 animate-pulse rounded bg-muted" />
       </div>
     </div>
   );
@@ -49,92 +69,89 @@ export function HomePage(): JSX.Element {
   }, [projects, filter]);
 
   const totalProjects = projects?.length ?? 0;
+  const totalFeatures = projects?.reduce((acc, p) => acc + p.featureCount, 0) ?? 0;
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-8 lg:px-10" aria-busy={isLoading || undefined}>
-      {/* Hero row */}
-      <div className="mb-6 flex flex-col items-stretch gap-6 xl:flex-row xl:items-end xl:justify-between">
-        <div className="max-w-2xl">
-          <p className="font-ui text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-            Workspace của bạn
-          </p>
-          <h1 className="mt-2 font-display text-[36px] leading-10 font-bold tracking-[-0.02em] text-foreground">
-            Danh sách project
+    <main className="min-h-[calc(100vh-3.5rem)] bg-canvas" aria-busy={isLoading || undefined}>
+      <div className="mx-auto max-w-7xl px-6 py-8 lg:px-10">
+        {/* Hero — CR-006 v3: compact title only, no subtitle (ít chữ) */}
+        <header className="mb-8">
+          <h1 className="font-display text-[36px] font-bold leading-10 tracking-[-0.02em] text-foreground">
+            Góc onboarding{" "}
+            <span aria-hidden="true" role="img">
+              👋
+            </span>
           </h1>
-          <p className="mt-2.5 font-body text-[15px] leading-[22px] text-muted-foreground">
-            Tất cả tài liệu onboarding cho các sprint đang chạy. Bấm vào project để xem feature và
-            nghiệp vụ chi tiết.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <StatChip
+        </header>
+
+        {/* Stat row — 3 cards solid-filled icon plates */}
+        <div className="mb-8 grid gap-4 sm:grid-cols-3">
+          <StatBox
             icon={FolderOpen}
             tone="primary"
             value={isLoading ? "—" : totalProjects}
             label="Project active"
           />
-          <StatChip
+          <StatBox
             icon={CheckCircle2}
-            tone="success"
-            value={isLoading ? "—" : "0"}
+            tone="sage"
+            value={isLoading ? "—" : totalFeatures}
             label="Feature đủ doc"
           />
-          <StatChip icon={Users} tone="info" value="8" label="Đang đóng góp" />
+          <StatBox icon={Users} tone="sage" value="8" label="Đang đóng góp" />
         </div>
-      </div>
 
-      {/* Filter + count strip */}
-      {!isError && totalProjects > 0 ? (
-        <div className="mb-5 flex flex-wrap items-center gap-3 rounded-xl border border-border bg-muted/40 px-3 py-2.5">
-          <ProjectFilterPills value={filter} onChange={setFilter} />
-          <div className="ml-auto flex items-center gap-3">
-            <span className="font-ui text-xs text-muted-foreground">
-              Sắp xếp: <span className="font-semibold text-foreground">Mới cập nhật</span>
-            </span>
-            <span className="font-ui text-xs text-muted-foreground">
-              {filtered.length} / {totalProjects} project
-            </span>
+        {/* Section header — h2 + Lọc dropdown + admin solid-filled CTA */}
+        {!isError && totalProjects > 0 ? (
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="font-display text-[20px] font-semibold text-foreground">Dự án</h2>
+            <div className="flex items-center gap-2">
+              <ProjectFilterMenu value={filter} onChange={setFilter} />
+              {isAdmin ? <CreateProjectDialog triggerLabel="+ Tạo dự án mới" /> : null}
+            </div>
           </div>
-        </div>
-      ) : null}
+        ) : null}
 
-      {/* Body states */}
-      {isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
-          <ProjectCardSkeleton />
-          <ProjectCardSkeleton />
-          <ProjectCardSkeleton />
-          <ProjectCardSkeleton />
-        </div>
-      ) : isError ? (
-        <div
-          role="alert"
-          className="flex flex-wrap items-center justify-between gap-4 rounded-md border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive"
-        >
-          <p>Có lỗi xảy ra khi tải danh sách project. Thử lại sau.</p>
-          <Button variant="outline" size="sm" onClick={() => refetch()}>
-            Thử lại
-          </Button>
-        </div>
-      ) : totalProjects === 0 ? (
-        <EmptyState
-          icon={FolderOpen}
-          title="Chưa có project nào trong catalog"
-          description={
-            isAdmin
-              ? "Tạo project đầu tiên để team bắt đầu document features. BA viết business sections; dev bổ sung tech-notes + screenshots."
-              : "Liên hệ admin để tạo project đầu tiên."
-          }
-          action={isAdmin ? <CreateProjectDialog triggerLabel="Tạo project đầu tiên" /> : null}
-        />
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
-          {filtered.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
-          {isAdmin ? <AdminCreateTile /> : null}
-        </div>
-      )}
+        {/* Body states */}
+        {isLoading ? (
+          <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+            <ProjectCardSkeleton />
+            <ProjectCardSkeleton />
+            <ProjectCardSkeleton />
+            <ProjectCardSkeleton />
+          </div>
+        ) : isError ? (
+          <div
+            role="alert"
+            className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive"
+          >
+            <p>Có lỗi xảy ra khi tải danh sách dự án. Thử lại sau.</p>
+            <Button variant="outline" size="sm" onClick={() => refetch()}>
+              Thử lại
+            </Button>
+          </div>
+        ) : totalProjects === 0 ? (
+          <div
+            role="status"
+            className="mx-auto flex max-w-md flex-col items-center gap-4 py-16 text-center"
+          >
+            <span aria-hidden="true" role="img" className="select-none text-6xl leading-none">
+              📁
+            </span>
+            <p className="font-display text-xl font-semibold text-foreground">
+              Chưa có dự án nào ✨
+            </p>
+            {isAdmin ? <CreateProjectDialog triggerLabel="+ Tạo dự án đầu tiên" /> : null}
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+            {filtered.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+            {isAdmin ? <AdminCreateTile /> : null}
+          </div>
+        )}
+      </div>
     </main>
   );
 }
@@ -145,12 +162,14 @@ function AdminCreateTile(): JSX.Element {
       customTrigger={
         <button
           type="button"
-          className="group flex min-h-[180px] items-center justify-center gap-2.5 rounded-xl border-2 border-dashed border-border bg-transparent text-muted-foreground transition-all hover:border-primary/40 hover:bg-primary/5 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="group flex min-h-[200px] flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-border bg-canvas-muted/30 text-center transition-all hover:border-primary/40 hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <span className="inline-flex size-8 items-center justify-center rounded-full bg-primary/10">
-            <Plus className="size-4 text-primary" aria-hidden="true" />
+          <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground transition-transform group-hover:scale-105">
+            <Plus aria-hidden="true" className="size-6" />
           </span>
-          <span className="font-ui text-sm font-semibold">Tạo project mới</span>
+          <span className="font-display text-base font-semibold text-foreground">
+            Tạo dự án mới
+          </span>
         </button>
       }
     />

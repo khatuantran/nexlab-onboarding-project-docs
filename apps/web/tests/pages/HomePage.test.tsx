@@ -67,25 +67,24 @@ describe("HomePage", () => {
     mockProjects([pilot, demo]);
     renderHome();
 
-    expect(await screen.findByRole("heading", { name: /danh sách project/i })).toBeInTheDocument();
-    const pilotLink = await screen.findByRole("link", { name: /xem chi tiết project pilot/i });
+    expect(await screen.findByRole("heading", { name: /góc onboarding/i })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /^dự án$/i })).toBeInTheDocument();
+    const pilotLink = await screen.findByRole("link", { name: /xem chi tiết dự án pilot/i });
     expect(within(pilotLink).getByText("Pilot Project")).toBeInTheDocument();
-    expect(within(pilotLink).getByText(/5 feature/)).toBeInTheDocument();
+    expect(within(pilotLink).getByText(/5 features?/i)).toBeInTheDocument();
     expect(pilotLink.querySelector("time")).not.toBeNull();
 
-    const demoLink = screen.getByRole("link", { name: /xem chi tiết project demo/i });
-    expect(within(demoLink).getByText(/1 feature/)).toBeInTheDocument();
+    const demoLink = screen.getByRole("link", { name: /xem chi tiết dự án demo/i });
+    expect(within(demoLink).getByText(/1 feature$/i)).toBeInTheDocument();
   });
 
-  it("shows empty state with admin CTA 'Tạo project đầu tiên'", async () => {
+  it("shows empty state with admin CTA 'Tạo dự án đầu tiên'", async () => {
     mockMe("admin");
     mockProjects([]);
     renderHome();
 
-    expect(await screen.findByText(/chưa có project nào trong catalog/i)).toBeInTheDocument();
-    expect(
-      await screen.findByRole("button", { name: /tạo project đầu tiên/i }),
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/chưa có dự án nào/i)).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: /tạo dự án đầu tiên/i })).toBeInTheDocument();
   });
 
   it("shows empty state without CTA for author role", async () => {
@@ -93,9 +92,8 @@ describe("HomePage", () => {
     mockProjects([]);
     renderHome();
 
-    expect(await screen.findByText(/chưa có project nào trong catalog/i)).toBeInTheDocument();
-    expect(await screen.findByText(/liên hệ admin/i)).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /tạo project/i })).toBeNull();
+    expect(await screen.findByText(/chưa có dự án nào/i)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /tạo dự án/i })).toBeNull();
   });
 
   it("row click navigates to /projects/:slug", async () => {
@@ -104,7 +102,7 @@ describe("HomePage", () => {
     mockProjects([pilot]);
     renderHome();
 
-    const link = await screen.findByRole("link", { name: /xem chi tiết project pilot/i });
+    const link = await screen.findByRole("link", { name: /xem chi tiết dự án pilot/i });
     await user.click(link);
     expect(await screen.findByTestId("project-page")).toBeInTheDocument();
   });
@@ -115,7 +113,7 @@ describe("HomePage", () => {
     mockProjects([]);
     renderHome();
 
-    const cta = await screen.findByRole("button", { name: /tạo project đầu tiên/i });
+    const cta = await screen.findByRole("button", { name: /tạo dự án đầu tiên/i });
     await user.click(cta);
     expect(await screen.findByRole("dialog", { name: /tạo project/i })).toBeInTheDocument();
   });
