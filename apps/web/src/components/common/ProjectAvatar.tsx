@@ -32,7 +32,7 @@ export function ProjectAvatar({
     <span
       aria-hidden="true"
       className={cn(
-        "inline-flex items-center justify-center rounded-lg shadow-sm font-display font-bold text-primary-900 bg-gradient-to-br shrink-0 ring-1 ring-primary-200/40 dark:ring-primary-700/40",
+        "inline-flex items-center justify-center rounded-lg shadow-sm font-display font-bold text-white bg-gradient-to-br shrink-0 ring-1 ring-primary-200/40 dark:ring-primary-700/40",
         SIZE_CLS[size],
         avatarBucket(seed),
         className,

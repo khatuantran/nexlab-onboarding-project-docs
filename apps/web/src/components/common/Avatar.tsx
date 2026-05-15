@@ -22,7 +22,7 @@ export function Avatar({ name, size = "sm", className }: AvatarProps): JSX.Eleme
     <span
       aria-hidden="true"
       className={cn(
-        "inline-flex items-center justify-center rounded-full bg-gradient-to-br font-ui font-bold text-primary-900 ring-background shrink-0",
+        "inline-flex items-center justify-center rounded-full bg-gradient-to-br font-ui font-bold text-white ring-background shrink-0",
         SIZE_CLS[size],
         avatarBucket(name),
         className,

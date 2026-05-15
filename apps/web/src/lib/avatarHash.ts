@@ -3,12 +3,16 @@
  * Hash slug → 1 of 5 primary-ramp gradient buckets cho project identity.
  */
 
+// Pin gradient to literal HSL (Nexlab primary ramp light-mode values) so
+// avatar identity is theme-invariant — token names invert in dark mode,
+// which collapses contrast against the white initials. Buckets stay in the
+// saturated 28-72% lightness range; white text passes 4.5:1 on all.
 const BUCKETS = [
-  "from-primary-200 to-primary-400",
-  "from-primary-300 to-primary-500",
-  "from-primary-400 to-primary-600",
-  "from-primary-500 to-primary-700",
-  "from-primary-600 to-primary-800",
+  "from-[hsl(32_91%_72%)] to-[hsl(27_88%_51%)]",
+  "from-[hsl(28_89%_61%)] to-[hsl(25_84%_48%)]",
+  "from-[hsl(27_88%_51%)] to-[hsl(22_82%_40%)]",
+  "from-[hsl(25_84%_48%)] to-[hsl(17_73%_34%)]",
+  "from-[hsl(22_82%_40%)] to-[hsl(15_69%_28%)]",
 ] as const;
 
 export function avatarBucket(seed: string): string {
