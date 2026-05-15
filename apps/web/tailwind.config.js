@@ -36,6 +36,16 @@ export default {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
+        canvas: {
+          DEFAULT: "hsl(var(--canvas))",
+          muted: "hsl(var(--canvas-muted))",
+        },
+        sage: {
+          DEFAULT: "hsl(var(--sage))",
+          foreground: "hsl(var(--sage-foreground))",
+          bg: "hsl(var(--sage-bg))",
+          text: "hsl(var(--sage-text))",
+        },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",

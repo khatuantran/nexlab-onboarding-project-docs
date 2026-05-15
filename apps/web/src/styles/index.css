@@ -46,6 +46,14 @@
     --accent: 0 0% 95%;
     --accent-foreground: 240 3% 16%;
 
+    /* Warm canvas + sage (CR-006 v3) — page bg variant + secondary accent */
+    --canvas: 35 30% 97%;
+    --canvas-muted: 35 25% 93%;
+    --sage: 145 30% 50%;
+    --sage-foreground: 0 0% 100%;
+    --sage-bg: 145 30% 94%;
+    --sage-text: 145 30% 35%;
+
     /* Muted */
     --muted: 0 0% 95%;
     --muted-foreground: 0 0% 55%;
@@ -106,6 +114,14 @@
     /* Accent */
     --accent: 0 0% 22%;
     --accent-foreground: 0 0% 98%;
+
+    /* Warm canvas + sage (CR-006 v3) — dark variants */
+    --canvas: 0 0% 15%;
+    --canvas-muted: 0 0% 18%;
+    --sage: 145 30% 60%;
+    --sage-foreground: 0 0% 15%;
+    --sage-bg: 145 20% 22%;
+    --sage-text: 145 30% 70%;
 
     /* Muted */
     --muted: 0 0% 22%;
