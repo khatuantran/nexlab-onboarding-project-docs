@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-_Last updated: 2026-05-14 · Index of mid-milestone scope / spec / tech changes._
+_Last updated: 2026-05-15 · Index of mid-milestone scope / spec / tech changes._
 
 Mỗi file `CR-NNN.md` clone từ [templates/05-change-request-template.md](../../templates/05-change-request-template.md). Bắt buộc cho mọi thay đổi **scope, spec, tech choice** sau khi milestone đã bắt đầu (không phải cho fresh US hoặc bug fix).
 
@@ -18,6 +18,7 @@ Related: [CLAUDE.md §When a request comes in](../../CLAUDE.md#when-a-request-co
 | CR-002 | UI Quality Uplift v1 (5 screens)                       | spec-change | Approved (impl `a2b347d`) | 2026-04-25 | [CR-002.md](CR-002.md) |
 | CR-003 | Free-tier pilot deployment (replace VPS path of M3)    | tech-change | Approved (impl pending)   | 2026-04-26 | [CR-003.md](CR-003.md) |
 | CR-004 | Image storage: Fly volume → Cloudinary                 | tech-change | Approved (Phase 1 ship)   | 2026-05-14 | [CR-004.md](CR-004.md) |
+| CR-005 | UI Quality Uplift v2 (patterns + multi-accent palette) | spec-change | Proposed                  | 2026-05-15 | [CR-005.md](CR-005.md) |
 
 ---
 
