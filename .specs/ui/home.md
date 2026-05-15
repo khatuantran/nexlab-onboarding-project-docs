@@ -7,8 +7,39 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `home`
-- **Status**: Implemented (US-004 / T5 `6981c07`; UI uplift v2 Workspace CR-002 / Phase 2-1 `1d76919`)
-- **Last updated**: 2026-04-25
+- **Status**: Implemented (US-004 / T5 `6981c07`; UI uplift v2 Workspace CR-002 / Phase 2-1 `1d76919`) · CR-005 v3 pilot pending (geometric patterns + accent palette + text reduction)
+- **Last updated**: 2026-05-15
+
+## v3 amendments (CR-005 pilot) — supersede sections marked below
+
+Pilot scope per [CR-005](../changes/CR-005.md) + charter v3 [visual-language.md](visual-language.md). Apply on top of existing v2 Wire-level + ProjectCard sections (rest of spec unchanged).
+
+### Hero block (supersedes Wire §HERO ROW + Tokens.hero subtitle)
+
+- **Background**: `GradientMesh` (primary + accent-amber tones, opacity 0.25) absolute behind text + 1 `BlobBackdrop` (tone `primary`, size `lg`, opacity 0.2) top-right corner. Pattern wraps trong hero row container, `aria-hidden`.
+- **Copy reduction**: drop subtitle paragraph. Keep eyebrow + h1 only. **Optional** 1-dòng micro-tagline ngắn (≤ 60 char) bên dưới h1 nếu thực sự cần context — default: omit.
+- **StatChips** giữ nguyên (3 chips horizontal) — đây là landing summary, không phải prose.
+
+### ProjectCard accent identity (supersedes ProjectCard §Container + Top row description)
+
+- **Accent mapping** (deterministic từ `project.slug` hash → 1 trong 6 accent tones): `accent-blue` / `accent-green` / `accent-purple` / `accent-pink` / `accent-cyan` / `accent-amber`. Stable across renders.
+- **Border-l 4px** colored theo accent: `border-l-4 border-l-{accent}-500`. Default border (`border border-border`) còn lại 3 sides.
+- **Avatar gradient** chuyển từ primary ramp → accent-tone ramp tương ứng (e.g. project accent = `accent-purple` → avatar `from-accent-purple-200 to-accent-purple-400`).
+- **Tag badge** giữ nguyên status logic (Đủ doc / Đang viết / Cần bổ sung / Draft) nhưng background dùng accent tone của project (subtle bg tint 10%).
+- **Hover**: shadow + border-l intensify (hơi đậm hơn), không đổi accent.
+
+### Empty state (supersedes "Empty" subsection)
+
+- **Backdrop**: `DotField` count=14, tone `primary`, opacity 0.25 — absolute centered behind icon + heading.
+- **Icon**: `FolderOpen` 56×56 (giảm từ 64) `text-primary/50`, centered trên DotField.
+- **Heading**: giữ "Chưa có project nào" font-display text-xl semibold.
+- **Description**: **1 dòng** ngắn ≤ 80 char (down from 1-2 sentences). Admin: "Tạo project đầu tiên để team bắt đầu document." · Author: "Liên hệ admin để tạo project đầu tiên."
+- **Action**: admin CTA giữ nguyên (`CreateProjectDialog` trigger).
+
+### Dark mode
+
+- GradientMesh opacity giảm 0.25 → 0.18; BlobBackdrop 0.2 → 0.14; DotField 0.25 → 0.18.
+- Accent border-l: dùng dark variant tokens (e.g. `border-l-accent-blue-400` thay vì `-500`).
 
 ## Route
 
