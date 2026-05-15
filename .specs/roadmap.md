@@ -100,6 +100,19 @@ Promoted M4 candidate "Admin UI quản lý user" thành shipped scope. Full life
 
 **Tests**: 177/177 API + 24 shared + 132 web unit + 2 new E2E scenarios.
 
+### Post-M2 enhancement — US-009 Self-service profile ✅ _(2026-05-15)_
+
+Mọi user tự quản lý hồ sơ: edit displayName, đổi password (other sessions purged), upload avatar Cloudinary. FR-USER-003 mới. 6 task, ~7-9h. Reuse `cloudinary.uploadImage` (CR-004) + `purgeSessionsForUser` (US-007).
+
+- [T1](stories/US-009/tasks.md#t1--migration--shared-schemas) Migration `0009_users_avatar_url.sql` + AuthUser shape extend — ✅ `477a410`.
+- [T2](stories/US-009/tasks.md#t2--get--patch-me) GET + PATCH /me (session-userId scoped, no :id URL) — ✅ `477a410`.
+- [T3](stories/US-009/tasks.md#t3--password--avatar-endpoints) POST /me/password + POST /me/avatar (bcrypt + purgeSessionsForUserExcept + Cloudinary) — ✅ `477a410`.
+- [T4](stories/US-009/tasks.md#t4--mutation-hooks--avatar-component) 4 mutation hooks + Avatar imageUrl prop + lg size — ✅ `ef3b59a`.
+- [T5](stories/US-009/tasks.md#t5--profilepage--usermenu-wire) ProfilePage 3 section + UserMenu Hồ sơ enabled — ✅ `ef3b59a`.
+- [T6](stories/US-009/tasks.md#t6--e2e--progress-sync) Playwright `e2e/us-009.spec.ts` + progress sync — ✅ this commit.
+
+**Tests**: 203/203 API + 24 shared + 154 web unit + 1 new E2E.
+
 ### Post-M2 enhancement — US-008 Admin feature archive ✅ _(2026-05-15)_
 
 Mirror project archive (US-004) cho từng feature trong project. FR-FEAT-001 amend (+3 EARS statements: admin archive, 403 non-admin, idempotent). 6 task, ~5h. Reuse 80% pattern từ US-004.

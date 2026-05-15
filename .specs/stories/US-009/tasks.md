@@ -24,14 +24,14 @@ _Last updated_: 2026-05-15
 
 ## Task Summary
 
-| #                                           | Title                                           | Effort | AC covered             | FR touched | UI spec                                    | Status     |
-| ------------------------------------------- | ----------------------------------------------- | ------ | ---------------------- | ---------- | ------------------------------------------ | ---------- |
-| [T1](#t1--migration--shared-schemas)        | Migration `avatar_url` + shared schemas extend  | 1h     | prereq                 | USER-003   | —                                          | 🟡 Planned |
-| [T2](#t2--get--patch-me)                    | `GET /me` + `PATCH /me` + tests                 | 1.5h   | AC-2, AC-3, AC-10      | USER-003   | —                                          | 🟡 Planned |
-| [T3](#t3--password--avatar-endpoints)       | `POST /me/password` + `POST /me/avatar` + tests | 2h     | AC-4, AC-5, AC-7..AC-9 | USER-003   | —                                          | 🟡 Planned |
-| [T4](#t4--mutation-hooks--avatar-component) | 4 query hooks + Avatar imageUrl extend + tests  | 1h     | AC-3, AC-7             | —          | [design-system](../../ui/design-system.md) | 🟡 Planned |
-| [T5](#t5--profilepage--usermenu-wire)       | ProfilePage + UserMenu link + tests             | 2h     | AC-1..AC-8             | —          | [profile.md](../../ui/profile.md)          | 🟡 Planned |
-| [T6](#t6--e2e--progress-sync)               | Playwright E2E + progress sync                  | 1h     | AC-1, AC-3, AC-4, AC-7 | all        | —                                          | 🟡 Planned |
+| #                                           | Title                                           | Effort | AC covered             | FR touched | UI spec                                    | Status       |
+| ------------------------------------------- | ----------------------------------------------- | ------ | ---------------------- | ---------- | ------------------------------------------ | ------------ |
+| [T1](#t1--migration--shared-schemas)        | Migration `avatar_url` + shared schemas extend  | 1h     | prereq                 | USER-003   | —                                          | ✅ `477a410` |
+| [T2](#t2--get--patch-me)                    | `GET /me` + `PATCH /me` + tests                 | 1.5h   | AC-2, AC-3, AC-10      | USER-003   | —                                          | ✅ `477a410` |
+| [T3](#t3--password--avatar-endpoints)       | `POST /me/password` + `POST /me/avatar` + tests | 2h     | AC-4, AC-5, AC-7..AC-9 | USER-003   | —                                          | ✅ `477a410` |
+| [T4](#t4--mutation-hooks--avatar-component) | 4 query hooks + Avatar imageUrl extend + tests  | 1h     | AC-3, AC-7             | —          | [design-system](../../ui/design-system.md) | ✅ `ef3b59a` |
+| [T5](#t5--profilepage--usermenu-wire)       | ProfilePage + UserMenu link + tests             | 2h     | AC-1..AC-8             | —          | [profile.md](../../ui/profile.md)          | ✅ `ef3b59a` |
+| [T6](#t6--e2e--progress-sync)               | Playwright E2E + progress sync                  | 1h     | AC-1, AC-3, AC-4, AC-7 | all        | —                                          | ✅ this sync |
 
 **Critical path**: T1 → T2 → T3 → T4 → T5 → T6.
 
@@ -64,9 +64,9 @@ Add `users.avatar_url TEXT` nullable. Extend `AuthUser` shape với `avatarUrl: 
 
 ### DoD checklist
 
-- [ ] Migration applied dev + test DB.
-- [ ] Shared + api tests green.
-- [ ] Commit `feat(api): users.avatar_url + self-profile shared schemas (US-009 / T1)`.
+- [x] Migration applied dev + test DB.
+- [x] Shared + api tests green.
+- [x] Commit `feat(api): users.avatar_url + self-profile shared schemas (US-009 / T1)`.
 
 ---
 
@@ -97,9 +97,9 @@ Add `users.avatar_url TEXT` nullable. Extend `AuthUser` shape với `avatarUrl: 
 
 ### DoD checklist
 
-- [ ] 2 test files green.
-- [ ] `pnpm --filter @onboarding/api test` toàn package xanh.
-- [ ] Commit `feat(api): GET/PATCH /me self-profile endpoints (US-009 / T2)`.
+- [x] 2 test files green.
+- [x] `pnpm --filter @onboarding/api test` toàn package xanh.
+- [x] Commit `feat(api): GET/PATCH /me self-profile endpoints (US-009 / T2)`.
 
 ---
 
@@ -133,9 +133,9 @@ Add `users.avatar_url TEXT` nullable. Extend `AuthUser` shape với `avatarUrl: 
 
 ### DoD checklist
 
-- [ ] 2 + 1 extend test file green.
-- [ ] Manual smoke curl: 4 scenarios pass.
-- [ ] Commit `feat(api): self password change + avatar upload (US-009 / T3)`.
+- [x] 2 + 1 extend test file green.
+- [x] Manual smoke curl: 4 scenarios pass.
+- [x] Commit `feat(api): self password change + avatar upload (US-009 / T3)`.
 
 ---
 
@@ -165,9 +165,9 @@ FE query hooks + Avatar component supports `imageUrl` prop.
 
 ### DoD checklist
 
-- [ ] Hook + component tests green.
-- [ ] No regression in existing Avatar callers (ProjectActionsMenu, UserMenu, AvatarStack).
-- [ ] Commit `feat(web): self-profile mutations + Avatar imageUrl (US-009 / T4)`.
+- [x] Hook + component tests green.
+- [x] No regression in existing Avatar callers (ProjectActionsMenu, UserMenu, AvatarStack).
+- [x] Commit `feat(web): self-profile mutations + Avatar imageUrl (US-009 / T4)`.
 
 ---
 
@@ -199,9 +199,9 @@ FE query hooks + Avatar component supports `imageUrl` prop.
 
 ### DoD checklist
 
-- [ ] FE tests green (~155 total).
-- [ ] `pnpm typecheck` + `pnpm lint` clean.
-- [ ] Commit `feat(web): ProfilePage + UserMenu profile link (US-009 / T5)`.
+- [x] FE tests green (~155 total).
+- [x] `pnpm typecheck` + `pnpm lint` clean.
+- [x] Commit `feat(web): ProfilePage + UserMenu profile link (US-009 / T5)`.
 
 ---
 
@@ -238,6 +238,6 @@ Run + verify pass. No production code expected unless E2E surfaces bug.
 
 ### DoD checklist
 
-- [ ] `pnpm test:e2e e2e/us-009.spec.ts` green.
-- [ ] Progress sync commit covers: README, .specs/roadmap.md, US-009/tasks.md DoD flips, traceability, api-surface, design-system CHANGELOG, releases CHANGELOG.
-- [ ] Commit `test(e2e): US-009 profile flow + progress sync (US-009 / T6)`.
+- [x] `pnpm test:e2e e2e/us-009.spec.ts` green.
+- [x] Progress sync commit covers: README, .specs/roadmap.md, US-009/tasks.md DoD flips, traceability, api-surface, design-system CHANGELOG, releases CHANGELOG.
+- [x] Commit `test(e2e): US-009 profile flow + progress sync (US-009 / T6)`.

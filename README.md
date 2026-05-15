@@ -20,6 +20,8 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ✅ **US-008 Admin feature archive shipped 2026-05-15** — admin có overflow ⋯ menu trên `FeatureCard` để archive 1 feature trong project. Soft-delete (`features.archived_at`); archived feature ẩn khỏi `GET /projects/:slug` + direct GET trả 404. Sections + uploads giữ nguyên. FR-FEAT-001 amend. 184/184 api + 24 shared + 142 web + e2e tests green.
 
+✅ **US-009 Self-service profile shipped 2026-05-15** — `/profile` page cho mọi user tự edit display name, đổi mật khẩu (other sessions purged, current sid preserved), upload avatar (Cloudinary, ≤ 2 MB). 4 endpoint `/api/v1/me/*` always read `req.session.userId` → IDOR-proof. UserMenu "Hồ sơ của tôi" nay link `/profile`. FR-USER-003 new. 203/203 api + 24 shared + 154 web + new `e2e/us-009.spec.ts` xanh.
+
 ## Vấn đề đang giải quyết
 
 - Dự án business phức tạp, tài liệu rải rác hoặc không có.

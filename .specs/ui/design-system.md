@@ -262,10 +262,10 @@ US-008 adds (✅ landed `a03c345`):
 
 - `FeatureActionsMenu` — overflow `⋯` dropdown trên `FeatureCard`, admin-only. Single item "Lưu trữ feature" (Archive icon, destructive tone). Native `window.confirm` → POST `/projects/:slug/features/:fSlug/archive` → toast + invalidate cache. Mirror [`ProjectActionsMenu`](../../apps/web/src/components/projects/ProjectActionsMenu.tsx) pattern. Props: `projectSlug: string`, `feature: { slug, title }`.
 
-US-009 adds (planned):
+US-009 adds (✅ landed `ef3b59a`):
 
 - `ProfilePage` — `/profile` dedicated screen với 3 section card (Profile / Security / Avatar). Reuse `Avatar` (extended với `imageUrl`), `Button`, `Input`, `Label`, `DropdownMenu` (UserMenu link). Mount under ProtectedLayout. See [profile.md](profile.md).
-- `Avatar` extended — optional prop `imageUrl?: string | null`. Nếu set, render `<img src>` với alt = name; fallback initials gradient (existing). Áp dụng cho UserMenu trigger + ProfilePage avatar large.
+- `Avatar` extended — optional prop `imageUrl?: string | null`. Nếu set, render `<img src>` với alt = name; fallback initials gradient (existing). Áp dụng cho UserMenu trigger + ProfilePage avatar large. Added `lg` size (80px).
 
 ---
 
@@ -318,6 +318,7 @@ Thêm row khi đổi token, icon registry, component inventory. Breaking change 
 | 2026-05-15 | **US-008 Gate 1 scaffold** — `FeatureActionsMenu` registered §5.3 (admin overflow ⋯ trên FeatureCard, single item "Lưu trữ feature"). Mirror `ProjectActionsMenu` pattern. Status `(planned)` cho tới khi US-008 T5 ship.                                                                                                                                                                                                                                                                                                                                                        | US-008 Gate 1 (spec only)                   |
 | 2026-05-15 | **US-008 implemented** — `FeatureActionsMenu` ships + wired vào `FeatureCard` (admin overlay top-right, hide chevron khi admin per BUG-004). `useArchiveFeature` mutation hook lands cùng FE commit. E2E happy path covers archive → list refresh → direct URL 404.                                                                                                                                                                                                                                                                                                              | US-008 ship `a03c345`                       |
 | 2026-05-15 | **US-009 Gate 1 scaffold** — `ProfilePage` registered §5.3 + planned `Avatar` extension (`imageUrl` prop). Spec only — implementation lands T2-T5.                                                                                                                                                                                                                                                                                                                                                                                                                               | US-009 Gate 1 (spec only)                   |
+| 2026-05-15 | **US-009 implemented** — `ProfilePage` ships ở `/profile`. `Avatar` gains `imageUrl` prop + `lg` size; UserMenu trigger + dropdown header pass `user.avatarUrl`. UserMenu "Hồ sơ của tôi" item enabled qua `asChild <Link to="/profile">`.                                                                                                                                                                                                                                                                                                                                       | US-009 ship `ef3b59a`                       |
 
 ---
 
