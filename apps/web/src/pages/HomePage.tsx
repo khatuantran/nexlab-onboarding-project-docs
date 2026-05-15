@@ -1,34 +1,31 @@
 import { useMemo, useState } from "react";
-import { CheckCircle2, FolderOpen, Plus, Users } from "lucide-react";
+import { CheckCircle2, FolderOpen, LayoutGrid, Plus, Users } from "lucide-react";
 import { useMe } from "@/queries/auth";
 import { useProjects } from "@/queries/projects";
 import { ProjectCard } from "@/components/projects/ProjectCard";
-import { ProjectFilterPills, type ProjectFilter } from "@/components/projects/ProjectFilterPills";
+import { ProjectFilterMenu, type ProjectFilter } from "@/components/projects/ProjectFilterMenu";
 import { CreateProjectDialog } from "@/components/projects/CreateProjectDialog";
 import { StatChip } from "@/components/common/StatChip";
-import { BlobBackdrop, DotField, GradientMesh } from "@/components/patterns";
+import { DotField } from "@/components/patterns";
 import { Button } from "@/components/ui/button";
 
 function ProjectCardSkeleton(): JSX.Element {
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-5">
+    <div className="relative flex flex-col gap-4 overflow-hidden rounded-xl border border-border bg-card p-5 pt-6">
+      <div className="absolute inset-x-0 top-0 h-1.5 animate-pulse bg-muted" />
       <div className="flex items-start gap-3.5">
         <div className="size-11 shrink-0 animate-pulse rounded-lg bg-muted" />
         <div className="flex-1 space-y-2">
           <div className="h-4 w-3/4 animate-pulse rounded bg-muted" />
           <div className="h-3 w-full animate-pulse rounded bg-muted" />
         </div>
-        <div className="size-5 animate-pulse rounded bg-muted" />
       </div>
       <div className="space-y-1.5">
         <div className="h-3 w-1/2 animate-pulse rounded bg-muted" />
         <div className="h-1.5 w-full animate-pulse rounded-full bg-muted" />
       </div>
       <div className="flex items-center justify-between border-t border-border pt-3">
-        <div className="flex gap-1">
-          <div className="size-7 animate-pulse rounded-full bg-muted" />
-          <div className="size-7 animate-pulse rounded-full bg-muted" />
-        </div>
+        <div className="h-5 w-20 animate-pulse rounded-full bg-muted" />
         <div className="h-3 w-16 animate-pulse rounded bg-muted" />
       </div>
     </div>
@@ -49,63 +46,57 @@ export function HomePage(): JSX.Element {
   }, [projects, filter]);
 
   const totalProjects = projects?.length ?? 0;
+  const totalFeatures = projects?.reduce((acc, p) => acc + p.featureCount, 0) ?? 0;
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-8 lg:px-10" aria-busy={isLoading || undefined}>
-      {/* Hero row — CR-005 v3: GradientMesh + BlobBackdrop backdrop, no subtitle */}
-      <div className="relative mb-6 overflow-hidden rounded-2xl px-6 py-7 sm:px-8 sm:py-9 lg:px-10">
-        <GradientMesh tones={["primary", "amber"]} opacity={0.18} className="dark:opacity-[0.12]" />
-        <BlobBackdrop
+      {/* Hero — CR-005 v3 pilot v2: clean bg, title + 1-line welcome */}
+      <header className="mb-8">
+        <h1 className="font-display text-[36px] font-bold leading-10 tracking-[-0.02em] text-foreground">
+          Workspace
+        </h1>
+        <p className="mt-2 max-w-2xl font-body text-[15px] leading-[22px] text-muted-foreground">
+          Chào mừng bạn trở lại! Dưới đây là tổng quan về hoạt động và tiến độ các dự án đang diễn
+          ra của bạn.
+        </p>
+      </header>
+
+      {/* Stat row */}
+      <div className="mb-8 grid gap-4 sm:grid-cols-3">
+        <StatChip
+          icon={FolderOpen}
           tone="primary"
-          size="lg"
-          opacity={0.18}
-          className="absolute -right-16 -top-20 dark:opacity-[0.12]"
+          topAccent
+          value={isLoading ? "—" : totalProjects}
+          label="Project active"
         />
-        <div className="relative flex flex-col items-stretch gap-6 xl:flex-row xl:items-end xl:justify-between">
-          <div className="max-w-2xl">
-            <p className="font-ui text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-              Workspace của bạn
-            </p>
-            <h1 className="mt-2 font-display text-[36px] font-bold leading-10 tracking-[-0.02em] text-foreground">
-              Danh sách project
-            </h1>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <StatChip
-              icon={FolderOpen}
-              tone="primary"
-              value={isLoading ? "—" : totalProjects}
-              label="Project active"
-            />
-            <StatChip
-              icon={CheckCircle2}
-              tone="success"
-              value={isLoading ? "—" : "0"}
-              label="Feature đủ doc"
-            />
-            <StatChip icon={Users} tone="info" value="8" label="Đang đóng góp" />
-          </div>
-        </div>
+        <StatChip
+          icon={CheckCircle2}
+          tone="blue"
+          topAccent
+          value={isLoading ? "—" : totalFeatures}
+          label="Feature đủ doc"
+        />
+        <StatChip icon={Users} tone="pink" topAccent value="8" label="Đang đóng góp" />
       </div>
 
-      {/* Filter + count strip */}
+      {/* Section header */}
       {!isError && totalProjects > 0 ? (
-        <div className="mb-5 flex flex-wrap items-center gap-3 rounded-xl border border-border bg-muted/40 px-3 py-2.5">
-          <ProjectFilterPills value={filter} onChange={setFilter} />
-          <div className="ml-auto flex items-center gap-3">
-            <span className="font-ui text-xs text-muted-foreground">
-              Sắp xếp: <span className="font-semibold text-foreground">Mới cập nhật</span>
-            </span>
-            <span className="font-ui text-xs text-muted-foreground">
-              {filtered.length} / {totalProjects} project
-            </span>
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="inline-flex items-center gap-2 font-display text-[17px] font-semibold text-foreground">
+            <LayoutGrid aria-hidden="true" className="size-[18px] text-primary" />
+            Dự án của bạn
+          </h2>
+          <div className="flex items-center gap-2">
+            <ProjectFilterMenu value={filter} onChange={setFilter} />
+            {isAdmin ? <CreateProjectDialog triggerLabel="+ Dự án mới" /> : null}
           </div>
         </div>
       ) : null}
 
       {/* Body states */}
       {isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
           <ProjectCardSkeleton />
           <ProjectCardSkeleton />
           <ProjectCardSkeleton />
@@ -150,7 +141,7 @@ export function HomePage(): JSX.Element {
           </div>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
           {filtered.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
@@ -167,12 +158,15 @@ function AdminCreateTile(): JSX.Element {
       customTrigger={
         <button
           type="button"
-          className="group flex min-h-[180px] items-center justify-center gap-2.5 rounded-xl border-2 border-dashed border-border bg-transparent text-muted-foreground transition-all hover:border-primary/40 hover:bg-primary/5 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="group flex min-h-[180px] flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border bg-transparent px-4 text-center text-muted-foreground transition-all hover:border-primary/40 hover:bg-primary/5 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <span className="inline-flex size-8 items-center justify-center rounded-full bg-primary/10">
             <Plus className="size-4 text-primary" aria-hidden="true" />
           </span>
-          <span className="font-ui text-sm font-semibold">Tạo project mới</span>
+          <span className="font-ui text-sm font-semibold text-foreground">Tạo dự án mới</span>
+          <span className="font-ui text-xs text-muted-foreground">
+            Bắt đầu một không gian làm việc mới
+          </span>
         </button>
       }
     />

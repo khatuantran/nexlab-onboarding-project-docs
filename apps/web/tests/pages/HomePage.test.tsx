@@ -67,14 +67,15 @@ describe("HomePage", () => {
     mockProjects([pilot, demo]);
     renderHome();
 
-    expect(await screen.findByRole("heading", { name: /danh sách project/i })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /^workspace$/i })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /dự án của bạn/i })).toBeInTheDocument();
     const pilotLink = await screen.findByRole("link", { name: /xem chi tiết project pilot/i });
     expect(within(pilotLink).getByText("Pilot Project")).toBeInTheDocument();
-    expect(within(pilotLink).getByText(/5 feature/)).toBeInTheDocument();
+    expect(within(pilotLink).getByText(/5 features?/)).toBeInTheDocument();
     expect(pilotLink.querySelector("time")).not.toBeNull();
 
     const demoLink = screen.getByRole("link", { name: /xem chi tiết project demo/i });
-    expect(within(demoLink).getByText(/1 feature/)).toBeInTheDocument();
+    expect(within(demoLink).getByText(/1 feature$/)).toBeInTheDocument();
   });
 
   it("shows empty state with admin CTA 'Tạo project đầu tiên'", async () => {
