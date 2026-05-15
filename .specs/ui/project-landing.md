@@ -37,12 +37,13 @@ idle → loading (useProject fetch)
 
 ## Interactions
 
-| Trigger                | Action                                           | Next state              | Side effect                                  |
-| ---------------------- | ------------------------------------------------ | ----------------------- | -------------------------------------------- |
-| Page mount             | `useProject(slug)` fetch                         | loading → success/error | TanStack Query cache key `["project", slug]` |
-| Click feature card     | Navigate `/projects/:slug/features/:featureSlug` | —                       | SPA push; scroll top on new screen           |
-| Hover card (desktop)   | Card elevation nhẹ (`hover:shadow-sm`)           | —                       | visual affordance only                       |
-| Keyboard Enter on card | Same as click                                    | —                       | tab order card-by-card                       |
+| Trigger                          | Action                                                                                      | Next state              | Side effect                                                                                               |
+| -------------------------------- | ------------------------------------------------------------------------------------------- | ----------------------- | --------------------------------------------------------------------------------------------------------- |
+| Page mount                       | `useProject(slug)` fetch                                                                    | loading → success/error | TanStack Query cache key `["project", slug]`                                                              |
+| Click feature card               | Navigate `/projects/:slug/features/:featureSlug`                                            | —                       | SPA push; scroll top on new screen                                                                        |
+| Hover card (desktop)             | Card elevation nhẹ (`hover:shadow-sm`)                                                      | —                       | visual affordance only                                                                                    |
+| Keyboard Enter on card           | Same as click                                                                               | —                       | tab order card-by-card                                                                                    |
+| Click ⋯ trên FeatureCard (admin) | Mở `FeatureActionsMenu` (Lưu trữ feature); event stopPropagation tránh navigate vào feature | list (menu overlay)     | Confirm OK → POST archive → toast + invalidate `["project", slug]` cache → feature mất khỏi list (US-008) |
 
 ## A11y
 

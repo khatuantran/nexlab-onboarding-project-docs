@@ -36,7 +36,7 @@ Mỗi FR có:
 | [FR-AUTH-001](#fr-auth-001--emailpassword-auth)               | Auth    | Email + password login/logout, session cookie         | P0       | US-001, US-002, US-003 |
 | [FR-PROJ-001](#fr-proj-001--project-crud-minimal)             | Project | Admin tạo project + liệt kê non-archived              | P0       | US-002, US-004         |
 | [FR-PROJ-002](#fr-proj-002--project-metadata-edit--archive)   | Project | Admin rename metadata + archive soft-delete           | P0       | US-004                 |
-| [FR-FEAT-001](#fr-feat-001--feature-crud-within-project)      | Feature | Tạo / sửa / list feature trong project                | P0       | US-002                 |
+| [FR-FEAT-001](#fr-feat-001--feature-crud-within-project)      | Feature | Tạo / sửa / list / archive feature trong project      | P0       | US-002, US-008         |
 | [FR-FEAT-002](#fr-feat-002--5-section-template)               | Feature | Feature có template cố định 5 section                 | P0       | US-001, US-002, US-003 |
 | [FR-FEAT-003](#fr-feat-003--per-section-multi-author)         | Feature | Multi-author theo từng section                        | P0       | US-002, US-003         |
 | [FR-EMBED-001](#fr-embed-001--external-link-embed)            | Embed   | Paste Jira/Figma/GitHub URL → preview card            | P0       | US-003                 |
@@ -134,16 +134,25 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 - When an authenticated user submits a feature creation request scoped to an existing project with a unique slug within that project and a human-readable title, the system shall persist the feature with all 5 sections initialized as empty drafts.
 - If the target project does not exist or the user lacks access to it, then the system shall respond with HTTP 404 `PROJECT_NOT_FOUND` (không leak project tồn tại).
 - When an authenticated user edits a feature's title or slug, the system shall update it and invalidate any cached feature responses for that project.
+- When an authenticated user with role `admin` archives a feature, the system shall set `archived_at = NOW()` and exclude that feature from subsequent project feature listings and direct GET responses.
+- If a non-admin user attempts to archive a feature, the system shall respond with HTTP 403 `FORBIDDEN`.
+- If the target feature does not exist (or is already archived from a previous call) when archive is requested, the call is idempotent — 204 cho row tồn tại với `archived_at` đã set; 404 `FEATURE_NOT_FOUND` cho slug không tồn tại từ đầu.
 
-**Rationale**: Feature là đơn vị onboarding chính. Tạo feature = tạo khung 5 section rỗng để author không bị "blank page paralysis".
+**Rationale**: Feature là đơn vị onboarding chính. Tạo feature = tạo khung 5 section rỗng để author không bị "blank page paralysis". Archive (soft-delete) cho phép admin ẩn feature stale khỏi catalog của project mà không mất sections + uploads — mirror đầy đủ pattern FR-PROJ-002.
 
-**Maps to**: US-002 (Lan tạo feature mới). Persona: P2 (BA/PM).
+**Maps to**: US-002 (Lan tạo feature mới), US-008 (admin archive feature). Persona: P2 (BA/PM) cho CRUD, P3 (Hùng — admin) cho archive.
 
 **Acceptance hints**:
 
 - Slug unique trong cùng project, không bắt unique cross-project.
 - 5 section rows tạo đồng thời trong 1 transaction (atomic).
 - Edit title → feature `updated_at` refresh → landing page reorders.
+- Archive là soft-delete: UPDATE `archived_at = NOW()`, không DELETE. Sections + uploads cascade-attached giữ nguyên.
+- Archived feature:
+  - KHÔNG xuất hiện trong `GET /projects/:slug` response `features[]`.
+  - Direct URL `/projects/:slug/features/:fSlug` return 404 `FEATURE_NOT_FOUND`.
+  - Search v2 (`GET /search`) phase 1 vẫn match archived feature — click qua sẽ 404, defer filter as known limitation.
+- Hard delete + recovery defer v2.
 
 ---
 

@@ -258,6 +258,10 @@ US-003 adds (planned):
 - `EmbedCard` — bordered card (`border border-border hover:border-primary/40 rounded-md p-3`). Brand icon 24px bên trái + 2-line text (URL path + domain subtitle). Wrapped trong `<a target="_blank" rel="noopener noreferrer">`. Props: `url: string`, `hostname: string`, `icon: LucideIcon | JSX`.
 - Brand icons (custom SVG components ~20 LOC each): `GithubIcon`, `FigmaIcon`, `JiraIcon`. Lucide không có brand icons → inline SVG với `currentColor` stroke.
 
+US-008 adds (planned):
+
+- `FeatureActionsMenu` — overflow `⋯` dropdown trên `FeatureCard`, admin-only. Single item "Lưu trữ feature" (Archive icon, destructive tone). Native `window.confirm` → POST `/projects/:slug/features/:fSlug/archive` → toast + invalidate cache. Mirror [`ProjectActionsMenu`](../../apps/web/src/components/projects/ProjectActionsMenu.tsx) pattern. Props: `projectSlug: string`, `feature: { slug, title }`.
+
 ---
 
 ## 6. A11y floor (áp dụng mọi screen)
@@ -306,6 +310,7 @@ Thêm row khi đổi token, icon registry, component inventory. Breaking change 
 | 2026-04-24 | **Nexlab DS adopted** ([ADR-003](../adr/ADR-003-nexlab-design-system.md)). Full token rewrite: primary orange `27 88% 51%` (was shadcn neutral `222 47% 11%`), secondary gold, new semantic tokens (success/warning/info/accent/popover/card + secondary-bg/text), primary ramp 50-900 exposed. Self-host Roboto + Inter via `@fontsource` (Latin + Vietnamese subsets). `NxLogo` brand component registered. Tailwind config: colors/borderRadius/boxShadow/fontFamily rewritten. Dark variants derived từ Nexlab palette. Supersede shadcn-neutral tokens + system font stack. | T-DS-1..4 `3e32743` / `96a1251` / `87b9827` |
 | 2026-05-15 | **AppHeader v2** — full chrome redesign. 5 icon rows mới (`Bell`, `ChevronDown`, `User`, `Settings`, `Home`). 5 component rows mới: `Kbd` primitive + `UserMenu` (Avatar dropdown 4-item, admin gate inside), `NavLinks`, `NotificationBell`, `BreadcrumbBar`. `AppHeader` row description rewritten — old fields (inline username + logout button + admin outline button) collapsed into UserMenu; Row 2 hiển thị breadcrumb + admin CTA. Layout: 2-row, max-w-6xl. Visual rules giữ §3 (primary orange chỉ trên CTA).                                                          | AppHeader v2 spec amend `ca87811`           |
 | 2026-05-15 | **AppHeader v2 implemented** — `Kbd` primitive, `NavLinks`, `NotificationBell`, `UserMenu`, `BreadcrumbBar` land. `AppHeader` rewired 2-row sticky chrome (max-w-6xl, backdrop-blur). RequireAuth + CreateProjectDialog tests updated to traverse the new UserMenu dropdown / Row 2 admin CTA.                                                                                                                                                                                                                                                                                   | AppHeader v2 ship                           |
+| 2026-05-15 | **US-008 Gate 1 scaffold** — `FeatureActionsMenu` registered §5.3 (admin overflow ⋯ trên FeatureCard, single item "Lưu trữ feature"). Mirror `ProjectActionsMenu` pattern. Status `(planned)` cho tới khi US-008 T5 ship.                                                                                                                                                                                                                                                                                                                                                        | US-008 Gate 1 (spec only)                   |
 
 ---
 
