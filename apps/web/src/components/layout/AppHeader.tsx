@@ -38,9 +38,9 @@ export function AppHeader(): JSX.Element | null {
           <AdminGate>
             <Link
               to="/admin/users"
-              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-ui text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 font-ui text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <Users className="size-4" aria-hidden="true" />
+              <Users className="mr-2 size-4" aria-hidden="true" />
               Quản lý user
             </Link>
             <CreateProjectDialog />

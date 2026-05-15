@@ -86,6 +86,20 @@ Implement US-002 rồi US-003.
   - [T7](stories/US-004/tasks.md#t7--projectactionsmenu-fe--archive-wire) ProjectActionsMenu FE + archive wire (⋯ overflow, useArchiveProject, redirect `/`) — ✅ `904e9c8` (2026-04-24).
   - [T8](stories/US-004/tasks.md#t8--e2e-smoke--progress-sync) Playwright E2E smoke (catalog → edit → archive → redirect) — ✅ `a9282d6` (2026-04-24). **US-004 Done**.
 
+### Post-M2 enhancement — US-007 Admin user lifecycle ✅ _(2026-05-15)_
+
+Promoted M4 candidate "Admin UI quản lý user" thành shipped scope. Full lifecycle: list + filter + invite + edit role + disable/enable + reset password. 7 task. FR-USER-002 mới + FR-AUTH-001 + FR-USER-001 amend.
+
+- [T1](stories/US-007/tasks.md#t1--migration--shared-schemas) Migration `0007_users_lifecycle.sql` + shared schemas — ✅ `b4e8a92`.
+- [T2](stories/US-007/tasks.md#t2--get-users-list-extend--get-usersid) GET /users admin shape + GET /users/:id — ✅ `c0c4ede` + `4ea187b`.
+- [T3](stories/US-007/tasks.md#t3--post-users-invite--temp-password) POST /users invite + temp password — ✅ `818287e`.
+- [T4](stories/US-007/tasks.md#t4--patch-usersid--archive--login-gate) PATCH + archive/unarchive + login gate (USER_DISABLED) + session middleware kick — ✅ `d6af653` + `ae6787d`.
+- [T5](stories/US-007/tasks.md#t5--reset-password-endpoint--session-invalidate) Reset password + Redis session purge — ✅ `f4b1af0`.
+- [T6](stories/US-007/tasks.md#t6--admin-users-fe-page) FE /admin/users page + 3 dialogs + 5 mutations + AppHeader link — ✅ `da67d63`.
+- [T7](stories/US-007/tasks.md#t7--e2e--progress-sync) Playwright `e2e/us-007.spec.ts` + progress sync — ✅ this commit.
+
+**Tests**: 177/177 API + 24 shared + 132 web unit + 2 new E2E scenarios.
+
 ### Post-M2 enhancement — US-005 Search v2 ✅ _(2026-04-25)_
 
 Multi-entity grouped search + filters (project + feature + section + author + upload caption + section-type / author / time / status filters). 10 task / 7 commit.

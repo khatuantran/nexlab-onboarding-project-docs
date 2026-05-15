@@ -16,6 +16,8 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ✅ **CR-004 Phase 2 deployed 2026-05-14** — Upload route streams to Cloudinary CDN via `cloudinary.uploader.upload_stream`; response returns absolute `https://res.cloudinary.com/...` URL. Read route `GET /uploads/:id` removed (now falls through to JSON 404 handler). `CLOUDINARY_URL` Fly secret set; `fly deploy --local-only` released image to fresh machines. 147/147 api tests + 132 web + 24 shared green; smoke verified live.
 
+✅ **US-007 Admin user lifecycle shipped 2026-05-15** — `/admin/users` page with list/filter, invite (returns temp password once), edit role, disable/enable, reset password. BE adds `archived_at` + `last_login_at` columns, 7 admin endpoints with last-admin + self-edit guards, login gate (`USER_DISABLED`), and Redis session purge on password reset. FR-USER-002 new + FR-AUTH-001 + FR-USER-001 amended. 177/177 api + 24 shared + 132 web tests green.
+
 ## Vấn đề đang giải quyết
 
 - Dự án business phức tạp, tài liệu rải rác hoặc không có.
@@ -100,6 +102,7 @@ Full setup (DB migrate / seed / dev servers / E2E) ở [docs/SETUP.md](docs/SETU
 - [US-004 — Project catalog + admin lifecycle](.specs/stories/US-004.md) + [tasks](.specs/stories/US-004/tasks.md) — **Done** (8/8 ✅, 2026-04-24)
 - [US-005 — Search v2 multi-entity + filters](.specs/stories/US-005.md) + [tasks](.specs/stories/US-005/tasks.md) — **Done** (10/10 ✅, 2026-04-25)
 - [US-006 — Search v2.1 prefix + accent-insensitive + fuzzy](.specs/stories/US-006.md) + [tasks](.specs/stories/US-006/tasks.md) — **Done** (5/5 ✅, 2026-05-01)
+- [US-007 — Admin quản lý user hệ thống](.specs/stories/US-007.md) + [tasks](.specs/stories/US-007/tasks.md) — **Done** (7/7 ✅, 2026-05-15)
 
 **Operational**:
 

@@ -21,13 +21,13 @@ _Last updated_: 2026-05-15 (Draft — 0/7 tasks)
 
 | #                                                      | Title                                               | Effort | AC covered        | FR                       | Layer | Status     |
 | ------------------------------------------------------ | --------------------------------------------------- | ------ | ----------------- | ------------------------ | ----- | ---------- |
-| [T1](#t1--migration--shared-schemas)                   | Migration archived_at + last_login_at + schemas     | 1.5h   | prereq AC-6       | USER-002                 | BE/DB | 🟡 Planned |
-| [T2](#t2--get-users-list-extend--get-usersid)          | GET /users list extend (status, lastLogin) + detail | 2.5h   | AC-1, AC-2        | USER-001 amend           | BE    | 🟡 Planned |
-| [T3](#t3--post-users-invite--temp-password)            | POST /users invite + temp password helper           | 2.5h   | AC-3, AC-4        | USER-002                 | BE    | 🟡 Planned |
-| [T4](#t4--patch-usersid--archive--login-gate)          | PATCH /users/:id + archive/unarchive + login gate   | 3h     | AC-5, AC-6, AC-8  | USER-002, AUTH-001 amend | BE    | 🟡 Planned |
-| [T5](#t5--reset-password-endpoint--session-invalidate) | POST /users/:id/reset-password + session purge      | 1.5h   | AC-7              | USER-002                 | BE    | 🟡 Planned |
-| [T6](#t6--admin-users-fe-page)                         | FE /admin/users page (table + filters + 3 dialogs)  | 4h     | AC-1..AC-7 UI     | all                      | FE    | 🟡 Planned |
-| [T7](#t7--e2e--progress-sync)                          | Playwright E2E + progress sync                      | 1h     | all AC end-to-end | all                      | test  | 🟡 Planned |
+| [T1](#t1--migration--shared-schemas)                   | Migration archived_at + last_login_at + schemas     | 1.5h   | prereq AC-6       | USER-002                 | BE/DB | ✅ shipped |
+| [T2](#t2--get-users-list-extend--get-usersid)          | GET /users list extend (status, lastLogin) + detail | 2.5h   | AC-1, AC-2        | USER-001 amend           | BE    | ✅ shipped |
+| [T3](#t3--post-users-invite--temp-password)            | POST /users invite + temp password helper           | 2.5h   | AC-3, AC-4        | USER-002                 | BE    | ✅ shipped |
+| [T4](#t4--patch-usersid--archive--login-gate)          | PATCH /users/:id + archive/unarchive + login gate   | 3h     | AC-5, AC-6, AC-8  | USER-002, AUTH-001 amend | BE    | ✅ shipped |
+| [T5](#t5--reset-password-endpoint--session-invalidate) | POST /users/:id/reset-password + session purge      | 1.5h   | AC-7              | USER-002                 | BE    | ✅ shipped |
+| [T6](#t6--admin-users-fe-page)                         | FE /admin/users page (table + filters + 3 dialogs)  | 4h     | AC-1..AC-7 UI     | all                      | FE    | ✅ shipped |
+| [T7](#t7--e2e--progress-sync)                          | Playwright E2E + progress sync                      | 1h     | all AC end-to-end | all                      | test  | ✅ shipped |
 
 **Critical path**: T1 → T2 → (T3 ‖ T4 ‖ T5) → T6 → T7.
 
