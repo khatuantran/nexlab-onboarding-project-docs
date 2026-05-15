@@ -100,6 +100,19 @@ Promoted M4 candidate "Admin UI quản lý user" thành shipped scope. Full life
 
 **Tests**: 177/177 API + 24 shared + 132 web unit + 2 new E2E scenarios.
 
+### Post-M2 enhancement — US-008 Admin feature archive ✅ _(2026-05-15)_
+
+Mirror project archive (US-004) cho từng feature trong project. FR-FEAT-001 amend (+3 EARS statements: admin archive, 403 non-admin, idempotent). 6 task, ~5h. Reuse 80% pattern từ US-004.
+
+- [T1](stories/US-008/tasks.md#t1--migration--schema) Migration `0008_features_archived_at.sql` + Drizzle schema — ✅ `02edde1`.
+- [T2](stories/US-008/tasks.md#t2--repo--listfeatures-filter) featureRepo.archive + listFeatures filter + findByProjectAndSlug filter — ✅ `02edde1`.
+- [T3](stories/US-008/tasks.md#t3--archive-route) POST /projects/:slug/features/:fSlug/archive (admin) — ✅ `02edde1`.
+- [T4](stories/US-008/tasks.md#t4--mutation-hook) useArchiveFeature mutation hook — ✅ `a03c345`.
+- [T5](stories/US-008/tasks.md#t5--fe-component-wire) FeatureActionsMenu + FeatureCard admin overlay (hide chevron per BUG-004) — ✅ `a03c345`.
+- [T6](stories/US-008/tasks.md#t6--e2e--progress-sync) Playwright `e2e/us-008.spec.ts` + progress sync — ✅ this commit.
+
+**Tests**: 184/184 API + 24 shared + 142 web unit + 1 new E2E.
+
 ### Post-M2 enhancement — US-005 Search v2 ✅ _(2026-04-25)_
 
 Multi-entity grouped search + filters (project + feature + section + author + upload caption + section-type / author / time / status filters). 10 task / 7 commit.

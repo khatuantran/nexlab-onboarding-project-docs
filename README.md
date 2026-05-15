@@ -18,6 +18,8 @@ Portal nội bộ giúp **dev mới (FE/BE/Fullstack) onboard vào các dự án
 
 ✅ **US-007 Admin user lifecycle shipped 2026-05-15** — `/admin/users` page with list/filter, invite (returns temp password once), edit role, disable/enable, reset password. BE adds `archived_at` + `last_login_at` columns, 7 admin endpoints with last-admin + self-edit guards, login gate (`USER_DISABLED`), and Redis session purge on password reset. FR-USER-002 new + FR-AUTH-001 + FR-USER-001 amended. 177/177 api + 24 shared + 132 web tests green.
 
+✅ **US-008 Admin feature archive shipped 2026-05-15** — admin có overflow ⋯ menu trên `FeatureCard` để archive 1 feature trong project. Soft-delete (`features.archived_at`); archived feature ẩn khỏi `GET /projects/:slug` + direct GET trả 404. Sections + uploads giữ nguyên. FR-FEAT-001 amend. 184/184 api + 24 shared + 142 web + e2e tests green.
+
 ## Vấn đề đang giải quyết
 
 - Dự án business phức tạp, tài liệu rải rác hoặc không có.

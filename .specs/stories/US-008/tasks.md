@@ -4,7 +4,7 @@
 
 _Story_: [US-008 — Admin archive feature](../US-008.md)
 _Total estimate_: ~5-6h (solo, TDD pace)
-_Last updated_: 2026-05-15
+_Last updated_: 2026-05-15 (T6 landed — US-008 Done)
 
 ---
 
@@ -24,14 +24,14 @@ _Last updated_: 2026-05-15
 
 ## Task Summary
 
-| #                                    | Title                                              | Effort | AC covered             | FR touched | UI spec                                           | Status     |
-| ------------------------------------ | -------------------------------------------------- | ------ | ---------------------- | ---------- | ------------------------------------------------- | ---------- |
-| [T1](#t1--migration--schema)         | DB migration `archived_at` + Drizzle schema        | 0.5h   | prereq                 | FEAT-001   | —                                                 | 🟡 Planned |
-| [T2](#t2--repo--listfeatures-filter) | featureRepo.archive + filter active rows           | 1h     | AC-4, AC-5, AC-6       | FEAT-001   | —                                                 | 🟡 Planned |
-| [T3](#t3--archive-route)             | Archive endpoint + tests                           | 1.5h   | AC-4, AC-6, AC-7, AC-8 | FEAT-001   | —                                                 | 🟡 Planned |
-| [T4](#t4--mutation-hook)             | `useArchiveFeature` mutation hook                  | 0.5h   | AC-4                   | —          | —                                                 | 🟡 Planned |
-| [T5](#t5--fe-component-wire)         | `FeatureActionsMenu` + FeatureCard overlay + tests | 1.5h   | AC-1, AC-2, AC-3, AC-7 | —          | [project-landing.md](../../ui/project-landing.md) | 🟡 Planned |
-| [T6](#t6--e2e--progress-sync)        | Playwright E2E + progress sync                     | 1h     | AC-1, AC-4, AC-5       | all        | —                                                 | 🟡 Planned |
+| #                                    | Title                                              | Effort | AC covered             | FR touched | UI spec                                           | Status       |
+| ------------------------------------ | -------------------------------------------------- | ------ | ---------------------- | ---------- | ------------------------------------------------- | ------------ |
+| [T1](#t1--migration--schema)         | DB migration `archived_at` + Drizzle schema        | 0.5h   | prereq                 | FEAT-001   | —                                                 | ✅ `02edde1` |
+| [T2](#t2--repo--listfeatures-filter) | featureRepo.archive + filter active rows           | 1h     | AC-4, AC-5, AC-6       | FEAT-001   | —                                                 | ✅ `02edde1` |
+| [T3](#t3--archive-route)             | Archive endpoint + tests                           | 1.5h   | AC-4, AC-6, AC-7, AC-8 | FEAT-001   | —                                                 | ✅ `02edde1` |
+| [T4](#t4--mutation-hook)             | `useArchiveFeature` mutation hook                  | 0.5h   | AC-4                   | —          | —                                                 | ✅ `a03c345` |
+| [T5](#t5--fe-component-wire)         | `FeatureActionsMenu` + FeatureCard overlay + tests | 1.5h   | AC-1, AC-2, AC-3, AC-7 | —          | [project-landing.md](../../ui/project-landing.md) | ✅ `a03c345` |
+| [T6](#t6--e2e--progress-sync)        | Playwright E2E + progress sync                     | 1h     | AC-1, AC-4, AC-5       | all        | —                                                 | ✅ this sync |
 
 **Critical path**: T1 → T2 → T3 → T4 → T5 → T6.
 
@@ -59,7 +59,7 @@ Add `archived_at TIMESTAMPTZ NULL` to `features` + partial index for active rows
 
 #### Green
 
-- `apps/api/src/db/migrations/0007_features_archived_at.sql`:
+- `apps/api/src/db/migrations/0008_features_archived_at.sql`:
   ```sql
   ALTER TABLE features ADD COLUMN archived_at TIMESTAMPTZ;
   CREATE INDEX features_active_idx ON features (project_id) WHERE archived_at IS NULL;
@@ -73,10 +73,10 @@ Add `archived_at TIMESTAMPTZ NULL` to `features` + partial index for active rows
 
 ### DoD checklist
 
-- [ ] Migration applied trên dev DB (`pnpm db:migrate`).
-- [ ] Test green.
-- [ ] `pnpm typecheck` xanh.
-- [ ] Commit `feat(api): add features.archived_at column + partial index (US-008 / T1)`.
+- [x] Migration applied trên dev DB (`pnpm db:migrate`).
+- [x] Test green.
+- [x] `pnpm typecheck` xanh.
+- [x] Commit `feat(api): add features.archived_at column + partial index (US-008 / T1)`.
 
 ### Commit example
 
@@ -123,9 +123,9 @@ Plus `apps/api/tests/repos/projectRepo.test.ts`: `listFeatures excludes archived
 
 ### DoD checklist
 
-- [ ] 5+ test cases green.
-- [ ] `pnpm typecheck` + `pnpm lint` xanh.
-- [ ] Commit `feat(api): featureRepo.archive + filter archived in listFeatures (US-008 / T2)`.
+- [x] 5+ test cases green.
+- [x] `pnpm typecheck` + `pnpm lint` xanh.
+- [x] Commit `feat(api): featureRepo.archive + filter archived in listFeatures (US-008 / T2)`.
 
 ### Commit example
 
@@ -175,9 +175,9 @@ feat(api): featureRepo.archive + filter archived in listFeatures (US-008 / T2 / 
 
 ### DoD checklist
 
-- [ ] 7 test cases green.
-- [ ] `pnpm test` toàn api package xanh.
-- [ ] Commit `feat(api): POST /projects/:slug/features/:fSlug/archive (US-008 / T3)`.
+- [x] 7 test cases green.
+- [x] `pnpm test` toàn api package xanh.
+- [x] Commit `feat(api): POST /projects/:slug/features/:fSlug/archive (US-008 / T3)`.
 
 ### Commit example
 
@@ -235,9 +235,9 @@ export function useArchiveFeature(
 
 ### DoD checklist
 
-- [ ] Hook test green.
-- [ ] `pnpm typecheck` xanh.
-- [ ] Commit `feat(web): useArchiveFeature mutation hook (US-008 / T4)`.
+- [x] Hook test green.
+- [x] `pnpm typecheck` xanh.
+- [x] Commit `feat(web): useArchiveFeature mutation hook (US-008 / T4)`.
 
 ### Commit example
 
@@ -277,9 +277,9 @@ feat(web): useArchiveFeature mutation hook (US-008 / T4)
 
 ### DoD checklist
 
-- [ ] FeatureActionsMenu + FeatureCard tests green.
-- [ ] Full `pnpm --filter @onboarding/web test` xanh (134+ tests).
-- [ ] Commit `feat(web): FeatureActionsMenu + archive overlay on FeatureCard (US-008 / T5)`.
+- [x] FeatureActionsMenu + FeatureCard tests green.
+- [x] Full `pnpm --filter @onboarding/web test` xanh (134+ tests).
+- [x] Commit `feat(web): FeatureActionsMenu + archive overlay on FeatureCard (US-008 / T5)`.
 
 ### Commit example
 
@@ -319,9 +319,9 @@ Run + verify pass. No additional production code expected.
 
 ### DoD checklist
 
-- [ ] `pnpm test:e2e e2e/us-008.spec.ts` green.
-- [ ] Progress sync commit covers: README.md, .specs/roadmap.md, US-008/tasks.md (DoD flips), traceability.md, api-surface.md, design-system.md CHANGELOG.
-- [ ] Commit `test(e2e): US-008 archive feature flow + progress sync (US-008 / T6)`.
+- [x] `pnpm test:e2e e2e/us-008.spec.ts` green.
+- [x] Progress sync commit covers: README.md, .specs/roadmap.md, US-008/tasks.md (DoD flips), traceability.md, api-surface.md, design-system.md CHANGELOG.
+- [x] Commit `test(e2e): US-008 archive feature flow + progress sync (US-008 / T6)`.
 
 ### Commit example
 
