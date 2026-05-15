@@ -25,19 +25,19 @@ export function SearchInput(): JSX.Element {
   };
 
   return (
-    <form role="search" onSubmit={handleSubmit} className="relative flex items-center">
+    <form role="search" onSubmit={handleSubmit} className="relative flex w-full items-center">
       <Search
-        className="pointer-events-none absolute left-3 size-4 text-muted-foreground"
+        className="pointer-events-none absolute left-3.5 size-4 text-muted-foreground"
         aria-hidden="true"
       />
       <input
         type="search"
         role="searchbox"
-        aria-label="Tìm feature"
-        placeholder="Tìm kiếm..."
+        aria-label="Tìm dự án / feature"
+        placeholder="Tìm dự án, feature..."
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        className="h-10 w-64 rounded-lg border border-input bg-muted/50 pl-9 pr-4 font-ui text-sm text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/20"
+        className="h-9 w-full rounded-full border-0 bg-muted/60 pl-10 pr-4 font-ui text-sm text-foreground placeholder:text-muted-foreground focus-visible:bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
       />
     </form>
   );

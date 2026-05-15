@@ -5,12 +5,15 @@ import { Breadcrumb, type BreadcrumbItem } from "@/components/common/Breadcrumb"
 import { projectKeys, type ProjectWithFeatures } from "@/queries/projects";
 
 interface BreadcrumbBarProps {
+  /** v3 (CR-006): inline mode renders compact trail inside AppHeader left
+   *  cluster (no Row 2 chrome). When false, retains v2 Row 2 layout with
+   *  rightSlot — kept for backward compat / non-Home screens nếu cần. */
+  inline?: boolean;
   rightSlot?: ReactNode;
 }
 
 /**
- * Row 2 của AppHeader v2 — breadcrumb trail bên trái + optional slot
- * bên phải (admin CTA). Auto-derives trail từ `useLocation()`:
+ * Auto-derives breadcrumb trail từ `useLocation()`:
  *
  *   /                                  → null (hidden)
  *   /search                            → Trang chủ › Tìm kiếm
@@ -18,10 +21,12 @@ interface BreadcrumbBarProps {
  *   /projects/:slug                    → Trang chủ › <project name>
  *   /projects/:slug/features/:fSlug    → Trang chủ › <project> › <featureSlug>
  *
- * Project name resolved qua `useProject(slug)` cache (already hydrated
- * by ProjectLandingPage / FeatureDetailPage), fallback slug.
+ * Project name resolved qua `useProject(slug)` cache, fallback slug.
  */
-export function BreadcrumbBar({ rightSlot }: BreadcrumbBarProps): JSX.Element | null {
+export function BreadcrumbBar({
+  inline = false,
+  rightSlot,
+}: BreadcrumbBarProps): JSX.Element | null {
   const { pathname } = useLocation();
   const params = useParams<{ slug?: string; featureSlug?: string }>();
   const qc = useQueryClient();
@@ -32,6 +37,18 @@ export function BreadcrumbBar({ rightSlot }: BreadcrumbBarProps): JSX.Element | 
 
   const items = buildItems(pathname, params, projectName);
   if (items.length === 0 && !rightSlot) return null;
+
+  if (inline) {
+    if (items.length <= 1) return null;
+    return (
+      <div className="hidden min-w-0 items-center gap-2 md:flex">
+        <span aria-hidden="true" className="text-muted-foreground">
+          /
+        </span>
+        <Breadcrumb items={items.slice(1)} className="truncate text-xs" />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-2.5">

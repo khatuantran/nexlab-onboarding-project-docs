@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Routes, Route, useLocation } from "react-router-dom";
-import { AppHeader } from "@/components/layout/AppHeader";
+import { CreateProjectDialog } from "@/components/projects/CreateProjectDialog";
 import { renderWithRouter } from "../lib/test-utils";
 import { server, http, HttpResponse, BASE } from "../lib/msw";
 
@@ -22,27 +22,16 @@ function mockMe(role: "admin" | "author") {
   );
 }
 
-describe("CreateProjectDialog — admin gate in AppHeader", () => {
-  it("admin sees the 'Tạo project' trigger", async () => {
-    mockMe("admin");
-    renderWithRouter(<AppHeader />, ["/"]);
-    const trigger = await screen.findByRole("button", { name: /tạo project/i });
-    expect(trigger).toBeInTheDocument();
-  });
-
-  it("author does not see the trigger", async () => {
-    mockMe("author");
-    renderWithRouter(<AppHeader />, ["/"]);
-    // Wait for /me resolution so render has stabilized
-    await screen.findByTestId("current-user");
-    expect(screen.queryByRole("button", { name: /tạo project/i })).toBeNull();
-  });
-});
-
+/**
+ * CR-006 v3 note: admin gate (who renders this dialog) lives at the caller
+ * (HomePage section header) since AppHeader Row 2 was eliminated. These
+ * tests focus on dialog form behavior, rendered directly without an admin
+ * harness. Admin/author visibility is asserted in HomePage tests.
+ */
 describe("CreateProjectDialog — form behavior", () => {
   it("opens dialog and auto-derives slug from name (strip diacritics)", async () => {
     mockMe("admin");
-    renderWithRouter(<AppHeader />, ["/"]);
+    renderWithRouter(<CreateProjectDialog triggerLabel="Tạo project" />, ["/"]);
     const user = userEvent.setup();
 
     await user.click(await screen.findByRole("button", { name: /tạo project/i }));
@@ -80,7 +69,7 @@ describe("CreateProjectDialog — form behavior", () => {
 
     renderWithRouter(
       <Routes>
-        <Route path="/" element={<AppHeader />} />
+        <Route path="/" element={<CreateProjectDialog triggerLabel="Tạo project" />} />
         <Route path="/projects/:slug" element={<LocationProbe />} />
       </Routes>,
       ["/"],
@@ -108,7 +97,7 @@ describe("CreateProjectDialog — form behavior", () => {
       ),
     );
 
-    renderWithRouter(<AppHeader />, ["/"]);
+    renderWithRouter(<CreateProjectDialog triggerLabel="Tạo project" />, ["/"]);
     const user = userEvent.setup();
     await user.click(await screen.findByRole("button", { name: /tạo project/i }));
     const dialog = await screen.findByRole("dialog");
@@ -116,7 +105,6 @@ describe("CreateProjectDialog — form behavior", () => {
     await user.click(within(dialog).getByRole("button", { name: /^tạo project$/i }));
 
     expect(await within(dialog).findByText(/slug đã được dùng/i)).toBeInTheDocument();
-    // Dialog stays open
     expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
 
@@ -124,7 +112,7 @@ describe("CreateProjectDialog — form behavior", () => {
     mockMe("admin");
     const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(false);
 
-    renderWithRouter(<AppHeader />, ["/"]);
+    renderWithRouter(<CreateProjectDialog triggerLabel="Tạo project" />, ["/"]);
     const user = userEvent.setup();
     await user.click(await screen.findByRole("button", { name: /tạo project/i }));
     const dialog = await screen.findByRole("dialog");
@@ -133,7 +121,6 @@ describe("CreateProjectDialog — form behavior", () => {
     await user.click(within(dialog).getByRole("button", { name: /hủy/i }));
 
     expect(confirmSpy).toHaveBeenCalled();
-    // confirm returned false → dialog stays
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     confirmSpy.mockRestore();
   });
