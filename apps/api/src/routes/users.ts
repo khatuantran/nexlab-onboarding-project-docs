@@ -1,7 +1,10 @@
 import { Router, type RequestHandler, type Router as ExpressRouter } from "express";
 import { z } from "zod";
+import { ErrorCode, type AdminUser, type UserPublic } from "@onboarding/shared";
+import { HttpError } from "../errors.js";
+import { requireAdmin } from "../middleware/requireAdmin.js";
 import { zodValidate } from "../middleware/zodValidate.js";
-import type { UserRepo } from "../repos/userRepo.js";
+import type { AdminUserRow, UserRepo } from "../repos/userRepo.js";
 
 export interface UsersRouterDeps {
   userRepo: UserRepo;
@@ -11,31 +14,76 @@ export interface UsersRouterDeps {
 const querySchema = z.object({
   q: z.string().max(100).optional(),
   role: z.enum(["admin", "author"]).optional(),
+  status: z.enum(["active", "archived", "all"]).optional(),
 });
 
+const idParamSchema = z.object({ id: z.string().uuid() });
+
+export function toAdminUser(row: AdminUserRow): AdminUser {
+  return {
+    id: row.id,
+    email: row.email,
+    displayName: row.displayName,
+    role: row.role,
+    archivedAt: row.archivedAt ? row.archivedAt.toISOString() : null,
+    lastLoginAt: row.lastLoginAt ? row.lastLoginAt.toISOString() : null,
+    createdAt: row.createdAt.toISOString(),
+  };
+}
+
 /**
- * US-005 / FR-USER-001 — author filter dropdown.
+ * US-007 — admin user lifecycle (list + detail in this file; mutation
+ * routes wired in later tasks). Non-admin callers see the public shape
+ * (id + displayName + role) for the author-filter dropdown; admin sees
+ * the AdminUser shape (+ email, archivedAt, lastLoginAt, createdAt).
  *
- * Returns up to 50 users (id + displayName + role only) for use in the
- * search UI. Email and passwordHash are intentionally excluded — internal
- * portal access model (FR-PROJ-001) lets every authenticated user see
- * other users' display names, but PII fields stay scoped to /auth/me +
- * admin invite endpoints.
+ * Original US-005 / FR-USER-001 contract preserved for non-admin callers.
  */
 export function createUsersRouter(deps: UsersRouterDeps): ExpressRouter {
   const { userRepo, requireAuth } = deps;
   const router = Router();
 
-  const handler: RequestHandler = async (req, res, next) => {
+  const list: RequestHandler = async (req, res, next) => {
     try {
-      const { q, role } = req.query as z.infer<typeof querySchema>;
-      const data = await userRepo.listUsers({ q, role });
-      res.status(200).json({ data });
+      const { q, role, status } = req.query as z.infer<typeof querySchema>;
+      const isAdmin = req.user?.role === "admin";
+      if (status && status !== "active" && !isAdmin) {
+        next(new HttpError(403, ErrorCode.FORBIDDEN, "Chỉ admin được xem user archived"));
+        return;
+      }
+      const rows = await userRepo.listUsers({
+        q,
+        role,
+        status: status ?? "active",
+        includeAdminFields: isAdmin,
+      });
+      if (isAdmin) {
+        const data: AdminUser[] = (rows as AdminUserRow[]).map(toAdminUser);
+        res.status(200).json({ data });
+      } else {
+        const data: UserPublic[] = rows as UserPublic[];
+        res.status(200).json({ data });
+      }
     } catch (err) {
       next(err);
     }
   };
 
-  router.get("/", requireAuth, zodValidate({ query: querySchema }), handler);
+  const getById: RequestHandler = async (req, res, next) => {
+    try {
+      const { id } = req.params as { id: string };
+      const row = await userRepo.getAdminById(id);
+      if (!row) {
+        next(new HttpError(404, ErrorCode.USER_NOT_FOUND, "User không tồn tại"));
+        return;
+      }
+      res.status(200).json({ data: toAdminUser(row) });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  router.get("/", requireAuth, zodValidate({ query: querySchema }), list);
+  router.get("/:id", requireAuth, requireAdmin, zodValidate({ params: idParamSchema }), getById);
   return router;
 }
