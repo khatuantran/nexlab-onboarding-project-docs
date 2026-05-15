@@ -47,6 +47,11 @@ Mọi error response tuân theo format:
 | `UPLOAD_PROVIDER_ERROR`  | 502  | Cloudinary upload stream rejected (network / quota / invalid response).    | FR-UPLOAD-001                                                                   | CR-004 Phase 2 (`7eb3617`)  |
 | `VALIDATION_ERROR`       | 400  | Zod parse fail. `details.issues` chứa ZodIssue[].                          | cross-cutting                                                                   | T3 (middleware)             |
 | `INTERNAL_ERROR`         | 500  | Unexpected exception. `details` không leak stack.                          | cross-cutting                                                                   | T2 ✅                       |
+| `USER_EMAIL_EXISTS`      | 409  | Invite user trùng email (case-insensitive).                                | [FR-USER-002](02-requirements.md#fr-user-002--admin-user-lifecycle)             | US-007 / T3                 |
+| `USER_NOT_FOUND`         | 404  | User id không tồn tại.                                                     | FR-USER-002                                                                     | US-007 / T2                 |
+| `USER_DISABLED`          | 403  | Login với account có `archived_at != NULL`.                                | FR-AUTH-001 amend, FR-USER-002                                                  | US-007 / T4                 |
+| `CANNOT_MODIFY_SELF`     | 409  | Admin cố đổi role / disable / reset chính mình.                            | FR-USER-002                                                                     | US-007 / T4                 |
+| `LAST_ADMIN_PROTECTED`   | 409  | Action sẽ làm hệ thống không còn admin nào.                                | FR-USER-002                                                                     | US-007 / T4                 |
 
 ---
 

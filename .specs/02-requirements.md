@@ -46,7 +46,8 @@ Mỗi FR có:
 | [FR-SEARCH-004](#fr-search-004--query-semantics)              | Search  | Prefix + accent-insensitive + fuzzy match semantics   | P1       | US-006                 |
 | [FR-READ-001](#fr-read-001--project-landing--feature-index)   | Read    | Project landing page có feature index                 | P0       | US-001                 |
 | [FR-UPLOAD-001](#fr-upload-001--image-upload-for-screenshots) | Upload  | Upload image file → volume, trả stable URL            | P0       | US-003                 |
-| [FR-USER-001](#fr-user-001--user-list-endpoint)               | User    | List user (read) cho author filter dropdown           | P1       | US-005                 |
+| [FR-USER-001](#fr-user-001--user-list-endpoint)               | User    | List user (read) cho author filter dropdown           | P1       | US-005, US-007         |
+| [FR-USER-002](#fr-user-002--admin-user-lifecycle)             | User    | Admin invite / edit role / archive / reset password   | P1       | US-007                 |
 
 Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 
@@ -72,6 +73,7 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 - Wrong email → 401 `INVALID_CREDENTIALS` (không 404, để tránh user enumeration).
 - Logout → 204 + cookie cleared.
 - Password hash dùng bcryptjs (cost factor ≥ 10).
+- **Disabled user gate (US-007)**: user có `archived_at != NULL` không login được — `POST /auth/login` trả 403 `USER_DISABLED`. Sau khi user bị archive runtime, request kế tiếp dùng session cũ phải 401 + destroy session (middleware check `archived_at` per request).
 - **User creation**: `POST /api/v1/users` admin-only; body `{ email, displayName, role }`; response `{ data: { user, temporaryPassword } }` trả 1 lần (không store plain). Seed script tạo 1 admin (`admin@local` / `dev12345`).
 - **Không có endpoint self-register**: `POST /api/v1/auth/register` không tồn tại v1.
 - Session TTL default 7 ngày sliding; cookie `maxAge` refresh mỗi request authenticated.
@@ -313,14 +315,42 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 
 **Acceptance hints**:
 
-- Endpoint: `GET /api/v1/users?q=<text?>&role=<admin|author?>`.
+- Endpoint: `GET /api/v1/users?q=<text?>&role=<admin|author?>&status=<active|archived|all?>`.
 - Auth: requireAuth (any role).
-- Response: `{ data: User[] }` với `User = { id, displayName, role }`. **Không** trả `email`, `passwordHash`, `createdAt`.
-- `q` ILIKE `%<q>%` trên `display_name`, case-insensitive.
+- Default `status=active` filter `archived_at IS NULL`. `status=archived|all` requires admin (403 nếu không).
+- Response cho author: `{ data: User[] }` với `User = { id, displayName, role }`. **Không** trả `email`, `archivedAt`, `lastLoginAt`.
+- Response cho admin: `{ data: AdminUser[] }` với `AdminUser = User & { email, archivedAt, lastLoginAt }`.
+- `GET /api/v1/users/:id` admin-only — trả `AdminUser` full shape; 404 nếu không tồn tại.
+- `q` ILIKE `%<q>%` trên `display_name` (admin: thêm OR `email`), case-insensitive.
 - `role` exact match.
 - Sort `display_name` asc.
-- Limit hard 50 (no pagination v1).
+- Limit hard 100 (no pagination v1 — pilot ≤ 100 user).
 - Empty result → `{ data: [] }`, không 404.
+
+---
+
+## FR-USER-002 — Admin user lifecycle
+
+**Statement (Event-driven + Unwanted):**
+
+- When an authenticated user with role `admin` submits a user invite request with a unique email, the system shall create the user with a generated 12-character temporary password and return the credential payload exactly once.
+- When an admin updates a user's `displayName` or `role`, the system shall persist the change and return the updated `AdminUser` shape.
+- When an admin archives or unarchives a user, the system shall toggle `archived_at`; archived users cannot login (FR-AUTH-001) and any live session is invalidated on the next request.
+- When an admin triggers password reset for a target user, the system shall generate a new temporary password, replace `password_hash`, purge target user's Redis sessions, and return the new credential exactly once.
+- If the actor would (a) modify their own role/status or (b) demote/disable the last remaining admin, then the system shall reject the request with 409 (`CANNOT_MODIFY_SELF` / `LAST_ADMIN_PROTECTED`).
+- If the invite email already exists (case-insensitive), then the system shall respond 409 `USER_EMAIL_EXISTS`.
+
+**Rationale**: Manual SQL invite không scale khi M3 onboard ≥ 3 dev. Admin UI mở khả năng list, invite, edit role, disable account, reset password mà không SSH. Last-admin guard tránh lockout system; self-protect tránh admin accidentally demote chính mình.
+
+**Maps to**: US-007. Persona: P3 (Admin = senior dev trong v1).
+
+**Acceptance hints**:
+
+- Endpoints: `POST /api/v1/users`, `PATCH /api/v1/users/:id`, `POST /api/v1/users/:id/archive`, `POST /api/v1/users/:id/unarchive`, `POST /api/v1/users/:id/reset-password`. Tất cả admin-only (403 nếu không).
+- Temp password: 12-char alphanumeric (no I/l/0/O ambiguity), bcrypt cost 12.
+- Response shape: `{ data: { user: AdminUser, tempPassword: string } }` cho invite + reset; `{ data: AdminUser }` cho patch + archive + unarchive.
+- Audit: `pino.info({event:"user.<verb>", actorId, targetId, ...})` mỗi mutation. Không lưu DB v1.
+- Idempotent archive/unarchive: gọi lại thao tác đã thực hiện không lỗi (no-op + cùng response).
 
 ---
 
@@ -469,7 +499,7 @@ Format theo [templates/01-non-functional-requirements-template.md](../templates/
 ### Still open (revisit sau pilot)
 
 - **Session TTL**: default 7d sliding; có thể chuyển fixed hoặc kéo dài sau khi đo real usage.
-- **Admin UI quản lý user**: v1 chỉ có endpoint `POST /api/v1/users` (cURL / seed). Admin UI list/disable user defer → US v2.
+- ~~**Admin UI quản lý user**: v1 chỉ có endpoint `POST /api/v1/users` (cURL / seed). Admin UI list/disable user defer → US v2.~~ ✅ Resolved 2026-05-15: promoted thành scope qua [US-007](stories/US-007.md) (full lifecycle: list + invite + edit role + archive + reset password).
 
 ---
 

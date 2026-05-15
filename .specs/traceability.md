@@ -34,7 +34,8 @@ Mục đích: khi đổi 1 FR biết ngay tác động tới story + task nào. 
 | G2 (tech context)                  | [FR-UPLOAD-001](02-requirements.md#fr-upload-001--image-upload-for-screenshots) | [US-003](stories/US-003.md)                                                           | —                                                                                                                                                                                                                                                                        | US-003 AC-4, AC-5, AC-6                          | 🟡 Planned                           |
 | G1 (tìm rộng hơn)                  | [FR-SEARCH-002](02-requirements.md#fr-search-002--multi-entity-search)          | [US-005](stories/US-005.md)                                                           | [US-005 T1-T4, T6, T8-T10](stories/US-005/tasks.md)                                                                                                                                                                                                                      | US-005 AC-1..AC-5, AC-10, AC-12, AC-15           | ✅ US-005 `d570bd1..a9fbf86`         |
 | G1                                 | [FR-SEARCH-003](02-requirements.md#fr-search-003--search-filters)               | [US-005](stories/US-005.md)                                                           | [US-005 T2, T4, T7, T9](stories/US-005/tasks.md)                                                                                                                                                                                                                         | US-005 AC-6, AC-7, AC-8, AC-9, AC-13, AC-14      | ✅ US-005 `3de57a5..a9fbf86`         |
-| G1                                 | [FR-USER-001](02-requirements.md#fr-user-001--user-list-endpoint)               | [US-005](stories/US-005.md)                                                           | [US-005 T5, T6](stories/US-005/tasks.md)                                                                                                                                                                                                                                 | US-005 AC-11                                     | ✅ US-005 `df8d877`                  |
+| G1                                 | [FR-USER-001](02-requirements.md#fr-user-001--user-list-endpoint)               | [US-005](stories/US-005.md), [US-007](stories/US-007.md)                              | [US-005 T5, T6](stories/US-005/tasks.md), [US-007 T2](stories/US-007/tasks.md#t2--get-users-list-extend--get-usersid)                                                                                                                                                    | US-005 AC-11; US-007 AC-1, AC-2                  | ✅ US-005 `df8d877` / 🟡 US-007 T2   |
+| G5 (admin ops không SSH DB)        | [FR-USER-002](02-requirements.md#fr-user-002--admin-user-lifecycle)             | [US-007](stories/US-007.md)                                                           | [US-007 T1..T7](stories/US-007/tasks.md)                                                                                                                                                                                                                                 | US-007 AC-1..AC-8                                | 🟡 Planned                           |
 | G1 (typo + accent + prefix)        | [FR-SEARCH-004](02-requirements.md#fr-search-004--query-semantics)              | [US-006](stories/US-006.md)                                                           | [US-006 T1-T5](stories/US-006/tasks.md)                                                                                                                                                                                                                                  | US-006 AC-1..AC-7                                | ✅ US-006 `648242b..adbdfa3`         |
 
 ---
@@ -93,6 +94,18 @@ Mục đích: khi đổi 1 FR biết ngay tác động tới story + task nào. 
 | [T6](stories/US-003/tasks.md#t6--section-editable-gate--ownership)  | FEAT-002, FEAT-003   | AC-1, AC-7          | ✅ `dd1c213` |
 | [T7](stories/US-003/tasks.md#t7--e2e-smoke--progress-sync)          | all                  | cross-cutting       | ✅ `c6c57fc` |
 
+### US-007 tasks
+
+| Task                                                                          | Primary FR               | AC covered (US-007) | Status     |
+| ----------------------------------------------------------------------------- | ------------------------ | ------------------- | ---------- |
+| [T1](stories/US-007/tasks.md#t1--migration--shared-schemas)                   | USER-002                 | prereq AC-2, AC-6   | 🟡 Planned |
+| [T2](stories/US-007/tasks.md#t2--get-users-list-extend--get-usersid)          | USER-001 amend           | AC-1, AC-2          | 🟡 Planned |
+| [T3](stories/US-007/tasks.md#t3--post-users-invite--temp-password)            | USER-002                 | AC-3, AC-4          | 🟡 Planned |
+| [T4](stories/US-007/tasks.md#t4--patch-usersid--archive--login-gate)          | USER-002, AUTH-001 amend | AC-5, AC-6, AC-8    | 🟡 Planned |
+| [T5](stories/US-007/tasks.md#t5--reset-password-endpoint--session-invalidate) | USER-002                 | AC-7                | 🟡 Planned |
+| [T6](stories/US-007/tasks.md#t6--admin-users-fe-page)                         | all USER FRs             | AC-1..AC-7 UI       | 🟡 Planned |
+| [T7](stories/US-007/tasks.md#t7--e2e--progress-sync)                          | all                      | all AC end-to-end   | 🟡 Planned |
+
 ---
 
 ## NFR coverage
@@ -109,7 +122,7 @@ Mục đích: khi đổi 1 FR biết ngay tác động tới story + task nào. 
 
 ## Coverage gaps (intentional)
 
-- **No US/task yet for**: Admin UI to list/disable users (deferred, xem `02-requirements.md` Still-open #2).
+- **Admin UI to list/disable users**: promoted from gap to committed scope via [US-007](stories/US-007.md) (2026-05-15).
 - **No test** cho session TTL expiry behavior — default 7d sliding, sẽ verify manual sau.
 - **No load test** gate CI v1 — NFR-PERF measured adhoc.
 
