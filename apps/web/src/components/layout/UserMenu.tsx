@@ -45,12 +45,12 @@ export function UserMenu({ user }: UserMenuProps): JSX.Element {
         aria-label={`Tài khoản ${user.displayName}`}
         data-testid="current-user"
       >
-        <Avatar name={user.displayName} size="sm" />
+        <Avatar name={user.displayName} size="sm" imageUrl={user.avatarUrl} />
         <ChevronDown className="size-3.5 text-muted-foreground" aria-hidden="true" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-[16rem]">
         <div className="flex items-center gap-3 px-3 py-3">
-          <Avatar name={user.displayName} size="md" />
+          <Avatar name={user.displayName} size="md" imageUrl={user.avatarUrl} />
           <div className="min-w-0 flex-1">
             <p className="truncate font-ui text-sm font-semibold text-foreground">
               {user.displayName}
@@ -67,12 +67,11 @@ export function UserMenu({ user }: UserMenuProps): JSX.Element {
           </div>
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled title="Sắp ra mắt">
-          <User className="size-4" aria-hidden="true" />
-          Hồ sơ của tôi
-          <span className="ml-auto font-ui text-[10px] uppercase tracking-wide text-muted-foreground">
-            Sắp ra mắt
-          </span>
+        <DropdownMenuItem asChild>
+          <Link to="/profile">
+            <User className="size-4" aria-hidden="true" />
+            Hồ sơ của tôi
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem disabled title="Sắp ra mắt">
           <Settings className="size-4" aria-hidden="true" />

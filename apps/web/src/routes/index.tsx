@@ -5,6 +5,7 @@ import { ProjectLandingPage } from "@/pages/ProjectLandingPage";
 import { FeatureDetailPage } from "@/pages/FeatureDetailPage";
 import { SearchPage } from "@/pages/SearchPage";
 import { AdminUsersPage } from "@/pages/AdminUsersPage";
+import { ProfilePage } from "@/pages/ProfilePage";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { RequireAuth } from "@/components/layout/RequireAuth";
 
@@ -27,6 +28,7 @@ export const routes: RouteObject[] = [
       { path: "/projects/:slug/features/:featureSlug", element: <FeatureDetailPage /> },
       { path: "/search", element: <SearchPage /> },
       { path: "/admin/users", element: <AdminUsersPage /> },
+      { path: "/profile", element: <ProfilePage /> },
     ],
   },
 ];
