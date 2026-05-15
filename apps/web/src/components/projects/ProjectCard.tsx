@@ -1,12 +1,12 @@
 import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { ProjectSummary } from "@onboarding/shared";
-import { AdminGate } from "@/components/common/AdminGate";
 import { ProjectAvatar } from "@/components/common/ProjectAvatar";
 import { ProgressBar } from "@/components/common/ProgressBar";
 import { AvatarStack } from "@/components/common/AvatarStack";
 import { RelativeTime } from "@/components/common/RelativeTime";
 import { ProjectActionsMenu } from "@/components/projects/ProjectActionsMenu";
+import { useMe } from "@/queries/auth";
 
 interface ProjectCardProps {
   project: ProjectSummary;
@@ -18,6 +18,9 @@ interface ProjectCardProps {
  * AvatarStack contributors = hardcoded ["NL", "PT"] dummy supplements.
  */
 export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
+  const { data: me } = useMe();
+  const isAdmin = me?.user.role === "admin";
+
   // v1 placeholder: BE doesn't return filledSectionCount yet. Compute total
   // sections (featureCount * 5) and show 0 filled until BE extension lands.
   const totalSections = project.featureCount * 5;
@@ -33,7 +36,7 @@ export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
       aria-label={`Xem chi tiết project ${project.name}`}
       className="group relative flex flex-col gap-4 rounded-xl border border-border bg-card p-5 transition-all hover:border-primary/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
-      <AdminGate>
+      {isAdmin ? (
         <div
           className="absolute right-2 top-2 z-10"
           // Stop click/keydown so Radix dropdown trigger doesn't navigate via parent Link.
@@ -42,8 +45,9 @@ export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
         >
           <ProjectActionsMenu project={project} />
         </div>
-      </AdminGate>
-      {/* Top row: avatar + title/desc + chevron */}
+      ) : null}
+      {/* Top row: avatar + title/desc + chevron (chevron hidden when admin
+          to avoid colliding with the overflow menu in the same corner). */}
       <div className="flex items-start gap-3.5">
         <ProjectAvatar seed={project.slug} name={project.name} size={44} letters={2} />
         <div className="min-w-0 flex-1">
@@ -56,10 +60,12 @@ export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
             </p>
           ) : null}
         </div>
-        <ChevronRight
-          aria-hidden="true"
-          className="size-5 shrink-0 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:text-primary"
-        />
+        {isAdmin ? null : (
+          <ChevronRight
+            aria-hidden="true"
+            className="size-5 shrink-0 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:text-primary"
+          />
+        )}
       </div>
 
       {/* Progress block */}
