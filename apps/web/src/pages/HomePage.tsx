@@ -5,8 +5,8 @@ import { useProjects } from "@/queries/projects";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { ProjectFilterPills, type ProjectFilter } from "@/components/projects/ProjectFilterPills";
 import { CreateProjectDialog } from "@/components/projects/CreateProjectDialog";
-import { EmptyState } from "@/components/common/EmptyState";
 import { StatChip } from "@/components/common/StatChip";
+import { BlobBackdrop, DotField, GradientMesh } from "@/components/patterns";
 import { Button } from "@/components/ui/button";
 
 function ProjectCardSkeleton(): JSX.Element {
@@ -52,34 +52,39 @@ export function HomePage(): JSX.Element {
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-8 lg:px-10" aria-busy={isLoading || undefined}>
-      {/* Hero row */}
-      <div className="mb-6 flex flex-col items-stretch gap-6 xl:flex-row xl:items-end xl:justify-between">
-        <div className="max-w-2xl">
-          <p className="font-ui text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-            Workspace của bạn
-          </p>
-          <h1 className="mt-2 font-display text-[36px] leading-10 font-bold tracking-[-0.02em] text-foreground">
-            Danh sách project
-          </h1>
-          <p className="mt-2.5 font-body text-[15px] leading-[22px] text-muted-foreground">
-            Tất cả tài liệu onboarding cho các sprint đang chạy. Bấm vào project để xem feature và
-            nghiệp vụ chi tiết.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <StatChip
-            icon={FolderOpen}
-            tone="primary"
-            value={isLoading ? "—" : totalProjects}
-            label="Project active"
-          />
-          <StatChip
-            icon={CheckCircle2}
-            tone="success"
-            value={isLoading ? "—" : "0"}
-            label="Feature đủ doc"
-          />
-          <StatChip icon={Users} tone="info" value="8" label="Đang đóng góp" />
+      {/* Hero row — CR-005 v3: GradientMesh + BlobBackdrop backdrop, no subtitle */}
+      <div className="relative mb-6 overflow-hidden rounded-2xl px-6 py-7 sm:px-8 sm:py-9 lg:px-10">
+        <GradientMesh tones={["primary", "amber"]} opacity={0.18} className="dark:opacity-[0.12]" />
+        <BlobBackdrop
+          tone="primary"
+          size="lg"
+          opacity={0.18}
+          className="absolute -right-16 -top-20 dark:opacity-[0.12]"
+        />
+        <div className="relative flex flex-col items-stretch gap-6 xl:flex-row xl:items-end xl:justify-between">
+          <div className="max-w-2xl">
+            <p className="font-ui text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+              Workspace của bạn
+            </p>
+            <h1 className="mt-2 font-display text-[36px] font-bold leading-10 tracking-[-0.02em] text-foreground">
+              Danh sách project
+            </h1>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <StatChip
+              icon={FolderOpen}
+              tone="primary"
+              value={isLoading ? "—" : totalProjects}
+              label="Project active"
+            />
+            <StatChip
+              icon={CheckCircle2}
+              tone="success"
+              value={isLoading ? "—" : "0"}
+              label="Feature đủ doc"
+            />
+            <StatChip icon={Users} tone="info" value="8" label="Đang đóng góp" />
+          </div>
         </div>
       </div>
 
@@ -117,16 +122,33 @@ export function HomePage(): JSX.Element {
           </Button>
         </div>
       ) : totalProjects === 0 ? (
-        <EmptyState
-          icon={FolderOpen}
-          title="Chưa có project nào trong catalog"
-          description={
-            isAdmin
-              ? "Tạo project đầu tiên để team bắt đầu document features. BA viết business sections; dev bổ sung tech-notes + screenshots."
-              : "Liên hệ admin để tạo project đầu tiên."
-          }
-          action={isAdmin ? <CreateProjectDialog triggerLabel="Tạo project đầu tiên" /> : null}
-        />
+        <div
+          role="status"
+          className="relative mx-auto flex max-w-md flex-col items-center gap-3 overflow-hidden rounded-xl border border-dashed border-border bg-muted/30 px-6 py-12 text-center"
+        >
+          <DotField
+            tone="primary"
+            count={14}
+            opacity={0.22}
+            className="absolute inset-0 h-full w-full dark:opacity-[0.15]"
+          />
+          <div className="relative flex flex-col items-center gap-3">
+            <FolderOpen aria-hidden="true" className="size-14 text-primary/50" />
+            <p className="font-display text-xl font-semibold text-foreground">
+              Chưa có project nào
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {isAdmin
+                ? "Tạo project đầu tiên để team bắt đầu document."
+                : "Liên hệ admin để tạo project đầu tiên."}
+            </p>
+            {isAdmin ? (
+              <div className="pt-2">
+                <CreateProjectDialog triggerLabel="Tạo project đầu tiên" />
+              </div>
+            ) : null}
+          </div>
+        </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
           {filtered.map((project) => (

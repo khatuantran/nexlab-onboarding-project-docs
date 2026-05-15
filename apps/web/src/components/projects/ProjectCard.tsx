@@ -6,10 +6,22 @@ import { ProgressBar } from "@/components/common/ProgressBar";
 import { AvatarStack } from "@/components/common/AvatarStack";
 import { RelativeTime } from "@/components/common/RelativeTime";
 import { ProjectActionsMenu } from "@/components/projects/ProjectActionsMenu";
+import { type PatternTone, toneColor } from "@/components/patterns/tone";
 import { useMe } from "@/queries/auth";
 
 interface ProjectCardProps {
   project: ProjectSummary;
+}
+
+const ACCENT_TONES: PatternTone[] = ["blue", "green", "purple", "pink", "cyan", "amber"];
+
+// Deterministic slug → accent tone bucket (CR-005 §ProjectCard accent identity).
+function accentFromSlug(slug: string): PatternTone {
+  let hash = 0;
+  for (let i = 0; i < slug.length; i++) {
+    hash = (hash * 31 + slug.charCodeAt(i)) >>> 0;
+  }
+  return ACCENT_TONES[hash % ACCENT_TONES.length] as PatternTone;
 }
 
 /**
@@ -30,11 +42,15 @@ export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
   // v1 placeholder contributor list — supplemented hardcoded names.
   const contributors = ["NL", "PT"]; // TODO: derive from updatedByName once exposed
 
+  // CR-005 v3: per-project accent identity (border-l-4 colored by slug hash).
+  const accent = accentFromSlug(project.slug);
+
   return (
     <Link
       to={`/projects/${project.slug}`}
       aria-label={`Xem chi tiết project ${project.name}`}
-      className="group relative flex flex-col gap-4 rounded-xl border border-border bg-card p-5 transition-all hover:border-primary/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      style={{ borderLeftColor: toneColor(accent) }}
+      className="group relative flex flex-col gap-4 rounded-xl border border-l-4 border-border bg-card p-5 transition-all hover:border-primary/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       {isAdmin ? (
         <div

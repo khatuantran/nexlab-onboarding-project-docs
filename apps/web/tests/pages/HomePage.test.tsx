@@ -82,7 +82,7 @@ describe("HomePage", () => {
     mockProjects([]);
     renderHome();
 
-    expect(await screen.findByText(/chưa có project nào trong catalog/i)).toBeInTheDocument();
+    expect(await screen.findByText(/chưa có project nào/i)).toBeInTheDocument();
     expect(
       await screen.findByRole("button", { name: /tạo project đầu tiên/i }),
     ).toBeInTheDocument();
@@ -93,7 +93,7 @@ describe("HomePage", () => {
     mockProjects([]);
     renderHome();
 
-    expect(await screen.findByText(/chưa có project nào trong catalog/i)).toBeInTheDocument();
+    expect(await screen.findByText(/chưa có project nào/i)).toBeInTheDocument();
     expect(await screen.findByText(/liên hệ admin/i)).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /tạo project/i })).toBeNull();
   });

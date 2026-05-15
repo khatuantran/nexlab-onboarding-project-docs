@@ -27,10 +27,10 @@ describe("pattern primitives", () => {
 
   it("GradientMesh renders div with multi-radial background", () => {
     const { container } = render(<GradientMesh tones={["primary", "purple", "cyan"]} />);
-    const div = container.querySelector("div");
+    const div = container.querySelector("div") as HTMLElement | null;
     expect(div).toBeInTheDocument();
     expect(div?.getAttribute("aria-hidden")).toBe("true");
-    const bgImage = (div as HTMLElement).style.backgroundImage;
+    const bgImage = div!.style.backgroundImage;
     expect(bgImage).toContain("radial-gradient");
     expect(bgImage.match(/radial-gradient/g)?.length).toBe(3);
   });
@@ -45,9 +45,9 @@ describe("pattern primitives", () => {
     const { container, rerender } = render(<DotField count={10} />);
     const circles1 = container.querySelectorAll("circle");
     expect(circles1).toHaveLength(10);
-    const first1 = circles1[0].getAttribute("cx");
+    const first1 = circles1[0]!.getAttribute("cx");
     rerender(<DotField count={10} />);
-    const first2 = container.querySelectorAll("circle")[0].getAttribute("cx");
+    const first2 = container.querySelectorAll("circle")[0]!.getAttribute("cx");
     expect(first1).toBe(first2);
   });
 

@@ -21,7 +21,7 @@ export function GradientMesh({
 
   const layers = stops
     .map((tone, i) => {
-      const pos = positions[i % positions.length];
+      const pos = positions[i % positions.length]!;
       const color = toneColor(tone);
       return `radial-gradient(circle at ${pos.x} ${pos.y}, ${color} 0%, transparent ${pos.size})`;
     })
