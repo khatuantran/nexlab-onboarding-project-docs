@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-_Last updated: 2026-05-14 · Index of reported faults._
+_Last updated: 2026-05-15 · Index of reported faults._
 
 Mỗi file `BUG-NNN.md` clone từ [templates/05-bug-template.md](../../templates/05-bug-template.md). TDD rule: failing regression test commit trước fix.
 
@@ -12,11 +12,12 @@ Related: [CLAUDE.md §When a request comes in](../../CLAUDE.md#when-a-request-co
 
 ## Items
 
-| ID      | Title                                           | Severity  | Status | Fixed at  | File                     |
-| ------- | ----------------------------------------------- | --------- | ------ | --------- | ------------------------ |
-| BUG-001 | `pnpm docker:*` scripts không load `.env.local` | 🟡 Medium | Fixed  | `908c37e` | [BUG-001.md](BUG-001.md) |
-| BUG-002 | Theme toggle cần 2 click để chuyển dark → light | 🟡 Medium | Fixed  | `51d0543` | [BUG-002.md](BUG-002.md) |
-| BUG-003 | Uploaded images render broken in production     | 🟠 High   | Fixed  | `db94afc` | [BUG-003.md](BUG-003.md) |
+| ID      | Title                                             | Severity  | Status | Fixed at  | File                     |
+| ------- | ------------------------------------------------- | --------- | ------ | --------- | ------------------------ |
+| BUG-001 | `pnpm docker:*` scripts không load `.env.local`   | 🟡 Medium | Fixed  | `908c37e` | [BUG-001.md](BUG-001.md) |
+| BUG-002 | Theme toggle cần 2 click để chuyển dark → light   | 🟡 Medium | Fixed  | `51d0543` | [BUG-002.md](BUG-002.md) |
+| BUG-003 | Uploaded images render broken in production       | 🟠 High   | Fixed  | `db94afc` | [BUG-003.md](BUG-003.md) |
+| BUG-004 | Overflow ⋯ menu đè lên ChevronRight ở ProjectCard | 🟢 Low    | Fixed  | `1adc157` | [BUG-004.md](BUG-004.md) |
 
 ---
 
