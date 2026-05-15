@@ -28,6 +28,11 @@ export const users = pgTable("users", {
   displayName: text("display_name").notNull(),
   role: userRoleEnum("role").notNull().default("author"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  // US-007 / T1 — soft-delete timestamp matches projects.archived_at pattern.
+  // NULL = active; set → archived (login blocked + sessions purged).
+  archivedAt: timestamp("archived_at", { withTimezone: true }),
+  // US-007 / T1 — informational, updated on successful login. NULL = never logged in.
+  lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
 });
 
 export const projects = pgTable("projects", {
