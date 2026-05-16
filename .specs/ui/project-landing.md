@@ -8,7 +8,12 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 
 - **Screen ID**: `project-landing`
 - **Status**: Implemented v2 (`8da2aff`); **v4 Dark vivid amend pending (CR-006 v4 — dark gradient hero + 4-col gradient FeatureCard)**.
-- **Last updated**: 2026-05-16 (v4.6 archive confirm → custom dialog)
+- **Last updated**: 2026-05-16 (v4.7 US-011 real contributors)
+
+## v4.7 (US-011, 2026-05-16) — Real contributors on ProjectHero + FeatureCard
+
+- `ProjectHero` accepts a new `contributors: string[]` prop (top 5 names) — caller (`ProjectLandingPage`) forwards `project.contributors.map(c => c.displayName)` from API response. Replaces hardcoded `["TM","NL","PT","HD"]` in the hero footer AvatarStack.
+- `FeatureCard` reads `feature.contributors[]` from props; drops `const contributors = ["TM", "NL"]`. Backed by `projectRepo.getContributorsForFeature` via the augmented `GET /projects/:slug` response.
 
 ## v4.6 archive confirm → custom dialog (CR-006 v4.6 — 2026-05-16)
 

@@ -12,6 +12,7 @@ const feature: FeatureListItem = {
   title: "Đăng nhập",
   filledCount: 2,
   updatedAt: new Date().toISOString(),
+  contributors: [],
 };
 
 function mockMe(role: "admin" | "author") {

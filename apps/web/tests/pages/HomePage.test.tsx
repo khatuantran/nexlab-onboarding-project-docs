@@ -49,6 +49,7 @@ const pilot: ProjectSummary = {
   featureCount: 5,
   createdAt: "2026-04-20T10:00:00Z",
   updatedAt: "2026-04-23T10:00:00Z",
+  contributors: [],
 };
 
 const demo: ProjectSummary = {
@@ -59,6 +60,7 @@ const demo: ProjectSummary = {
   featureCount: 1,
   createdAt: "2026-04-18T10:00:00Z",
   updatedAt: "2026-04-22T10:00:00Z",
+  contributors: [],
 };
 
 describe("HomePage", () => {

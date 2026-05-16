@@ -22,10 +22,10 @@ _Last updated_: 2026-05-16
 
 | #                                     | Title                                              | Effort | AC covered                   | FR touched | UI spec | Status     |
 | ------------------------------------- | -------------------------------------------------- | ------ | ---------------------------- | ---------- | ------- | ---------- |
-| [T1](#t1--migration--shared-schemas)  | Migration `0010` + shared `AuthUser` + Zod extend  | 0.5h   | prereq                       | USER-003   | —       | 🟡 Planned |
-| [T2](#t2--patchme-route-extend)       | `PATCH /me` accept 4 new fields + tests            | 1h     | AC-2, AC-3, AC-4, AC-5, AC-6 | USER-003   | —       | 🟡 Planned |
-| [T3](#t3--personalinfocard-real-data) | FE `PersonalInfoCard` reads real fields + empty UX | 0.5h   | AC-1, AC-7, AC-8             | —          | profile | 🟡 Planned |
-| [T4](#t4--editprofiledialog-extend)   | FE `EditProfileDialog` 4-input form + test         | 1h     | AC-9                         | —          | profile | 🟡 Planned |
+| [T1](#t1--migration--shared-schemas)  | Migration `0010` + shared `AuthUser` + Zod extend  | 0.5h   | prereq                       | USER-003   | —       | ✅ shipped |
+| [T2](#t2--patchme-route-extend)       | `PATCH /me` accept 4 new fields + tests            | 1h     | AC-2, AC-3, AC-4, AC-5, AC-6 | USER-003   | —       | ✅ shipped |
+| [T3](#t3--personalinfocard-real-data) | FE `PersonalInfoCard` reads real fields + empty UX | 0.5h   | AC-1, AC-7, AC-8             | —          | profile | ✅ shipped |
+| [T4](#t4--editprofiledialog-extend)   | FE `EditProfileDialog` 4-input form + test         | 1h     | AC-9                         | —          | profile | ✅ shipped |
 
 ---
 
@@ -54,9 +54,9 @@ _Last updated_: 2026-05-16
 
 ### DoD checklist
 
-- [ ] `pnpm db:generate` không sinh diff (manual SQL match Drizzle infer).
-- [ ] `pnpm --filter @onboarding/shared test` xanh với 4 field round-trip + regex reject.
-- [ ] No TS error trong shared / api / web sau extend.
+- [x] `pnpm db:generate` không sinh diff (manual SQL match Drizzle infer).
+- [x] `pnpm --filter @onboarding/shared test` xanh với 4 field round-trip + regex reject.
+- [x] No TS error trong shared / api / web sau extend.
 
 ---
 
@@ -83,9 +83,9 @@ _Last updated_: 2026-05-16
 
 ### DoD checklist
 
-- [ ] `pnpm --filter @onboarding/api test integration/me.patch` xanh.
-- [ ] AC-2..AC-6 đều có 1+ test case.
-- [ ] Commit `feat(api): extend PATCH /me with phone/department/location/bio (US-010 / T1-T2)`.
+- [x] `pnpm --filter @onboarding/api test integration/me.patch` xanh.
+- [x] AC-2..AC-6 đều có 1+ test case.
+- [x] Commit `feat(api): extend PATCH /me with phone/department/location/bio (US-010 / T1-T2)`.
 
 ---
 
@@ -106,9 +106,9 @@ _Last updated_: 2026-05-16
 
 ### DoD checklist
 
-- [ ] `pnpm --filter @onboarding/web test pages/ProfilePage` xanh.
-- [ ] AC-1 (response shape) implicit via AC-7 test.
-- [ ] Commit `feat(web): PersonalInfoCard reads real phone/department/location (US-010 / T3)`.
+- [x] `pnpm --filter @onboarding/web test pages/ProfilePage` xanh.
+- [x] AC-1 (response shape) implicit via AC-7 test.
+- [x] Commit `feat(web): PersonalInfoCard reads real phone/department/location (US-010 / T3)`.
 
 ---
 
@@ -129,7 +129,7 @@ _Last updated_: 2026-05-16
 
 ### DoD checklist
 
-- [ ] `pnpm --filter @onboarding/web test` xanh full suite.
-- [ ] AC-9 covered.
-- [ ] UI spec `.specs/ui/profile.md` extend v4.7 note (EditProfileDialog 4-field).
-- [ ] Commit `feat(web): EditProfileDialog 4-field form (US-010 / T4)`.
+- [x] `pnpm --filter @onboarding/web test` xanh full suite.
+- [x] AC-9 covered.
+- [x] UI spec `.specs/ui/profile.md` extend v4.7 note (EditProfileDialog 4-field).
+- [x] Commit `feat(web): EditProfileDialog 4-field form (US-010 / T4)`.

@@ -137,20 +137,24 @@ Multi-entity grouped search + filters (project + feature + section + author + up
 - [T6 + T7 + T8 + T9](stories/US-005/tasks.md#t6--frontend-query-hooks-usesearch-v2--useusers) FilterBar + 4 sub-filters + 5 entity cards + grouped SearchPage — ✅ `a9fbf86`.
 - [T10](stories/US-005/tasks.md#t10--tests--e2e--progress-sync) Playwright us-005 + progress sync — ✅ this commit.
 
-### Post-M2 phase — Real-data backfill (mock replacement) 🟡 _(2026-05-16, in progress)_
+### Post-M2 phase — Real-data backfill (mock replacement) 🟡 _(2026-05-16, Sprint 1 ✅ shipped)_
 
 CR-006 v4 UI redesign shipped many surfaces with hardcoded placeholder data because no BE existed yet. Audit (2026-05-16) cataloged 13 mock surfaces; specs landed in `4e5d652` + `ba44036`. Execution sequenced into 5 phases — Phase 1 + 2 are the immediate path; Phase 3-5 are deferred candidates for M3 (pre-pilot) or M4 (post-pilot).
 
 **Spec coverage (13/13)** — see [.specs/stories/US-010.md](stories/US-010.md) + [US-011.md](stories/US-011.md) + [.specs/backlog/](backlog/) BL-001..BL-011.
 
-#### Phase 1 — P0 (build now) — ~8-11h total
+#### Phase 1 — P0 (build now) — ~8-11h total — ✅ shipped 2026-05-16
 
 Replace the most visible, highest-impact mocks. No dependencies.
 
-- [US-010](stories/US-010.md) Profile enrichment (phone / department / location / bio) — ~3-4h. Migration `0010` + extend PATCH /me + ProfilePage `PersonalInfoCard` + `EditProfileDialog`. Replaces 3 hardcoded `InfoRow` strings.
-- [US-011](stories/US-011.md) Real contributors derivation — ~5-7h. New FR-PROJ-003. Aggregation from `sections.updated_by`; no schema change. Replaces hardcoded contributors on ProjectCard / ProjectHero / FeatureCard + drops ActivityRail `STATIC_PADDING`.
+- [US-010](stories/US-010.md) Profile enrichment (phone / department / location / bio) — ~3-4h. ✅ shipped `a8b559c..07a32a2`. Migration `0010` + extend PATCH /me + ProfilePage `PersonalInfoCard` + `EditProfileDialog`. Replaces 3 hardcoded `InfoRow` strings.
+- [US-011](stories/US-011.md) Real contributors derivation — ~5-7h. ✅ shipped `5816bf8..d436207`. New FR-PROJ-003. Aggregation from `sections.updated_by`; no schema change. Replaces hardcoded contributors on ProjectCard / ProjectHero / FeatureCard + drops ActivityRail `STATIC_PADDING`.
 
-**Expected outcome**: ProfilePage `PersonalInfoCard` truthful; all contributor avatars across the app are real. Drops ~5 of 13 mock surfaces.
+**Outcome**: ProfilePage `PersonalInfoCard` truthful; all contributor avatars across the app are real. **5 of 13 mock surfaces cleared.**
+
+#### Phase 1.5 — Paperwork drift cleanup — ✅ shipped 2026-05-16 (`b41a370`)
+
+US-001 status flipped `Draft` → `Done`. 5 stale traceability rows (FR-AUTH-001 / FR-FEAT-002 / FR-FEAT-003 / FR-EMBED-001 / FR-READ-001 / FR-UPLOAD-001) flipped 🟡 → ✅. NFR-PERF-001 + NFR-A11Y-001 spot-check baseline recorded (re-audit at M3 pilot).
 
 #### Phase 2 — P0 deferred (build after EditFeatureDialog ships) — ~5-7h
 

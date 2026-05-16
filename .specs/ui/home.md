@@ -8,7 +8,11 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 
 - **Screen ID**: `home`
 - **Status**: v2 Workspace shipped (CR-002 / Phase 2-1 `1d76919`); v3 + v3.1 Notion warm shipped (CR-006 pilot `a03f9c4` / `ab92574`); **v4 Dark vivid + glassmorphism pending (CR-006 v4 amend — supersedes v3 / v3.1 Wire-level + ProjectCard sections)**.
-- **Last updated**: 2026-05-16 (v4.6 archive confirm → custom dialog)
+- **Last updated**: 2026-05-16 (v4.7 US-011 real contributors)
+
+## v4.7 (US-011, 2026-05-16) — Real contributors
+
+`ProjectCard` drops the `CONTRIBUTOR_POOL` constant (`["EK","PT","KT","NL","TR","TM"]`) and the `pickContributors` hash-derived helper. AvatarStack now reads `project.contributors.map(c => c.displayName)` straight from the API response (`GET /projects` augmented per FR-PROJ-003 via window-function batched query in `projectRepo.getContributorsForProjects`). Empty array → no avatars rendered. Replaces ~6 hardcoded contributor initials on every project card.
 
 ## v4.6 archive confirm → custom dialog (CR-006 v4.6 — 2026-05-16)
 

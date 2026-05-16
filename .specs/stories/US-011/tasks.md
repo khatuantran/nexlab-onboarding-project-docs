@@ -21,11 +21,11 @@ _Last updated_: 2026-05-16
 
 | #                                           | Title                                                                     | Effort | AC covered    | FR touched | UI spec                         | Status     |
 | ------------------------------------------- | ------------------------------------------------------------------------- | ------ | ------------- | ---------- | ------------------------------- | ---------- |
-| [T1](#t1--shared-contributorsummary--types) | Shared `ContributorSummary` schema + extend project shapes                | 0.5h   | prereq        | PROJ-003   | —                               | 🟡 Planned |
-| [T2](#t2--repo-aggregation-queries)         | Repo `getContributorsForProject/Feature` + batched variant                | 2h     | AC-1..5, AC-9 | PROJ-003   | —                               | 🟡 Planned |
-| [T3](#t3--route-augmentation)               | Routes `/projects` + `/projects/:slug` + `/features/...` augment response | 1h     | AC-1..5       | PROJ-003   | —                               | 🟡 Planned |
-| [T4](#t4--projectcard--featurecard-wire)    | FE `ProjectCard` + `FeatureCard` read real contributors                   | 1h     | AC-6, AC-7    | —          | home, project-landing           | 🟡 Planned |
-| [T5](#t5--projecthero--activityrail-wire)   | FE `ProjectHero` + `ActivityRail` drop hardcoded data                     | 1h     | AC-7, AC-8    | —          | project-landing, feature-detail | 🟡 Planned |
+| [T1](#t1--shared-contributorsummary--types) | Shared `ContributorSummary` schema + extend project shapes                | 0.5h   | prereq        | PROJ-003   | —                               | ✅ shipped |
+| [T2](#t2--repo-aggregation-queries)         | Repo `getContributorsForProject/Feature` + batched variant                | 2h     | AC-1..5, AC-9 | PROJ-003   | —                               | ✅ shipped |
+| [T3](#t3--route-augmentation)               | Routes `/projects` + `/projects/:slug` + `/features/...` augment response | 1h     | AC-1..5       | PROJ-003   | —                               | ✅ shipped |
+| [T4](#t4--projectcard--featurecard-wire)    | FE `ProjectCard` + `FeatureCard` read real contributors                   | 1h     | AC-6, AC-7    | —          | home, project-landing           | ✅ shipped |
+| [T5](#t5--projecthero--activityrail-wire)   | FE `ProjectHero` + `ActivityRail` drop hardcoded data                     | 1h     | AC-7, AC-8    | —          | project-landing, feature-detail | ✅ shipped |
 
 ---
 
@@ -43,8 +43,8 @@ _Last updated_: 2026-05-16
 
 ### DoD
 
-- [ ] `pnpm --filter @onboarding/shared test` xanh.
-- [ ] Commit `feat(shared): ContributorSummary schema + project/feature extend (US-011 / T1)`.
+- [x] `pnpm --filter @onboarding/shared test` xanh.
+- [x] Commit `feat(shared): ContributorSummary schema + project/feature extend (US-011 / T1)`.
 
 ---
 
@@ -80,9 +80,9 @@ _Last updated_: 2026-05-16
 
 ### DoD
 
-- [ ] All 5 AC have a test case.
-- [ ] `pnpm --filter @onboarding/api test unit/projectRepo` xanh.
-- [ ] Commit `feat(api): contributor aggregation queries (US-011 / T2)`.
+- [x] All 5 AC have a test case.
+- [x] `pnpm --filter @onboarding/api test unit/projectRepo` xanh.
+- [x] Commit `feat(api): contributor aggregation queries (US-011 / T2)`.
 
 ---
 
@@ -103,9 +103,9 @@ _Last updated_: 2026-05-16
 
 ### DoD
 
-- [ ] `pnpm --filter @onboarding/api test` xanh full suite.
-- [ ] AC-9 covered explicitly (single-query batched or counted).
-- [ ] Commit `feat(api): contributors aggregation on /projects + /features routes (US-011 / T3)`.
+- [x] `pnpm --filter @onboarding/api test` xanh full suite.
+- [x] AC-9 covered explicitly (single-query batched or counted).
+- [x] Commit `feat(api): contributors aggregation on /projects + /features routes (US-011 / T3)`.
 
 ---
 
@@ -128,10 +128,10 @@ _Last updated_: 2026-05-16
 
 ### DoD
 
-- [ ] `pnpm --filter @onboarding/web test components/ProjectCard components/FeatureCard` xanh.
-- [ ] AC-6 + AC-7 covered.
-- [ ] `.specs/ui/home.md` + `.specs/ui/project-landing.md` v4.7 note appended.
-- [ ] Commit `feat(web): ProjectCard + FeatureCard read real contributors (US-011 / T4)`.
+- [x] `pnpm --filter @onboarding/web test components/ProjectCard components/FeatureCard` xanh.
+- [x] AC-6 + AC-7 covered.
+- [x] `.specs/ui/home.md` + `.specs/ui/project-landing.md` v4.7 note appended.
+- [x] Commit `feat(web): ProjectCard + FeatureCard read real contributors (US-011 / T4)`.
 
 ---
 
@@ -156,7 +156,7 @@ _Last updated_: 2026-05-16
 
 ### DoD
 
-- [ ] `pnpm --filter @onboarding/web test` xanh full suite.
-- [ ] AC-7 + AC-8 covered.
-- [ ] `.specs/ui/project-landing.md` + `.specs/ui/feature-detail.md` v4.7 note appended.
-- [ ] Commit `feat(web): drop hardcoded contributors — ProjectHero + ActivityRail (US-011 / T5)`.
+- [x] `pnpm --filter @onboarding/web test` xanh full suite.
+- [x] AC-7 + AC-8 covered.
+- [x] `.specs/ui/project-landing.md` + `.specs/ui/feature-detail.md` v4.7 note appended.
+- [x] Commit `feat(web): drop hardcoded contributors — ProjectHero + ActivityRail (US-011 / T5)`.

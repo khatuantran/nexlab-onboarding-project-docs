@@ -2,6 +2,8 @@
 
 <!-- template: 02-ui-spec-template.md@0.1 -->
 
+> **v4.7 (US-010, 2026-05-16)**: `PersonalInfoCard` reads real phone/department/location from `useMe().data.user` (4 nullable columns added via migration `0010_users_profile_enrichment.sql`). When a value is null, `InfoRow` renders italic muted "— Chưa cập nhật". `EditProfileDialog` form extended from 1 → 5 inputs (Tên hiển thị / Điện thoại / Phòng ban / Địa chỉ / Bio textarea max 500). Submit diffs against original — missing keys leave server-side untouched, empty-after-was-set sends `null`. `useUpdateMyProfile` mutation hook unchanged (extended `UpdateMyProfileRequest` body shape via shared schema).
+>
 > **v4 amend (CR-006 v4 — 2026-05-16)**: Cover hero overlap pattern per variation-a-profile.jsx. Header rewrites:
 >
 > - Cover `GradientHero` h-[200px] with 2 blobs (purple + orange) + dot grid + logo watermark + "Đổi ảnh bìa" placeholder button top-right.
