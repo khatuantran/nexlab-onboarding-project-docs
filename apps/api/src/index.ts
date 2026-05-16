@@ -22,6 +22,7 @@ import { createFeatureRepo } from "./repos/featureRepo.js";
 import { createSectionRepo } from "./repos/sectionRepo.js";
 import { createSearchRepo } from "./repos/searchRepo.js";
 import { createUploadRepo } from "./repos/uploadRepo.js";
+import { createUserSkillsRepo } from "./repos/userSkillsRepo.js";
 import { createUserStatsRepo } from "./repos/userStatsRepo.js";
 import { createCloudinaryClient } from "./lib/cloudinary.js";
 import { purgeSessionsForUser } from "./lib/sessionPurge.js";
@@ -38,6 +39,7 @@ const sectionRepo = createSectionRepo(db);
 const searchRepo = createSearchRepo(db);
 const uploadRepo = createUploadRepo(db);
 const userStatsRepo = createUserStatsRepo(db);
+const userSkillsRepo = createUserSkillsRepo(db);
 const cloudinary = createCloudinaryClient(config.CLOUDINARY_URL);
 const cloudinaryFolder = `onboarding-portal/${config.NODE_ENV}`;
 const cloudinaryAvatarsFolder = `${cloudinaryFolder}/avatars`;
@@ -74,6 +76,7 @@ const app = createApp({
   meRouter: createMeRouter({
     userRepo,
     userStatsRepo,
+    userSkillsRepo,
     requireAuth,
     redis,
     cloudinary,

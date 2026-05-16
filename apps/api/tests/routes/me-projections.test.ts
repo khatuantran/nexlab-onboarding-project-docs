@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { createUserSkillsRepo } from "../../src/repos/userSkillsRepo.js";
 import session from "express-session";
 import request from "supertest";
 import { eq, inArray } from "drizzle-orm";
@@ -53,6 +54,7 @@ function buildApp() {
     meRouter: createMeRouter({
       userRepo,
       userStatsRepo,
+      userSkillsRepo: createUserSkillsRepo(db),
       requireAuth,
       redis: fakeRedisFull,
       cloudinary: fakeCloudinary,

@@ -11,11 +11,13 @@ import {
   changePasswordRequestSchema,
   recentProjectsQuerySchema,
   updateMyProfileRequestSchema,
+  updateSkillsRequestSchema,
   type ActivityQuery,
   type AuthUser,
   type ChangePasswordRequest,
   type RecentProjectsQuery,
   type UpdateMyProfileRequest,
+  type UpdateSkillsRequest,
   type UploadMimeType,
 } from "@onboarding/shared";
 import { HttpError } from "../errors.js";
@@ -23,6 +25,7 @@ import { zodValidate } from "../middleware/zodValidate.js";
 import { purgeSessionsForUserExcept } from "../lib/sessionPurge.js";
 import type { CloudinaryClient } from "../lib/cloudinary.js";
 import type { UserRepo, AdminUserRow } from "../repos/userRepo.js";
+import type { UserSkillsRepo } from "../repos/userSkillsRepo.js";
 import type { UserStatsRepo } from "../repos/userStatsRepo.js";
 
 /** US-009 — bcrypt cost matches users.ts admin invite/reset for consistency. */
@@ -33,6 +36,7 @@ const AVATAR_MAX_BYTES = 2 * 1024 * 1024;
 export interface MeRouterDeps {
   userRepo: UserRepo;
   userStatsRepo: UserStatsRepo;
+  userSkillsRepo: UserSkillsRepo;
   requireAuth: RequestHandler;
   redis: Pick<Redis, "scan" | "get" | "del">;
   cloudinary: CloudinaryClient;
@@ -61,7 +65,15 @@ function toAuthUser(row: AdminUserRow): AuthUser {
 }
 
 export function createMeRouter(deps: MeRouterDeps): ExpressRouter {
-  const { userRepo, userStatsRepo, requireAuth, redis, cloudinary, cloudinaryAvatarsFolder } = deps;
+  const {
+    userRepo,
+    userStatsRepo,
+    userSkillsRepo,
+    requireAuth,
+    redis,
+    cloudinary,
+    cloudinaryAvatarsFolder,
+  } = deps;
   const router = Router();
 
   const upload = multer({
@@ -290,6 +302,38 @@ export function createMeRouter(deps: MeRouterDeps): ExpressRouter {
     getRecentProjects,
   );
   router.get("/activity", requireAuth, zodValidate({ query: activityQuerySchema }), getActivity);
+
+  const getSkills: RequestHandler = async (req, res, next) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        next(new HttpError(401, ErrorCode.UNAUTHENTICATED, "Bạn cần đăng nhập"));
+        return;
+      }
+      const data = await userSkillsRepo.getForUser(userId);
+      res.status(200).json({ data });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  const putSkills: RequestHandler = async (req, res, next) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        next(new HttpError(401, ErrorCode.UNAUTHENTICATED, "Bạn cần đăng nhập"));
+        return;
+      }
+      const body = req.body as UpdateSkillsRequest;
+      const data = await userSkillsRepo.replaceAll(userId, body.skills);
+      res.status(200).json({ data });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  router.get("/skills", requireAuth, getSkills);
+  router.put("/skills", requireAuth, zodValidate({ body: updateSkillsRequestSchema }), putSkills);
   router.post(
     "/password",
     requireAuth,
