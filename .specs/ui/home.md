@@ -8,7 +8,18 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 
 - **Screen ID**: `home`
 - **Status**: v2 Workspace shipped (CR-002 / Phase 2-1 `1d76919`); v3 + v3.1 Notion warm shipped (CR-006 pilot `a03f9c4` / `ab92574`); **v4 Dark vivid + glassmorphism pending (CR-006 v4 amend — supersedes v3 / v3.1 Wire-level + ProjectCard sections)**.
-- **Last updated**: 2026-05-16 (v4.1 tightening)
+- **Last updated**: 2026-05-16 (v4.4 ProjectCard header simplification)
+
+## v4.4 ProjectCard header simplification (CR-006 v4.4 — 2026-05-16)
+
+User feedback (screenshot): "bỏ cái phần trăm đi, đem nút 3 chấm lên gốc trên bên phải".
+
+- **Drop ProgressRing column**: header right-hand `ProgressRing` (size 52, white stroke 90%) + centered `{pct}%` overlay + "doc" subscript REMOVED. `ProgressRing` no longer imported in `ProjectCard`.
+- **Admin overflow menu placement**: `ProjectActionsMenu` moves from the category tag-pill row to the dedicated top-right slot (the slot the ring just vacated). Wrapper unchanged: `rounded-md bg-white/15 backdrop-blur-sm` + `stopPropagation` on click/keydown to avoid swallowing the card link.
+- **Live pill survives**: previously the tag-pill row showed _either_ admin menu _or_ Live pill (mutually exclusive). Now Live pill remains in the tag row for everyone; admin gets the menu separately in the top-right.
+- **Section dots row** in body unchanged — still encodes filledSections/totalSections; `pct` const retained because it drives that calculation.
+
+Test impact: `tests/components/ProjectCard.test.tsx` drops ProgressRing svg + `^\d+%$` + "doc" assertions and the "admin hides Live" assertion (the two no longer collide).
 
 ## v4.1 tightening (CR-006 v4.1 — 2026-05-16, refinement after user review)
 

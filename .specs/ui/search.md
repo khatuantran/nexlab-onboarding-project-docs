@@ -9,6 +9,12 @@
 > - **Floating filter bar**: FilterBar wrapped in v4 glassmorphism shell `relative -mt-[28px] px-10` → inner `rounded-[16px] border border-border bg-background p-3 shadow-[0_8px_28px_rgba(0,0,0,0.1)]` overlapping the dark hero (hero `pb-16` for clearance). Scope chip (when `projectSlug` set) renders inside the shell above FilterBar. FilterBar internal `mb-6 ... rounded-xl border bg-muted/40` chrome stripped (host now provides it).
 > - **EntityGroup accents**: each group has a per-entity accent (Projects=orange, Features=purple, Sections=green, Authors=blue, Uploads=rose). Header icon = `size-8 rounded-[10px]` gradient plate with white icon + drop shadow; count pill uses matching tinted bg/text.
 > - **Idle (q empty) state**: was centered text. Now mirrors result-page chrome — full `GradientHero` (purple + blue blobs) + eyebrow + h1 "Tìm trong workspace" + descriptor. Below hero in `max-w-3xl px-10 -mt-[28px]`: floating `TipCard` (rounded-[16px] shadow) + 3-tile entity hint row (Projects orange / Features purple / Sections green).
+>
+> **v4.5 layout (CR-006 v4.5 — 2026-05-16)**: result body switches from single `max-w-5xl` center column to 3-col grid `grid gap-6 px-10 pt-6 lg:grid-cols-[240px_1fr] xl:grid-cols-[240px_1fr_260px]` (fills the empty side rails on wide screens).
+>
+> - **Left rail (lg+)**: sticky `SummaryRail` card — "Tóm tắt" heading + 5 entity rows (Projects/Features/Sections/Authors/Uploads), each row = gradient icon plate (8×8 rounded-[8px], matching EntityGroup accent) + label + count, wrapped in an anchor `<a href="#group-{title}">` for click-to-scroll. Empty groups: opacity-50 + pointer-events-none.
+> - **Right rail (xl+)**: sticky stack of 2 cards — "Mẹo tìm kiếm" (3 bullet tips) and "Phím tắt" (⌘K focus / Esc clear / Enter submit, each with `<kbd>`).
+> - Both rails collapse on narrower breakpoints; center body width is unchanged.
 
 Referenced tokens / icons / components từ [design-system.md](design-system.md). Visual quality bar per [visual-language.md](visual-language.md) charter (CR-002).
 

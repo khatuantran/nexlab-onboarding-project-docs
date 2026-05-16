@@ -8,7 +8,13 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 
 - **Screen ID**: `project-landing`
 - **Status**: Implemented v2 (`8da2aff`); **v4 Dark vivid amend pending (CR-006 v4 — dark gradient hero + 4-col gradient FeatureCard)**.
-- **Last updated**: 2026-05-16 (v4 amend)
+- **Last updated**: 2026-05-16 (v4.4 FeatureCard header simplification + page-level breadcrumb)
+
+## v4.4 FeatureCard header simplification (CR-006 v4.4 — 2026-05-16)
+
+Mirror of [home.md §v4.4](home.md) ProjectCard change so the feature grid header matches: `FeatureCard` drops the ProgressRing 44 (white stroke + pct% overlay) from the gradient header. Admin `FeatureActionsMenu` still lives at `absolute right-2 top-2` (was already there per BUG-004); the slot is now uncontested. `pct` const + `ProgressRing` import removed. Test impact: `tests/pages/ProjectLandingPage.test.tsx` drops `^100%$` / `^40%$` assertions; title + RelativeTime still assert.
+
+Also: page-level `Breadcrumb` (Projects > {project.name}) added at `px-10 pt-4` above the hero — mirrors the FeatureDetailPage breadcrumb pattern. AppHeader BreadcrumbBar removed in the same iteration; this is the in-page replacement.
 
 ## v4 amendments (CR-006 v4 — Dark vivid + glassmorphism) — supersedes v2 hero + FeatureCard sections below
 
