@@ -108,7 +108,7 @@ export function HomePage(): JSX.Element {
         <div className="flex flex-col gap-10 lg:flex-row lg:items-end">
           <div className="flex-1">
             <div className="mb-3.5 flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center rounded-full border border-primary/40 bg-primary/[0.22] px-3.5 py-1 font-ui text-[11px] font-bold uppercase tracking-[0.12em] text-[#FFD092]">
+              <span className="inline-flex items-center rounded-full border border-primary/50 bg-primary/30 px-3.5 py-1 font-ui text-[11px] font-bold uppercase tracking-[0.12em] text-orange-200">
                 ✦ Sprint 14 · Q2 2026
               </span>
               {totalFeatures > 0 ? (

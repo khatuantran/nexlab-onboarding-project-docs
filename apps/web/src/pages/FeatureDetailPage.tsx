@@ -141,7 +141,7 @@ export function FeatureDetailPage(): JSX.Element {
                   status.tone === "success"
                     ? "bg-green-500/25 text-green-200"
                     : status.tone === "primary"
-                      ? "bg-primary/25 text-[#FFD092]"
+                      ? "bg-primary/30 text-orange-200"
                       : "bg-white/15 text-white/80"
                 }`}
               >
