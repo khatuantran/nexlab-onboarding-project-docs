@@ -137,7 +137,7 @@ Multi-entity grouped search + filters (project + feature + section + author + up
 - [T6 + T7 + T8 + T9](stories/US-005/tasks.md#t6--frontend-query-hooks-usesearch-v2--useusers) FilterBar + 4 sub-filters + 5 entity cards + grouped SearchPage — ✅ `a9fbf86`.
 - [T10](stories/US-005/tasks.md#t10--tests--e2e--progress-sync) Playwright us-005 + progress sync — ✅ this commit.
 
-### Post-M2 phase — Real-data backfill (mock replacement) 🟡 _(2026-05-16, Sprint 1 + 2 ✅ shipped)_
+### Post-M2 phase — Real-data backfill (mock replacement) 🟡 _(2026-05-16, Sprint 1 + 2 + 3 ✅ shipped)_
 
 CR-006 v4 UI redesign shipped many surfaces with hardcoded placeholder data because no BE existed yet. Audit (2026-05-16) cataloged 13 mock surfaces; specs landed in `4e5d652` + `ba44036`. Execution sequenced into 5 phases — Phase 1 + 2 are the immediate path; Phase 3-5 are deferred candidates for M3 (pre-pilot) or M4 (post-pilot).
 
@@ -163,16 +163,16 @@ US-001 status flipped `Draft` → `Done`. 5 stale traceability rows (FR-AUTH-001
 
 **Outcome**: Repo / Xem PR buttons clickable across the app. **7 of 13 mock surfaces cleared** (5 from Sprint 1 + 2 from Sprint 2).
 
-#### Phase 3 — P1 batch (after US-011 lands; shared aggregation pattern) — ~15-18h total
+#### Phase 3 — P1 batch (after US-011 lands; shared aggregation pattern) — ✅ shipped 2026-05-16 (Sprint 3)
 
-This batch reuses the SQL aggregation infrastructure from US-011. Best built together so a single repo-pattern refactor covers all 4.
+Backlog stubs promoted to user stories; all aggregations share `userStatsRepo` (sections.updated_by-keyed).
 
-- [BL-011](backlog/BL-011.md) Workspace stats + `filledSectionCount` (HomePage hero tiles real) — ~4h.
-- [BL-003](backlog/BL-003.md) Profile stats aggregation (4-tile card real) — ~3h.
-- [BL-004](backlog/BL-004.md) Recent projects card — ~3h.
-- [BL-005](backlog/BL-005.md) Activity feed (Profile feed + ActivityRail "Xem tất cả") — ~5-6h.
+- [US-014](stories/US-014.md) Workspace stats + per-project `filledSectionCount` — ✅ `71c2570..cd1b066`. HomePage hero 3-tile + real "Đủ doc" filter; `onboardingMedianHours` tile dropped per triage.
+- [US-015](stories/US-015.md) Profile stats (`/me/stats` 4 counts) — ✅ `920a601..f66f79a`.
+- [US-016](stories/US-016.md) Recent projects (`/me/recent-projects?limit=`) — ✅ `920a601..f66f79a`.
+- [US-017](stories/US-017.md) User activity feed (`/me/activity` cursor pagination + ActivityRail right-side drawer) — ✅ `920a601..f66f79a`. Feature-scoped endpoint dropped (≤5 section rows = no pagination needed; drawer reuses already-loaded sections).
 
-**Expected outcome**: HomePage hero, full Profile page, and ActivityRail expand are all truthful. Drops 4 more mock surfaces.
+**Outcome**: HomePage hero, full Profile page, and ActivityRail expand are truthful. **11 of 13 mock surfaces cleared** (5 Sprint 1 + 2 Sprint 2 + 4 Sprint 3).
 
 #### Phase 4 — P2 nice-to-have (isolated, schedule when capacity allows) — ~17-21h total
 

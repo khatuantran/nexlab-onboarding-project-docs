@@ -2,10 +2,10 @@
 
 _Story_: [US-016](../US-016.md). Effort ~2h.
 
-| #   | Title                                                                        | Effort | AC     | Status  |
-| --- | ---------------------------------------------------------------------------- | ------ | ------ | ------- |
-| T1  | Shared `RecentProjectItem` + repo `getRecentProjectsForUser` + route + tests | 1.5h   | 1-4, 6 | pending |
-| T2  | FE `RecentProjectsCard` + tests                                              | 0.5h   | 5      | pending |
+| #   | Title                                                                        | Effort | AC     | Status     |
+| --- | ---------------------------------------------------------------------------- | ------ | ------ | ---------- |
+| T1  | Shared `RecentProjectItem` + repo `getRecentProjectsForUser` + route + tests | 1.5h   | 1-4, 6 | ✅ shipped |
+| T2  | FE `RecentProjectsCard` + tests                                              | 0.5h   | 5      | ✅ shipped |
 
 ## T1 — BE
 

@@ -2,10 +2,10 @@
 
 _Story_: [US-015 — /me/stats](../US-015.md). Effort ~2h.
 
-| #   | Title                                                          | Effort | AC  | Status  |
-| --- | -------------------------------------------------------------- | ------ | --- | ------- |
-| T1  | Shared `MeStats` type + repo `getStatsForUser` + route + tests | 1.5h   | 1-6 | pending |
-| T2  | FE Profile StatsCard reads `useMeStats()` + tests              | 0.5h   | 7   | pending |
+| #   | Title                                                          | Effort | AC  | Status     |
+| --- | -------------------------------------------------------------- | ------ | --- | ---------- |
+| T1  | Shared `MeStats` type + repo `getStatsForUser` + route + tests | 1.5h   | 1-6 | ✅ shipped |
+| T2  | FE Profile StatsCard reads `useMeStats()` + tests              | 0.5h   | 7   | ✅ shipped |
 
 ## T1 — BE
 

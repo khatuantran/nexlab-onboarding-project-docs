@@ -10,11 +10,11 @@ _Last updated_: 2026-05-16
 
 ## Task Summary
 
-| #                                                 | Title                                                                                                | Effort | AC covered | Status  |
-| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ------ | ---------- | ------- |
-| [T1](#t1--be-workspace-stats--filledsectioncount) | Repo aggregation + `GET /workspace/stats` route + `ProjectSummary.filledSectionCount` extend + tests | 2.5h   | AC-1..6    | pending |
-| [T2](#t2--fe-home-3-tile-hero--filter)            | HomePage hero 3-tile + Đủ doc filter rewrite + tests                                                 | 1h     | AC-7..9    | pending |
-| [T3](#t3--shared-types)                           | `WorkspaceStats` shared type; `ProjectSummary` extend                                                | 0.5h   | AC-1, AC-6 | pending |
+| #                                                 | Title                                                                                                | Effort | AC covered | Status     |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ------ | ---------- | ---------- |
+| [T1](#t1--be-workspace-stats--filledsectioncount) | Repo aggregation + `GET /workspace/stats` route + `ProjectSummary.filledSectionCount` extend + tests | 2.5h   | AC-1..6    | ✅ shipped |
+| [T2](#t2--fe-home-3-tile-hero--filter)            | HomePage hero 3-tile + Đủ doc filter rewrite + tests                                                 | 1h     | AC-7..9    | ✅ shipped |
+| [T3](#t3--shared-types)                           | `WorkspaceStats` shared type; `ProjectSummary` extend                                                | 0.5h   | AC-1, AC-6 | ✅ shipped |
 
 ## T3 — Shared types (foundation, do first)
 

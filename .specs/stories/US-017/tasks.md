@@ -2,11 +2,11 @@
 
 _Story_: [US-017](../US-017.md). Effort ~4h.
 
-| #   | Title                                                           | Effort | AC   | Status  |
-| --- | --------------------------------------------------------------- | ------ | ---- | ------- |
-| T1  | Shared `ActivityItem` + `ActivityPage` types + cursor schema    | 0.5h   | 1, 3 | pending |
-| T2  | BE repo `getActivityForUser` + route + cursor + tests           | 2h     | 1-7  | pending |
-| T3  | FE ProfilePage `ActivityFeedCard` + ActivityRail drawer + tests | 1.5h   | 8-9  | pending |
+| #   | Title                                                           | Effort | AC   | Status     |
+| --- | --------------------------------------------------------------- | ------ | ---- | ---------- |
+| T1  | Shared `ActivityItem` + `ActivityPage` types + cursor schema    | 0.5h   | 1, 3 | ✅ shipped |
+| T2  | BE repo `getActivityForUser` + route + cursor + tests           | 2h     | 1-7  | ✅ shipped |
+| T3  | FE ProfilePage `ActivityFeedCard` + ActivityRail drawer + tests | 1.5h   | 8-9  | ✅ shipped |
 
 ## T1 — Shared types
 
