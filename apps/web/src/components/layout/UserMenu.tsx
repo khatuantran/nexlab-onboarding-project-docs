@@ -16,6 +16,13 @@ interface UserMenuProps {
   user: AuthUser;
 }
 
+function getInitials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "??";
+  if (parts.length === 1) return parts[0]!.slice(0, 2).toUpperCase();
+  return (parts[0]![0]! + parts[parts.length - 1]![0]!).toUpperCase();
+}
+
 /**
  * Header trigger = Avatar (initials) + ChevronDown affordance. Dropdown
  * surface mở ra header (displayName + email + role badge) rồi 4 item:
@@ -38,15 +45,41 @@ export function UserMenu({ user }: UserMenuProps): JSX.Element {
     });
   };
 
+  const initials = getInitials(user.displayName);
+  const roleLabel = isAdmin ? "Admin · BA" : "Author";
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="inline-flex items-center gap-2 rounded-full p-1 pr-2 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:bg-accent"
+        className="flex shrink-0 items-center gap-2.5 border-l border-border pl-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         aria-label={`Tài khoản ${user.displayName}`}
         data-testid="current-user"
       >
-        <Avatar name={user.displayName} size="sm" imageUrl={user.avatarUrl} />
-        <ChevronDown className="size-3.5 text-muted-foreground" aria-hidden="true" />
+        {user.avatarUrl ? (
+          <Avatar
+            name={user.displayName}
+            size="sm"
+            imageUrl={user.avatarUrl}
+            className="size-[34px] rounded-[10px]"
+          />
+        ) : (
+          <span
+            aria-hidden="true"
+            className="inline-flex size-[34px] shrink-0 items-center justify-center rounded-[10px] bg-gradient-to-br from-primary to-primary-700 font-ui text-[12px] font-bold text-white shadow-[0_2px_8px_hsl(var(--primary)/0.4)]"
+          >
+            {initials}
+          </span>
+        )}
+        <span className="hidden flex-col items-start leading-none md:flex">
+          <span className="font-ui text-[13px] font-bold text-foreground">{user.displayName}</span>
+          <span className="mt-[3px] font-ui text-[11px] font-medium text-muted-foreground">
+            {roleLabel}
+          </span>
+        </span>
+        <ChevronDown
+          className="size-3.5 shrink-0 text-muted-foreground md:hidden"
+          aria-hidden="true"
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-[16rem]">
         <div className="flex items-center gap-3 px-3 py-3">
