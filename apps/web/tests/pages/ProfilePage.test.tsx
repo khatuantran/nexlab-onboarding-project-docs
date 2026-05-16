@@ -295,5 +295,40 @@ describe("ProfilePage US-015 + US-016 + US-017 — real stats / recent / activit
   });
 });
 
+describe("ProfilePage US-018 — SkillsCard real chips", () => {
+  it("renders real skill chips from /me/skills", async () => {
+    mockMe();
+    server.use(
+      http.get(`${BASE}/me/skills`, () =>
+        HttpResponse.json(
+          {
+            data: [
+              { id: "s-1", label: "SQL", color: "blue", sortOrder: 0 },
+              { id: "s-2", label: "Figma", color: "purple", sortOrder: 1 },
+            ],
+          },
+          { status: 200 },
+        ),
+      ),
+    );
+    renderWithRouter(<ProfilePage />, ["/profile"]);
+    expect(await screen.findByText("SQL")).toBeInTheDocument();
+    expect(await screen.findByText("Figma")).toBeInTheDocument();
+    // The old hardcoded chips are gone.
+    expect(screen.queryByText("Business Analysis")).toBeNull();
+    expect(screen.queryByText("BPMN")).toBeNull();
+  });
+
+  it("empty state: only 'Thêm skill đầu tiên' button visible when API returns []", async () => {
+    mockMe();
+    server.use(
+      http.get(`${BASE}/me/skills`, () => HttpResponse.json({ data: [] }, { status: 200 })),
+    );
+    renderWithRouter(<ProfilePage />, ["/profile"]);
+    expect(await screen.findByRole("button", { name: /thêm skill đầu tiên/i })).toBeInTheDocument();
+    expect(screen.queryByText("Business Analysis")).toBeNull();
+  });
+});
+
 // Quiet down vi unused-import.
 void vi;

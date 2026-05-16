@@ -40,6 +40,8 @@ import { Label } from "@/components/ui/label";
 import { useMe } from "@/queries/auth";
 import { useChangePassword, useUpdateMyProfile, useUploadAvatar } from "@/queries/me";
 import { useMeStats, useMyActivity, useMyRecentProjects } from "@/queries/stats";
+import { useMySkills } from "@/queries/skills";
+import { EditSkillsDialog, SKILL_COLOR_HEX } from "@/components/profile/EditSkillsDialog";
 import { cn } from "@/lib/cn";
 import { Link } from "react-router-dom";
 import { formatRelativeVi } from "@/lib/relativeTime";
@@ -256,17 +258,9 @@ function PersonalInfoCard({ user }: { user: ProfileUser }): JSX.Element {
 
 /* ---------- Skills card ---------- */
 
-const SKILLS = [
-  { t: "Business Analysis", c: "#F07613" },
-  { t: "User Story", c: "#8B5CF6" },
-  { t: "Figma", c: "#F43F5E" },
-  { t: "SQL", c: "#3B82F6" },
-  { t: "BPMN", c: "#10B981" },
-  { t: "Product Thinking", c: "#F59E0B" },
-  { t: "Onboarding Doc", c: "#F07613" },
-];
-
 function SkillsCard(): JSX.Element {
+  const { data } = useMySkills();
+  const skills = data ?? [];
   return (
     <section
       aria-labelledby="skills-title"
@@ -282,23 +276,30 @@ function SkillsCard(): JSX.Element {
         <h3 id="skills-title">Kỹ năng & Tags</h3>
       </span>
       <div className="flex flex-wrap gap-2">
-        {SKILLS.map((s) => (
-          <span
-            key={s.t}
-            className="rounded-full border px-3 py-1 font-ui text-[12px] font-semibold"
-            style={{ background: `${s.c}1F`, borderColor: `${s.c}4D`, color: s.c }}
-          >
-            {s.t}
-          </span>
-        ))}
-        <button
-          type="button"
-          onClick={() => toast("Thêm skill: tính năng v2")}
-          className="inline-flex items-center gap-1.5 rounded-full border-[1.5px] border-dashed border-border bg-transparent px-3 py-1 font-ui text-[12px] font-semibold text-muted-foreground hover:border-primary/40 hover:text-primary"
-        >
-          <Plus className="size-3" aria-hidden="true" />
-          Thêm
-        </button>
+        {skills.map((s) => {
+          const c = SKILL_COLOR_HEX[s.color];
+          return (
+            <span
+              key={s.id ?? s.label}
+              className="rounded-full border px-3 py-1 font-ui text-[12px] font-semibold"
+              style={{ background: `${c}1F`, borderColor: `${c}4D`, color: c }}
+            >
+              {s.label}
+            </span>
+          );
+        })}
+        <EditSkillsDialog
+          skills={skills}
+          trigger={
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 rounded-full border-[1.5px] border-dashed border-border bg-transparent px-3 py-1 font-ui text-[12px] font-semibold text-muted-foreground hover:border-primary/40 hover:text-primary"
+            >
+              <Plus className="size-3" aria-hidden="true" />
+              {skills.length === 0 ? "Thêm skill đầu tiên" : "Sửa skills"}
+            </button>
+          }
+        />
       </div>
     </section>
   );
