@@ -23,13 +23,27 @@ export interface FeaturesRouterDeps {
   requireAdmin: RequestHandler;
 }
 
-function toFeatureResponse(row: Feature): FeatureResponse {
+function toFeatureResponse(
+  row: Feature,
+  contributors: Array<{
+    userId: string;
+    displayName: string;
+    avatarUrl: string | null;
+    lastUpdatedAt: Date;
+  }>,
+): FeatureResponse {
   return {
     id: row.id,
     slug: row.slug,
     title: row.title,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
+    contributors: contributors.map((c) => ({
+      userId: c.userId,
+      displayName: c.displayName,
+      avatarUrl: c.avatarUrl,
+      lastUpdatedAt: c.lastUpdatedAt.toISOString(),
+    })),
   };
 }
 
@@ -59,7 +73,7 @@ export function createFeaturesRouter(deps: FeaturesRouterDeps): ExpressRouter {
         slug: body.slug,
         title: body.title,
       });
-      res.status(201).json({ data: toFeatureResponse(feature) });
+      res.status(201).json({ data: toFeatureResponse(feature, []) });
     } catch (err) {
       if (err instanceof FeatureSlugConflictError) {
         next(
@@ -94,13 +108,8 @@ export function createFeaturesRouter(deps: FeaturesRouterDeps): ExpressRouter {
           updatedByName: row?.updatedByName ?? null,
         };
       });
-      const feature: FeatureResponse = {
-        id: result.feature.id,
-        slug: result.feature.slug,
-        title: result.feature.title,
-        createdAt: result.feature.createdAt.toISOString(),
-        updatedAt: result.feature.updatedAt.toISOString(),
-      };
+      const contributors = await projectRepo.getContributorsForFeature(result.feature.id);
+      const feature = toFeatureResponse(result.feature, contributors);
       res.status(200).json({ data: { feature, sections: ordered } });
     } catch (err) {
       next(err);

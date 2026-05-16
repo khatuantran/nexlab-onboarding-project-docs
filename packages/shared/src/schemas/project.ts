@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { slugSchema } from "./feature.js";
+import { slugSchema, type ContributorSummary } from "./feature.js";
 
 export const createProjectRequestSchema = z.object({
   slug: slugSchema,
@@ -34,4 +34,6 @@ export interface ProjectSummary {
   featureCount: number;
   updatedAt: string;
   createdAt: string;
+  /** US-011 — top 5 contributors by recency, empty when no edits. */
+  contributors: ContributorSummary[];
 }

@@ -94,6 +94,18 @@ describe("GET /projects/:slug", () => {
     expect(feat).toBeDefined();
     expect(feat.filledCount).toBe(5);
     expect(feat.title).toBeTruthy();
+
+    // US-011 — both project + each feature carry a contributors array (may be empty).
+    expect(Array.isArray(res.body.data.project.contributors)).toBe(true);
+    expect(Array.isArray(feat.contributors)).toBe(true);
+    // Seeded feature has section edits by admin (per seed.ts) → at least 1 contributor.
+    if (feat.contributors.length > 0) {
+      const c = feat.contributors[0];
+      expect(c).toHaveProperty("userId");
+      expect(c).toHaveProperty("displayName");
+      expect(c).toHaveProperty("avatarUrl");
+      expect(c).toHaveProperty("lastUpdatedAt");
+    }
   });
 
   it("returns 404 PROJECT_NOT_FOUND for unknown slug", async () => {

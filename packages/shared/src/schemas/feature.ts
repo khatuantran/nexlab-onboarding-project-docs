@@ -41,6 +41,18 @@ export const searchQuerySchema = z.object({
 
 export type SearchQuery = z.infer<typeof searchQuerySchema>;
 
+/**
+ * US-011 — derived per-scope contributor summary (max 5 per response).
+ * Derived from DISTINCT `sections.updated_by` within the scope,
+ * sorted by most-recent edit. No schema change; pure projection.
+ */
+export interface ContributorSummary {
+  userId: string;
+  displayName: string;
+  avatarUrl: string | null;
+  lastUpdatedAt: string;
+}
+
 export interface ProjectResponse {
   id: string;
   slug: string;
@@ -48,6 +60,8 @@ export interface ProjectResponse {
   description: string | null;
   createdAt: string;
   updatedAt: string;
+  /** US-011 — top 5 contributors by recency, empty when no edits. */
+  contributors: ContributorSummary[];
 }
 
 export interface FeatureListItem {
@@ -56,6 +70,8 @@ export interface FeatureListItem {
   title: string;
   filledCount: number;
   updatedAt: string;
+  /** US-011 — top 5 contributors by recency, empty when no edits. */
+  contributors: ContributorSummary[];
 }
 
 export interface SectionResponse {
@@ -72,6 +88,8 @@ export interface FeatureResponse {
   title: string;
   createdAt: string;
   updatedAt: string;
+  /** US-011 — top 5 contributors by recency, empty when no edits. */
+  contributors: ContributorSummary[];
 }
 
 export interface SearchHit {
