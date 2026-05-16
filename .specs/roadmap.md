@@ -176,9 +176,9 @@ Backlog stubs promoted to user stories; all aggregations share `userStatsRepo` (
 
 #### Phase 4 — P2 nice-to-have (isolated, schedule when capacity allows) — ~17-21h total
 
+- [US-018](stories/US-018.md) Profile skills CRUD (promoted from [BL-002](backlog/BL-002.md)) — ✅ shipped 2026-05-16 `37edd6b..f846045`. Migration `0012` + 7-hue palette + cap 12 + replace-all PUT. **Sprint 4a — 12 of 13 mock surfaces cleared.**
 - [BL-006](backlog/BL-006.md) Cover image upload (profile + project) — ~3-4h (US-009 avatar pattern).
 - [BL-007](backlog/BL-007.md) Watch / follow project + feature — ~5h (`watchers` table + 2 toggle endpoints). Foundational for BL-008.
-- [BL-002](backlog/BL-002.md) Profile skills CRUD — ~4-5h (after US-010 ship).
 - [BL-010](backlog/BL-010.md) ProjectTabs Activity / Members / Settings panels — ~6-8h (depends BL-005 + US-011, mostly composition).
 
 #### Phase 5 — P3 large features (defer to M4 post-pilot) — ~25-30h total

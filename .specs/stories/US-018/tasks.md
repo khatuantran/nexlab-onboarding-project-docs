@@ -2,11 +2,11 @@
 
 _Story_: [US-018 — Profile skills CRUD](../US-018.md). Effort ~4-5h.
 
-| #   | Title                                                                                 | Effort | AC       | Status  |
-| --- | ------------------------------------------------------------------------------------- | ------ | -------- | ------- |
-| T1  | Migration 0012 + Drizzle `user_skills` + shared types/schema                          | 0.5h   | prereq   | pending |
-| T2  | BE `userSkillsRepo` + `GET/PUT /me/skills` + tests                                    | 1.5h   | AC-1..8  | pending |
-| T3  | FE `useMySkills`/`useUpdateMySkills` + `EditSkillsDialog` + `SkillsCard` wire + tests | 2.5h   | AC-9..12 | pending |
+| #   | Title                                                                                 | Effort | AC       | Status     |
+| --- | ------------------------------------------------------------------------------------- | ------ | -------- | ---------- |
+| T1  | Migration 0012 + Drizzle `user_skills` + shared types/schema                          | 0.5h   | prereq   | ✅ shipped |
+| T2  | BE `userSkillsRepo` + `GET/PUT /me/skills` + tests                                    | 1.5h   | AC-1..8  | ✅ shipped |
+| T3  | FE `useMySkills`/`useUpdateMySkills` + `EditSkillsDialog` + `SkillsCard` wire + tests | 2.5h   | AC-9..12 | ✅ shipped |
 
 ## T1 — Migration + shared schema
 
