@@ -205,6 +205,39 @@ describe("FeatureDetailPage", () => {
     expect(prLink).toHaveAttribute("target", "_blank");
   });
 
+  it("BUG-005: hero meta line uses text-white/75 (not /45) for dark-mode contrast", async () => {
+    server.use(
+      http.get(`${BASE}/projects/demo/features/login-with-email`, () =>
+        HttpResponse.json(
+          {
+            data: {
+              feature: {
+                id: "f-1",
+                slug: "login-with-email",
+                title: "Login",
+                createdAt: "2026-04-20T10:00:00Z",
+                updatedAt: "2026-04-23T09:00:00Z",
+                contributors: [],
+                prUrl: null,
+              },
+              sections: buildSections(),
+            },
+          },
+          { status: 200 },
+        ),
+      ),
+    );
+
+    renderDetail();
+
+    const metaText = await screen.findByText(/Cập nhật/i);
+    const metaWrapper = metaText.closest("span");
+    expect(metaWrapper).not.toBeNull();
+    const cls = metaWrapper!.className;
+    expect(cls).toContain("text-white/75");
+    expect(cls).not.toContain("text-white/45");
+  });
+
   it("US-013: renders disabled PR button when prUrl null", async () => {
     server.use(
       http.get(`${BASE}/projects/demo/features/login-with-email`, () =>

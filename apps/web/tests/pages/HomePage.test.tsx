@@ -68,6 +68,17 @@ const demo: ProjectSummary = {
 };
 
 describe("HomePage", () => {
+  it("BUG-005: HeroStat label uses text-white/75 (not /50) for dark-mode contrast", async () => {
+    mockMe("author");
+    mockProjects([pilot]);
+    renderHome();
+
+    const label = await screen.findByText(/^Projects$/);
+    const cls = label.className;
+    expect(cls).toContain("text-white/75");
+    expect(cls).not.toContain("text-white/50");
+  });
+
   it("renders v4 dark hero, filter chip group, vivid project cards", async () => {
     mockMe("author");
     mockProjects([pilot, demo]);
