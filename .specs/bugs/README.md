@@ -19,6 +19,7 @@ Related: [CLAUDE.md §When a request comes in](../../CLAUDE.md#when-a-request-co
 | BUG-003 | Uploaded images render broken in production       | 🟠 High   | Fixed  | `db94afc` | [BUG-003.md](BUG-003.md) |
 | BUG-004 | Overflow ⋯ menu đè lên ChevronRight ở ProjectCard | 🟢 Low    | Fixed  | `1adc157` | [BUG-004.md](BUG-004.md) |
 | BUG-005 | Hero secondary text khó đọc trong dark mode       | 🟡 Medium | Fixed  | `a77d254` | [BUG-005.md](BUG-005.md) |
+| BUG-006 | PILOT-style peach chip khó đọc trong dark hero    | 🟢 Low    | Open   | —         | [BUG-006.md](BUG-006.md) |
 
 ---
 
