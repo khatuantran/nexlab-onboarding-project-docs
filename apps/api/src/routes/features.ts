@@ -126,6 +126,7 @@ export function createFeaturesRouter(deps: FeaturesRouterDeps): ExpressRouter {
       const updated = await featureRepo.update(slug, featureSlug, {
         title: body.title,
         slug: body.slug,
+        prUrl: body.prUrl,
       });
       if (!updated) {
         next(new HttpError(404, ErrorCode.FEATURE_NOT_FOUND, "Feature không tồn tại"));

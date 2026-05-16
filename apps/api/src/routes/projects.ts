@@ -152,6 +152,7 @@ export function createProjectsRouter(deps: ProjectsRouterDeps): ExpressRouter {
       const updated = await projectRepo.updateMetadata(slug, {
         name: body.name,
         description: body.description ?? null,
+        repoUrl: body.repoUrl,
       });
       if (!updated) {
         next(new HttpError(404, ErrorCode.PROJECT_NOT_FOUND, "Project không tồn tại"));

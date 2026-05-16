@@ -40,7 +40,7 @@ export interface FeatureRepo {
   update(
     projectSlug: string,
     featureSlug: string,
-    patch: { title?: string; slug?: string },
+    patch: { title?: string; slug?: string; prUrl?: string | null },
   ): Promise<Feature | null>;
 }
 
@@ -118,7 +118,7 @@ export function createFeatureRepo(db: Db): FeatureRepo {
     },
     async update(projectSlug, featureSlug, patch) {
       // Skip update entirely if no fields provided (defensive — Zod refine should catch).
-      if (patch.title === undefined && patch.slug === undefined) {
+      if (patch.title === undefined && patch.slug === undefined && patch.prUrl === undefined) {
         const existing = await db
           .select({ feature: features })
           .from(features)
@@ -139,11 +139,17 @@ export function createFeatureRepo(db: Db): FeatureRepo {
         .from(projects)
         .where(eq(projects.slug, projectSlug));
 
-      const setClause: Partial<{ title: string; slug: string; updatedAt: Date }> = {
+      const setClause: Partial<{
+        title: string;
+        slug: string;
+        prUrl: string | null;
+        updatedAt: Date;
+      }> = {
         updatedAt: new Date(),
       };
       if (patch.title !== undefined) setClause.title = patch.title;
       if (patch.slug !== undefined) setClause.slug = patch.slug;
+      if (patch.prUrl !== undefined) setClause.prUrl = patch.prUrl;
 
       try {
         const rows = await db

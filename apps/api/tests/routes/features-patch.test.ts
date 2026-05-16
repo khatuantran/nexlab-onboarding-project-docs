@@ -203,4 +203,63 @@ describe("PATCH /api/v1/projects/:slug/features/:fSlug (US-012 / T2)", () => {
     expect(res.status).toBe(400);
     expect(res.body.error.code).toBe("VALIDATION_ERROR");
   });
+
+  // US-013 — prUrl PATCH semantics
+  it("US-013 AC-5: PATCH persists prUrl", async () => {
+    const fSlug = `pt-pr-${Date.now()}`;
+    await createFeature(fSlug);
+    const admin = await loginAs("admin@local");
+    const res = await admin
+      .patch(`/api/v1/projects/${projectSlug}/features/${fSlug}`)
+      .send({ prUrl: "https://github.com/foo/bar/pull/42" });
+    expect(res.status).toBe(200);
+    expect(res.body.data.prUrl).toBe("https://github.com/foo/bar/pull/42");
+  });
+
+  it("US-013 AC-6: PATCH null clears prUrl", async () => {
+    const fSlug = `pt-pr-clear-${Date.now()}`;
+    await createFeature(fSlug);
+    const admin = await loginAs("admin@local");
+    await admin
+      .patch(`/api/v1/projects/${projectSlug}/features/${fSlug}`)
+      .send({ prUrl: "https://github.com/foo/bar/pull/9" });
+    const res = await admin
+      .patch(`/api/v1/projects/${projectSlug}/features/${fSlug}`)
+      .send({ prUrl: null });
+    expect(res.status).toBe(200);
+    expect(res.body.data.prUrl).toBeNull();
+  });
+
+  it("US-013 AC-7: PATCH omitting prUrl preserves prior value", async () => {
+    const fSlug = `pt-pr-keep-${Date.now()}`;
+    await createFeature(fSlug);
+    const admin = await loginAs("admin@local");
+    await admin
+      .patch(`/api/v1/projects/${projectSlug}/features/${fSlug}`)
+      .send({ prUrl: "https://github.com/foo/bar/pull/9" });
+    const res = await admin
+      .patch(`/api/v1/projects/${projectSlug}/features/${fSlug}`)
+      .send({ title: "Touched only title" });
+    expect(res.status).toBe(200);
+    expect(res.body.data.prUrl).toBe("https://github.com/foo/bar/pull/9");
+  });
+
+  it("US-013: invalid prUrl format → 400 VALIDATION_ERROR", async () => {
+    const fSlug = `pt-pr-bad-${Date.now()}`;
+    await createFeature(fSlug);
+    const admin = await loginAs("admin@local");
+    const res = await admin
+      .patch(`/api/v1/projects/${projectSlug}/features/${fSlug}`)
+      .send({ prUrl: "not-a-url" });
+    expect(res.status).toBe(400);
+    expect(res.body.error.code).toBe("VALIDATION_ERROR");
+  });
+
+  it("US-013 AC-9: GET /features/:fSlug includes prUrl field (null when unset)", async () => {
+    const fSlug = `pt-pr-shape-${Date.now()}`;
+    await createFeature(fSlug);
+    const admin = await loginAs("admin@local");
+    const res = await admin.get(`/api/v1/projects/${projectSlug}/features/${fSlug}`);
+    expect(res.body.data.feature).toHaveProperty("prUrl", null);
+  });
 });

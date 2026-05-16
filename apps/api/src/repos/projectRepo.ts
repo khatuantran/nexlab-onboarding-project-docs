@@ -39,6 +39,11 @@ export class SlugConflictError extends Error {
 export interface UpdateProjectMetadataInput {
   name: string;
   description?: string | null;
+  /**
+   * US-013 — external Git repo URL.
+   * `undefined` = leave column untouched; `null` = clear; string = update.
+   */
+  repoUrl?: string | null;
 }
 
 /**
@@ -121,13 +126,21 @@ export function createProjectRepo(db: Db): ProjectRepo {
       }
     },
     async updateMetadata(slug, input) {
+      const setClause: Partial<{
+        name: string;
+        description: string | null;
+        repoUrl: string | null;
+        updatedAt: Date;
+      }> = {
+        name: input.name,
+        description: input.description ?? null,
+        updatedAt: new Date(),
+      };
+      // Only touch repo_url when caller explicitly passed it (undefined skips).
+      if (input.repoUrl !== undefined) setClause.repoUrl = input.repoUrl;
       const rows = await db
         .update(projects)
-        .set({
-          name: input.name,
-          description: input.description ?? null,
-          updatedAt: new Date(),
-        })
+        .set(setClause)
         .where(and(eq(projects.slug, slug), isNull(projects.archivedAt)))
         .returning();
       return rows[0] ?? null;

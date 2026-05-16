@@ -132,6 +132,59 @@ describe("PATCH /api/v1/projects/:slug", () => {
     expect(res.status).toBe(400);
     expect(res.body.error.code).toBe("VALIDATION_ERROR");
   });
+
+  // US-013 — repoUrl PATCH semantics
+  it("US-013 AC-1: persists repoUrl on update; response carries new value", async () => {
+    const { agent, slug } = await createProject();
+    const res = await agent
+      .patch(`/api/v1/projects/${slug}`)
+      .send({ name: "Pilot", repoUrl: "https://github.com/foo/bar" });
+    expect(res.status).toBe(200);
+    expect(res.body.data.repoUrl).toBe("https://github.com/foo/bar");
+    const reload = await agent.get(`/api/v1/projects/${slug}`);
+    expect(reload.body.data.project.repoUrl).toBe("https://github.com/foo/bar");
+  });
+
+  it("US-013 AC-2: explicit null clears repoUrl", async () => {
+    const { agent, slug } = await createProject();
+    await agent
+      .patch(`/api/v1/projects/${slug}`)
+      .send({ name: "Pilot", repoUrl: "https://github.com/foo/bar" });
+    const res = await agent
+      .patch(`/api/v1/projects/${slug}`)
+      .send({ name: "Pilot", repoUrl: null });
+    expect(res.status).toBe(200);
+    expect(res.body.data.repoUrl).toBeNull();
+  });
+
+  it("US-013 AC-3: omitting repoUrl key preserves prior value", async () => {
+    const { agent, slug } = await createProject();
+    await agent
+      .patch(`/api/v1/projects/${slug}`)
+      .send({ name: "Pilot", repoUrl: "https://github.com/foo/bar" });
+    const res = await agent.patch(`/api/v1/projects/${slug}`).send({ name: "Pilot v2" });
+    expect(res.status).toBe(200);
+    expect(res.body.data.name).toBe("Pilot v2");
+    expect(res.body.data.repoUrl).toBe("https://github.com/foo/bar");
+  });
+
+  it("US-013 AC-4: rejects invalid repoUrl format with 400", async () => {
+    const { agent, slug } = await createProject();
+    const res = await agent
+      .patch(`/api/v1/projects/${slug}`)
+      .send({ name: "Pilot", repoUrl: "not-a-url" });
+    expect(res.status).toBe(400);
+    expect(res.body.error.code).toBe("VALIDATION_ERROR");
+  });
+
+  it("US-013 AC-8: GET endpoints expose repoUrl field (null for new project)", async () => {
+    const { agent, slug } = await createProject();
+    const detail = await agent.get(`/api/v1/projects/${slug}`);
+    expect(detail.body.data.project).toHaveProperty("repoUrl", null);
+    const list = await agent.get(`/api/v1/projects`);
+    const me = list.body.data.find((p: { slug: string }) => p.slug === slug);
+    expect(me).toHaveProperty("repoUrl", null);
+  });
 });
 
 describe("POST /api/v1/projects/:slug/archive", () => {
