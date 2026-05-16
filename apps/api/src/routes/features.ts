@@ -5,9 +5,11 @@ import {
   SECTION_ORDER,
   createFeatureRequestSchema,
   slugSchema,
+  updateFeatureRequestSchema,
   type CreateFeatureRequest,
   type FeatureResponse,
   type SectionResponse,
+  type UpdateFeatureRequest,
 } from "@onboarding/shared";
 import { HttpError } from "../errors.js";
 import { requireAuthor } from "../middleware/requireAuthor.js";
@@ -116,6 +118,35 @@ export function createFeaturesRouter(deps: FeaturesRouterDeps): ExpressRouter {
     }
   };
 
+  const patch: RequestHandler = async (req, res, next) => {
+    try {
+      const { slug, featureSlug } = req.params as { slug: string; featureSlug: string };
+      const body = req.body as UpdateFeatureRequest;
+      const updated = await featureRepo.update(slug, featureSlug, {
+        title: body.title,
+        slug: body.slug,
+      });
+      if (!updated) {
+        next(new HttpError(404, ErrorCode.FEATURE_NOT_FOUND, "Feature không tồn tại"));
+        return;
+      }
+      const contributors = await projectRepo.getContributorsForFeature(updated.id);
+      res.status(200).json({ data: toFeatureResponse(updated, contributors) });
+    } catch (err) {
+      if (err instanceof FeatureSlugConflictError) {
+        next(
+          new HttpError(
+            409,
+            ErrorCode.FEATURE_SLUG_TAKEN,
+            "Feature slug đã tồn tại trong project này",
+          ),
+        );
+        return;
+      }
+      next(err);
+    }
+  };
+
   const archive: RequestHandler = async (req, res, next) => {
     try {
       const { slug, featureSlug } = req.params as { slug: string; featureSlug: string };
@@ -138,6 +169,13 @@ export function createFeaturesRouter(deps: FeaturesRouterDeps): ExpressRouter {
     create,
   );
   router.get("/:featureSlug", requireAuth, zodValidate({ params: getParams }), get);
+  router.patch(
+    "/:featureSlug",
+    requireAuth,
+    requireAdmin,
+    zodValidate({ params: getParams, body: updateFeatureRequestSchema }),
+    patch,
+  );
   router.post(
     "/:featureSlug/archive",
     requireAuth,
