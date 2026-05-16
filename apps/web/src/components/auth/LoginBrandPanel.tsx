@@ -47,7 +47,7 @@ export function LoginBrandPanel(): JSX.Element {
               nhanh hơn.
             </span>
           </h1>
-          <p className="mt-3.5 max-w-[380px] font-body text-[15px] leading-6 text-white/55">
+          <p className="mt-3.5 max-w-[380px] font-body text-[15px] leading-6 text-white/75">
             Một nơi duy nhất cho nghiệp vụ, flow, business rules, tech notes của mọi feature đang
             chạy.
           </p>
@@ -73,7 +73,7 @@ export function LoginBrandPanel(): JSX.Element {
               </span>
               <div>
                 <div className="font-ui text-[13px] font-bold text-white">{label}</div>
-                <div className="mt-1 font-ui text-[11px] font-medium text-white/45">{sub}</div>
+                <div className="mt-1 font-ui text-[11px] font-medium text-white/75">{sub}</div>
               </div>
             </div>
           ))}

@@ -34,7 +34,7 @@ function HeroStat({ value, label, color, live }: StatProps): JSX.Element {
         {live ? <span aria-hidden="true" className="live-dot size-1.5 rounded-full" /> : null}
         {value}
       </div>
-      <div className="mt-1.5 font-ui text-[11px] font-semibold uppercase tracking-[0.08em] text-white/50">
+      <div className="mt-1.5 font-ui text-[11px] font-semibold uppercase tracking-[0.08em] text-white/75">
         {label}
       </div>
     </div>

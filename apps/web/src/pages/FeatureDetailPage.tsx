@@ -160,12 +160,12 @@ export function FeatureDetailPage(): JSX.Element {
               <span className="inline-flex items-center rounded-full bg-blue-500/25 px-2.5 py-1 font-ui text-[11px] font-bold text-blue-200">
                 v2
               </span>
-              <span className="font-ui text-[12px] font-medium text-white/45">
+              <span className="font-ui text-[12px] font-medium text-white/75">
                 · Cập nhật{" "}
                 <RelativeTime
                   iso={feature.updatedAt}
                   showIcon={false}
-                  className="inline-flex !text-[12px] !text-white/45"
+                  className="inline-flex !text-[12px] !text-white/75"
                 />
                 {lastUpdater.name ? (
                   <>

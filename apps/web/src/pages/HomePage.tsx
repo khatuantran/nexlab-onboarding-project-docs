@@ -49,7 +49,7 @@ function StatTile({ icon: Icon, gradient, value, label }: StatTileProps): JSX.El
       <div className="font-display text-[26px] font-black tracking-[-0.02em] text-white">
         {value}
       </div>
-      <div className="mt-1.5 font-ui text-[11px]/[1.3] font-semibold text-white/50">{label}</div>
+      <div className="mt-1.5 font-ui text-[11px]/[1.3] font-semibold text-white/75">{label}</div>
     </div>
   );
 }
