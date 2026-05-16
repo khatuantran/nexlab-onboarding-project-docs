@@ -4,9 +4,9 @@ _Story_: [US-019 — Cover image upload](../US-019.md). Effort ~4-5h.
 
 | #   | Title                                                                     | Effort | AC        | Status     |
 | --- | ------------------------------------------------------------------------- | ------ | --------- | ---------- |
-| T1  | Migration 0013 + Drizzle schema + shared `coverUrl` field on Auth/Project | 0.5h   | prereq    | 🟡 Planned |
-| T2  | BE `POST /me/cover` + `POST /projects/:slug/cover` + repo updates + tests | 2h     | AC-1..11  | 🟡 Planned |
-| T3  | FE `CoverUploadDialog` + ProfilePage + ProjectHero wire + tests           | 2h     | AC-12..14 | 🟡 Planned |
+| T1  | Migration 0013 + Drizzle schema + shared `coverUrl` field on Auth/Project | 0.5h   | prereq    | ✅ shipped |
+| T2  | BE `POST /me/cover` + `POST /projects/:slug/cover` + repo updates + tests | 2h     | AC-1..11  | ✅ shipped |
+| T3  | FE `CoverUploadDialog` + ProfilePage + ProjectHero wire + tests           | 2h     | AC-12..14 | ✅ shipped |
 
 ## T1 — Migration + shared
 
