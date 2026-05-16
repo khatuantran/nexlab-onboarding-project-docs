@@ -2,6 +2,12 @@
 
 <!-- template: 02-ui-spec-template.md@0.1 -->
 
+> **v4 amend (CR-006 v4 — 2026-05-16)**: Dark vivid hero + floating toolbar per variation-a-users.jsx. Layout rewrites:
+>
+> - Header: full-bleed `GradientHero` (3 blobs rose+purple+blue + dot grid + logo watermark) with eyebrow chip "✦ Quản trị hệ thống" + h1 white "Quản lý / người dùng" gradient text (rose→light) + 4 stat tiles glassmorphism (Tổng users rose / Đang hoạt động green / Authors blue / Admin purple).
+> - Floating toolbar `-mt-22 px-10 rounded-[16px] border bg-background shadow`: search input + divider + role select + status select + divider + InviteUserDialog CTA. Replaces v2 light filter bar.
+> - UsersTable preserved as content body inside `px-10 pt-5`.
+
 ## Screen metadata
 
 - **Screen ID**: `admin-users`
