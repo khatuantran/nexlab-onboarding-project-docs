@@ -54,6 +54,7 @@ Mỗi FR có:
 | [FR-STATS-001](#fr-stats-001--workspace-aggregate-stats)             | Stats   | Workspace stats endpoint + per-project `filledSectionCount` | P1       | US-014                         |
 | [FR-PROFILE-001](#fr-profile-001--per-user-projection-stats--recent) | User    | `/me/stats` + `/me/recent-projects` projections             | P1       | US-015, US-016                 |
 | [FR-ACTIVITY-001](#fr-activity-001--user-activity-feed)              | User    | `/me/activity` cursor-paginated feed of own section edits   | P1       | US-017                         |
+| [FR-PROFILE-002](#fr-profile-002--per-user-skills-crud)              | User    | Per-user skills CRUD (table-backed, 7-color enum, cap 12)   | P2       | US-018                         |
 
 Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 
@@ -506,6 +507,28 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 - Items returned + 1 over-fetch trick: if rows.length > limit, pop last and set `nextCursor = popped.updatedAt`.
 - Empty feed: `{ items: [], nextCursor: null }`.
 - Invalid limit (`< 1` / `> 50` / non-numeric) → 400 `VALIDATION_ERROR`.
+
+---
+
+## FR-PROFILE-002 — Per-user skills CRUD
+
+**Statement (Event-driven + Unwanted):**
+
+- When an authenticated user fetches `GET /api/v1/me/skills`, the system shall return `{ data: SkillItem[] }` (`{ id, label, color, sortOrder }`) sorted by `sort_order` ascending; empty array for users with no skills.
+- When an authenticated user submits `PUT /api/v1/me/skills` with `{ skills: SkillItem[] }`, the system shall replace the caller's entire skill set in a single transaction, assigning `sort_order` from the array order.
+- If the request array length exceeds 12, contains duplicate labels (case-insensitive), contains an empty label, or contains a `color` outside the 7-value enum (`purple|orange|green|blue|rose|amber|primary`), the system shall respond with HTTP 400 `VALIDATION_ERROR` and not write to the database.
+
+**Rationale**: CR-006 v4 `SkillsCard` ships 7 hardcoded chips. Free-text skills with constrained colors give users an identity surface without skill-taxonomy complexity. Separate `user_skills` table (vs JSONB) per 2026-05-16 triage prepares for future skill-search.
+
+**Maps to**: US-018. Personas: any authenticated user.
+
+**Acceptance hints**:
+
+- Schema: `user_skills (id UUID PK, user_id UUID FK CASCADE, label TEXT, color TEXT, sort_order INT, created_at TIMESTAMPTZ)` + unique index `(user_id, lower(label))`.
+- Color enum at Zod boundary (server) + client dropdown.
+- Cap 12 enforced both client (disable Add button) and server (Zod `.max(12)`).
+- Replace-all semantics: PUT with `{ skills: [] }` clears all rows for the caller. Other users' rows untouched.
+- Out of scope: skill autocomplete, endorsements, cross-user view.
 
 ---
 
