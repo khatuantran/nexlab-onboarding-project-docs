@@ -8,7 +8,12 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 
 - **Screen ID**: `project-landing`
 - **Status**: Implemented v2 (`8da2aff`); **v4 Dark vivid amend pending (CR-006 v4 — dark gradient hero + 4-col gradient FeatureCard)**.
-- **Last updated**: 2026-05-16 (v4.7 US-011 real contributors)
+- **Last updated**: 2026-05-16 (US-019 cover image)
+
+## US-019 (2026-05-16) — Project cover image upload
+
+- `ProjectHero` accepts new `coverUrl?: string | null` prop. Khi set, render `<img class="object-cover">` + `bg-gradient-to-b from-black/40 to-black/60` overlay layered inside `GradientHero` (blobs glow giữ nguyên); fallback giữ gradient mặc định khi null.
+- Admin-only `ProjectCoverUploadDialog` (inline) trong cluster actions: `<button>` "Ảnh bìa" → Radix Dialog với file picker 4 MB cap (png/jpg/webp). Submit → `POST /api/v1/projects/:slug/cover` → toast "Đã cập nhật ảnh bìa project" → invalidate `projectKeys.byId(slug)` + `projectKeys.all`. Non-admin không thấy button. Ship `ca6cea8`.
 
 ## v4.7 (US-011, 2026-05-16) — Real contributors on ProjectHero + FeatureCard
 
