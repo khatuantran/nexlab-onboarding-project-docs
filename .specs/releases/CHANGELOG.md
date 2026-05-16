@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-_Last updated: 2026-04-24 · [Keep-a-Changelog](https://keepachangelog.com/en/1.1.0/) format. M1 closed · M2 closed (US-002 + US-003 + US-004 shipped)._
+_Last updated: 2026-05-16 · [Keep-a-Changelog](https://keepachangelog.com/en/1.1.0/) format. M1 closed · M2 closed (US-002 + US-003 + US-004 shipped)._
 
 Running log of user-facing changes. Thêm row dưới `[Unreleased]` khi commit ship feature/fix/change. Khi milestone đạt exit criteria → rename block thành `[Mx]` + release date, start new `[Unreleased]`.
 
@@ -50,6 +50,8 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 - **Fly `uploads_volume` (1 GB SIN) destroyed** ([CR-004](../changes/CR-004.md) Phase 1, 2026-05-14) — stops the $0.26/month volume line. Upload route now writes to the container's ephemeral filesystem (Dockerfile still `mkdir -p /data/uploads`); files survive only until the next machine restart. 3 pre-existing volume files (2.7 MB total) lost — per BUG-003 none of them ever rendered on prod, so production data loss is nil. Phase 2 of CR-004 moves storage to Cloudinary CDN; until then, treat upload feature as "best-effort" on prod. Commits: `1f7d24d` (spec) → `fe28c04` (fly.toml drop `[[mounts]]`) → out-of-band `fly volumes destroy vol_vly2yydkd99pkxm4` → this commit (progress sync).
 
 ### Fixed
+
+- **Hero secondary text khó đọc trong dark mode** ([BUG-005](../bugs/BUG-005.md), 2026-05-16) — User report (screenshot): dòng meta "· Cập nhật ..." trong hero `FeatureDetailPage` mờ tới mức không đọc được ở dark mode. Audit phát hiện pattern lặp 7 vị trí dùng `text-white/45..55` (FeatureDetailPage meta ×2, HomePage / AdminUsersPage / ProjectHero HeroStat label ×3, LoginBrandPanel tagline + recent sub ×2). **Fix**: standardize toàn bộ về `text-white/75` (~9:1 contrast, AAA) — readable trên hero gradient mà vẫn tonally below title (full white bold), preserving v4 typography hierarchy. 2 regression test cases (FeatureDetailPage meta + HomePage HeroStat). 180/180 web tests green. Commits: `bcc17a0` (spec) → `b16196e` (failing tests) → `a77d254` (fix) → this commit (progress sync).
 
 - **Uploaded images render broken in production** ([BUG-003](../bugs/BUG-003.md), 2026-05-14) — Pilot prod (Netlify FE + Fly BE per [CR-003](../changes/CR-003.md)) returned broken-image icons for every markdown body that embedded `![alt](/api/v1/uploads/:id)`. Two-layer cause: (1) relative URL resolved against the Netlify origin → SPA fallback `index.html` instead of binary; (2) `GET /uploads/:id` required `requireAuth`, which cross-origin `<img>` requests cannot reliably satisfy (third-party cookie blocked in Safari + post-2026 Chrome). **Fix**: FE rewrites `/api/v1/uploads/:id` and legacy `/uploads/:id` img src to absolute `${VITE_API_BASE_URL origin}/api/v1/uploads/:id` at sanitize-hook time (zero markdown migration — handles existing DB rows); BE drops `requireAuth` on the read route, falling back to UUIDv4 (~122 bits) as the unguessable token (matches FR-PROJ-001 v1 access model). MIME whitelist + path-traversal guard remain. FR-UPLOAD-001 acceptance hint amended to document public-read contract. Tests: 4 new green (1 BE + 3 FE) — full 144 api + 132 web + 24 shared green. Commits: `ba0645f` (spec) → `0c3b753` (failing tests) → `db94afc` (fix) → this commit (progress sync).
 
