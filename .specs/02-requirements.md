@@ -31,25 +31,26 @@ Mỗi FR có:
 
 ## FR Summary Table
 
-| ID                                                            | Area    | Summary                                                | Priority | Maps to                |
-| ------------------------------------------------------------- | ------- | ------------------------------------------------------ | -------- | ---------------------- |
-| [FR-AUTH-001](#fr-auth-001--emailpassword-auth)               | Auth    | Email + password login/logout, session cookie          | P0       | US-001, US-002, US-003 |
-| [FR-PROJ-001](#fr-proj-001--project-crud-minimal)             | Project | Admin tạo project + liệt kê non-archived               | P0       | US-002, US-004         |
-| [FR-PROJ-002](#fr-proj-002--project-metadata-edit--archive)   | Project | Admin rename metadata + archive soft-delete            | P0       | US-004                 |
-| [FR-FEAT-001](#fr-feat-001--feature-crud-within-project)      | Feature | Tạo / sửa / list / archive feature trong project       | P0       | US-002, US-008         |
-| [FR-FEAT-002](#fr-feat-002--5-section-template)               | Feature | Feature có template cố định 5 section                  | P0       | US-001, US-002, US-003 |
-| [FR-FEAT-003](#fr-feat-003--per-section-multi-author)         | Feature | Multi-author theo từng section                         | P0       | US-002, US-003         |
-| [FR-EMBED-001](#fr-embed-001--external-link-embed)            | Embed   | Paste Jira/Figma/GitHub URL → preview card             | P0       | US-003                 |
-| [FR-SEARCH-001](#fr-search-001--full-text-search)             | Search  | FTS feature theo title + section content               | P0       | US-001                 |
-| [FR-SEARCH-002](#fr-search-002--multi-entity-search)          | Search  | Search grouped: project/feature/section/author/upload  | P1       | US-005                 |
-| [FR-SEARCH-003](#fr-search-003--search-filters)               | Search  | Filter section-type / time / author / status           | P1       | US-005                 |
-| [FR-SEARCH-004](#fr-search-004--query-semantics)              | Search  | Prefix + accent-insensitive + fuzzy match semantics    | P1       | US-006                 |
-| [FR-READ-001](#fr-read-001--project-landing--feature-index)   | Read    | Project landing page có feature index                  | P0       | US-001                 |
-| [FR-UPLOAD-001](#fr-upload-001--image-upload-for-screenshots) | Upload  | Upload image file → volume, trả stable URL             | P0       | US-003                 |
-| [FR-USER-001](#fr-user-001--user-list-endpoint)               | User    | List user (read) cho author filter dropdown            | P1       | US-005, US-007         |
-| [FR-USER-002](#fr-user-002--admin-user-lifecycle)             | User    | Admin invite / edit role / archive / reset password    | P1       | US-007                 |
-| [FR-USER-003](#fr-user-003--self-service-profile-management)  | User    | View / edit displayName / change password / avatar     | P1       | US-009, US-010         |
-| [FR-PROJ-003](#fr-proj-003--contributors-derivation)          | Project | Derive top contributors per project/feature from edits | P1       | US-011                 |
+| ID                                                            | Area    | Summary                                                   | Priority | Maps to                        |
+| ------------------------------------------------------------- | ------- | --------------------------------------------------------- | -------- | ------------------------------ |
+| [FR-AUTH-001](#fr-auth-001--emailpassword-auth)               | Auth    | Email + password login/logout, session cookie             | P0       | US-001, US-002, US-003         |
+| [FR-PROJ-001](#fr-proj-001--project-crud-minimal)             | Project | Admin tạo project + liệt kê non-archived                  | P0       | US-002, US-004                 |
+| [FR-PROJ-002](#fr-proj-002--project-metadata-edit--archive)   | Project | Admin rename metadata + archive soft-delete               | P0       | US-004, US-013                 |
+| [FR-FEAT-001](#fr-feat-001--feature-crud-within-project)      | Feature | Tạo / sửa / list / archive feature trong project          | P0       | US-002, US-008, US-012, US-013 |
+| [FR-FEAT-002](#fr-feat-002--5-section-template)               | Feature | Feature có template cố định 5 section                     | P0       | US-001, US-002, US-003         |
+| [FR-FEAT-003](#fr-feat-003--per-section-multi-author)         | Feature | Multi-author theo từng section                            | P0       | US-002, US-003                 |
+| [FR-EMBED-001](#fr-embed-001--external-link-embed)            | Embed   | Paste Jira/Figma/GitHub URL → preview card                | P0       | US-003                         |
+| [FR-SEARCH-001](#fr-search-001--full-text-search)             | Search  | FTS feature theo title + section content                  | P0       | US-001                         |
+| [FR-SEARCH-002](#fr-search-002--multi-entity-search)          | Search  | Search grouped: project/feature/section/author/upload     | P1       | US-005                         |
+| [FR-SEARCH-003](#fr-search-003--search-filters)               | Search  | Filter section-type / time / author / status              | P1       | US-005                         |
+| [FR-SEARCH-004](#fr-search-004--query-semantics)              | Search  | Prefix + accent-insensitive + fuzzy match semantics       | P1       | US-006                         |
+| [FR-READ-001](#fr-read-001--project-landing--feature-index)   | Read    | Project landing page có feature index                     | P0       | US-001                         |
+| [FR-UPLOAD-001](#fr-upload-001--image-upload-for-screenshots) | Upload  | Upload image file → volume, trả stable URL                | P0       | US-003                         |
+| [FR-USER-001](#fr-user-001--user-list-endpoint)               | User    | List user (read) cho author filter dropdown               | P1       | US-005, US-007                 |
+| [FR-USER-002](#fr-user-002--admin-user-lifecycle)             | User    | Admin invite / edit role / archive / reset password       | P1       | US-007                         |
+| [FR-USER-003](#fr-user-003--self-service-profile-management)  | User    | View / edit displayName / change password / avatar        | P1       | US-009, US-010                 |
+| [FR-PROJ-003](#fr-proj-003--contributors-derivation)          | Project | Derive top contributors per project/feature from edits    | P1       | US-011                         |
+| [FR-LINK-001](#fr-link-001--external-repo--pr-url-linking)    | Project | Project repoUrl + Feature prUrl (nullable, click-through) | P1       | US-013                         |
 
 Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 
@@ -126,6 +127,7 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
   - Direct URL `/projects/:slug` return 404 `PROJECT_NOT_FOUND` (không leak tồn tại).
   - Search `GET /search` skip archived projects trong scope.
 - Hard delete + recovery defer v2.
+- **US-013 amend (2026-05-16)**: PATCH body có thể nhận `repoUrl?: string | null` (xem FR-LINK-001). Missing key = giữ; explicit `null` = clear; string = update. Validation: regex `/^https?:\/\//` + max 500 chars.
 
 ---
 
@@ -155,6 +157,8 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
   - Direct URL `/projects/:slug/features/:fSlug` return 404 `FEATURE_NOT_FOUND`.
   - Search v2 (`GET /search`) phase 1 vẫn match archived feature — click qua sẽ 404, defer filter as known limitation.
 - Hard delete + recovery defer v2.
+- **US-012 amend (2026-05-16)**: `PATCH /api/v1/projects/:slug/features/:featureSlug` admin-only nhận `{ title?, slug? }` (≥ 1 key). Conflict slug trong project → 409 `FEATURE_SLUG_TAKEN`. Slug rename = bookmark cũ chết (no redirect v1).
+- **US-013 amend (2026-05-16)**: PATCH body có thể nhận `prUrl?: string | null` (xem FR-LINK-001).
 
 ---
 
@@ -412,6 +416,29 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 - AvatarStack on FE shows up to 3 avatars + "+N" overflow when `contributors.length > 3`.
 - No new endpoint; existing read endpoints augment their response shape (backward-compatible additive field).
 - No mutation; contributors are derived projection only. To "add a contributor" a user must edit a section.
+
+---
+
+## FR-LINK-001 — External repo + PR URL linking
+
+**Statement (Event-driven + Optional + Unwanted):**
+
+- When an authenticated user with role `admin` submits a project edit request containing `repoUrl`, the system shall persist the value (or clear it on explicit `null`) and surface it on subsequent project read responses.
+- When an authenticated user with role `admin` submits a feature edit request containing `prUrl`, the system shall persist the value (or clear it on explicit `null`) and surface it on subsequent feature read responses.
+- If either URL fails the format check (regex `^https?:\/\/` + max 500 chars), the system shall respond with HTTP 400 `VALIDATION_ERROR` identifying the offending field.
+- Both fields are nullable; absence from PATCH body = leave untouched; explicit `null` = clear.
+
+**Rationale**: CR-006 v4 ships "Repo" (project hero) + "Xem PR" (feature detail) buttons wired to placeholder toast. Pure URL-store (no GitHub API) gives users click-through to existing tools while keeping schema simple — 2 nullable text columns, no OAuth, no rate limits. v2 may layer GitHub API enrichment on top.
+
+**Maps to**: US-013 (promoted from BL-001). Personas: P1 (Minh clicks Repo to read code), P2 (Lan paste PR link), P3 (Hùng admin sets URLs).
+
+**Acceptance hints**:
+
+- Schema: migration `0011` adds `projects.repo_url TEXT` + `features.pr_url TEXT`. Both nullable.
+- Validation: accept any `http(s)` domain (user triage 2026-05-16: "Bất kỳ http(s) URL"). No allowlist.
+- FE: button renders as `<a href={url} target="_blank" rel="noopener noreferrer">` when URL set; disabled `<button>` with tooltip "Chưa link repo / PR" when null. No layout shift.
+- Response shape: `repoUrl` / `prUrl` appear in `ProjectResponse`, `ProjectSummary`, `FeatureResponse`, `FeatureListItem`.
+- Out of scope: domain whitelist, GitHub API fetch, per-section PR links, branch/commit links.
 
 ---
 
