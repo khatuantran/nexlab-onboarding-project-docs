@@ -24,6 +24,7 @@ function toAuthUser(u: User): AuthUser {
     department: u.department ?? null,
     location: u.location ?? null,
     bio: u.bio ?? null,
+    coverUrl: u.coverUrl ?? null,
   };
 }
 

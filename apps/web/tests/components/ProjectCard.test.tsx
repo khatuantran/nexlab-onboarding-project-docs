@@ -17,6 +17,7 @@ const project: ProjectSummary = {
   contributors: [],
   repoUrl: null,
   filledSectionCount: 0,
+  coverUrl: null,
 };
 
 function mockMe(role: "admin" | "author") {

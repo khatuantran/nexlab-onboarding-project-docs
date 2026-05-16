@@ -61,6 +61,7 @@ function toAuthUser(row: AdminUserRow): AuthUser {
     department: row.department,
     location: row.location,
     bio: row.bio,
+    coverUrl: row.coverUrl ?? null,
   };
 }
 

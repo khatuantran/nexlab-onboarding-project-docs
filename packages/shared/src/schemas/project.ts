@@ -42,4 +42,6 @@ export interface ProjectSummary {
   repoUrl: string | null;
   /** US-014 — sum of non-empty sections across this project's non-archived features. */
   filledSectionCount: number;
+  /** US-019 — Cloudinary secure_url cho cover image. null = gradient fallback. */
+  coverUrl: string | null;
 }

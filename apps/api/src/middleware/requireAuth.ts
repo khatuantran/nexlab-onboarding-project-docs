@@ -59,6 +59,7 @@ export function createRequireAuth(userRepo: UserRepo): RequestHandler {
         department: user.department ?? null,
         location: user.location ?? null,
         bio: user.bio ?? null,
+        coverUrl: user.coverUrl ?? null,
       };
       next();
     } catch (err) {

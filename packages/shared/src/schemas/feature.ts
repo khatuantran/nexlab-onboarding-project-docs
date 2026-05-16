@@ -92,6 +92,8 @@ export interface ProjectResponse {
   contributors: ContributorSummary[];
   /** US-013 — external Git repo URL, null when not set. */
   repoUrl: string | null;
+  /** US-019 — Cloudinary secure_url cho cover image. null = gradient fallback. */
+  coverUrl: string | null;
 }
 
 export interface FeatureListItem {

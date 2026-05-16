@@ -38,4 +38,6 @@ export interface AuthUser {
   department: string | null;
   location: string | null;
   bio: string | null;
+  // US-019 — Cloudinary secure_url cho cover image. null = gradient fallback.
+  coverUrl: string | null;
 }

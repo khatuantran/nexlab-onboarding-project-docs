@@ -42,6 +42,8 @@ export interface AdminUserRow extends UserListItem {
   department: string | null;
   location: string | null;
   bio: string | null;
+  /** US-019 — Cloudinary cover URL or null. */
+  coverUrl: string | null;
 }
 
 export interface CreateUserInput {
@@ -75,6 +77,8 @@ export interface UserRepo {
   countActiveAdmins(): Promise<number>;
   /** US-009 — update only the avatar_url column. */
   updateAvatarUrl(id: string, avatarUrl: string | null): Promise<AdminUserRow | null>;
+  /** US-019 — update only the cover_url column. */
+  updateCoverUrl(id: string, coverUrl: string | null): Promise<AdminUserRow | null>;
 }
 
 const LIST_LIMIT = 100;
@@ -93,6 +97,7 @@ function toAdminRow(r: User): AdminUserRow {
     department: r.department ?? null,
     location: r.location ?? null,
     bio: r.bio ?? null,
+    coverUrl: r.coverUrl ?? null,
   };
 }
 
@@ -209,6 +214,11 @@ export function createUserRepo(db: Db): UserRepo {
     },
     async updateAvatarUrl(id, avatarUrl) {
       const rows = await db.update(users).set({ avatarUrl }).where(eq(users.id, id)).returning();
+      const r = rows[0];
+      return r ? toAdminRow(r) : null;
+    },
+    async updateCoverUrl(id, coverUrl) {
+      const rows = await db.update(users).set({ coverUrl }).where(eq(users.id, id)).returning();
       const r = rows[0];
       return r ? toAdminRow(r) : null;
     },

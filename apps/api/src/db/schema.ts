@@ -50,6 +50,8 @@ export const users = pgTable("users", {
   department: text("department"),
   location: text("location"),
   bio: text("bio"),
+  // US-019 / T1 — Cloudinary secure_url của ảnh bìa profile. NULL = fallback gradient.
+  coverUrl: text("cover_url"),
 });
 
 export const projects = pgTable("projects", {
@@ -67,6 +69,8 @@ export const projects = pgTable("projects", {
   archivedAt: timestamp("archived_at", { withTimezone: true }),
   // US-013 / T1 — external repo URL (FR-LINK-001). Nullable; NULL = "Repo" button disabled in FE.
   repoUrl: text("repo_url"),
+  // US-019 / T1 — Cloudinary secure_url của ảnh bìa project. NULL = fallback gradient hero.
+  coverUrl: text("cover_url"),
 });
 
 export const features = pgTable(

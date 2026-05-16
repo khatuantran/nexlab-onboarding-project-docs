@@ -52,6 +52,7 @@ const pilot: ProjectSummary = {
   contributors: [],
   repoUrl: null,
   filledSectionCount: 0,
+  coverUrl: null,
 };
 
 const demo: ProjectSummary = {
@@ -65,6 +66,7 @@ const demo: ProjectSummary = {
   contributors: [],
   repoUrl: null,
   filledSectionCount: 0,
+  coverUrl: null,
 };
 
 describe("HomePage", () => {

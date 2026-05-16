@@ -67,6 +67,7 @@ function toProjectSummary(row: ProjectSummaryRow, contributors: ContributorRow[]
     contributors: contributors.map(toContributorSummary),
     repoUrl: row.repoUrl ?? null,
     filledSectionCount: Number(row.filledSectionCount ?? 0),
+    coverUrl: row.coverUrl ?? null,
   };
 }
 
@@ -80,6 +81,7 @@ function toProjectResponse(row: Project, contributors: ContributorRow[]): Projec
     updatedAt: row.updatedAt.toISOString(),
     contributors: contributors.map(toContributorSummary),
     repoUrl: row.repoUrl ?? null,
+    coverUrl: row.coverUrl ?? null,
   };
 }
 

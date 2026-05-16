@@ -21,6 +21,8 @@ export interface ProjectSummaryRow {
   updatedAt: Date;
   repoUrl: string | null;
   filledSectionCount: number;
+  /** US-019 — Cloudinary cover URL or null. */
+  coverUrl: string | null;
 }
 
 /**
@@ -75,6 +77,8 @@ export interface ProjectRepo {
   create(input: CreateProjectInput): Promise<Project>;
   updateMetadata(slug: string, input: UpdateProjectMetadataInput): Promise<Project | null>;
   archive(slug: string): Promise<boolean>;
+  /** US-019 — update only the cover_url column. Returns null when slug missing. */
+  updateCoverUrl(slug: string, coverUrl: string | null): Promise<Project | null>;
   /** US-011 — top contributors for a single project (archived features excluded). */
   getContributorsForProject(projectId: string, limit?: number): Promise<ContributorRow[]>;
   /** US-011 — top contributors for a single feature. */
@@ -108,6 +112,7 @@ export function createProjectRepo(db: Db): ProjectRepo {
           createdAt: projects.createdAt,
           updatedAt: projects.updatedAt,
           repoUrl: projects.repoUrl,
+          coverUrl: projects.coverUrl,
           featureCount: sql<number>`COUNT(DISTINCT ${features.id})::int`,
           filledSectionCount: sql<number>`COUNT(${sections.id}) FILTER (WHERE length(${sections.body}) > 0)::int`,
         })
@@ -215,6 +220,14 @@ export function createProjectRepo(db: Db): ProjectRepo {
         .where(eq(projects.slug, slug))
         .returning({ id: projects.id });
       return rows.length > 0;
+    },
+    async updateCoverUrl(slug, coverUrl) {
+      const rows = await db
+        .update(projects)
+        .set({ coverUrl, updatedAt: new Date() })
+        .where(and(eq(projects.slug, slug), isNull(projects.archivedAt)))
+        .returning();
+      return rows[0] ?? null;
     },
     async listFeatures(projectId) {
       // Feature list + count of sections with non-empty body (filledCount).
