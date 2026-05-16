@@ -54,6 +54,14 @@
     --sage-bg: 145 30% 94%;
     --sage-text: 145 30% 35%;
 
+    /* Project tile palette (CR-006 v3.1) — 6 named tile bg colors, white text */
+    --tile-orange: 27 88% 51%;
+    --tile-navy: 223 50% 40%;
+    --tile-green: 145 45% 38%;
+    --tile-amber: 38 80% 50%;
+    --tile-peach: 25 70% 60%;
+    --tile-rust: 12 60% 40%;
+
     /* Muted */
     --muted: 0 0% 95%;
     --muted-foreground: 0 0% 55%;
@@ -122,6 +130,14 @@
     --sage-foreground: 0 0% 15%;
     --sage-bg: 145 20% 22%;
     --sage-text: 145 30% 70%;
+
+    /* Project tile palette (CR-006 v3.1) — dark variants slightly lighter */
+    --tile-orange: 28 89% 58%;
+    --tile-navy: 223 55% 50%;
+    --tile-green: 145 45% 48%;
+    --tile-amber: 38 80% 58%;
+    --tile-peach: 25 70% 65%;
+    --tile-rust: 12 60% 50%;
 
     /* Muted */
     --muted: 0 0% 22%;

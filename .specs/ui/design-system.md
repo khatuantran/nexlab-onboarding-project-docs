@@ -61,6 +61,19 @@ Primary ramp 50-900 exposed cho tinted surfaces (Tailwind `bg-primary-100` etc.)
 | 800  | `17 73% 34%` | rgb(149, 59, 23)       |
 | 900  | `15 69% 28%` | rgb(120, 51, 22)       |
 
+**Project tile palette (v3.1 — CR-006)** — 6 named tile colors cho ProjectCard category identity. Saturated, white-foreground. NOT a generic accent palette — only used by ProjectCard tile bg + CircleDecor:
+
+| Token           | Light HSL     | Dark HSL      | Dùng ở                                   |
+| --------------- | ------------- | ------------- | ---------------------------------------- |
+| `--tile-orange` | `27 88% 51%`  | `28 89% 58%`  | ProjectCard tile bg — category "E2E"     |
+| `--tile-navy`   | `223 50% 40%` | `223 55% 50%` | ProjectCard tile bg — category "Backend" |
+| `--tile-green`  | `145 45% 38%` | `145 45% 48%` | ProjectCard tile bg — category "Search"  |
+| `--tile-amber`  | `38 80% 50%`  | `38 80% 58%`  | ProjectCard tile bg — category "Payment" |
+| `--tile-peach`  | `25 70% 60%`  | `25 70% 65%`  | ProjectCard tile bg — category "CRM"     |
+| `--tile-rust`   | `12 60% 40%`  | `12 60% 50%`  | ProjectCard tile bg — category "Admin"   |
+
+All tiles use white foreground (`text-white`); no separate foreground token. Category hash → tone is deterministic per `project.slug`. Pool of 6 fixed category labels (E2E / Backend / Search / Payment / CRM / Admin) — v1 placeholder until BE category field exists.
+
 **Warm canvas + Sage (v3 — CR-006)** — warm page bg variant + sage secondary accent for graphics-rich Notion direction:
 
 | Token               | Light HSL     | Dark HSL      | Dùng ở                                                        |

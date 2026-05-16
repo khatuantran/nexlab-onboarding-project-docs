@@ -46,6 +46,14 @@ export default {
           bg: "hsl(var(--sage-bg))",
           text: "hsl(var(--sage-text))",
         },
+        tile: {
+          orange: "hsl(var(--tile-orange))",
+          navy: "hsl(var(--tile-navy))",
+          green: "hsl(var(--tile-green))",
+          amber: "hsl(var(--tile-amber))",
+          peach: "hsl(var(--tile-peach))",
+          rust: "hsl(var(--tile-rust))",
+        },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
