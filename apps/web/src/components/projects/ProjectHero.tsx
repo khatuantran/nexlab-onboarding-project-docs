@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { formatRelativeVi } from "@/lib/relativeTime";
-import { DecorativeMark } from "@/components/common/DecorativeMark";
-import { MiniStat } from "@/components/common/MiniStat";
+import { AvatarStack } from "@/components/common/AvatarStack";
+import { GradientHero } from "@/components/patterns/GradientHero";
 
 interface ProjectHeroProps {
   name: string;
@@ -15,11 +15,34 @@ interface ProjectHeroProps {
   actions?: ReactNode;
 }
 
+interface StatProps {
+  value: string | number;
+  label: string;
+  color: string;
+  live?: boolean;
+}
+
+function HeroStat({ value, label, color, live }: StatProps): JSX.Element {
+  return (
+    <div>
+      <div
+        className="inline-flex items-center gap-1.5 font-display text-[28px] font-black leading-none tracking-[-0.02em]"
+        style={{ color }}
+      >
+        {live ? <span aria-hidden="true" className="live-dot size-1.5 rounded-full" /> : null}
+        {value}
+      </div>
+      <div className="mt-1.5 font-ui text-[11px] font-semibold uppercase tracking-[0.08em] text-white/50">
+        {label}
+      </div>
+    </div>
+  );
+}
+
 /**
- * Project landing hero panel per project-landing.md (CR-002 Phase 1B-2).
- * Gradient warm-orange backdrop + decorative NxLogo mark + 4 inline
- * mini-stats (Features / Sections progress / Đang chỉnh placeholder /
- * Cập nhật cuối). Hardcoded badges (Pilot / Đang chạy / Sprint 14) v1.
+ * Project landing hero v4 (CR-006 v4) — dark vivid GradientHero with
+ * compact tag/Live chip row + h1 + 4 colored inline stats + actions
+ * row + AvatarStack. Replaces v2 warm gradient panel + MiniStat row.
  */
 export function ProjectHero({
   name,
@@ -34,54 +57,58 @@ export function ProjectHero({
 }: ProjectHeroProps): JSX.Element {
   const pct = totalSections > 0 ? Math.round((filledSections / totalSections) * 100) : 0;
   const updatedRel = lastUpdatedAt ? formatRelativeVi(lastUpdatedAt) : "—";
+  void description;
+  void lastUpdatedBy;
 
   return (
-    <section className="relative mb-7 overflow-hidden rounded-2xl border border-primary-100 bg-gradient-to-br from-[#FFF8EE] via-[#FDEED7] to-[#FFE9D0] p-7 dark:border-primary-200/50 dark:from-primary-100/45 dark:via-primary-50/55 dark:to-primary-100/35">
-      <DecorativeMark size={320} className="absolute -right-12 -top-12 hidden md:block" />
+    <GradientHero
+      showWatermark
+      gridOverlay
+      className="mx-10 mb-7 mt-3 rounded-[22px]"
+      blobs={[
+        { color: "rgba(240,118,19,0.4)", size: 300, pos: { top: -50, left: -30 } },
+        { color: "rgba(139,92,246,0.35)", size: 260, pos: { bottom: -40, right: 120 } },
+      ]}
+    >
+      <div className="flex flex-col gap-6 p-[32px_36px_30px] sm:flex-row sm:items-start">
+        <div className="flex-1">
+          {/* Tag + Live chips */}
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center rounded-full border border-primary/50 bg-primary/25 px-3 py-1 font-ui text-[11px] font-bold uppercase tracking-[0.1em] text-[#FFD092]">
+              Pilot
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-green-500/40 bg-green-500/20 px-3 py-1 font-ui text-[11px] font-semibold text-green-200">
+              <span
+                aria-hidden="true"
+                className="size-1.5 animate-pulse rounded-full bg-green-300"
+              />
+              Đang chạy · Sprint 14
+            </span>
+          </div>
 
-      <div className="relative">
-        {/* Badges row */}
-        <div className="mb-2.5 flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-0.5 font-ui text-[11px] font-bold uppercase tracking-wide text-primary">
-            <span aria-hidden="true" className="size-1.5 rounded-full bg-primary" />
-            Pilot
-          </span>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-0.5 font-ui text-[11px] font-bold uppercase tracking-wide text-success">
-            <span aria-hidden="true" className="size-1.5 rounded-full bg-success animate-pulse" />
-            Đang chạy
-          </span>
-          <span className="font-ui text-xs text-muted-foreground">· Sprint 14 · Catalog</span>
+          <h1 className="font-display text-[32px] font-black leading-[38px] tracking-[-0.025em] text-white sm:text-[38px] sm:leading-[44px]">
+            {name}
+          </h1>
+
+          {/* 4 inline stats */}
+          <div className="mt-5 flex flex-wrap gap-8">
+            <HeroStat value={featureCount} label="Features" color="#FFD092" />
+            <HeroStat
+              value={`${doneFeatureCount}/${featureCount}`}
+              label="Đủ doc"
+              color="#6EE7B7"
+            />
+            <HeroStat value={pct + "%"} label="Tiến độ" color="#93C5FD" live />
+            <HeroStat value={updatedRel} label="Cập nhật" color="#C4B5FD" />
+          </div>
         </div>
 
-        {/* h1 + subtitle */}
-        <h1 className="font-display text-[32px] leading-[38px] font-bold tracking-[-0.02em] text-foreground">
-          {name}
-        </h1>
-        <p className="mt-2 max-w-2xl font-body text-sm leading-relaxed text-foreground/85 dark:text-foreground/95">
-          {description ?? "Chưa có mô tả · BA và dev sẽ bổ sung context project."} BA:{" "}
-          <strong>Trí Minh</strong> · Tech lead: <strong>Ngọc Linh</strong>.
-        </p>
-
-        {/* Mini-stats row */}
-        <div className="mt-6 flex flex-wrap gap-7">
-          <MiniStat label="FEATURES" value={featureCount} sub={`${doneFeatureCount} đã đủ doc`} />
-          <MiniStat
-            label="SECTIONS HOÀN THÀNH"
-            value={`${filledSections}/${totalSections}`}
-            sub={`${pct}% tổng tiến độ`}
-            tone="primary"
-          />
-          <MiniStat label="ĐANG CHỈNH" value="—" sub="v2 — đang phát triển" />
-          <MiniStat
-            label="CẬP NHẬT CUỐI"
-            value={updatedRel}
-            sub={lastUpdatedBy ? `· @${lastUpdatedBy}` : "· chưa có hoạt động"}
-          />
+        {/* Actions cluster */}
+        <div className="flex flex-col items-end gap-3">
+          {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}
+          <AvatarStack names={["TM", "NL", "PT", "HD"]} size="sm" />
         </div>
-
-        {/* Actions */}
-        {actions ? <div className="mt-7 flex flex-wrap items-center gap-2">{actions}</div> : null}
       </div>
-    </section>
+    </GradientHero>
   );
 }

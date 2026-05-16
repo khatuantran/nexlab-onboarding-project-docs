@@ -1,11 +1,9 @@
-import { ChevronRight, FileText } from "lucide-react";
+import { Check, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { FeatureListItem } from "@onboarding/shared";
-import { cn } from "@/lib/cn";
 import { AvatarStack } from "@/components/common/AvatarStack";
-import { ProgressBar } from "@/components/common/ProgressBar";
 import { RelativeTime } from "@/components/common/RelativeTime";
-import { SectionDots } from "@/components/common/SectionDots";
+import { ProgressRing } from "@/components/patterns/ProgressRing";
 import { FeatureActionsMenu } from "@/components/features/FeatureActionsMenu";
 import { useMe } from "@/queries/auth";
 
@@ -22,17 +20,14 @@ const STATUS_LABEL: Record<Status, string> = {
   draft: "Draft",
 };
 
-const STATUS_PLATE: Record<Status, string> = {
-  done: "bg-success/10 text-success",
-  active: "bg-primary/10 text-primary",
-  draft: "bg-muted text-muted-foreground",
-};
-
-const STATUS_BADGE: Record<Status, string> = {
-  done: "bg-success/15 text-success",
-  active: "bg-primary/15 text-primary",
-  draft: "bg-muted text-muted-foreground",
-};
+const GRADIENTS = [
+  "bg-gradient-to-br from-primary-700 to-primary",
+  "bg-gradient-to-br from-green-700 to-green-500",
+  "bg-gradient-to-br from-purple-700 to-purple-500",
+  "bg-gradient-to-br from-amber-700 to-amber-500",
+  "bg-gradient-to-br from-blue-700 to-blue-500",
+  "bg-gradient-to-br from-rose-700 to-rose-500",
+];
 
 function deriveStatus(filled: number): Status {
   if (filled >= 5) return "done";
@@ -40,11 +35,17 @@ function deriveStatus(filled: number): Status {
   return "draft";
 }
 
+function hashSlug(slug: string): number {
+  let h = 0;
+  for (let i = 0; i < slug.length; i++) h = (h * 31 + slug.charCodeAt(i)) >>> 0;
+  return h;
+}
+
 /**
- * Project landing feature card per project-landing.md (CR-002 Phase 1B-2).
- * Icon plate (status-tinted) + title + status badge + RelativeTime +
- * progress block + footer (avatar stack + section dots).
- * Contributors hardcoded ["NL", "PT"] placeholder until BE exposes editors.
+ * Feature card v4 (CR-006 v4) — vivid gradient header (1 of 6 palettes
+ * by slug hash) + status icon plate / Check + ProgressRing 44 white +
+ * title in header + light body with section dots + AvatarStack +
+ * updated time. Replaces v2 light icon-row card.
  */
 export function FeatureCard({ projectSlug, feature }: FeatureCardProps): JSX.Element {
   const { data: me } = useMe();
@@ -52,92 +53,90 @@ export function FeatureCard({ projectSlug, feature }: FeatureCardProps): JSX.Ele
   const status = deriveStatus(feature.filledCount);
   const total = 5;
   const pct = Math.round((feature.filledCount / total) * 100);
-  const contributors = ["NL", "PT"]; // v1 placeholder
+  const gradient = GRADIENTS[hashSlug(feature.slug) % GRADIENTS.length]!;
+  const contributors = ["TM", "NL"];
 
   return (
     <Link
       to={`/projects/${projectSlug}/features/${feature.slug}`}
-      className="group relative flex flex-col gap-3.5 rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       aria-label={`Xem chi tiết feature ${feature.title}`}
+      className="card-hover group relative flex flex-col overflow-hidden rounded-[18px] border border-border bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
+      {/* Gradient header */}
+      <div
+        className={`relative min-h-[120px] overflow-hidden p-[20px_18px_16px] text-white ${gradient}`}
+      >
+        <span
+          aria-hidden="true"
+          className="absolute -right-8 -top-8 size-[110px] rounded-full bg-white/[0.12]"
+        />
+        <div className="relative flex items-start justify-between">
+          <span
+            aria-hidden="true"
+            className="inline-flex size-9 items-center justify-center rounded-[10px] bg-white/20"
+          >
+            {status === "done" ? (
+              <Check className="size-[18px] text-white" strokeWidth={2.5} />
+            ) : (
+              <FileText className="size-[18px] text-white" />
+            )}
+          </span>
+          <div className="relative size-11">
+            <ProgressRing
+              pct={pct}
+              size={44}
+              strokeWidth={5}
+              color="rgba(255,255,255,0.9)"
+              bg="rgba(255,255,255,0.2)"
+            />
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 flex items-center justify-center font-display text-[11px] font-bold leading-none text-white"
+            >
+              {pct}%
+            </span>
+          </div>
+        </div>
+        <div className="relative mt-2.5 line-clamp-1 font-display text-[14px] font-bold leading-[20px] text-white">
+          {feature.title}
+        </div>
+        <span className="relative mt-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/20 px-2 py-0.5 font-ui text-[10px] font-bold text-white">
+          <span aria-hidden="true" className="size-1 rounded-full bg-white" />
+          {STATUS_LABEL[status]}
+        </span>
+      </div>
+
       {isAdmin ? (
         <div
           className="absolute right-2 top-2 z-10"
-          // Stop click/keydown so Radix dropdown trigger doesn't bubble into the parent Link.
           onClick={(e) => e.stopPropagation()}
           onKeyDown={(e) => e.stopPropagation()}
         >
           <FeatureActionsMenu projectSlug={projectSlug} feature={feature} />
         </div>
       ) : null}
-      <div className="flex items-center gap-3">
-        <span
-          aria-hidden="true"
-          className={cn(
-            "inline-flex size-9 items-center justify-center rounded-lg shrink-0",
-            STATUS_PLATE[status],
-          )}
-        >
-          <FileText className="size-[18px]" />
-        </span>
-        <div className="min-w-0 flex-1">
-          <h2 className="line-clamp-1 font-display text-sm leading-tight font-bold text-foreground">
-            {feature.title}
-          </h2>
-          <div className="mt-1 flex items-center gap-2">
+
+      {/* Light body — section dots + footer */}
+      <div className="flex flex-1 flex-col gap-2 p-[12px_16px_14px]">
+        <div className="flex items-center gap-1">
+          {Array.from({ length: total }).map((_, i) => (
             <span
-              className={cn(
-                "inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-ui text-[10px] font-bold uppercase tracking-wide",
-                STATUS_BADGE[status],
-              )}
-            >
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "size-1.5 rounded-full",
-                  status === "done"
-                    ? "bg-success"
-                    : status === "active"
-                      ? "bg-primary"
-                      : "bg-muted-foreground/60",
-                )}
-              />
-              {STATUS_LABEL[status]}
-            </span>
-            <span className="font-ui text-[11px] text-muted-foreground">·</span>
-            <RelativeTime
-              iso={feature.updatedAt}
-              showIcon={false}
-              className="text-[11px] text-muted-foreground"
+              key={i}
+              aria-hidden="true"
+              className={`h-[5px] w-[20px] rounded-full ${
+                i < feature.filledCount ? "bg-primary" : "bg-muted"
+              }`}
             />
-          </div>
+          ))}
         </div>
-        {isAdmin ? null : (
-          <ChevronRight
-            aria-hidden="true"
-            className="size-4 shrink-0 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:text-primary"
+        <div className="mt-1 flex items-center justify-between">
+          <RelativeTime
+            iso={feature.updatedAt}
+            showIcon={false}
+            className="!font-ui !text-[11px] !text-muted-foreground"
           />
-        )}
-      </div>
-
-      <div>
-        <div className="mb-1.5 flex items-baseline justify-between">
-          <span className="font-ui text-xs font-semibold text-foreground/80">
-            <span>
-              {feature.filledCount}/{total}
-            </span>{" "}
-            sections
-          </span>
-          <span className="font-ui text-xs font-medium text-muted-foreground tabular-nums">
-            {pct}%
-          </span>
+          <AvatarStack names={contributors} size="xs" />
         </div>
-        <ProgressBar value={pct} ariaLabel={`Sections progress ${pct}%`} />
-      </div>
-
-      <div className="flex items-center justify-between border-t border-border pt-2.5">
-        <AvatarStack names={contributors} size="sm" />
-        <SectionDots filled={feature.filledCount} total={total} />
       </div>
     </Link>
   );

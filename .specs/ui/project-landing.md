@@ -7,8 +7,17 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `project-landing`
-- **Status**: Implemented (read T9 `879b15b`; admin actions US-004 / T7 `904e9c8`; UI uplift v2 Workspace CR-002 / Phase 2-2 `8da2aff`)
-- **Last updated**: 2026-04-25
+- **Status**: Implemented v2 (`8da2aff`); **v4 Dark vivid amend pending (CR-006 v4 — dark gradient hero + 4-col gradient FeatureCard)**.
+- **Last updated**: 2026-05-16 (v4 amend)
+
+## v4 amendments (CR-006 v4 — Dark vivid + glassmorphism) — supersedes v2 hero + FeatureCard sections below
+
+Pilot scope per [CR-006 §Iteration v4](../changes/CR-006.md). State machine + Route + Auth + A11y + Maps US unchanged.
+
+- **ProjectHero** rewrite — uses `GradientHero` primitive (dark gradient + 2 blobs orange/purple + dot grid + logo watermark) wrapped `rounded-[22px]` with `mx-10 mt-3 mb-7`. Tag chip "Pilot" + Live chip "Đang chạy · Sprint 14" + h1 white + 4 inline colored stats (Features amber / Đủ doc green / Tiến độ blue with live dot / Cập nhật purple) + right cluster (Theo dõi/Repo ghost-glass buttons + Tạo feature primary CTA + AvatarStack). Replaces v2 warm gradient panel + MiniStat row.
+- **FeatureCard** rewrite — vivid gradient header (1 of 6 palettes by slug hash, min-h 120) + decorative circle + status icon plate / Check + ProgressRing 44 white with pct% overlay + title in header + status pill. Light body p-3: section dots row (5 cells primary/muted) + footer (RelativeTime + AvatarStack). Replaces v2 light icon-row card.
+- **Grid**: 4-col `sm:grid-cols-2 xl:grid-cols-4` (was 2-col).
+- **Page wrapper**: `bg-background pb-16` (drops mx-auto max-w-6xl container — hero is full-bleed, tabs/grid use `px-10`).
 
 ## Route
 

@@ -42,19 +42,19 @@ function renderCard() {
 }
 
 describe("FeatureCard — admin vs author affordance (US-008, BUG-004 contract)", () => {
-  it("admin: renders overflow menu and hides ChevronRight", async () => {
+  it("admin: renders overflow menu (v4 gradient header, no ChevronRight)", async () => {
     mockMe("admin");
     const { container } = renderCard();
     expect(await screen.findByRole("button", { name: /thao tác feature/i })).toBeInTheDocument();
+    // v4: no chevron in either role — affordance is whole-card hover.
     expect(container.querySelector("svg.lucide-chevron-right")).toBeNull();
   });
 
-  it("author: renders ChevronRight and hides overflow menu", async () => {
+  it("author: hides overflow menu (whole-card hover affordance, no chevron)", async () => {
     mockMe("author");
     const { container } = renderCard();
-    // Wait for /me to resolve so the conditional render settles.
     await screen.findByRole("link", { name: /xem chi tiết feature đăng nhập/i });
     expect(screen.queryByRole("button", { name: /thao tác feature/i })).toBeNull();
-    expect(container.querySelector("svg.lucide-chevron-right")).not.toBeNull();
+    expect(container.querySelector("svg.lucide-chevron-right")).toBeNull();
   });
 });

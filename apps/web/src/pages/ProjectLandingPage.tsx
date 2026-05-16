@@ -5,7 +5,6 @@ import { toast } from "sonner";
 import type { FeatureListItem, ProjectResponse } from "@onboarding/shared";
 import { ApiError } from "@/lib/api";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { AdminGate } from "@/components/common/AdminGate";
 import { AuthorGate } from "@/components/common/AuthorGate";
 import { EmptyState } from "@/components/common/EmptyState";
@@ -144,30 +143,32 @@ export function ProjectLandingPage(): JSX.Element {
   const { project, features } = data;
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-8 lg:px-10">
+    <main className="bg-background pb-16">
       <HeroBlock project={project} features={features} />
 
-      <ProjectTabs
-        featureCount={features.length}
-        catalogChildren={
-          features.length === 0 ? (
-            <EmptyState
-              icon={FolderPlus}
-              title="Chưa có feature nào trong project này"
-              description="Project mới được tạo. Dùng nút Thêm feature ở header để bắt đầu document."
-            />
-          ) : (
-            <div className="grid gap-3.5 sm:grid-cols-1 lg:grid-cols-2">
-              {features.map((feature) => (
-                <FeatureCard key={feature.id} projectSlug={project.slug} feature={feature} />
-              ))}
-              <AuthorGate>
-                <AuthorCreateTile projectSlug={project.slug} projectName={project.name} />
-              </AuthorGate>
-            </div>
-          )
-        }
-      />
+      <div className="px-10">
+        <ProjectTabs
+          featureCount={features.length}
+          catalogChildren={
+            features.length === 0 ? (
+              <EmptyState
+                icon={FolderPlus}
+                title="Chưa có feature nào trong project này"
+                description="Project mới được tạo. Dùng nút Thêm feature ở header để bắt đầu document."
+              />
+            ) : (
+              <div className="grid gap-3.5 sm:grid-cols-2 xl:grid-cols-4">
+                {features.map((feature) => (
+                  <FeatureCard key={feature.id} projectSlug={project.slug} feature={feature} />
+                ))}
+                <AuthorGate>
+                  <AuthorCreateTile projectSlug={project.slug} projectName={project.name} />
+                </AuthorGate>
+              </div>
+            )
+          }
+        />
+      </div>
     </main>
   );
 }
@@ -207,24 +208,29 @@ function HeroBlock({
       lastUpdatedBy={null}
       actions={
         <>
-          <Button
-            variant="outline"
-            size="sm"
+          <button
             type="button"
             onClick={placeholderToast("Theo dõi project")}
+            className="inline-flex items-center gap-2 rounded-[10px] border border-white/25 bg-white/10 px-3.5 py-2 font-ui text-[13px] font-semibold text-white backdrop-blur-sm hover:bg-white/15"
           >
-            <Star aria-hidden="true" className="mr-2 size-4" />
+            <Star aria-hidden="true" className="size-3.5" />
             Theo dõi
-          </Button>
-          <Button variant="outline" size="sm" type="button" onClick={placeholderToast("Mở repo")}>
-            <Code aria-hidden="true" className="mr-2 size-4" />
+          </button>
+          <button
+            type="button"
+            onClick={placeholderToast("Mở repo")}
+            className="inline-flex items-center gap-2 rounded-[10px] border border-white/25 bg-white/10 px-3.5 py-2 font-ui text-[13px] font-semibold text-white backdrop-blur-sm hover:bg-white/15"
+          >
+            <Code aria-hidden="true" className="size-3.5" />
             Repo
-          </Button>
+          </button>
           <AuthorGate>
             <CreateFeatureDialog projectSlug={project.slug} projectName={project.name} />
           </AuthorGate>
           <AdminGate>
-            <ProjectActionsMenu project={project} />
+            <div className="rounded-[10px] bg-white/15 backdrop-blur-sm">
+              <ProjectActionsMenu project={project} />
+            </div>
           </AdminGate>
         </>
       }
