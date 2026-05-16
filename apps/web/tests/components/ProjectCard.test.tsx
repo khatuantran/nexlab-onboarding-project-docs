@@ -44,7 +44,7 @@ function renderCard() {
  * (AvatarStack + features count + activity).
  */
 describe("ProjectCard — v4 vivid gradient header", () => {
-  it("renders initials plate, category tag, ProgressRing svg, section dots, features counter", async () => {
+  it("renders initials plate, category tag, section dots, features counter", async () => {
     mockMe("author");
     renderCard();
     const link = await screen.findByRole("link", { name: /xem chi tiết dự án pilot project/i });
@@ -55,12 +55,6 @@ describe("ProjectCard — v4 vivid gradient header", () => {
     // Category tag from one of 6 fixed labels (deterministic by slug hash).
     expect(within(link).getByText(/^(E2E|Backend|Search|Payment|CRM|Admin)$/)).toBeInTheDocument();
 
-    // ProgressRing svg present in header.
-    expect(link.querySelector("svg[role='img']")).not.toBeNull();
-    // pct% text rendered inside ring + "doc" subscript below.
-    expect(within(link).getByText(/^\d+%$/)).toBeInTheDocument();
-    expect(within(link).getByText(/^doc$/i)).toBeInTheDocument();
-
     // Features compact counter "3f" in bottom row.
     expect(within(link).getByText(/^3f$/i)).toBeInTheDocument();
 
@@ -68,11 +62,10 @@ describe("ProjectCard — v4 vivid gradient header", () => {
     expect(link.querySelector("time")).not.toBeNull();
   });
 
-  it("admin: renders overflow menu, hides Live indicator", async () => {
+  it("admin: renders overflow menu in top-right of header", async () => {
     mockMe("admin");
     renderCard();
     expect(await screen.findByRole("button", { name: /thao tác project/i })).toBeInTheDocument();
-    expect(screen.queryByText(/^Live$/)).toBeNull();
   });
 
   it("author with featureCount > 0: renders Live indicator, hides overflow menu", async () => {

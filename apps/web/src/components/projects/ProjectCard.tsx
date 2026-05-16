@@ -3,7 +3,6 @@ import { Clock } from "lucide-react";
 import type { ProjectSummary } from "@onboarding/shared";
 import { AvatarStack } from "@/components/common/AvatarStack";
 import { RelativeTime } from "@/components/common/RelativeTime";
-import { ProgressRing } from "@/components/patterns/ProgressRing";
 import { ProjectActionsMenu } from "@/components/projects/ProjectActionsMenu";
 import { useMe } from "@/queries/auth";
 
@@ -121,15 +120,7 @@ export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
               <span className="inline-flex items-center rounded-full border border-white/30 bg-white/[0.22] px-2.5 py-1 font-ui text-[11px] font-bold text-white">
                 {category}
               </span>
-              {isAdmin ? (
-                <div
-                  className="rounded-md bg-white/15 backdrop-blur-sm"
-                  onClick={(e) => e.stopPropagation()}
-                  onKeyDown={(e) => e.stopPropagation()}
-                >
-                  <ProjectActionsMenu project={project} />
-                </div>
-              ) : isLive ? (
+              {isLive ? (
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/[0.18] px-2.5 py-1 font-ui text-[11px] font-bold text-white">
                   <span
                     aria-hidden="true"
@@ -141,23 +132,15 @@ export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
             </div>
           </div>
 
-          <div className="flex shrink-0 flex-col items-center gap-1">
-            <div className="relative size-[52px]">
-              <ProgressRing
-                pct={pct}
-                size={52}
-                color="rgba(255,255,255,0.9)"
-                bg="rgba(255,255,255,0.2)"
-              />
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 flex items-center justify-center font-display text-[13px] font-bold leading-none text-white"
-              >
-                {pct}%
-              </span>
+          {isAdmin ? (
+            <div
+              className="shrink-0 rounded-md bg-white/15 backdrop-blur-sm"
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => e.stopPropagation()}
+            >
+              <ProjectActionsMenu project={project} />
             </div>
-            <span className="font-ui text-[10px] font-semibold text-white/70">doc</span>
-          </div>
+          ) : null}
         </div>
       </div>
 
