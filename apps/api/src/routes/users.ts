@@ -48,6 +48,10 @@ export function toAdminUser(row: AdminUserRow): AdminUser {
     archivedAt: row.archivedAt ? row.archivedAt.toISOString() : null,
     lastLoginAt: row.lastLoginAt ? row.lastLoginAt.toISOString() : null,
     createdAt: row.createdAt.toISOString(),
+    phone: row.phone,
+    department: row.department,
+    location: row.location,
+    bio: row.bio,
   };
 }
 

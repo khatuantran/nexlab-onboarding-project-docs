@@ -47,6 +47,10 @@ function toAuthUser(row: AdminUserRow): AuthUser {
     avatarUrl: row.avatarUrl,
     lastLoginAt: row.lastLoginAt ? row.lastLoginAt.toISOString() : null,
     createdAt: row.createdAt.toISOString(),
+    phone: row.phone,
+    department: row.department,
+    location: row.location,
+    bio: row.bio,
   };
 }
 
@@ -103,7 +107,13 @@ export function createMeRouter(deps: MeRouterDeps): ExpressRouter {
         return;
       }
       const body = req.body as UpdateMyProfileRequest;
-      const row = await userRepo.updateUser(userId, { displayName: body.displayName });
+      const row = await userRepo.updateUser(userId, {
+        displayName: body.displayName,
+        phone: body.phone,
+        department: body.department,
+        location: body.location,
+        bio: body.bio,
+      });
       if (!row) {
         next(new HttpError(401, ErrorCode.UNAUTHENTICATED, "Bạn cần đăng nhập"));
         return;

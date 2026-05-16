@@ -37,6 +37,11 @@ export interface AdminUserRow extends UserListItem {
   createdAt: Date;
   /** US-009 — Cloudinary secure_url or null. */
   avatarUrl: string | null;
+  /** US-010 — profile enrichment fields. */
+  phone: string | null;
+  department: string | null;
+  location: string | null;
+  bio: string | null;
 }
 
 export interface CreateUserInput {
@@ -49,6 +54,11 @@ export interface CreateUserInput {
 export interface UpdateUserPatch {
   displayName?: string;
   role?: "admin" | "author";
+  /** US-010 — profile enrichment. `null` clears, `undefined` leaves untouched. */
+  phone?: string | null;
+  department?: string | null;
+  location?: string | null;
+  bio?: string | null;
 }
 
 export interface UserRepo {
@@ -79,6 +89,10 @@ function toAdminRow(r: User): AdminUserRow {
     lastLoginAt: r.lastLoginAt ?? null,
     createdAt: r.createdAt,
     avatarUrl: r.avatarUrl ?? null,
+    phone: r.phone ?? null,
+    department: r.department ?? null,
+    location: r.location ?? null,
+    bio: r.bio ?? null,
   };
 }
 
@@ -157,6 +171,11 @@ export function createUserRepo(db: Db): UserRepo {
       const update: Partial<typeof users.$inferInsert> = {};
       if (patch.displayName !== undefined) update.displayName = patch.displayName;
       if (patch.role !== undefined) update.role = patch.role;
+      // US-010 — accept null to clear, undefined to leave untouched.
+      if (patch.phone !== undefined) update.phone = patch.phone;
+      if (patch.department !== undefined) update.department = patch.department;
+      if (patch.location !== undefined) update.location = patch.location;
+      if (patch.bio !== undefined) update.bio = patch.bio;
       if (Object.keys(update).length === 0) {
         return this.getAdminById(id);
       }

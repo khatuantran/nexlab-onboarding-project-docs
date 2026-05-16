@@ -55,6 +55,10 @@ export function createRequireAuth(userRepo: UserRepo): RequestHandler {
         avatarUrl: user.avatarUrl ?? null,
         lastLoginAt: user.lastLoginAt ? user.lastLoginAt.toISOString() : null,
         createdAt: user.createdAt.toISOString(),
+        phone: user.phone ?? null,
+        department: user.department ?? null,
+        location: user.location ?? null,
+        bio: user.bio ?? null,
       };
       next();
     } catch (err) {

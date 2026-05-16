@@ -35,6 +35,11 @@ export const users = pgTable("users", {
   lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
   // US-009 / T1 — Cloudinary secure_url của ảnh đại diện. NULL = fallback initials.
   avatarUrl: text("avatar_url"),
+  // US-010 / T1 — profile enrichment fields. All nullable; NULL = "Chưa cập nhật".
+  phone: text("phone"),
+  department: text("department"),
+  location: text("location"),
+  bio: text("bio"),
 });
 
 export const projects = pgTable("projects", {

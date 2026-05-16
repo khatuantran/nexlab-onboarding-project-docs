@@ -20,6 +20,10 @@ function toAuthUser(u: User): AuthUser {
     avatarUrl: u.avatarUrl ?? null,
     lastLoginAt: u.lastLoginAt ? u.lastLoginAt.toISOString() : null,
     createdAt: u.createdAt.toISOString(),
+    phone: u.phone ?? null,
+    department: u.department ?? null,
+    location: u.location ?? null,
+    bio: u.bio ?? null,
   };
 }
 

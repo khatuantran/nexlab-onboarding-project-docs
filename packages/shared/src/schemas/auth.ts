@@ -33,4 +33,9 @@ export interface AuthUser {
   // US-009 — informational fields surfaced by GET /me self-profile.
   lastLoginAt: string | null;
   createdAt: string;
+  // US-010 — profile enrichment fields. Nullable; FE renders "Chưa cập nhật".
+  phone: string | null;
+  department: string | null;
+  location: string | null;
+  bio: string | null;
 }
