@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-_Last updated: 2026-05-16 · [Keep-a-Changelog](https://keepachangelog.com/en/1.1.0/) format. M1 closed · M2 closed (US-002 + US-003 + US-004 shipped)._
+_Last updated: 2026-05-16 (BUG-006 follow-up) · [Keep-a-Changelog](https://keepachangelog.com/en/1.1.0/) format. M1 closed · M2 closed (US-002 + US-003 + US-004 shipped)._
 
 Running log of user-facing changes. Thêm row dưới `[Unreleased]` khi commit ship feature/fix/change. Khi milestone đạt exit criteria → rename block thành `[Mx]` + release date, start new `[Unreleased]`.
 
@@ -50,6 +50,8 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 - **Fly `uploads_volume` (1 GB SIN) destroyed** ([CR-004](../changes/CR-004.md) Phase 1, 2026-05-14) — stops the $0.26/month volume line. Upload route now writes to the container's ephemeral filesystem (Dockerfile still `mkdir -p /data/uploads`); files survive only until the next machine restart. 3 pre-existing volume files (2.7 MB total) lost — per BUG-003 none of them ever rendered on prod, so production data loss is nil. Phase 2 of CR-004 moves storage to Cloudinary CDN; until then, treat upload feature as "best-effort" on prod. Commits: `1f7d24d` (spec) → `fe28c04` (fly.toml drop `[[mounts]]`) → out-of-band `fly volumes destroy vol_vly2yydkd99pkxm4` → this commit (progress sync).
 
 ### Fixed
+
+- **Hero chips (tất cả tone) khó đọc trong dark mode** ([BUG-006](../bugs/BUG-006.md), 2026-05-16) — Follow-up sau BUG-005. v1 fix peach-only (`text-orange-200`) chưa đủ sáng — user vẫn không đọc được "Đủ doc" (green) + "v2" (blue). **v2 fix**: bump tất cả hero chip (orange / green / blue / rose / amber) về Tailwind `*-100` shade (lightness ~95%) + bg `*-500/35` + border `*-500/55` cho crispness. 11 chip sites + add border vào "v2" blue chip trên FeatureDetailPage. 4 regression test cases (HomePage Sprint + ProjectLandingPage Pilot + FeatureDetailPage status "Đủ doc" green + "v2" blue). 183/183 web tests green. Commits: `760f2cd` (spec) → `5730fae` (failing tests v1) → `22135c4` (v1 fix peach) → `941bc36` (v2 fix all tones + tests v2) → this commit (progress sync).
 
 - **Hero secondary text khó đọc trong dark mode** ([BUG-005](../bugs/BUG-005.md), 2026-05-16) — User report (screenshot): dòng meta "· Cập nhật ..." trong hero `FeatureDetailPage` mờ tới mức không đọc được ở dark mode. Audit phát hiện pattern lặp 7 vị trí dùng `text-white/45..55` (FeatureDetailPage meta ×2, HomePage / AdminUsersPage / ProjectHero HeroStat label ×3, LoginBrandPanel tagline + recent sub ×2). **Fix**: standardize toàn bộ về `text-white/75` (~9:1 contrast, AAA) — readable trên hero gradient mà vẫn tonally below title (full white bold), preserving v4 typography hierarchy. 2 regression test cases (FeatureDetailPage meta + HomePage HeroStat). 180/180 web tests green. Commits: `bcc17a0` (spec) → `b16196e` (failing tests) → `a77d254` (fix) → this commit (progress sync).
 
