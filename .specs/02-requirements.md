@@ -31,24 +31,25 @@ Mỗi FR có:
 
 ## FR Summary Table
 
-| ID                                                            | Area    | Summary                                               | Priority | Maps to                |
-| ------------------------------------------------------------- | ------- | ----------------------------------------------------- | -------- | ---------------------- |
-| [FR-AUTH-001](#fr-auth-001--emailpassword-auth)               | Auth    | Email + password login/logout, session cookie         | P0       | US-001, US-002, US-003 |
-| [FR-PROJ-001](#fr-proj-001--project-crud-minimal)             | Project | Admin tạo project + liệt kê non-archived              | P0       | US-002, US-004         |
-| [FR-PROJ-002](#fr-proj-002--project-metadata-edit--archive)   | Project | Admin rename metadata + archive soft-delete           | P0       | US-004                 |
-| [FR-FEAT-001](#fr-feat-001--feature-crud-within-project)      | Feature | Tạo / sửa / list / archive feature trong project      | P0       | US-002, US-008         |
-| [FR-FEAT-002](#fr-feat-002--5-section-template)               | Feature | Feature có template cố định 5 section                 | P0       | US-001, US-002, US-003 |
-| [FR-FEAT-003](#fr-feat-003--per-section-multi-author)         | Feature | Multi-author theo từng section                        | P0       | US-002, US-003         |
-| [FR-EMBED-001](#fr-embed-001--external-link-embed)            | Embed   | Paste Jira/Figma/GitHub URL → preview card            | P0       | US-003                 |
-| [FR-SEARCH-001](#fr-search-001--full-text-search)             | Search  | FTS feature theo title + section content              | P0       | US-001                 |
-| [FR-SEARCH-002](#fr-search-002--multi-entity-search)          | Search  | Search grouped: project/feature/section/author/upload | P1       | US-005                 |
-| [FR-SEARCH-003](#fr-search-003--search-filters)               | Search  | Filter section-type / time / author / status          | P1       | US-005                 |
-| [FR-SEARCH-004](#fr-search-004--query-semantics)              | Search  | Prefix + accent-insensitive + fuzzy match semantics   | P1       | US-006                 |
-| [FR-READ-001](#fr-read-001--project-landing--feature-index)   | Read    | Project landing page có feature index                 | P0       | US-001                 |
-| [FR-UPLOAD-001](#fr-upload-001--image-upload-for-screenshots) | Upload  | Upload image file → volume, trả stable URL            | P0       | US-003                 |
-| [FR-USER-001](#fr-user-001--user-list-endpoint)               | User    | List user (read) cho author filter dropdown           | P1       | US-005, US-007         |
-| [FR-USER-002](#fr-user-002--admin-user-lifecycle)             | User    | Admin invite / edit role / archive / reset password   | P1       | US-007                 |
-| [FR-USER-003](#fr-user-003--self-service-profile-management)  | User    | View / edit displayName / change password / avatar    | P1       | US-009                 |
+| ID                                                            | Area    | Summary                                                | Priority | Maps to                |
+| ------------------------------------------------------------- | ------- | ------------------------------------------------------ | -------- | ---------------------- |
+| [FR-AUTH-001](#fr-auth-001--emailpassword-auth)               | Auth    | Email + password login/logout, session cookie          | P0       | US-001, US-002, US-003 |
+| [FR-PROJ-001](#fr-proj-001--project-crud-minimal)             | Project | Admin tạo project + liệt kê non-archived               | P0       | US-002, US-004         |
+| [FR-PROJ-002](#fr-proj-002--project-metadata-edit--archive)   | Project | Admin rename metadata + archive soft-delete            | P0       | US-004                 |
+| [FR-FEAT-001](#fr-feat-001--feature-crud-within-project)      | Feature | Tạo / sửa / list / archive feature trong project       | P0       | US-002, US-008         |
+| [FR-FEAT-002](#fr-feat-002--5-section-template)               | Feature | Feature có template cố định 5 section                  | P0       | US-001, US-002, US-003 |
+| [FR-FEAT-003](#fr-feat-003--per-section-multi-author)         | Feature | Multi-author theo từng section                         | P0       | US-002, US-003         |
+| [FR-EMBED-001](#fr-embed-001--external-link-embed)            | Embed   | Paste Jira/Figma/GitHub URL → preview card             | P0       | US-003                 |
+| [FR-SEARCH-001](#fr-search-001--full-text-search)             | Search  | FTS feature theo title + section content               | P0       | US-001                 |
+| [FR-SEARCH-002](#fr-search-002--multi-entity-search)          | Search  | Search grouped: project/feature/section/author/upload  | P1       | US-005                 |
+| [FR-SEARCH-003](#fr-search-003--search-filters)               | Search  | Filter section-type / time / author / status           | P1       | US-005                 |
+| [FR-SEARCH-004](#fr-search-004--query-semantics)              | Search  | Prefix + accent-insensitive + fuzzy match semantics    | P1       | US-006                 |
+| [FR-READ-001](#fr-read-001--project-landing--feature-index)   | Read    | Project landing page có feature index                  | P0       | US-001                 |
+| [FR-UPLOAD-001](#fr-upload-001--image-upload-for-screenshots) | Upload  | Upload image file → volume, trả stable URL             | P0       | US-003                 |
+| [FR-USER-001](#fr-user-001--user-list-endpoint)               | User    | List user (read) cho author filter dropdown            | P1       | US-005, US-007         |
+| [FR-USER-002](#fr-user-002--admin-user-lifecycle)             | User    | Admin invite / edit role / archive / reset password    | P1       | US-007                 |
+| [FR-USER-003](#fr-user-003--self-service-profile-management)  | User    | View / edit displayName / change password / avatar     | P1       | US-009, US-010         |
+| [FR-PROJ-003](#fr-proj-003--contributors-derivation)          | Project | Derive top contributors per project/feature from edits | P1       | US-011                 |
 
 Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 
@@ -373,10 +374,12 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 - When an authenticated user submits a password change (`POST /api/v1/me/password`) with `{ oldPassword, newPassword }`, the system shall verify `oldPassword` against the stored bcrypt hash; on success persist the bcrypt hash of `newPassword`, purge all other Redis sessions for that user (current session preserved via its sid), and return 204.
 - If the supplied `oldPassword` does not match, the system shall respond 401 `INVALID_CREDENTIALS` (no information leak about whether the user exists or the format of the stored hash).
 - When an authenticated user uploads an avatar image (`POST /api/v1/me/avatar`, multipart `file` ≤ 2 MB, png/jpg/webp), the system shall stream the bytes through Cloudinary into folder `onboarding-portal/<env>/avatars/`, persist the returned `secure_url` on `users.avatar_url`, and return `{ data: { avatarUrl } }`. Previous avatar URL is overwritten (no Cloudinary orphan cleanup v1 — accept storage drift).
+- **(US-010 amend, 2026-05-16)** When an authenticated user fetches their own profile (`GET /api/v1/me`), the system shall additionally return `phone`, `department`, `location`, `bio` (all nullable strings) from the user's row.
+- **(US-010 amend, 2026-05-16)** When an authenticated user submits a profile update (`PATCH /api/v1/me`), the system shall accept optional `phone` (1-30 chars matching `/^[0-9 +\-()]{1,30}$/`), `department` (1-120 chars), `location` (1-120 chars), `bio` (0-500 chars), persist them on the user's own row, and return the refreshed `AuthUser`. Explicit `null` in the body clears the field; missing key leaves the field unchanged.
 
 **Rationale**: Users hiện không có cách nào đổi displayName hay password (admin reset password cho người khác qua US-007 nhưng không có self-flow). Avatar gradient initials đủ pilot nhưng user request branding cá nhân. Self-service giảm load admin (mọi PW change phải qua admin reset → friction).
 
-**Maps to**: US-009 (self-service profile). Personas: P1 (Minh), P2 (Lan), P3 (Hùng) — universal.
+**Maps to**: US-009 (self-service profile baseline) + US-010 (4-field enrichment). Personas: P1 (Minh), P2 (Lan), P3 (Hùng) — universal.
 
 **Acceptance hints**:
 
@@ -387,6 +390,28 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 - Avatar upload: reuse `cloudinary.uploadImage` (CR-004 Phase 2) with `folder = "${cloudinaryFolder}/avatars"`. Magic-byte mime sniff via `file-type` (same pattern as `/uploads`). Rejected mime → 415 `UNSUPPORTED_MEDIA_TYPE`; > 2 MB → 413 `FILE_TOO_LARGE`; Cloudinary down → 502 `UPLOAD_PROVIDER_ERROR`; SDK unconfigured → 503 `UPLOADS_DISABLED`.
 - Response shape after update: PATCH/password mutations may return `{ data: AuthUser }` (with refreshed avatarUrl) so FE invalidates `authKeys.me` and the header avatar updates in one round-trip.
 - No audit log v1; pino `info({event:"profile.updated", userId})` per mutation is enough.
+- US-010 enrichment: 4 nullable text columns added via migration `0010_users_profile_enrichment.sql` (`phone`, `department`, `location`, `bio`). Zod schema enforces optional + length + phone regex; explicit `null` clears, missing key leaves untouched (PATCH semantics).
+
+---
+
+## FR-PROJ-003 — Contributors derivation
+
+**Statement (Event-driven + Ubiquitous):**
+
+- When an authenticated user fetches a project list (`GET /api/v1/projects`), a single project (`GET /api/v1/projects/:slug`), or a feature (`GET /api/v1/projects/:slug/features/:featureSlug`), the response shall include a `contributors[]` array of up to 5 `{ userId, displayName, avatarUrl, lastUpdatedAt }` entries, sorted by most-recent edit on that scope, derived from distinct `sections.updated_by` rows within the scope (joined to `users`).
+- The system shall exclude sections belonging to archived features when computing project-scope contributors (matching the existing `features.archived_at IS NULL` filter used by `GET /projects/:slug`).
+- The system shall return an empty `contributors[]` array when no `sections.updated_by` rows exist within the scope (e.g. brand-new project, feature with all-empty sections).
+
+**Rationale**: FE surfaces (ProjectCard, ProjectHero, FeatureCard, ActivityRail) currently render hardcoded contributor initials (`["TM","NL"]`, hash-derived `CONTRIBUTOR_POOL`). v1 has no `contributors` membership table; the existing `sections.updated_by` FK to `users` is sufficient to derive real top-contributors without new schema. Top-5 limit keeps response payload bounded.
+
+**Maps to**: US-011 (real contributors). Personas: P1 (Minh sees "who edited"), P2 (Lan), P3 (Hùng).
+
+**Acceptance hints**:
+
+- Per-row query for `GET /projects` (N projects) avoids N+1 via single SQL: `SELECT project_id, ARRAY_AGG(...) FROM (SELECT DISTINCT ON (project_id, user_id) ... ORDER BY project_id, user_id, updated_at DESC) sub GROUP BY project_id` or lateral join. Estimate added latency < 30 ms for typical N=10.
+- AvatarStack on FE shows up to 3 avatars + "+N" overflow when `contributors.length > 3`.
+- No new endpoint; existing read endpoints augment their response shape (backward-compatible additive field).
+- No mutation; contributors are derived projection only. To "add a contributor" a user must edit a section.
 
 ---
 

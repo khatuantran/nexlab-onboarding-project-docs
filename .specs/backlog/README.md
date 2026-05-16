@@ -12,9 +12,10 @@ Related: [CLAUDE.md §When a request comes in](../../CLAUDE.md#when-a-request-co
 
 ## Items
 
-| ID        | Title | Priority | Status | Last activity | File |
-| --------- | ----- | -------- | ------ | ------------- | ---- |
-| _(empty)_ | —     | —        | —      | —             | —    |
+| ID     | Title                                     | Priority | Status  | Last activity | File                   |
+| ------ | ----------------------------------------- | -------- | ------- | ------------- | ---------------------- |
+| BL-001 | Project repo URL + Feature PR URL linking | P0       | Triaged | 2026-05-16    | [BL-001.md](BL-001.md) |
+| BL-002 | Profile skills CRUD                       | P2       | Triaged | 2026-05-16    | [BL-002.md](BL-002.md) |
 
 ---
 
