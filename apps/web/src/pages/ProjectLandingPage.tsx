@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import type { FeatureListItem, ProjectResponse } from "@onboarding/shared";
 import { ApiError } from "@/lib/api";
+import { Breadcrumb } from "@/components/common/Breadcrumb";
 import { Card } from "@/components/ui/card";
 import { AdminGate } from "@/components/common/AdminGate";
 import { AuthorGate } from "@/components/common/AuthorGate";
@@ -144,6 +145,12 @@ export function ProjectLandingPage(): JSX.Element {
 
   return (
     <main className="bg-background pb-16">
+      <div className="px-10 pt-4">
+        <Breadcrumb
+          items={[{ label: "Projects", to: "/" }, { label: project.name }]}
+          className="text-xs"
+        />
+      </div>
       <HeroBlock project={project} features={features} />
 
       <div className="px-10">
