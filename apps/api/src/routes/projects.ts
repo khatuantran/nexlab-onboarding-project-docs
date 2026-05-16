@@ -66,6 +66,7 @@ function toProjectSummary(row: ProjectSummaryRow, contributors: ContributorRow[]
     updatedAt: row.updatedAt.toISOString(),
     contributors: contributors.map(toContributorSummary),
     repoUrl: row.repoUrl ?? null,
+    filledSectionCount: Number(row.filledSectionCount ?? 0),
   };
 }
 

@@ -16,6 +16,7 @@ const project: ProjectSummary = {
   createdAt: new Date().toISOString(),
   contributors: [],
   repoUrl: null,
+  filledSectionCount: 0,
 };
 
 function mockMe(role: "admin" | "author") {

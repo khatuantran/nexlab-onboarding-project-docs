@@ -20,6 +20,17 @@ export interface ProjectSummaryRow {
   createdAt: Date;
   updatedAt: Date;
   repoUrl: string | null;
+  filledSectionCount: number;
+}
+
+/**
+ * US-014 — workspace-level aggregate stats. Computed on demand from
+ * `projects` + `features` + `sections.updated_*`. No caching v1.
+ */
+export interface WorkspaceStatsRow {
+  projectCount: number;
+  featuresDocumented: number;
+  contributorsActive: number;
 }
 
 export interface CreateProjectInput {
@@ -73,6 +84,8 @@ export interface ProjectRepo {
     projectIds: string[],
     limit?: number,
   ): Promise<Map<string, ContributorRow[]>>;
+  /** US-014 — workspace stats endpoint backing query. */
+  getWorkspaceStats(activeWindowDays?: number): Promise<WorkspaceStatsRow>;
 }
 
 export function createProjectRepo(db: Db): ProjectRepo {
@@ -82,6 +95,10 @@ export function createProjectRepo(db: Db): ProjectRepo {
       return rows[0] ?? null;
     },
     async listNonArchived() {
+      // US-014: join sections (LEFT) on top of features to compute
+      // `filledSectionCount`. The features×sections inflation forces
+      // COUNT(DISTINCT) for `featureCount`. Archived features are filtered
+      // via the join predicate so they don't bleed into either column.
       const rows = await db
         .select({
           id: projects.id,
@@ -91,14 +108,60 @@ export function createProjectRepo(db: Db): ProjectRepo {
           createdAt: projects.createdAt,
           updatedAt: projects.updatedAt,
           repoUrl: projects.repoUrl,
-          featureCount: sql<number>`COUNT(${features.id})::int`,
+          featureCount: sql<number>`COUNT(DISTINCT ${features.id})::int`,
+          filledSectionCount: sql<number>`COUNT(${sections.id}) FILTER (WHERE length(${sections.body}) > 0)::int`,
         })
         .from(projects)
-        .leftJoin(features, eq(features.projectId, projects.id))
+        .leftJoin(features, and(eq(features.projectId, projects.id), isNull(features.archivedAt)))
+        .leftJoin(sections, eq(sections.featureId, features.id))
         .where(isNull(projects.archivedAt))
         .groupBy(projects.id)
         .orderBy(desc(projects.updatedAt));
       return rows;
+    },
+    async getWorkspaceStats(activeWindowDays = 30) {
+      const [projectsRow] = await db
+        .select({ count: sql<number>`COUNT(*)::int` })
+        .from(projects)
+        .where(isNull(projects.archivedAt));
+
+      // featuresDocumented = features where every one of the 5 sections has body length > 0.
+      // Equivalent: features with COUNT(sections where length(body) > 0) = 5.
+      const featuresDocResult = await db.execute(sql`
+        SELECT COUNT(*)::int AS count FROM (
+          SELECT f.id
+          FROM ${features} f
+          INNER JOIN ${projects} p ON p.id = f.project_id AND p.archived_at IS NULL
+          INNER JOIN ${sections} s ON s.feature_id = f.id
+          WHERE f.archived_at IS NULL
+          GROUP BY f.id
+          HAVING COUNT(*) FILTER (WHERE length(s.body) > 0) = 5
+        ) AS docs
+      `);
+      const featuresDocumented = Number(
+        (featuresDocResult.rows[0] as { count?: number | string } | undefined)?.count ?? 0,
+      );
+
+      const [contribsRow] = await db
+        .select({
+          count: sql<number>`COUNT(DISTINCT ${sections.updatedBy})::int`,
+        })
+        .from(sections)
+        .innerJoin(features, eq(features.id, sections.featureId))
+        .innerJoin(projects, eq(projects.id, features.projectId))
+        .where(
+          and(
+            isNull(features.archivedAt),
+            isNull(projects.archivedAt),
+            sql`${sections.updatedAt} >= NOW() - (${activeWindowDays} || ' days')::interval`,
+          ),
+        );
+
+      return {
+        projectCount: Number(projectsRow?.count ?? 0),
+        featuresDocumented,
+        contributorsActive: Number(contribsRow?.count ?? 0),
+      };
     },
     async create(input) {
       try {

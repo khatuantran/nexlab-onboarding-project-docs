@@ -40,4 +40,6 @@ export interface ProjectSummary {
   contributors: ContributorSummary[];
   /** US-013 — external Git repo URL, null when not set. */
   repoUrl: string | null;
+  /** US-014 — sum of non-empty sections across this project's non-archived features. */
+  filledSectionCount: number;
 }

@@ -31,6 +31,7 @@ export type AppDeps = HealthDeps & {
   usersRouter?: express.Router;
   uploadsRouter?: express.Router;
   meRouter?: express.Router;
+  workspaceRouter?: express.Router;
 };
 
 /**
@@ -116,6 +117,9 @@ export function createApp(deps: AppDeps): Express {
   }
   if (deps.meRouter) {
     v1.use("/me", deps.meRouter);
+  }
+  if (deps.workspaceRouter) {
+    v1.use("/workspace", deps.workspaceRouter);
   }
 
   app.use("/api/v1", v1);

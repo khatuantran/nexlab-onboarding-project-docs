@@ -51,6 +51,7 @@ const pilot: ProjectSummary = {
   updatedAt: "2026-04-23T10:00:00Z",
   contributors: [],
   repoUrl: null,
+  filledSectionCount: 0,
 };
 
 const demo: ProjectSummary = {
@@ -63,6 +64,7 @@ const demo: ProjectSummary = {
   updatedAt: "2026-04-22T10:00:00Z",
   contributors: [],
   repoUrl: null,
+  filledSectionCount: 0,
 };
 
 describe("HomePage", () => {

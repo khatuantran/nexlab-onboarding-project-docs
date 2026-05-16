@@ -15,6 +15,7 @@ import { createSearchRouter } from "./routes/search.js";
 import { createUsersRouter } from "./routes/users.js";
 import { createUploadsRouter } from "./routes/uploads.js";
 import { createMeRouter } from "./routes/me.js";
+import { createWorkspaceRouter } from "./routes/workspace.js";
 import { createUserRepo } from "./repos/userRepo.js";
 import { createProjectRepo } from "./repos/projectRepo.js";
 import { createFeatureRepo } from "./repos/featureRepo.js";
@@ -75,6 +76,7 @@ const app = createApp({
     cloudinary,
     cloudinaryAvatarsFolder,
   }),
+  workspaceRouter: createWorkspaceRouter({ projectRepo, requireAuth }),
 });
 
 const server = app.listen(config.API_PORT, () => {
