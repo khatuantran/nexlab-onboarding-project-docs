@@ -248,138 +248,250 @@ export function SearchPage(): JSX.Element {
         </div>
       </div>
 
-      <div className="mx-auto max-w-5xl px-10 pt-6">
-        {/* Body */}
-        {isLoading && (
-          <div className="space-y-3.5">
-            {[0, 1, 2].map((i) => (
-              <ResultSkeleton key={i} />
-            ))}
-          </div>
-        )}
+      <div className="grid gap-6 px-10 pt-6 lg:grid-cols-[240px_1fr] xl:grid-cols-[240px_1fr_260px]">
+        {/* Left rail — entity summary nav */}
+        <aside className="hidden lg:block">
+          <SummaryRail data={data} isLoading={isLoading} />
+        </aside>
 
-        {isError && !isLoading && (
-          <p
-            role="alert"
-            className="rounded-md border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive"
-          >
-            Có lỗi xảy ra, thử lại sau.
-          </p>
-        )}
-
-        {!isLoading && !isError && hitsTotal === 0 && (
-          <div className="mx-auto max-w-md py-12 text-center">
-            <SearchX className="mx-auto size-16 text-primary/40" aria-hidden="true" />
-            <h2 className="mt-6 font-display text-xl font-semibold text-foreground">
-              {filtersActive
-                ? "Không có kết quả với filter hiện tại"
-                : `Không tìm thấy feature nào khớp với "${q}"`}
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Thử từ khoá khác hoặc bỏ filter. FTS hỗ trợ tiếng Việt có dấu — kiểm tra chính tả nếu
-              kết quả trống.
-            </p>
-            {filtersActive && (
-              <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-                {sectionTypes.length > 0 && (
-                  <FilterChip
-                    label={`Loại: ${sectionTypes.join(", ")}`}
-                    onRemove={() => clearFilter("sectionTypes")}
-                  />
-                )}
-                {authorId && (
-                  <FilterChip
-                    label={`Tác giả: ${authorDisplayName ?? "đã chọn"}`}
-                    onRemove={() => clearFilter("authorId")}
-                  />
-                )}
-                {updatedSince && (
-                  <FilterChip label="Thời gian" onRemove={() => clearFilter("updatedSince")} />
-                )}
-                {status && (
-                  <FilterChip
-                    label={`Trạng thái: ${status}`}
-                    onRemove={() => clearFilter("status")}
-                  />
-                )}
-              </div>
-            )}
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-              {projectSlug ? (
-                <Button variant="outline" size="sm" type="button" onClick={removeScope}>
-                  Bỏ filter project
-                </Button>
-              ) : null}
-              <Button variant="default" size="sm" type="button" onClick={() => navigate("/")}>
-                Quay về catalog
-              </Button>
+        {/* Center — body */}
+        <div className="min-w-0">
+          {isLoading && (
+            <div className="space-y-3.5">
+              {[0, 1, 2].map((i) => (
+                <ResultSkeleton key={i} />
+              ))}
             </div>
-          </div>
-        )}
+          )}
 
-        {!isLoading && !isError && hitsTotal > 0 && data && (
-          <div>
-            {data.projects.length > 0 && (
-              <EntityGroup
-                icon={FolderOpen}
-                title="Projects"
-                count={data.projects.length}
-                accent="orange"
-              >
-                {data.projects.map((hit) => (
-                  <ProjectResultCard key={hit.slug} hit={hit} />
-                ))}
-              </EntityGroup>
-            )}
-            {data.features.length > 0 && (
-              <EntityGroup
-                icon={FileText}
-                title="Features"
-                count={data.features.length}
-                accent="purple"
-              >
-                {data.features.map((hit) => (
-                  <FeatureResultCard key={`${hit.projectSlug}/${hit.featureSlug}`} hit={hit} />
-                ))}
-              </EntityGroup>
-            )}
-            {data.sections.length > 0 && (
-              <EntityGroup
-                icon={ScrollText}
-                title="Sections"
-                count={data.sections.length}
-                accent="green"
-              >
-                {data.sections.map((hit) => (
-                  <SectionResultCard
-                    key={`${hit.projectSlug}/${hit.featureSlug}/${hit.sectionType}`}
-                    hit={hit}
-                  />
-                ))}
-              </EntityGroup>
-            )}
-            {data.authors.length > 0 && (
-              <EntityGroup icon={User} title="Authors" count={data.authors.length} accent="blue">
-                {data.authors.map((hit) => (
-                  <AuthorResultCard key={hit.id} hit={hit} />
-                ))}
-              </EntityGroup>
-            )}
-            {data.uploads.length > 0 && (
-              <EntityGroup
-                icon={Paperclip}
-                title="Uploads"
-                count={data.uploads.length}
-                accent="rose"
-              >
-                {data.uploads.map((hit) => (
-                  <UploadResultCard key={hit.id} hit={hit} />
-                ))}
-              </EntityGroup>
-            )}
-          </div>
-        )}
+          {isError && !isLoading && (
+            <p
+              role="alert"
+              className="rounded-md border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive"
+            >
+              Có lỗi xảy ra, thử lại sau.
+            </p>
+          )}
+
+          {!isLoading && !isError && hitsTotal === 0 && (
+            <div className="mx-auto max-w-md py-12 text-center">
+              <SearchX className="mx-auto size-16 text-primary/40" aria-hidden="true" />
+              <h2 className="mt-6 font-display text-xl font-semibold text-foreground">
+                {filtersActive
+                  ? "Không có kết quả với filter hiện tại"
+                  : `Không tìm thấy feature nào khớp với "${q}"`}
+              </h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Thử từ khoá khác hoặc bỏ filter. FTS hỗ trợ tiếng Việt có dấu — kiểm tra chính tả
+                nếu kết quả trống.
+              </p>
+              {filtersActive && (
+                <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+                  {sectionTypes.length > 0 && (
+                    <FilterChip
+                      label={`Loại: ${sectionTypes.join(", ")}`}
+                      onRemove={() => clearFilter("sectionTypes")}
+                    />
+                  )}
+                  {authorId && (
+                    <FilterChip
+                      label={`Tác giả: ${authorDisplayName ?? "đã chọn"}`}
+                      onRemove={() => clearFilter("authorId")}
+                    />
+                  )}
+                  {updatedSince && (
+                    <FilterChip label="Thời gian" onRemove={() => clearFilter("updatedSince")} />
+                  )}
+                  {status && (
+                    <FilterChip
+                      label={`Trạng thái: ${status}`}
+                      onRemove={() => clearFilter("status")}
+                    />
+                  )}
+                </div>
+              )}
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                {projectSlug ? (
+                  <Button variant="outline" size="sm" type="button" onClick={removeScope}>
+                    Bỏ filter project
+                  </Button>
+                ) : null}
+                <Button variant="default" size="sm" type="button" onClick={() => navigate("/")}>
+                  Quay về catalog
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {!isLoading && !isError && hitsTotal > 0 && data && (
+            <div>
+              {data.projects.length > 0 && (
+                <EntityGroup
+                  icon={FolderOpen}
+                  title="Projects"
+                  count={data.projects.length}
+                  accent="orange"
+                >
+                  {data.projects.map((hit) => (
+                    <ProjectResultCard key={hit.slug} hit={hit} />
+                  ))}
+                </EntityGroup>
+              )}
+              {data.features.length > 0 && (
+                <EntityGroup
+                  icon={FileText}
+                  title="Features"
+                  count={data.features.length}
+                  accent="purple"
+                >
+                  {data.features.map((hit) => (
+                    <FeatureResultCard key={`${hit.projectSlug}/${hit.featureSlug}`} hit={hit} />
+                  ))}
+                </EntityGroup>
+              )}
+              {data.sections.length > 0 && (
+                <EntityGroup
+                  icon={ScrollText}
+                  title="Sections"
+                  count={data.sections.length}
+                  accent="green"
+                >
+                  {data.sections.map((hit) => (
+                    <SectionResultCard
+                      key={`${hit.projectSlug}/${hit.featureSlug}/${hit.sectionType}`}
+                      hit={hit}
+                    />
+                  ))}
+                </EntityGroup>
+              )}
+              {data.authors.length > 0 && (
+                <EntityGroup icon={User} title="Authors" count={data.authors.length} accent="blue">
+                  {data.authors.map((hit) => (
+                    <AuthorResultCard key={hit.id} hit={hit} />
+                  ))}
+                </EntityGroup>
+              )}
+              {data.uploads.length > 0 && (
+                <EntityGroup
+                  icon={Paperclip}
+                  title="Uploads"
+                  count={data.uploads.length}
+                  accent="rose"
+                >
+                  {data.uploads.map((hit) => (
+                    <UploadResultCard key={hit.id} hit={hit} />
+                  ))}
+                </EntityGroup>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Right rail — tips + keyboard hints */}
+        <aside className="hidden xl:block">
+          <HintsRail />
+        </aside>
       </div>
     </main>
+  );
+}
+
+const SUMMARY_ROWS = [
+  { key: "projects", label: "Projects", icon: FolderOpen, color: "from-[#FB923C] to-[#F07613]" },
+  { key: "features", label: "Features", icon: FileText, color: "from-[#A78BFA] to-[#8B5CF6]" },
+  { key: "sections", label: "Sections", icon: ScrollText, color: "from-[#34D399] to-[#10B981]" },
+  { key: "authors", label: "Authors", icon: User, color: "from-[#60A5FA] to-[#3B82F6]" },
+  { key: "uploads", label: "Uploads", icon: Paperclip, color: "from-[#FB7185] to-[#F43F5E]" },
+] as const;
+
+type SearchData = ReturnType<typeof useSearch>["data"];
+
+function SummaryRail({ data, isLoading }: { data: SearchData; isLoading: boolean }): JSX.Element {
+  return (
+    <div className="sticky top-20 rounded-[16px] border border-border bg-card p-4">
+      <h3 className="mb-3 font-ui text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+        Tóm tắt
+      </h3>
+      <ul className="flex flex-col gap-1">
+        {SUMMARY_ROWS.map((row) => {
+          const Icon = row.icon;
+          const count = isLoading || !data ? 0 : data[row.key].length;
+          const dim = count === 0;
+          return (
+            <li key={row.key}>
+              <a
+                href={`#group-${row.label}`}
+                className={`flex items-center gap-2.5 rounded-[10px] px-2 py-1.5 font-ui text-sm transition-colors ${
+                  dim
+                    ? "pointer-events-none opacity-50"
+                    : "hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                }`}
+              >
+                <span
+                  className={`inline-flex size-7 items-center justify-center rounded-[8px] bg-gradient-to-br text-white shadow-[0_2px_6px_rgba(0,0,0,0.15)] ${row.color}`}
+                >
+                  <Icon className="size-3.5" aria-hidden="true" />
+                </span>
+                <span className="flex-1 font-medium text-foreground">{row.label}</span>
+                <span className="font-ui text-[12px] font-bold tabular-nums text-muted-foreground">
+                  {count}
+                </span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+function HintsRail(): JSX.Element {
+  return (
+    <div className="sticky top-20 flex flex-col gap-4">
+      <div className="rounded-[16px] border border-border bg-card p-4">
+        <h3 className="mb-3 font-ui text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+          Mẹo tìm kiếm
+        </h3>
+        <ul className="space-y-2 font-body text-[13px] text-muted-foreground">
+          <li className="flex gap-2">
+            <span aria-hidden="true" className="mt-1.5 size-1 shrink-0 rounded-full bg-primary" />
+            <span>Tìm theo title hoặc nội dung section.</span>
+          </li>
+          <li className="flex gap-2">
+            <span aria-hidden="true" className="mt-1.5 size-1 shrink-0 rounded-full bg-primary" />
+            <span>FTS hỗ trợ tiếng Việt có dấu — viết đúng dấu để chính xác hơn.</span>
+          </li>
+          <li className="flex gap-2">
+            <span aria-hidden="true" className="mt-1.5 size-1 shrink-0 rounded-full bg-primary" />
+            <span>Filter loại + tác giả + thời gian để zoom kết quả.</span>
+          </li>
+        </ul>
+      </div>
+      <div className="rounded-[16px] border border-border bg-card p-4">
+        <h3 className="mb-3 font-ui text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+          Phím tắt
+        </h3>
+        <ul className="space-y-2 font-ui text-[13px]">
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Focus search</span>
+            <kbd className="rounded-md border border-border bg-muted px-1.5 py-0.5 font-mono text-[11px] font-semibold text-foreground">
+              ⌘K
+            </kbd>
+          </li>
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Đóng / clear</span>
+            <kbd className="rounded-md border border-border bg-muted px-1.5 py-0.5 font-mono text-[11px] font-semibold text-foreground">
+              Esc
+            </kbd>
+          </li>
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Submit</span>
+            <kbd className="rounded-md border border-border bg-muted px-1.5 py-0.5 font-mono text-[11px] font-semibold text-foreground">
+              Enter
+            </kbd>
+          </li>
+        </ul>
+      </div>
+    </div>
   );
 }
