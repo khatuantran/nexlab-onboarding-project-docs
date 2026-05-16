@@ -137,6 +137,74 @@ Multi-entity grouped search + filters (project + feature + section + author + up
 - [T6 + T7 + T8 + T9](stories/US-005/tasks.md#t6--frontend-query-hooks-usesearch-v2--useusers) FilterBar + 4 sub-filters + 5 entity cards + grouped SearchPage — ✅ `a9fbf86`.
 - [T10](stories/US-005/tasks.md#t10--tests--e2e--progress-sync) Playwright us-005 + progress sync — ✅ this commit.
 
+### Post-M2 phase — Real-data backfill (mock replacement) 🟡 _(2026-05-16, in progress)_
+
+CR-006 v4 UI redesign shipped many surfaces with hardcoded placeholder data because no BE existed yet. Audit (2026-05-16) cataloged 13 mock surfaces; specs landed in `4e5d652` + `ba44036`. Execution sequenced into 5 phases — Phase 1 + 2 are the immediate path; Phase 3-5 are deferred candidates for M3 (pre-pilot) or M4 (post-pilot).
+
+**Spec coverage (13/13)** — see [.specs/stories/US-010.md](stories/US-010.md) + [US-011.md](stories/US-011.md) + [.specs/backlog/](backlog/) BL-001..BL-011.
+
+#### Phase 1 — P0 (build now) — ~8-11h total
+
+Replace the most visible, highest-impact mocks. No dependencies.
+
+- [US-010](stories/US-010.md) Profile enrichment (phone / department / location / bio) — ~3-4h. Migration `0010` + extend PATCH /me + ProfilePage `PersonalInfoCard` + `EditProfileDialog`. Replaces 3 hardcoded `InfoRow` strings.
+- [US-011](stories/US-011.md) Real contributors derivation — ~5-7h. New FR-PROJ-003. Aggregation from `sections.updated_by`; no schema change. Replaces hardcoded contributors on ProjectCard / ProjectHero / FeatureCard + drops ActivityRail `STATIC_PADDING`.
+
+**Expected outcome**: ProfilePage `PersonalInfoCard` truthful; all contributor avatars across the app are real. Drops ~5 of 13 mock surfaces.
+
+#### Phase 2 — P0 deferred (build after EditFeatureDialog ships) — ~5-7h
+
+- [BL-001](backlog/BL-001.md) Project repo URL + Feature PR URL — needs `EditFeatureDialog` scoped first (no exists today). Schema: 2 nullable text columns. Replaces 2 `placeholderToast` buttons ("Repo" + "Xem PR") with real `<a href target="_blank">`.
+
+#### Phase 3 — P1 batch (after US-011 lands; shared aggregation pattern) — ~15-18h total
+
+This batch reuses the SQL aggregation infrastructure from US-011. Best built together so a single repo-pattern refactor covers all 4.
+
+- [BL-011](backlog/BL-011.md) Workspace stats + `filledSectionCount` (HomePage hero tiles real) — ~4h.
+- [BL-003](backlog/BL-003.md) Profile stats aggregation (4-tile card real) — ~3h.
+- [BL-004](backlog/BL-004.md) Recent projects card — ~3h.
+- [BL-005](backlog/BL-005.md) Activity feed (Profile feed + ActivityRail "Xem tất cả") — ~5-6h.
+
+**Expected outcome**: HomePage hero, full Profile page, and ActivityRail expand are all truthful. Drops 4 more mock surfaces.
+
+#### Phase 4 — P2 nice-to-have (isolated, schedule when capacity allows) — ~17-21h total
+
+- [BL-006](backlog/BL-006.md) Cover image upload (profile + project) — ~3-4h (US-009 avatar pattern).
+- [BL-007](backlog/BL-007.md) Watch / follow project + feature — ~5h (`watchers` table + 2 toggle endpoints). Foundational for BL-008.
+- [BL-002](backlog/BL-002.md) Profile skills CRUD — ~4-5h (after US-010 ship).
+- [BL-010](backlog/BL-010.md) ProjectTabs Activity / Members / Settings panels — ~6-8h (depends BL-005 + US-011, mostly composition).
+
+#### Phase 5 — P3 large features (defer to M4 post-pilot) — ~25-30h total
+
+- [BL-008](backlog/BL-008.md) Notification system + NotificationBell — ~12-16h (table + 4 endpoints + polling FE). Needs BL-007 watchers first.
+- [BL-009](backlog/BL-009.md) AdminSettings real wiring — ~10-15h (split into 4-5 sub-stories per panel).
+
+#### Dependency graph (high-level)
+
+```text
+US-010 ──────┐
+US-011 ──────┼─→ Phase 3 (BL-003/004/005/011 share aggregation infra)
+             ├─→ BL-010 Members tab
+             └─→ BL-002 (after US-010 sets PATCH /me pattern)
+
+BL-001 ─→ EditFeatureDialog (prereq, scope in BL-001)
+
+BL-007 ─→ BL-008 (watchers define notification audience)
+BL-005 ─→ BL-008 (activity events feed notification payload)
+         └─→ BL-010 (Activity tab reuses /activity endpoint)
+
+BL-009 — standalone, 4-5 sub-stories independent
+BL-006 — standalone (US-009 avatar pattern is the template)
+```
+
+#### Triage decisions (user, 2026-05-16)
+
+- Build top 1-2 P0 now; backlog the rest.
+- P0 priorities: profile fields ✓, contributors ✓, repo/PR (deferred to Phase 2).
+- Phase 3-5 to be re-triaged after Phase 1 + 2 ship, with user signal on which P1 to promote first.
+
+---
+
 ### M3 — Pilot launch 🟡 _(target 2026-07-31, free-tier path per [CR-003](changes/CR-003.md) + [ADR-002](adr/ADR-002-deployment-platform.md))_
 
 Deploy lên free-tier managed stack ($0/tháng), pilot với ≥ 1 project thật.
