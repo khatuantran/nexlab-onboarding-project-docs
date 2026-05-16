@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { NxLogo } from "@/components/common/NxLogo";
-import { BreadcrumbBar } from "@/components/layout/BreadcrumbBar";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { UserMenu } from "@/components/layout/UserMenu";
@@ -33,7 +32,6 @@ export function AppHeader(): JSX.Element | null {
         <NxLogo size={26} />
       </Link>
       <span aria-hidden="true" className="h-[22px] w-px shrink-0 bg-border" />
-      <BreadcrumbBar inline />
       <div className="max-w-[400px] flex-1">
         <SearchInput pill />
       </div>
