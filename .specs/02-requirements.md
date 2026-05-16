@@ -55,6 +55,7 @@ Mỗi FR có:
 | [FR-PROFILE-001](#fr-profile-001--per-user-projection-stats--recent) | User    | `/me/stats` + `/me/recent-projects` projections             | P1       | US-015, US-016                 |
 | [FR-ACTIVITY-001](#fr-activity-001--user-activity-feed)              | User    | `/me/activity` cursor-paginated feed of own section edits   | P1       | US-017                         |
 | [FR-PROFILE-002](#fr-profile-002--per-user-skills-crud)              | User    | Per-user skills CRUD (table-backed, 7-color enum, cap 12)   | P2       | US-018                         |
+| [FR-COVER-001](#fr-cover-001--cover-image-upload-profile--project)   | User    | Upload cover image cho user profile + project hero          | P2       | US-019                         |
 
 Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 
@@ -529,6 +530,33 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 - Cap 12 enforced both client (disable Add button) and server (Zod `.max(12)`).
 - Replace-all semantics: PUT with `{ skills: [] }` clears all rows for the caller. Other users' rows untouched.
 - Out of scope: skill autocomplete, endorsements, cross-user view.
+
+---
+
+## FR-COVER-001 — Cover image upload (profile + project)
+
+**Statement (Event-driven + Unwanted):**
+
+- When an authenticated user uploads a cover image (`POST /api/v1/me/cover`, multipart `file` ≤ 4 MB, png/jpg/webp), the system shall stream the bytes through Cloudinary into folder `onboarding-portal/<env>/covers/users/`, persist the returned `secure_url` on `users.cover_url`, and return `{ data: { coverUrl } }`. Previous cover URL overwritten (no Cloudinary orphan cleanup v1).
+- When an admin uploads a project cover (`POST /api/v1/projects/:slug/cover`, same body shape), the system shall require `requireAuth + requireAdmin`, resolve `:slug` to a project (404 `PROJECT_NOT_FOUND` if missing), upload to folder `onboarding-portal/<env>/covers/projects/`, persist on `projects.cover_url`, and return `{ data: { coverUrl } }`.
+- When a non-admin (role=author) calls `POST /api/v1/projects/:slug/cover`, the system shall respond 403 `FORBIDDEN`.
+- When `GET /api/v1/me`, `GET /api/v1/projects`, or `GET /api/v1/projects/:slug` succeeds, the response shall include `coverUrl: string | null` (additive field; null when never uploaded).
+- If the supplied file exceeds 4 MB, the system shall respond 413 `FILE_TOO_LARGE` ("File quá lớn (max 4 MB)") without invoking Cloudinary.
+- If the supplied file's magic-byte sniff is not in the {png, jpg, webp} whitelist, the system shall respond 415 `UNSUPPORTED_MEDIA_TYPE`.
+- If Cloudinary returns 5xx or network error, the system shall respond 502 `UPLOAD_PROVIDER_ERROR`. If Cloudinary env vars are missing, 503 `UPLOADS_DISABLED`.
+
+**Rationale**: ProfilePage v4.1 ships a "Đổi ảnh bìa" button wired to `placeholderToast` — last placeholder of the v4 mock audit on the personal-branding surface. ProjectHero v4 uses generic gradient — admins request per-project hero personalization. Reusing US-009 avatar Cloudinary pattern means zero new infra and an established 4xx/5xx contract; the 4 MB cap (vs avatar's 2 MB) reflects cover dimensions (~2000×860).
+
+**Maps to**: US-019 (cover upload, profile + project). Personas: P1 (Minh — own profile), P3 (Hùng — admin projects).
+
+**Acceptance hints**:
+
+- Endpoint `POST /me/cover` reuses `multerSingle` pattern but with a `COVER_MAX_BYTES = 4 * 1024 * 1024` limit (separate multer instance with its own size cap).
+- Endpoint `POST /projects/:slug/cover` mounts under `createProjectsRouter` with `requireAdmin` middleware (existing pattern from `PATCH /projects/:slug`).
+- Cloudinary folder split: `${cloudinaryFolder}/covers/users` vs `${cloudinaryFolder}/covers/projects` — distinct subfolders for separable cost reporting.
+- No new error codes introduced — reuse `FILE_TOO_LARGE`, `UNSUPPORTED_MEDIA_TYPE`, `UPLOAD_PROVIDER_ERROR`, `UPLOADS_DISABLED`, `PROJECT_NOT_FOUND`, `FORBIDDEN`, `UNAUTHENTICATED`.
+- FE overlay treatment when cover present: `bg-gradient-to-b from-black/40 to-black/60` on top of `<img>` to keep title/meta legible. `GradientHero` blobs glow preserved over the image for v4 identity.
+- Out of scope v1: cropping UI, gallery presets, per-feature covers, animated covers.
 
 ---
 
