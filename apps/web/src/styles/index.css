@@ -46,21 +46,72 @@
     --accent: 0 0% 95%;
     --accent-foreground: 240 3% 16%;
 
-    /* Warm canvas + sage (CR-006 v3) — page bg variant + secondary accent */
-    --canvas: 35 30% 97%;
-    --canvas-muted: 35 25% 93%;
-    --sage: 145 30% 50%;
-    --sage-foreground: 0 0% 100%;
-    --sage-bg: 145 30% 94%;
-    --sage-text: 145 30% 35%;
+    /* Accent palette (CR-006 v4) — 5 hues × 5 stops, category identity slots only */
+    --purple-50: 258 100% 96%;
+    --purple-200: 253 92% 86%;
+    --purple-400: 258 90% 76%;
+    --purple-500: 258 90% 67%;
+    --purple-700: 262 79% 50%;
+    --green-50: 152 81% 96%;
+    --green-200: 156 73% 80%;
+    --green-400: 158 64% 52%;
+    --green-500: 158 64% 39%;
+    --green-700: 158 92% 24%;
+    --blue-50: 214 100% 97%;
+    --blue-200: 213 97% 87%;
+    --blue-400: 213 94% 68%;
+    --blue-500: 217 91% 60%;
+    --blue-700: 225 73% 48%;
+    --rose-50: 356 100% 97%;
+    --rose-200: 351 100% 91%;
+    --rose-400: 351 95% 71%;
+    --rose-500: 350 89% 60%;
+    --rose-700: 348 84% 42%;
+    --amber-50: 48 100% 96%;
+    --amber-200: 49 96% 80%;
+    --amber-400: 43 96% 56%;
+    --amber-500: 38 92% 50%;
+    --amber-700: 26 88% 35%;
 
-    /* Project tile palette (CR-006 v3.1) — 6 named tile bg colors, white text */
-    --tile-orange: 27 88% 51%;
-    --tile-navy: 223 50% 40%;
-    --tile-green: 145 45% 38%;
-    --tile-amber: 38 80% 50%;
-    --tile-peach: 25 70% 60%;
-    --tile-rust: 12 60% 40%;
+    /* Hero dark gradient stops (CR-006 v4) — GradientHero primitive bg */
+    --hero-1: 261 73% 8%;
+    --hero-2: 255 60% 14%;
+    --hero-3: 222 65% 14%;
+    --hero-4: 216 25% 6%;
+
+    /* Logo gradient (CR-006 v4) — wordmark mask + gradient text */
+    --logo-grad-start: 31 100% 50%;
+    --logo-grad-end: 31 100% 78%;
+
+    /* Slate (CR-006 v4) — wordmark + secondary strokes */
+    --slate-500: 221 12% 51%;
+    --slate-600: 221 12% 46%;
+
+    /* Neutral scale explicit (CR-006 v4) */
+    --neutral-000: 0 0% 100%;
+    --neutral-050: 0 0% 98%;
+    --neutral-100: 0 0% 95%;
+    --neutral-200: 0 0% 94%;
+    --neutral-300: 0 0% 89%;
+    --neutral-400: 0 0% 81%;
+    --neutral-500: 0 0% 68%;
+    --neutral-600: 0 0% 55%;
+    --neutral-700: 0 0% 39%;
+    --neutral-800: 285 4% 28%;
+    --neutral-900: 240 3% 16%;
+    --neutral-1000: 203 31% 15%;
+    --neutral-ink: 0 0% 15%;
+    --neutral-black: 0 0% 0%;
+
+    /* Semantic fg/bg aliases (CR-006 v4) */
+    --fg-1: 240 3% 16%;
+    --fg-2: 285 4% 28%;
+    --fg-3: 0 0% 55%;
+    --fg-4: 0 0% 68%;
+    --fg-inverse: 0 0% 100%;
+    --bg-subtle: 0 0% 95%;
+    --bg-muted: 0 0% 94%;
+    --bg-dark: 0 0% 15%;
 
     /* Muted */
     --muted: 0 0% 95%;
@@ -123,21 +174,72 @@
     --accent: 0 0% 22%;
     --accent-foreground: 0 0% 98%;
 
-    /* Warm canvas + sage (CR-006 v3) — dark variants */
-    --canvas: 0 0% 15%;
-    --canvas-muted: 0 0% 18%;
-    --sage: 145 30% 60%;
-    --sage-foreground: 0 0% 15%;
-    --sage-bg: 145 20% 22%;
-    --sage-text: 145 30% 70%;
+    /* Accent palette (CR-006 v4) — dark variants slightly lighter */
+    --purple-50: 258 60% 18%;
+    --purple-200: 253 70% 30%;
+    --purple-400: 258 85% 70%;
+    --purple-500: 258 90% 75%;
+    --purple-700: 262 79% 60%;
+    --green-50: 152 50% 14%;
+    --green-200: 156 60% 28%;
+    --green-400: 158 60% 58%;
+    --green-500: 158 64% 50%;
+    --green-700: 158 80% 34%;
+    --blue-50: 214 50% 14%;
+    --blue-200: 213 60% 30%;
+    --blue-400: 213 90% 72%;
+    --blue-500: 217 91% 68%;
+    --blue-700: 225 73% 56%;
+    --rose-50: 356 50% 14%;
+    --rose-200: 351 60% 28%;
+    --rose-400: 351 92% 72%;
+    --rose-500: 350 89% 66%;
+    --rose-700: 348 84% 52%;
+    --amber-50: 48 50% 14%;
+    --amber-200: 49 60% 28%;
+    --amber-400: 43 92% 62%;
+    --amber-500: 38 92% 56%;
+    --amber-700: 26 88% 44%;
 
-    /* Project tile palette (CR-006 v3.1) — dark variants slightly lighter */
-    --tile-orange: 28 89% 58%;
-    --tile-navy: 223 55% 50%;
-    --tile-green: 145 45% 48%;
-    --tile-amber: 38 80% 58%;
-    --tile-peach: 25 70% 65%;
-    --tile-rust: 12 60% 50%;
+    /* Hero dark gradient stops — same as light (hero intentionally dark in both modes) */
+    --hero-1: 261 73% 8%;
+    --hero-2: 255 60% 14%;
+    --hero-3: 222 65% 14%;
+    --hero-4: 216 25% 6%;
+
+    /* Logo gradient — unchanged across modes */
+    --logo-grad-start: 31 100% 50%;
+    --logo-grad-end: 31 100% 78%;
+
+    /* Slate — dark mode */
+    --slate-500: 221 12% 60%;
+    --slate-600: 221 12% 55%;
+
+    /* Neutral scale explicit — dark mode */
+    --neutral-000: 220 12% 7%;
+    --neutral-050: 220 12% 10%;
+    --neutral-100: 220 12% 12%;
+    --neutral-200: 220 12% 16%;
+    --neutral-300: 220 12% 19%;
+    --neutral-400: 220 12% 26%;
+    --neutral-500: 220 12% 37%;
+    --neutral-600: 220 12% 48%;
+    --neutral-700: 220 12% 60%;
+    --neutral-800: 220 12% 71%;
+    --neutral-900: 220 12% 84%;
+    --neutral-1000: 220 12% 92%;
+    --neutral-ink: 220 12% 5%;
+    --neutral-black: 0 0% 0%;
+
+    /* Semantic fg/bg aliases — dark mode */
+    --fg-1: 220 12% 84%;
+    --fg-2: 220 12% 71%;
+    --fg-3: 220 12% 48%;
+    --fg-4: 220 12% 37%;
+    --fg-inverse: 0 0% 15%;
+    --bg-subtle: 220 12% 12%;
+    --bg-muted: 220 12% 19%;
+    --bg-dark: 0 0% 0%;
 
     /* Muted */
     --muted: 0 0% 22%;
@@ -181,5 +283,52 @@
       BlinkMacSystemFont,
       "Segoe UI",
       sans-serif;
+  }
+}
+
+/* CR-006 v4 utilities — dot grid + live pulse + card hover */
+
+@layer utilities {
+  .dot-grid {
+    background-image: radial-gradient(
+      circle,
+      rgb(255 255 255 / 0.08) 1px,
+      transparent 1.2px
+    );
+    background-size: 20px 20px;
+  }
+
+  .card-hover {
+    transition:
+      transform 150ms ease-out,
+      box-shadow 150ms ease-out,
+      border-color 150ms ease-out;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 2px 6px 0 rgb(0 0 0 / 0.12),
+      0 0 4px 0 rgb(0 0 0 / 0.04);
+    border-color: hsl(var(--primary-300));
+  }
+
+  .live-dot {
+    background: hsl(var(--success));
+    animation: pulse-ring 1.6s infinite;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgb(34 197 94 / 0.5);
+  }
+
+  70% {
+    box-shadow: 0 0 0 8px rgb(34 197 94 / 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgb(34 197 94 / 0);
   }
 }

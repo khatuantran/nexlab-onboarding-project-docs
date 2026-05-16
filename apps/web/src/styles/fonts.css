@@ -2,11 +2,15 @@
    bundled by Vite, not CDN). ADR-003 §2.3. Latin + Vietnamese subsets
    only để tiết kiệm bundle.
 
-   Montserrat (wordmark) is skipped: Nexlab lockup ships as SVG.
+   Montserrat (brand wordmark, font-brand) added 2026-05-16 in CR-006
+   v4 — used only for compact text-rendered wordmark fallback (the lockup
+   normally ships as SVG). Light weights (200/300/400) match reference
+   tokens.css "Montserrat ExtraLight" wordmark spec.
 
    Weight coverage:
-   - Roboto (body):    400 / 500 / 700
-   - Inter (display, label, button fallback): 400 / 500 / 600 / 700
+   - Roboto (body):                            400 / 500 / 700
+   - Inter (display, label, button fallback):  400 / 500 / 600 / 700
+   - Montserrat (brand wordmark):              200 / 300 / 400 (Latin only)
 */
 
 /* Roboto — body + small text */
@@ -26,3 +30,8 @@
 @import "@fontsource/inter/vietnamese-500.css";
 @import "@fontsource/inter/vietnamese-600.css";
 @import "@fontsource/inter/vietnamese-700.css";
+
+/* Montserrat — brand wordmark (CR-006 v4) */
+@import "@fontsource/montserrat/latin-200.css";
+@import "@fontsource/montserrat/latin-300.css";
+@import "@fontsource/montserrat/latin-400.css";
