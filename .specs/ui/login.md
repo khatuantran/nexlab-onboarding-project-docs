@@ -9,8 +9,18 @@ Referenced tokens, icons, components từ [design-system.md](design-system.md). 
 ## Screen metadata
 
 - **Screen ID**: `login`
-- **Status**: Implemented (T8 `5e90753`; UI uplift v2 Workspace 2-pane CR-002 / Phase 2-5 `a2b347d`)
-- **Last updated**: 2026-04-25
+- **Status**: Implemented v2 (`a2b347d`); **v4 Dark vivid + glassmorphism amend pending (CR-006 v4 — flips split + dark brand left + gradient CTA + stat pills)**.
+- **Last updated**: 2026-05-16 (v4 amend)
+
+## v4 amendments (CR-006 v4 — Dark vivid + glassmorphism) — supersedes v2 Wire-level below
+
+Pilot scope per [CR-006 §Iteration v4](../changes/CR-006.md) + [visual-language v4](visual-language.md). Replaces v2 Workspace 2-pane layout. Route + Auth + State machine + A11y + Maps US unchanged.
+
+- **Layout flip**: brand panel moves to **LEFT** (xl ≥ 1280px only, `flex-[0_0_620px]`); form on **RIGHT** (flex-1, max-w-[380px] centered). Mobile/tablet stack form full-width (brand hidden).
+- **Brand panel** = `GradientHero` primitive (dark gradient + 3 radial blobs + dot grid + logo watermark). Content stack: logo lockup (38×38 plate gradient + "Nexlab" wordmark + "Portal" pill) → h1 "Onboard / nhanh hơn." with gradient text on line 2 → subtitle 1 line → 2×2 feature grid (Nghiệp vụ purple / User flow primary / Business rules green / Tech notes blue) glassmorphism cards → testimonial bottom (Avatar + 5 stars + italic quote + author).
+- **Form pane** content: eyebrow chip "✦ Đăng nhập" (primary-purple gradient bg) + h1 "Chào mừng quay lại 👋" (font-display 38px black) + 1-line subtitle + Email + Password fields (height 50, rounded-12, focus halo 4px) + Remember me + gradient CTA "Đăng nhập ngay" (54h, rounded-14, primary→primary-700 gradient + shadow) + "hoặc" divider + Google SSO + 3 stat pills (42 projects / 86% doc / 18 engineers) + footer help text.
+- **Stat pills row**: 3 inline chips below SSO button — each `rounded-full bg-{tone}-50 text-{tone}-700 + size-1.75 dot`. Replaces v2 FloatStat collage on right panel.
+- DROP v2 components: `FloatStat`, `DecorativeMark` (still in code for now — phase B cleanup).
 
 ## Route
 

@@ -48,22 +48,24 @@ export function LoginPage(): JSX.Element {
 
   return (
     <div className="flex min-h-screen overflow-hidden">
-      {/* Left form pane */}
-      <main className="flex w-full flex-col bg-background px-6 py-10 sm:px-12 lg:px-16 lg:py-15 xl:w-[540px] xl:flex-shrink-0">
-        <div>
+      {/* Left brand panel — dark vivid (xl only) */}
+      <LoginBrandPanel />
+
+      {/* Right form pane */}
+      <main className="flex w-full flex-col bg-background px-6 py-10 sm:px-12 lg:px-16 lg:py-15 xl:flex-1">
+        <div className="xl:hidden">
           <NxLogo size={32} />
         </div>
         <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-sm">
-            <p className="font-ui text-xs font-semibold uppercase tracking-[0.16em] text-primary-600">
-              Onboarding Portal
-            </p>
-            <h1 className="mt-3.5 mb-2 font-display text-[38px] leading-[44px] font-bold tracking-[-0.02em] text-foreground">
+          <div className="w-full max-w-[380px]">
+            <span className="inline-flex items-center rounded-full border border-primary-200 bg-gradient-to-r from-primary-50 to-purple-50 px-3.5 py-1.5 font-ui text-[11px] font-bold uppercase tracking-[0.12em] text-primary-700">
+              ✦ Đăng nhập
+            </span>
+            <h1 className="mb-2.5 mt-5.5 font-display text-[38px] leading-[44px] font-black tracking-[-0.025em] text-foreground">
               Chào mừng quay lại 👋
             </h1>
-            <p className="mb-8 font-body text-[15px] leading-6 text-muted-foreground">
-              Dùng tài khoản nội bộ để xem và đóng góp tài liệu onboarding cho các feature đang phát
-              triển.
+            <p className="mb-7 font-body text-[14px] leading-[22px] text-muted-foreground">
+              Xem tài liệu onboarding và đóng góp cho features đang phát triển.
             </p>
 
             <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -163,14 +165,14 @@ export function LoginPage(): JSX.Element {
                 type="submit"
                 size="lg"
                 disabled={isPending}
-                className="mt-3 h-12 w-full shadow-[0_4px_12px_rgba(226,99,20,0.32)]"
+                className="mt-6 h-[54px] w-full rounded-[14px] bg-gradient-to-br from-primary via-primary-600 to-primary-700 text-white shadow-[0_8px_28px_rgba(226,99,20,0.45)] hover:from-primary hover:to-primary-800"
               >
                 {isPending ? (
                   "Đang đăng nhập…"
                 ) : (
                   <>
-                    Đăng nhập
-                    <ArrowRight className="ml-2 size-4" aria-hidden="true" />
+                    <ArrowRight className="mr-2 size-4" aria-hidden="true" />
+                    Đăng nhập ngay
                   </>
                 )}
               </Button>
@@ -198,7 +200,28 @@ export function LoginPage(): JSX.Element {
               Tiếp tục với Google Workspace
             </Button>
 
-            <p className="mt-7 font-body text-xs text-muted-foreground">
+            {/* Stat pills */}
+            <div className="mt-7 flex flex-wrap gap-2">
+              {STAT_PILLS.map((p) => (
+                <span
+                  key={p.label}
+                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-ui text-[12px] font-semibold"
+                  style={{
+                    background: `hsl(var(--${p.color}-50))`,
+                    color: `hsl(var(--${p.color}-700))`,
+                  }}
+                >
+                  <span
+                    aria-hidden="true"
+                    className="size-[7px] rounded-full"
+                    style={{ background: `hsl(var(--${p.color}-500))` }}
+                  />
+                  {p.label}
+                </span>
+              ))}
+            </div>
+
+            <p className="mt-6 font-body text-xs text-muted-foreground">
               Chưa có tài khoản? Liên hệ{" "}
               <button
                 type="button"
@@ -216,8 +239,12 @@ export function LoginPage(): JSX.Element {
           </div>
         </div>
       </main>
-
-      <LoginBrandPanel />
     </div>
   );
 }
+
+const STAT_PILLS = [
+  { color: "primary", label: "42 projects active" },
+  { color: "green", label: "86% đã có doc" },
+  { color: "purple", label: "18 engineers" },
+] as const;
