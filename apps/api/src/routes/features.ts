@@ -46,6 +46,7 @@ function toFeatureResponse(
       avatarUrl: c.avatarUrl,
       lastUpdatedAt: c.lastUpdatedAt.toISOString(),
     })),
+    prUrl: row.prUrl ?? null,
   };
 }
 

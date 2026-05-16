@@ -8,6 +8,7 @@ export interface FeatureListRow {
   title: string;
   updatedAt: Date;
   filledCount: number;
+  prUrl: string | null;
 }
 
 export interface ProjectSummaryRow {
@@ -18,6 +19,7 @@ export interface ProjectSummaryRow {
   featureCount: number;
   createdAt: Date;
   updatedAt: Date;
+  repoUrl: string | null;
 }
 
 export interface CreateProjectInput {
@@ -83,6 +85,7 @@ export function createProjectRepo(db: Db): ProjectRepo {
           description: projects.description,
           createdAt: projects.createdAt,
           updatedAt: projects.updatedAt,
+          repoUrl: projects.repoUrl,
           featureCount: sql<number>`COUNT(${features.id})::int`,
         })
         .from(projects)
@@ -148,6 +151,7 @@ export function createProjectRepo(db: Db): ProjectRepo {
           slug: features.slug,
           title: features.title,
           updatedAt: features.updatedAt,
+          prUrl: features.prUrl,
           filledCount: sql<number>`COUNT(${sections.id}) FILTER (WHERE length(${sections.body}) > 0)::int`,
         })
         .from(features)

@@ -78,6 +78,13 @@
       "when": 1779200000000,
       "tag": "0010_users_profile_enrichment",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1779300000000,
+      "tag": "0011_projects_repo_url_features_pr_url",
+      "breakpoints": true
     }
   ]
 }

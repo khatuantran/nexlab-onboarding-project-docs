@@ -13,6 +13,7 @@ const feature: FeatureListItem = {
   filledCount: 2,
   updatedAt: new Date().toISOString(),
   contributors: [],
+  prUrl: null,
 };
 
 function mockMe(role: "admin" | "author") {

@@ -18,6 +18,16 @@ export type SectionType = (typeof SECTION_ORDER)[number];
 export const sectionTypeSchema = z.enum(SECTION_ORDER);
 
 /**
+ * US-013 — generic http(s) URL accepted for external link fields (repo / PR).
+ * Loose validation per user triage 2026-05-16: any `http(s)` domain, max 500 chars.
+ * Domain whitelist + GitHub API enrichment defer to v2.
+ */
+export const urlSchema = z
+  .string()
+  .max(500, "URL tối đa 500 ký tự")
+  .regex(/^https?:\/\/.+/u, "URL phải bắt đầu với http:// hoặc https://");
+
+/**
  * Slug format (projects + features). Lowercase kebab-case, 3-60 chars.
  * Matches `api-surface.md §Response shape conventions`.
  */
@@ -43,8 +53,10 @@ export const updateFeatureRequestSchema = z
   .object({
     title: z.string().min(1, "Tiêu đề bắt buộc").max(160, "Tiêu đề tối đa 160 ký tự").optional(),
     slug: slugSchema.optional(),
+    /** US-013 — PR URL; null clears, missing leaves untouched. */
+    prUrl: urlSchema.nullable().optional(),
   })
-  .refine((v) => v.title !== undefined || v.slug !== undefined, {
+  .refine((v) => v.title !== undefined || v.slug !== undefined || v.prUrl !== undefined, {
     message: "Cần ít nhất 1 trường",
   });
 
@@ -78,6 +90,8 @@ export interface ProjectResponse {
   updatedAt: string;
   /** US-011 — top 5 contributors by recency, empty when no edits. */
   contributors: ContributorSummary[];
+  /** US-013 — external Git repo URL, null when not set. */
+  repoUrl: string | null;
 }
 
 export interface FeatureListItem {
@@ -88,6 +102,8 @@ export interface FeatureListItem {
   updatedAt: string;
   /** US-011 — top 5 contributors by recency, empty when no edits. */
   contributors: ContributorSummary[];
+  /** US-013 — external Pull Request URL, null when not set. */
+  prUrl: string | null;
 }
 
 export interface SectionResponse {
@@ -106,6 +122,8 @@ export interface FeatureResponse {
   updatedAt: string;
   /** US-011 — top 5 contributors by recency, empty when no edits. */
   contributors: ContributorSummary[];
+  /** US-013 — external Pull Request URL, null when not set. */
+  prUrl: string | null;
 }
 
 export interface SearchHit {

@@ -55,6 +55,8 @@ export const projects = pgTable("projects", {
   // Soft-delete timestamp (FR-PROJ-002). NULL = active; set → archived.
   // Catalog list + direct detail lookup phải filter WHERE archived_at IS NULL.
   archivedAt: timestamp("archived_at", { withTimezone: true }),
+  // US-013 / T1 — external repo URL (FR-LINK-001). Nullable; NULL = "Repo" button disabled in FE.
+  repoUrl: text("repo_url"),
 });
 
 export const features = pgTable(
@@ -71,6 +73,8 @@ export const features = pgTable(
     // Soft-delete timestamp (US-008, FR-FEAT-001 amend). NULL = active.
     // listFeatures + findByProjectAndSlug filter WHERE archived_at IS NULL.
     archivedAt: timestamp("archived_at", { withTimezone: true }),
+    // US-013 / T1 — external Pull Request URL (FR-LINK-001). NULL = "Xem PR" disabled in FE.
+    prUrl: text("pr_url"),
   },
   (table) => [uniqueIndex("features_project_slug_uidx").on(table.projectId, table.slug)],
 );

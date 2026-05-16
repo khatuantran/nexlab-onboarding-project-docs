@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { slugSchema, type ContributorSummary } from "./feature.js";
+import { slugSchema, urlSchema, type ContributorSummary } from "./feature.js";
 
 export const createProjectRequestSchema = z.object({
   slug: slugSchema,
@@ -17,6 +17,8 @@ export type CreateProjectRequest = z.infer<typeof createProjectRequestSchema>;
 export const updateProjectRequestSchema = z.object({
   name: z.string().min(1, "Tên project bắt buộc").max(120, "Tên project tối đa 120 ký tự"),
   description: z.string().max(1000, "Mô tả tối đa 1000 ký tự").optional(),
+  /** US-013 — external Git repo URL; null clears, missing leaves untouched. */
+  repoUrl: urlSchema.nullable().optional(),
 });
 
 export type UpdateProjectRequest = z.infer<typeof updateProjectRequestSchema>;
@@ -36,4 +38,6 @@ export interface ProjectSummary {
   createdAt: string;
   /** US-011 — top 5 contributors by recency, empty when no edits. */
   contributors: ContributorSummary[];
+  /** US-013 — external Git repo URL, null when not set. */
+  repoUrl: string | null;
 }

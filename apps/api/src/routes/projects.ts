@@ -65,6 +65,7 @@ function toProjectSummary(row: ProjectSummaryRow, contributors: ContributorRow[]
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
     contributors: contributors.map(toContributorSummary),
+    repoUrl: row.repoUrl ?? null,
   };
 }
 
@@ -77,6 +78,7 @@ function toProjectResponse(row: Project, contributors: ContributorRow[]): Projec
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
     contributors: contributors.map(toContributorSummary),
+    repoUrl: row.repoUrl ?? null,
   };
 }
 
@@ -109,6 +111,7 @@ export function createProjectsRouter(deps: ProjectsRouterDeps): ExpressRouter {
           filledCount: Number(f.filledCount),
           updatedAt: f.updatedAt.toISOString(),
           contributors: (featureContributorsMap.get(f.id) ?? []).map(toContributorSummary),
+          prUrl: f.prUrl ?? null,
         })),
       };
       res.status(200).json({ data: response });
@@ -180,11 +183,9 @@ export function createProjectsRouter(deps: ProjectsRouterDeps): ExpressRouter {
       const rows = await projectRepo.listNonArchived();
       const ids = rows.map((r) => r.id);
       const contributorsByProject = await projectRepo.getContributorsForProjects(ids);
-      res
-        .status(200)
-        .json({
-          data: rows.map((r) => toProjectSummary(r, contributorsByProject.get(r.id) ?? [])),
-        });
+      res.status(200).json({
+        data: rows.map((r) => toProjectSummary(r, contributorsByProject.get(r.id) ?? [])),
+      });
     } catch (err) {
       next(err);
     }
