@@ -8,7 +8,11 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 
 - **Screen ID**: `home`
 - **Status**: v2 Workspace shipped (CR-002 / Phase 2-1 `1d76919`); v3 + v3.1 Notion warm shipped (CR-006 pilot `a03f9c4` / `ab92574`); **v4 Dark vivid + glassmorphism pending (CR-006 v4 amend — supersedes v3 / v3.1 Wire-level + ProjectCard sections)**.
-- **Last updated**: 2026-05-16 (v4.4 ProjectCard header simplification)
+- **Last updated**: 2026-05-16 (v4.6 archive confirm → custom dialog)
+
+## v4.6 archive confirm → custom dialog (CR-006 v4.6 — 2026-05-16)
+
+User feedback (screenshot): native `window.confirm()` của browser xấu, không follow design system. `ProjectActionsMenu` "Lưu trữ project" giờ mở `ConfirmDialog` (new primitive — see [design-system.md](design-system.md) CHANGELOG v4.6) thay vì native confirm. Title `Lưu trữ project "{name}"?`, description "Project sẽ ẩn khỏi catalog. Features và sections vẫn được giữ nguyên, có thể khôi phục sau.", buttons Huỷ + Lưu trữ (destructive). Pending state disables both buttons. Behavior + POST `/projects/:slug/archive` + toast + navigate `/` flow unchanged.
 
 ## v4.4 ProjectCard header simplification (CR-006 v4.4 — 2026-05-16)
 

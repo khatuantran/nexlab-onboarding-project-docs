@@ -8,7 +8,11 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 
 - **Screen ID**: `project-landing`
 - **Status**: Implemented v2 (`8da2aff`); **v4 Dark vivid amend pending (CR-006 v4 — dark gradient hero + 4-col gradient FeatureCard)**.
-- **Last updated**: 2026-05-16 (v4.4 FeatureCard header simplification + page-level breadcrumb)
+- **Last updated**: 2026-05-16 (v4.6 archive confirm → custom dialog)
+
+## v4.6 archive confirm → custom dialog (CR-006 v4.6 — 2026-05-16)
+
+Mirror of [home.md §v4.6](home.md) — `FeatureActionsMenu` "Lưu trữ feature" admin action giờ mở `ConfirmDialog` (Radix Dialog primitive — see [design-system.md](design-system.md) CHANGELOG v4.6) thay native `window.confirm()`. Title `Lưu trữ feature "{title}"?`, description "Feature sẽ ẩn khỏi catalog. Sections và uploads vẫn được giữ nguyên, có thể khôi phục sau.", buttons Huỷ + Lưu trữ (destructive). POST `/projects/:slug/features/:fSlug/archive` flow + toast + cache invalidate giữ nguyên.
 
 ## v4.4 FeatureCard header simplification (CR-006 v4.4 — 2026-05-16)
 
