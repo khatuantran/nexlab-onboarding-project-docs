@@ -7,10 +7,14 @@ import type Redis from "ioredis";
 import {
   ErrorCode,
   UPLOAD_MIME_WHITELIST,
+  activityQuerySchema,
   changePasswordRequestSchema,
+  recentProjectsQuerySchema,
   updateMyProfileRequestSchema,
+  type ActivityQuery,
   type AuthUser,
   type ChangePasswordRequest,
+  type RecentProjectsQuery,
   type UpdateMyProfileRequest,
   type UploadMimeType,
 } from "@onboarding/shared";
@@ -19,6 +23,7 @@ import { zodValidate } from "../middleware/zodValidate.js";
 import { purgeSessionsForUserExcept } from "../lib/sessionPurge.js";
 import type { CloudinaryClient } from "../lib/cloudinary.js";
 import type { UserRepo, AdminUserRow } from "../repos/userRepo.js";
+import type { UserStatsRepo } from "../repos/userStatsRepo.js";
 
 /** US-009 — bcrypt cost matches users.ts admin invite/reset for consistency. */
 const BCRYPT_COST = 12;
@@ -27,6 +32,7 @@ const AVATAR_MAX_BYTES = 2 * 1024 * 1024;
 
 export interface MeRouterDeps {
   userRepo: UserRepo;
+  userStatsRepo: UserStatsRepo;
   requireAuth: RequestHandler;
   redis: Pick<Redis, "scan" | "get" | "del">;
   cloudinary: CloudinaryClient;
@@ -55,7 +61,7 @@ function toAuthUser(row: AdminUserRow): AuthUser {
 }
 
 export function createMeRouter(deps: MeRouterDeps): ExpressRouter {
-  const { userRepo, requireAuth, redis, cloudinary, cloudinaryAvatarsFolder } = deps;
+  const { userRepo, userStatsRepo, requireAuth, redis, cloudinary, cloudinaryAvatarsFolder } = deps;
   const router = Router();
 
   const upload = multer({
@@ -227,8 +233,63 @@ export function createMeRouter(deps: MeRouterDeps): ExpressRouter {
     }
   };
 
+  const getStats: RequestHandler = async (req, res, next) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        next(new HttpError(401, ErrorCode.UNAUTHENTICATED, "Bạn cần đăng nhập"));
+        return;
+      }
+      const data = await userStatsRepo.getStatsForUser(userId);
+      res.status(200).json({ data });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  const getRecentProjects: RequestHandler = async (req, res, next) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        next(new HttpError(401, ErrorCode.UNAUTHENTICATED, "Bạn cần đăng nhập"));
+        return;
+      }
+      const { limit } = req.query as unknown as RecentProjectsQuery;
+      const data = await userStatsRepo.getRecentProjectsForUser(userId, limit);
+      res.status(200).json({ data });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  const getActivity: RequestHandler = async (req, res, next) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        next(new HttpError(401, ErrorCode.UNAUTHENTICATED, "Bạn cần đăng nhập"));
+        return;
+      }
+      const { limit, cursor } = req.query as unknown as ActivityQuery;
+      const data = await userStatsRepo.getActivityForUser(userId, {
+        limit,
+        cursor: cursor ? new Date(cursor) : null,
+      });
+      res.status(200).json({ data });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   router.get("/", requireAuth, getMe);
   router.patch("/", requireAuth, zodValidate({ body: updateMyProfileRequestSchema }), patchMe);
+  router.get("/stats", requireAuth, getStats);
+  router.get(
+    "/recent-projects",
+    requireAuth,
+    zodValidate({ query: recentProjectsQuerySchema }),
+    getRecentProjects,
+  );
+  router.get("/activity", requireAuth, zodValidate({ query: activityQuerySchema }), getActivity);
   router.post(
     "/password",
     requireAuth,

@@ -1,4 +1,5 @@
 import { afterAll, afterEach, describe, expect, it } from "vitest";
+import { createUserStatsRepo } from "../../src/repos/userStatsRepo.js";
 import session from "express-session";
 import request from "supertest";
 import { eq } from "drizzle-orm";
@@ -58,6 +59,7 @@ function buildApp() {
       }),
     }),
     meRouter: createMeRouter({
+      userStatsRepo: createUserStatsRepo(db),
       userRepo,
       requireAuth,
       redis: fakeRedis,

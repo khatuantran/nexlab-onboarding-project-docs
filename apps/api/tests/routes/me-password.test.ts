@@ -1,4 +1,5 @@
 import { afterAll, afterEach, describe, expect, it } from "vitest";
+import { createUserStatsRepo } from "../../src/repos/userStatsRepo.js";
 import session from "express-session";
 import bcrypt from "bcryptjs";
 import request from "supertest";
@@ -74,6 +75,7 @@ function buildApp(redis: FakeRedis) {
       }),
     }),
     meRouter: createMeRouter({
+      userStatsRepo: createUserStatsRepo(db),
       userRepo,
       requireAuth,
       redis,

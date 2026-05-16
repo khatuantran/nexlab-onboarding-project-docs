@@ -1,4 +1,5 @@
 import { afterAll, describe, expect, it } from "vitest";
+import { createUserStatsRepo } from "../../src/repos/userStatsRepo.js";
 import session from "express-session";
 import request from "supertest";
 import { createApp } from "../../src/app.js";
@@ -54,6 +55,7 @@ function buildApp() {
     sessionMiddleware,
     authRouter: createAuthRouter({ userRepo, loginRateLimit }),
     meRouter: createMeRouter({
+      userStatsRepo: createUserStatsRepo(db),
       userRepo,
       requireAuth,
       redis: fakeRedis,
