@@ -532,7 +532,7 @@ function EditProfileDialog({ user }: { user: ProfileUser }): JSX.Element {
             Cập nhật tên hiển thị xuất hiện trên header và các pages có avatar.
           </DialogDescription>
         </DialogHeader>
-        <form className="mt-2 flex flex-col gap-4" onSubmit={onSubmit}>
+        <form className="flex flex-col gap-4 px-6 pb-4 pt-2" onSubmit={onSubmit}>
           <div className="flex flex-col gap-2">
             <Label htmlFor="edit-displayname" className="font-ui text-xs font-semibold">
               Tên hiển thị
@@ -643,7 +643,7 @@ function ChangePasswordDialog(): JSX.Element {
             Đổi mật khẩu xong, các phiên đăng nhập khác sẽ bị thoát.
           </DialogDescription>
         </DialogHeader>
-        <form className="mt-2 grid gap-4" onSubmit={onSubmit}>
+        <form className="grid gap-4 px-6 pb-4 pt-2" onSubmit={onSubmit}>
           <div>
             <Label htmlFor="me-old">Mật khẩu hiện tại</Label>
             <Input
@@ -777,7 +777,7 @@ function AvatarUploadDialog({ user }: { user: ProfileUser }): JSX.Element {
             PNG, JPG, hoặc WebP ≤ 2 MB. Ảnh hiển thị trên header và các pages có avatar.
           </DialogDescription>
         </DialogHeader>
-        <div className="mt-2 flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-4 px-6 pb-4 pt-2">
           <Avatar
             name={user.displayName}
             size="lg"
