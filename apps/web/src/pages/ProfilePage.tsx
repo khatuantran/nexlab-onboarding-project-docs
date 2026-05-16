@@ -1,5 +1,24 @@
 import { useRef, useState, type FormEvent } from "react";
-import { Bell, Camera, Clock, FolderOpen, Image as ImageIcon, Loader2, Pencil } from "lucide-react";
+import {
+  Activity as ActivityIcon,
+  Bell,
+  Camera,
+  Check as CheckIcon,
+  Clock,
+  Edit as EditIcon,
+  File as FileIcon,
+  FolderOpen,
+  Image as ImageIcon,
+  Loader2,
+  MapPin,
+  Pencil,
+  Phone,
+  Plus,
+  Star,
+  User as UserIcon,
+  Users as UsersIcon,
+  type LucideIcon,
+} from "lucide-react";
 import { toast } from "sonner";
 import { ApiError } from "@/lib/api";
 import { Avatar } from "@/components/common/Avatar";
@@ -10,6 +29,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useMe } from "@/queries/auth";
 import { useChangePassword, useUpdateMyProfile, useUploadAvatar } from "@/queries/me";
+import { cn } from "@/lib/cn";
 
 /**
  * `/profile` — self-service profile page (US-009). Three section card:
@@ -115,17 +135,368 @@ export function ProfilePage(): JSX.Element | null {
               <Bell aria-hidden="true" className="size-3.5" />
               Thông báo
             </button>
+            <button
+              type="button"
+              onClick={() => {
+                document
+                  .getElementById("profile-section-title")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              className="inline-flex items-center gap-2 rounded-[10px] bg-gradient-to-br from-primary to-primary-700 px-3.5 py-2 font-ui text-[13px] font-bold text-white shadow-[0_4px_16px_rgba(226,99,20,0.4)] hover:from-primary-600"
+            >
+              <Pencil aria-hidden="true" className="size-3.5" />
+              Cập nhật hồ sơ
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Three sections (compatibility with existing tests + functional form pieces) */}
-      <div className="mx-auto mt-6 flex max-w-3xl flex-col gap-6 px-10">
+      {/* Tabs row — purely decorative; content below renders always for test compat */}
+      <ProfileTabs />
+
+      {/* 2-col visual layout — v4 cards on top, existing form sections below */}
+      <div className="grid grid-cols-1 gap-5 px-10 pt-6 lg:grid-cols-2">
+        {/* LEFT column */}
+        <div className="flex flex-col gap-4">
+          <PersonalInfoCard user={user} />
+          <SkillsCard />
+        </div>
+        {/* RIGHT column */}
+        <div className="flex flex-col gap-4">
+          <StatsCard />
+          <RecentProjectsCard />
+          <ActivityFeedCard />
+        </div>
+      </div>
+
+      {/* Existing functional form sections (Thông tin tài khoản editable / Đổi mật khẩu / Ảnh đại diện) */}
+      <div className="mx-auto mt-8 flex max-w-3xl flex-col gap-6 px-10">
+        <div className="flex items-center gap-2.5">
+          <span aria-hidden="true" className="h-px flex-1 bg-border" />
+          <span className="font-ui text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+            Quản lý tài khoản
+          </span>
+          <span aria-hidden="true" className="h-px flex-1 bg-border" />
+        </div>
         <ProfileSection user={user} />
         <SecuritySection />
         <AvatarSection user={user} />
       </div>
     </main>
+  );
+}
+
+const TABS = ["Thông tin", "Đóng góp", "Bảo mật"] as const;
+type TabId = (typeof TABS)[number];
+
+function ProfileTabs(): JSX.Element {
+  const [active, setActive] = useState<TabId>("Thông tin");
+  return (
+    <div className="border-b border-border px-10 pt-1">
+      <div role="tablist" aria-label="Tabs hồ sơ" className="flex flex-wrap gap-0">
+        {TABS.map((t) => (
+          <button
+            key={t}
+            role="tab"
+            type="button"
+            aria-selected={active === t}
+            onClick={() => {
+              setActive(t);
+              if (t !== "Thông tin") toast(`${t}: nội dung placeholder, v2`);
+            }}
+            className={cn(
+              "relative -mb-px px-5 py-3.5 font-ui text-[14px] font-semibold transition-colors",
+              active === t
+                ? "border-b-2 border-primary text-primary"
+                : "border-b-2 border-transparent text-muted-foreground hover:text-foreground",
+            )}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Personal info — read-only summary card (v4 NEW) ---------- */
+
+interface InfoRowProps {
+  icon: LucideIcon;
+  label: string;
+  value: string;
+  accent: string;
+}
+
+function InfoRow({ icon: Icon, label, value, accent }: InfoRowProps): JSX.Element {
+  return (
+    <div className="flex items-center gap-3 border-b border-border py-3 last:border-b-0">
+      <span
+        aria-hidden="true"
+        className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg"
+        style={{ background: `${accent}26` }}
+      >
+        <Icon className="size-[15px]" style={{ color: accent }} />
+      </span>
+      <div className="flex-1">
+        <div className="font-ui text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+          {label}
+        </div>
+        <div className="mt-1 font-ui text-[14px] font-semibold text-foreground">{value}</div>
+      </div>
+    </div>
+  );
+}
+
+function PersonalInfoCard({ user }: { user: ProfileUser }): JSX.Element {
+  return (
+    <section
+      aria-labelledby="personal-info-title"
+      className="rounded-2xl border border-border bg-card p-[20px_24px]"
+    >
+      <div className="mb-1 flex items-center justify-between">
+        <span className="inline-flex items-center gap-2 font-display text-[15px] font-bold text-foreground">
+          <span
+            aria-hidden="true"
+            className="inline-flex size-7 items-center justify-center rounded-lg bg-primary-50"
+          >
+            <UserIcon className="size-3.5 text-primary-700" />
+          </span>
+          <h3 id="personal-info-title">Thông tin cá nhân</h3>
+        </span>
+      </div>
+      <InfoRow icon={UserIcon} label="Họ tên" value={user.displayName} accent="#F07613" />
+      <InfoRow icon={Phone} label="Điện thoại" value="0901 234 567" accent="#10B981" />
+      <InfoRow
+        icon={UsersIcon}
+        label="Phòng ban"
+        value={user.role === "admin" ? "Admin · System" : "Product · BA Team"}
+        accent="#8B5CF6"
+      />
+      <InfoRow icon={MapPin} label="Địa chỉ" value="TP. Hồ Chí Minh" accent="#F43F5E" />
+    </section>
+  );
+}
+
+/* ---------- Skills card ---------- */
+
+const SKILLS = [
+  { t: "Business Analysis", c: "#F07613" },
+  { t: "User Story", c: "#8B5CF6" },
+  { t: "Figma", c: "#F43F5E" },
+  { t: "SQL", c: "#3B82F6" },
+  { t: "BPMN", c: "#10B981" },
+  { t: "Product Thinking", c: "#F59E0B" },
+  { t: "Onboarding Doc", c: "#F07613" },
+];
+
+function SkillsCard(): JSX.Element {
+  return (
+    <section
+      aria-labelledby="skills-title"
+      className="rounded-2xl border border-border bg-card p-[20px_24px]"
+    >
+      <span className="mb-3.5 inline-flex items-center gap-2 font-display text-[15px] font-bold text-foreground">
+        <span
+          aria-hidden="true"
+          className="inline-flex size-7 items-center justify-center rounded-lg bg-purple-50"
+        >
+          <Star className="size-3.5 text-purple-700" />
+        </span>
+        <h3 id="skills-title">Kỹ năng & Tags</h3>
+      </span>
+      <div className="flex flex-wrap gap-2">
+        {SKILLS.map((s) => (
+          <span
+            key={s.t}
+            className="rounded-full border px-3 py-1 font-ui text-[12px] font-semibold"
+            style={{ background: `${s.c}1F`, borderColor: `${s.c}4D`, color: s.c }}
+          >
+            {s.t}
+          </span>
+        ))}
+        <button
+          type="button"
+          onClick={() => toast("Thêm skill: tính năng v2")}
+          className="inline-flex items-center gap-1.5 rounded-full border-[1.5px] border-dashed border-border bg-transparent px-3 py-1 font-ui text-[12px] font-semibold text-muted-foreground hover:border-primary/40 hover:text-primary"
+        >
+          <Plus className="size-3" aria-hidden="true" />
+          Thêm
+        </button>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Stats 4-tile card ---------- */
+
+const STATS = [
+  { icon: FolderOpen, v: "4", l: "Projects", c: "#F07613" },
+  { icon: FileIcon, v: "18", l: "Features doc", c: "#8B5CF6" },
+  { icon: EditIcon, v: "42", l: "Lần chỉnh sửa", c: "#3B82F6" },
+  { icon: CheckIcon, v: "12", l: "Sections xong", c: "#10B981" },
+];
+
+function StatsCard(): JSX.Element {
+  return (
+    <section
+      aria-labelledby="stats-title"
+      className="rounded-2xl border border-border bg-card p-[20px_24px]"
+    >
+      <span className="mb-4 inline-flex items-center gap-2 font-display text-[15px] font-bold text-foreground">
+        <span
+          aria-hidden="true"
+          className="inline-flex size-7 items-center justify-center rounded-lg bg-blue-50"
+        >
+          <ActivityIcon className="size-3.5 text-blue-700" />
+        </span>
+        <h3 id="stats-title">Thống kê đóng góp</h3>
+      </span>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {STATS.map((s) => (
+          <div
+            key={s.l}
+            className="rounded-xl border p-[14px_12px] text-center"
+            style={{ background: `${s.c}1A`, borderColor: `${s.c}40` }}
+          >
+            <span
+              aria-hidden="true"
+              className="mb-2 inline-flex size-8 items-center justify-center rounded-lg"
+              style={{ background: `${s.c}33` }}
+            >
+              <s.icon className="size-4" style={{ color: s.c }} />
+            </span>
+            <div className="font-display text-[22px] font-black tracking-[-0.02em] text-foreground">
+              {s.v}
+            </div>
+            <div className="mt-1.5 font-ui text-[11px]/[1.3] font-semibold text-muted-foreground">
+              {s.l}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Recent projects card ---------- */
+
+const RECENT_PROJECTS = [
+  { name: "USthree E2E", tag: "E2E", pct: 80, c: "#F07613" },
+  { name: "E2E Backend", tag: "Backend", pct: 50, c: "#8B5CF6" },
+  { name: "Catalog Search", tag: "Search", pct: 40, c: "#10B981" },
+  { name: "Momo Payment", tag: "Payment", pct: 100, c: "#3B82F6" },
+];
+
+function RecentProjectsCard(): JSX.Element {
+  return (
+    <section
+      aria-labelledby="recent-projects-title"
+      className="rounded-2xl border border-border bg-card p-[20px_24px]"
+    >
+      <span className="mb-3.5 inline-flex items-center gap-2 font-display text-[15px] font-bold text-foreground">
+        <span
+          aria-hidden="true"
+          className="inline-flex size-7 items-center justify-center rounded-lg bg-primary-50"
+        >
+          <FolderOpen className="size-3.5 text-primary-700" />
+        </span>
+        <h3 id="recent-projects-title">Projects tham gia</h3>
+      </span>
+      <div className="flex flex-col">
+        {RECENT_PROJECTS.map((p, i) => (
+          <div
+            key={p.name}
+            className={cn(
+              "flex items-center gap-3 py-2.5",
+              i < RECENT_PROJECTS.length - 1 && "border-b border-border",
+            )}
+          >
+            <span
+              aria-hidden="true"
+              className="inline-flex size-9 shrink-0 items-center justify-center rounded-[10px]"
+              style={{ background: `${p.c}26` }}
+            >
+              <FolderOpen className="size-4" style={{ color: p.c }} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="truncate font-ui text-[13px] font-semibold text-foreground">
+                {p.name}
+              </div>
+              <div className="mt-1.5 flex items-center gap-2">
+                <div className="h-1 flex-1 rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full"
+                    style={{ width: `${p.pct}%`, background: p.c }}
+                  />
+                </div>
+                <span className="shrink-0 font-ui text-[11px] font-semibold text-muted-foreground">
+                  {p.pct}%
+                </span>
+              </div>
+            </div>
+            <span
+              className="shrink-0 rounded-md px-2 py-0.5 font-ui text-[11px] font-bold"
+              style={{ background: `${p.c}1F`, color: p.c }}
+            >
+              {p.tag}
+            </span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Activity feed card ---------- */
+
+const ACTIVITY = [
+  { what: "Thêm Tech notes vào", target: "Feature 1777027304928", time: "12 phút trước" },
+  { what: "Cập nhật User flow ở", target: "USthree E2E 1777027126142", time: "1 giờ trước" },
+  { what: "Đánh dấu hoàn thành", target: "Webhook Momo v2", time: "3 giờ trước" },
+  { what: "Tạo project", target: "Catalog Search", time: "1 ngày trước" },
+];
+
+function ActivityFeedCard(): JSX.Element {
+  return (
+    <section
+      aria-labelledby="activity-title"
+      className="rounded-2xl border border-border bg-card p-[20px_24px]"
+    >
+      <span className="mb-3.5 inline-flex items-center gap-2 font-display text-[15px] font-bold text-foreground">
+        <span
+          aria-hidden="true"
+          className="inline-flex size-7 items-center justify-center rounded-lg bg-green-50"
+        >
+          <Clock className="size-3.5 text-green-700" />
+        </span>
+        <h3 id="activity-title">Hoạt động gần đây</h3>
+      </span>
+      <div className="flex flex-col">
+        {ACTIVITY.map((a, i) => (
+          <div
+            key={i}
+            className={cn(
+              "flex gap-2.5 py-2.5",
+              i < ACTIVITY.length - 1 && "border-b border-border",
+            )}
+          >
+            <span
+              aria-hidden="true"
+              className="mt-1.5 size-1.5 shrink-0 rounded-full bg-green-500"
+            />
+            <div className="flex-1">
+              <span className="font-body text-[13px] leading-[18px] text-muted-foreground">
+                {a.what} <strong className="font-semibold text-primary-700">{a.target}</strong>
+              </span>
+              <div className="mt-1 font-ui text-[11px] font-medium text-muted-foreground">
+                {a.time}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 

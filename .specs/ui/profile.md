@@ -7,6 +7,14 @@
 > - Cover `GradientHero` h-[200px] with 2 blobs (purple + orange) + dot grid + logo watermark + "Đổi ảnh bìa" placeholder button top-right.
 > - Profile card overlap `-mt-[60px] px-10`: avatar 96×96 (rounded-[16px] gradient bg-primary→primary-700 with strong shadow) + Online green dot + h1 "Hồ sơ của tôi" (was h1 page title) + Role badge (primary-50/700 for admin, muted for author) + Online pill (green-50/700) + meta row (displayName + Joined relative time) + "Thông báo" button (placeholder).
 > - 3 sections (Thông tin tài khoản / Đổi mật khẩu / Ảnh đại diện) stacked below in max-w-3xl container with px-10 mt-6 gap-6. Existing form behavior preserved.
+>
+> **v4.1 enrichment (CR-006 v4.1 — 2026-05-16)**: Add tabs row [Thông tin / Đóng góp / Bảo mật] + 2-col layout (`grid lg:grid-cols-2 px-10 pt-6`) between profile card and existing functional sections:
+>
+> - **Left col**: `PersonalInfoCard` (read-only InfoRow stack: Họ tên/Điện thoại/Phòng ban/Địa chỉ, each with accent icon plate) + `SkillsCard` (7 colored skill tags + "Thêm" outline dashed).
+> - **Right col**: `StatsCard` 4-tile grid (Projects orange / Features doc purple / Lần chỉnh sửa blue / Sections xong green) + `RecentProjectsCard` (4 hardcoded projects với progress bar + tag pill) + `ActivityFeedCard` (4 entries với green dot + `{verb} {target}` text).
+> - Tabs are decorative — all content renders always (test compat).
+> - Profile card actions add `Cập nhật hồ sơ` gradient CTA next to `Thông báo` (scrolls to the editable section below).
+> - Existing 3 functional form sections moved into "Quản lý tài khoản" sub-section below the visual cards (border separator).
 
 Referenced tokens / icons / components từ [design-system.md](design-system.md).
 
