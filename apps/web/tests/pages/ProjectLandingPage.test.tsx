@@ -60,13 +60,12 @@ describe("ProjectLandingPage", () => {
     const loginCard = screen.getByRole("link", {
       name: /xem chi tiết feature đăng nhập bằng email/i,
     });
-    // v4 FeatureCard: title in gradient header + ProgressRing pct text.
+    // v4.4 FeatureCard: title in gradient header + section dots (no pct ring).
     expect(within(loginCard).getByText(/đăng nhập bằng email/i)).toBeInTheDocument();
-    expect(within(loginCard).getByText(/^100%$/)).toBeInTheDocument();
     expect(loginCard.querySelector("time")).not.toBeNull();
 
     const exportCard = screen.getByRole("link", { name: /xem chi tiết feature xuất báo cáo/i });
-    expect(within(exportCard).getByText(/^40%$/)).toBeInTheDocument();
+    expect(within(exportCard).getByText(/xuất báo cáo/i)).toBeInTheDocument();
   });
 
   it("renders empty state when features is empty (AC-4)", async () => {

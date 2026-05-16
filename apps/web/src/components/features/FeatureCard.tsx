@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import type { FeatureListItem } from "@onboarding/shared";
 import { AvatarStack } from "@/components/common/AvatarStack";
 import { RelativeTime } from "@/components/common/RelativeTime";
-import { ProgressRing } from "@/components/patterns/ProgressRing";
 import { FeatureActionsMenu } from "@/components/features/FeatureActionsMenu";
 import { useMe } from "@/queries/auth";
 
@@ -52,7 +51,6 @@ export function FeatureCard({ projectSlug, feature }: FeatureCardProps): JSX.Ele
   const isAdmin = me?.user.role === "admin";
   const status = deriveStatus(feature.filledCount);
   const total = 5;
-  const pct = Math.round((feature.filledCount / total) * 100);
   const gradient = GRADIENTS[hashSlug(feature.slug) % GRADIENTS.length]!;
   const contributors = ["TM", "NL"];
 
@@ -81,21 +79,6 @@ export function FeatureCard({ projectSlug, feature }: FeatureCardProps): JSX.Ele
               <FileText className="size-[18px] text-white" />
             )}
           </span>
-          <div className="relative size-11">
-            <ProgressRing
-              pct={pct}
-              size={44}
-              strokeWidth={5}
-              color="rgba(255,255,255,0.9)"
-              bg="rgba(255,255,255,0.2)"
-            />
-            <span
-              aria-hidden="true"
-              className="absolute inset-0 flex items-center justify-center font-display text-[11px] font-bold leading-none text-white"
-            >
-              {pct}%
-            </span>
-          </div>
         </div>
         <div className="relative mt-2.5 line-clamp-1 font-display text-[14px] font-bold leading-[20px] text-white">
           {feature.title}
