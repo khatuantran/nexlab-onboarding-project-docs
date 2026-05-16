@@ -38,29 +38,31 @@ function renderCard() {
 }
 
 /**
- * CR-006 v3.1 ProjectCard rich tile per user mockup 2026-05-16.
- * Full-color tile with category tag + big % + decorative circles +
- * sections counter + avatar stack + relative time. Admin gets overflow
- * menu in lieu of Live indicator.
+ * CR-006 v4 ProjectCard — gradient header (1 of 6 vivid palettes) +
+ * initials plate + tag pill + Live pill or admin overflow +
+ * ProgressRing + light body with title + section dots + bottom row
+ * (AvatarStack + features count + activity).
  */
-describe("ProjectCard — rich tile (v3.1)", () => {
-  it("renders category tag, big %, sections counter, avatar stack", async () => {
+describe("ProjectCard — v4 vivid gradient header", () => {
+  it("renders initials plate, category tag, ProgressRing svg, section dots, features counter", async () => {
     mockMe("author");
     renderCard();
     const link = await screen.findByRole("link", { name: /xem chi tiết dự án pilot project/i });
 
-    // Category tag from one of 6 fixed labels (deterministic from slug hash).
-    const categoryTag = within(link).getByText(/^(E2E|Backend|Search|Payment|CRM|Admin)$/);
-    expect(categoryTag).toBeInTheDocument();
+    // Initials plate — 2-letter uppercase from first word.
+    expect(within(link).getByText(/^PI$/)).toBeInTheDocument();
 
-    // Big % display — 0/20/40/60/80/100 cycle.
-    expect(within(link).getByText(/^\d+%$/)).toBeInTheDocument();
+    // Category tag from one of 6 fixed labels (deterministic by slug hash).
+    expect(within(link).getByText(/^(E2E|Backend|Search|Payment|CRM|Admin)$/)).toBeInTheDocument();
+
+    // ProgressRing svg present in header.
+    expect(link.querySelector("svg[role='img']")).not.toBeNull();
     expect(within(link).getByText(/^doc$/i)).toBeInTheDocument();
 
-    // Sections counter + feature count.
-    expect(within(link).getByText(/\d+\/15 sections · 3 features/)).toBeInTheDocument();
+    // Features compact counter "3f" in bottom row.
+    expect(within(link).getByText(/^3f$/i)).toBeInTheDocument();
 
-    // Relative time semantic element.
+    // RelativeTime element.
     expect(link.querySelector("time")).not.toBeNull();
   });
 

@@ -62,20 +62,30 @@ const demo: ProjectSummary = {
 };
 
 describe("HomePage", () => {
-  it("renders project rows with name, description, featureCount, relative time", async () => {
+  it("renders v4 dark hero, filter chip group, vivid project cards", async () => {
     mockMe("author");
     mockProjects([pilot, demo]);
     renderHome();
 
-    expect(await screen.findByRole("heading", { name: /góc onboarding/i })).toBeInTheDocument();
-    expect(await screen.findByRole("heading", { name: /^dự án$/i })).toBeInTheDocument();
+    // v4 hero headline "Workspace / của bạn" — h1 wraps both lines.
+    expect(await screen.findByRole("heading", { name: /workspace/i })).toBeInTheDocument();
+
+    // Floating filter bar — chip group with 4 options.
+    const filterGroup = await screen.findByRole("tablist", { name: /lọc dự án/i });
+    expect(within(filterGroup).getByRole("tab", { name: /tất cả/i })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    expect(within(filterGroup).getByRole("tab", { name: /đang chạy/i })).toBeInTheDocument();
+
+    // Project cards render with compact feature counts "Nf".
     const pilotLink = await screen.findByRole("link", { name: /xem chi tiết dự án pilot/i });
     expect(within(pilotLink).getByText("Pilot Project")).toBeInTheDocument();
-    expect(within(pilotLink).getByText(/5 features?/i)).toBeInTheDocument();
+    expect(within(pilotLink).getByText(/^5f$/i)).toBeInTheDocument();
     expect(pilotLink.querySelector("time")).not.toBeNull();
 
     const demoLink = screen.getByRole("link", { name: /xem chi tiết dự án demo/i });
-    expect(within(demoLink).getByText(/1 feature$/i)).toBeInTheDocument();
+    expect(within(demoLink).getByText(/^1f$/i)).toBeInTheDocument();
   });
 
   it("shows empty state with admin CTA 'Tạo dự án đầu tiên'", async () => {
