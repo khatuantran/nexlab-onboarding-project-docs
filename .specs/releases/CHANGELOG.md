@@ -12,6 +12,10 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 
 ## [Unreleased]
 
+### Changed
+
+- **Delete flow cho avatar + cover image** ([US-009](../stories/US-009.md) AC-8a + [US-019](../stories/US-019.md) AC-15/16 amend, 2026-05-16) — Bổ sung 3 endpoint DELETE: `DELETE /api/v1/me/avatar` (`requireAuth`), `DELETE /api/v1/me/cover` (`requireAuth`), `DELETE /api/v1/projects/:slug/cover` (admin gate). Mỗi handler best-effort gọi Cloudinary `destroy(publicId)` (parse từ secureUrl; log warn nếu fail nhưng vẫn proceed) rồi clear URL trong DB → 204. FE: 3 dialog (Avatar / profile cover / project cover) thêm outline danger button "Xóa ảnh" visible khi URL set; toast "Đã xóa ảnh" + invalidate cache. Reuses existing repo null-accept signatures (`updateAvatarUrl/updateCoverUrl(id, null)`). No new error codes.
+
 ### Added
 
 - **Cover image upload — profile + project** ([US-019](../stories/US-019.md), 2026-05-16) — Promoted from [BL-006](../backlog/BL-006.md). New `FR-COVER-001`. Migration `0013_users_projects_cover_url.sql` adds nullable `users.cover_url` + `projects.cover_url`. 2 new endpoints (mirror US-009 avatar pattern): `POST /api/v1/me/cover` (`requireAuth`, max 4 MB png/jpg/webp, Cloudinary folder `covers/users/`) + `POST /api/v1/projects/:slug/cover` (admin gate, folder `covers/projects/`). Read endpoints (`GET /me`, `GET /projects`, `GET /projects/:slug`) augment response với `coverUrl: string | null`. FE: inline `CoverUploadDialog` thay `placeholderToast("Đổi ảnh bìa")` trên ProfilePage; ProjectHero `<img>` + overlay `bg-gradient-to-b from-black/40 to-black/60` khi `coverUrl` set, blobs glow giữ nguyên. Reuses Cloudinary error contracts (FILE_TOO_LARGE / UNSUPPORTED_MEDIA_TYPE / UPLOAD_PROVIDER_ERROR / UPLOADS_DISABLED) — no new error codes. 268/268 api + 186/186 web tests green. Commits: `1b27265` (spec) → `638fdae` (T1 migration + shared) → `a41f4eb` (T2 BE) → `ca6cea8` (T3 FE) → this commit (progress sync).
