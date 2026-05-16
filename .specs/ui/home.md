@@ -7,10 +7,102 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 ## Screen metadata
 
 - **Screen ID**: `home`
-- **Status**: v2 Workspace shipped (CR-002 / Phase 2-1 `1d76919`); **v3 Notion warm + graphics-rich pending (CR-006 — supersedes v2 Wire-level + ProjectCard sections)**
-- **Last updated**: 2026-05-16
+- **Status**: v2 Workspace shipped (CR-002 / Phase 2-1 `1d76919`); v3 + v3.1 Notion warm shipped (CR-006 pilot `a03f9c4` / `ab92574`); **v4 Dark vivid + glassmorphism pending (CR-006 v4 amend — supersedes v3 / v3.1 Wire-level + ProjectCard sections)**.
+- **Last updated**: 2026-05-16 (v4 amend)
 
-## v3 amendments (CR-006 pilot — Notion warm + graphics-rich) — supersedes Wire-level + ProjectCard sections below
+## v4 amendments (CR-006 v4 — Dark vivid + glassmorphism) — supersedes v3 / v3.1 + Wire-level below
+
+Pilot scope per [CR-006 §Iteration v4](../changes/CR-006.md) + charter v4 [visual-language.md §2/§3/§7/§10/§11/§12](visual-language.md). Replaces v3 + v3.1 amendments. State machine + Route + A11y + Maps US unchanged from v2/v3.
+
+### Page background
+
+- Use default `bg-background` (light) / dark variant. v3 `bg-canvas` warm off-white DROPPED.
+
+### Hero — dark gradient + 3 blobs + 4 stat tiles
+
+- Container: full-bleed `<GradientHero blobs={[orange, purple, blue]} showWatermark gridOverlay>` (primitive in `apps/web/src/components/patterns/`). Padding `pt-11 pb-14 px-10` (44-56 vertical, 40 horizontal). Below AppHeader, no rounded corners on container — bleeds full width.
+- Internal layout `relative flex items-end gap-10`:
+  - **Left** flex-1: eyebrow chip "✦ Sprint 14 · Q2 2026" `inline-flex rounded-full px-3.5 py-1 bg-primary/22 border border-primary/45 font-ui text-[11px] uppercase tracking-[0.12em] text-[#FFD092]` + (optional) Live chip `inline-flex items-center gap-1.5 rounded-full bg-green-500/18 border border-green-500/40 px-3.5 py-1 font-ui text-[11px] text-green-200` with pulsing dot + "2 đang chỉnh". Then h1 2 lines `font-display text-[56px]/[60px] font-black tracking-[-0.03em] text-white`: line 1 plain "Workspace" + line 2 gradient span "của bạn" applying `bg-gradient-to-r from-[hsl(var(--logo-grad-start))] to-[hsl(var(--logo-grad-end))] bg-clip-text text-transparent`.
+  - **Right** stat tiles: `grid grid-cols-4 gap-2.5 w-[552px]` (128px col × 4 + gaps). Each tile glassmorphism `rounded-2xl bg-white/6 border border-white/10 backdrop-blur-md p-[18px_14px_16px] text-center`:
+    - Icon plate `inline-flex size-[42px] rounded-xl bg-gradient-to-br from-{tone} to-{tone}-700 shadow-[0_4px_14px_rgba(0,0,0,0.35)] mb-2.5 items-center justify-center` + icon size-5 white.
+    - Value `font-display text-[26px] font-black tracking-[-0.02em] text-white` + label `mt-1.5 font-ui text-[11px]/[1.3] font-semibold text-white/50`.
+    - 4 tiles: (1) Folder + count Projects (primary), (2) Check + count Đủ tài liệu (green), (3) Users + count Đóng góp (purple), (4) Clock + "2.3h" Onboard TB (blue).
+
+### Floating filter bar — over hero edge
+
+- Wrapper `px-10 -mt-[22px] relative` (negative top margin overlaps hero bottom).
+- Inner `bg-background rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.1)] border border-border p-2.5 px-3.5 flex items-center gap-2`:
+  - Search icon (size-4 muted) + `<input>` placeholder "Tìm project, owner, tag..." `flex-1 border-none outline-none bg-transparent font-ui text-sm font-medium text-foreground`.
+  - Divider `w-px h-[22px] bg-border`.
+  - Filter chip group: 4 buttons ["Tất cả", "Đang chạy", "Đủ doc", "Cần bổ sung"]. Each `h-8 px-3.5 rounded-md font-ui text-[13px] font-semibold cursor-pointer transition`. Active = `bg-primary text-primary-foreground`. Idle = `bg-transparent text-muted-foreground hover:text-foreground`.
+  - Divider `w-px h-[22px] bg-border`.
+  - Admin only: "Tạo mới" CTA `h-9 px-3.5 rounded-[10px] bg-primary text-white font-ui text-[13px] font-bold inline-flex items-center gap-1.5 shadow-[0_4px_12px_rgba(226,99,20,0.35)] cursor-pointer` + Plus icon size-3.5. Click → `<CreateProjectDialog>` (existing).
+
+### Project count + view toggle row
+
+- Wrapper `px-10 pt-5 pb-4 flex items-center justify-between`:
+  - Left: `font-ui text-[14px] font-bold text-foreground` "{projects.length} projects".
+  - Right: view toggle pair (Grid icon active = `bg-primary-50 border-primary-500/30`, List icon idle = `bg-background border-border`). Each button `size-8 rounded-md border border-border inline-flex items-center justify-center cursor-pointer`. v4 ship Grid-only active; List render placeholder.
+
+### Project grid — VividProjectCard 3-col
+
+- Wrapper `grid grid-cols-3 gap-4 px-10 pb-15`. Mobile collapses 1-col / tablet 2-col.
+- Each card = `<ProjectCard project={...}>`. See §"ProjectCard v4" below.
+- Admin only: last cell rendered as dashed "Tạo dự án mới" tile `min-h-[200px] rounded-2xl border-2 border-dashed border-border bg-transparent p-5 flex flex-col items-center justify-center gap-3 text-muted-foreground font-ui text-[13px] font-semibold cursor-pointer hover:border-primary/40 hover:bg-primary-50` + icon plate `size-12 rounded-2xl bg-primary-50 inline-flex items-center justify-center` containing Plus size-6 primary-600.
+
+### ProjectCard v4 (replaces v3 banner-top + v3.1 full-color tile)
+
+User mockup 2026-05-16 (new export) supersedes the v3.1 muted tile. v4 is a layered card: gradient header (1 of 6 vivid palettes) + light body with rich metrics.
+
+- Container: `<Link>` wraps card `rounded-2xl overflow-hidden border border-border bg-card flex flex-col card-hover` (card-hover = `transition-[transform,box-shadow,border-color] duration-150 cursor-pointer hover:translate-y-[-1px] hover:shadow-md hover:border-primary-300`).
+- **Header** (gradient): `p-[22px_22px_18px] bg-gradient-to-br from-{tone}-700 to-{tone}-500 relative overflow-hidden min-h-[150px]`. Tone determined by `slug` hash → 1 of 6: orange / purple / green / blue / rose / amber (Tailwind classes via accent palette tokens).
+  - 2 decorative circles absolute (rgba white/.12 + white/.07) — first `right-[-40px] top-[-40px] size-[140px] rounded-full bg-white/12`, second `left-[-20px] bottom-[-30px] size-[100px] rounded-full bg-white/7`.
+  - Top row `relative flex justify-between items-start`:
+    - **Left stack**: initials plate `inline-flex size-[46px] rounded-xl bg-white/22 shadow items-center justify-center font-display text-[17px] font-extrabold text-white mb-2.5` (initials = first 2 chars of first word uppercase). Below: tag pill + Live pill side-by-side `flex gap-1.5 flex-wrap`.
+      - Tag pill `inline-flex rounded-full bg-white/22 border border-white/30 px-2.5 py-1 font-ui text-[11px] font-bold text-white` containing project category label (placeholder = deterministic 1 of 6 strings from slug hash).
+      - Live pill (if `featureCount > 0`): `inline-flex items-center gap-1.5 rounded-full bg-white/18 border border-white/25 px-2.5 py-1 font-ui text-[11px] font-bold text-white` + pulsing dot `size-1.5 animate-pulse rounded-full bg-white`.
+      - Admin overflow menu (replaces Live slot when role=admin): `<ProjectActionsMenu>` mounted inside a `bg-white/15 backdrop-blur-sm rounded-md` wrapper.
+    - **Right**: `<ProgressRing pct={pct} size={52} color="rgba(255,255,255,0.9)" bg="rgba(255,255,255,0.2)" />` + "doc" subscript `mt-1 font-ui text-[10px] font-semibold text-white/70`. pct placeholder = `((hash >> 4) % 6) * 20` (0/20/40/60/80/100 cycle) until BE filledSectionCount lands.
+- **Body** (light): `p-[16px_22px_20px] flex flex-col gap-2.5 flex-1`:
+  - Title h3 `font-display text-[15px]/[20px] font-bold text-foreground line-clamp-1` + desc `font-body text-[12px]/[17px] text-muted-foreground line-clamp-1 mt-1.5`.
+  - Section dots progress row: `flex items-center gap-1` containing N cells `flex-1 h-[5px] rounded-full bg-primary` (filled) or `bg-muted` (empty) + counter `font-ui text-[12px] font-bold text-foreground/80 ml-2` "{filledSections}/{totalSections}".
+  - Bottom row `pt-2.5 border-t border-border flex items-center justify-between`:
+    - Left: `<AvatarStack>` (3 names from pool deterministic by hash, size="xs") + `font-ui text-[12px] font-semibold text-muted-foreground` "{featureCount}f".
+    - Right: activity indicator — `inline-flex items-center gap-1.5 font-ui text-[12px] font-medium`. Color green-500 + pulsing dot when "live" (activeNow > 0); else Clock icon size-3 muted + relative time.
+
+### Tile palette mapping (v4)
+
+Replaces v3.1 muted tile palette. 6 vivid gradient palettes mapped by `slug` hash modulo:
+
+| Hash bucket | Tone     | Tailwind classes                  | Reference (500)     |
+| ----------- | -------- | --------------------------------- | ------------------- |
+| 0           | `orange` | `from-primary-700 to-primary-500` | `#F07613 → #BB4A13` |
+| 1           | `purple` | `from-purple-700 to-purple-500`   | `#8B5CF6 → #6D28D9` |
+| 2           | `green`  | `from-green-700 to-green-500`     | `#10B981 → #047857` |
+| 3           | `blue`   | `from-blue-700 to-blue-500`       | `#3B82F6 → #1D4ED8` |
+| 4           | `rose`   | `from-rose-700 to-rose-500`       | `#F43F5E → #BE123C` |
+| 5           | `amber`  | `from-amber-700 to-amber-500`     | `#F59E0B → #B45309` |
+
+Category labels per tone (placeholder — replaces v3.1 set): unchanged 6 fixed strings ("E2E" / "Backend" / "Search" / "Payment" / "CRM" / "Admin") deterministic by hash. BE category field deferred.
+
+### Empty state (v4)
+
+- Centered `flex flex-col items-center gap-4 py-16 px-6 max-w-md mx-auto text-center`.
+- Visual: emoji 4xl "📁" OR icon plate `size-16 rounded-2xl bg-primary text-white inline-flex items-center justify-center` containing FolderOpen size-7.
+- Heading "Chưa có dự án nào ✨" `font-display text-xl font-semibold`.
+- Description — 1 line `text-sm text-muted-foreground`: "Tạo dự án đầu tiên để team bắt đầu document features." (admin) / "Liên hệ admin để bắt đầu." (author).
+- Admin CTA: gradient primary button "Tạo dự án đầu tiên".
+
+### Tokens & typography (v4)
+
+- Page bg: default `bg-background`. v3 `bg-canvas` DROPPED.
+- Hero bg: `GradientHero` (dark gradient + blobs + watermark).
+- Glassmorphism on stat tiles: `bg-white/6 border-white/10 backdrop-blur-md` (over dark hero).
+- Card body: light `bg-card`. Card header: 1 of 6 vivid gradients (tone palette per §Tile palette mapping).
+- Buttons: primary `bg-primary text-primary-foreground shadow-[0_4px_12px_rgba(226,99,20,0.35)]`; floating filter chips active `bg-primary text-white`.
+- Border-radius: cards `rounded-2xl`. Filter bar `rounded-2xl`. Buttons `rounded-[10px]`. Tile plates `rounded-xl`.
+
+## v3 amendments (CR-006 pilot — Notion warm + graphics-rich) — superseded by v4 above
 
 Pilot scope per [CR-006](../changes/CR-006.md) + charter v3 [visual-language.md](visual-language.md). Replaces v2 Workspace wire (CR-002). State machine + Interactions + A11y + Maps US unchanged.
 

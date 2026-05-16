@@ -1,14 +1,66 @@
-# UI Spec — AppHeader (v3 single-row chrome)
+# UI Spec — AppHeader (v4 pill search + initials gradient)
 
 <!-- template: 02-ui-spec-template.md@0.1 -->
 
 ## Screen metadata
 
 - **Screen ID**: `app-header`
-- **Status**: Spec ready — pilot pending (CR-006 / Phase C2)
-- **Last updated**: 2026-05-16
+- **Status**: v3 shipped (CR-006 / Phase C2 `6341287`); **v4 Dark vivid amend pending (CR-006 v4 / Phase C2)**.
+- **Last updated**: 2026-05-16 (v4 amend)
 
-Component-level spec (not a route). Mounted ở `ProtectedLayout` cho mọi authenticated screen. Replaces v2 2-row AppHeader chrome per [CR-006](../changes/CR-006.md). Visual quality bar per [visual-language v3](visual-language.md) — single-row, warm, icon-first.
+Component-level spec (not a route). Mounted ở `ProtectedLayout` cho mọi authenticated screen. v4 amend tightens chrome per dark-vivid direction. Visual quality bar per [visual-language v4](visual-language.md) — single-row, pill search with ⌘K kbd, initials gradient UserMenu trigger.
+
+## v4 amendments (CR-006 v4 — Dark vivid + glassmorphism) — supersedes Wire-level + Component changes below
+
+Pilot scope per [CR-006 §Iteration v4](../changes/CR-006.md). Replaces v3 single-row spec at the wire level (more specific paddings + initials gradient on UserMenu trigger + ⌘K kbd badge on search pill). State machine + A11y + Interactions unchanged.
+
+### Container
+
+- `<header role="banner" className="sticky top-0 z-20 h-16 border-b border-border bg-background px-6 flex items-center gap-4">` (h-16 = 64px per reference topbar.jsx, bumped from v3 h-14 = 56px).
+- No `max-w-7xl` constraint — full-bleed; padding `px-6` only.
+- No translucent bg / backdrop-blur on header itself in v4 (chrome stays solid `bg-background` for contrast with dark hero below).
+
+### Left cluster — Logo + divider + (optional) breadcrumb
+
+- `<NxLogo variant="lockup" size={26}>` (down from 28 — reference uses 26).
+- Vertical divider `w-px h-[22px] bg-border` after logo.
+- Optional inline `<BreadcrumbBar inline/>` (when inside project / feature route) right after divider. v3 prop kept.
+
+### Center — Search pill with ⌘K kbd
+
+- `<SearchInput pill>` (NEW pill variant — add prop to existing component).
+- Layout: `flex-1 max-w-[400px] h-[38px] flex items-center gap-2.5 px-3.5 rounded-[10px] bg-bg-subtle border-[1.5px] border-border focus-within:bg-background focus-within:border-primary focus-within:shadow-[0_0_0_4px_rgba(240,118,19,0.1)] transition`.
+- Inner: Search icon size-[15px] (focused = primary, idle = muted) + `<input>` placeholder "Tìm project, feature, người..." font-ui text-[13px] font-medium + `<kbd className="text-[11px] font-semibold text-muted-foreground border border-border bg-bg-subtle rounded px-1.5 py-0.5">⌘K</kbd>` trailing.
+
+### Right cluster — Bell + Theme + UserMenu pill
+
+- `flex-1` spacer between center search and right cluster.
+- `<NotificationBell>` square `size-9 rounded-[10px]` ghost icon button + Bell icon size-[17px] + red dot indicator `absolute top-[9px] right-[9px] size-[7px] bg-[#F43F5E] rounded-full border-2 border-background`. Tooltip "Sắp ra mắt".
+- `<ThemeToggle>` same `size-9 rounded-[10px]` ghost shape + Sun/Moon icon size-[17px].
+- `<UserMenu>` rewrite trigger:
+  - Wrapper `flex items-center gap-2.5 pl-3 border-l border-border shrink-0`.
+  - Inside trigger: initials plate `size-[34px] rounded-[10px] bg-gradient-to-br from-primary to-primary-700 inline-flex items-center justify-center font-ui text-[12px] font-bold text-white shadow-[0_2px_8px_rgba(240,118,19,0.4)]` (e.g. "TM").
+  - Stack to the right: name `font-ui text-[13px] font-bold text-foreground leading-none` + role badge below `font-ui text-[11px] font-medium text-muted-foreground leading-none mt-[3px]` (e.g. "Admin · BA").
+  - Dropdown menu items unchanged from v3 (Hồ sơ / Cài đặt / Quản lý user [admin] / Đăng xuất).
+
+### v4 changes from v3
+
+| Component        | v3                                              | v4                                                                                                        |
+| ---------------- | ----------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Container height | `h-14` (56px) + `bg-canvas/90 backdrop-blur-md` | `h-16` (64px) + solid `bg-background` (chrome stays solid)                                                |
+| Search input     | `h-9 rounded-full bg-muted/50` pill             | `h-[38px] rounded-[10px] bg-bg-subtle border-[1.5px]` + ⌘K kbd badge                                      |
+| Bell + Theme     | `size-9 rounded-md`                             | `size-9 rounded-[10px]` (consistent w/ search); Bell adds red-dot indicator                               |
+| UserMenu trigger | Avatar size-8 only                              | Initials gradient plate 34×34 + name (13px bold) + role label (11px muted), bordered with `border-l pl-3` |
+| Logo size        | NxLogo lockup `size={28}`                       | NxLogo lockup `size={26}` (match reference)                                                               |
+| Vertical divider | None                                            | `w-px h-[22px] bg-border` after logo                                                                      |
+
+### Tests update (v4)
+
+- AppHeader.test selectors: kbd `⌘K` visible, initials gradient trigger renders user displayName + role text content.
+- UserMenu.test: trigger renders name + role; dropdown items unchanged.
+- SearchInput.test: pill variant applies expected classes when `pill={true}`.
+
+## v3 wire (superseded by v4 above)
 
 ## Route
 
