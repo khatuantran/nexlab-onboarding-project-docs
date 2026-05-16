@@ -34,7 +34,6 @@ export function AppHeader(): JSX.Element | null {
       </Link>
       <span aria-hidden="true" className="h-[22px] w-px shrink-0 bg-border" />
       <BreadcrumbBar inline />
-      <div className="flex-1" />
       <div className="max-w-[400px] flex-1">
         <SearchInput pill />
       </div>

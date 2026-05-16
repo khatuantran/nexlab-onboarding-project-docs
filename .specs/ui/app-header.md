@@ -34,7 +34,7 @@ Pilot scope per [CR-006 §Iteration v4](../changes/CR-006.md). Replaces v3 singl
 
 ### Right cluster — Bell + Theme + UserMenu pill
 
-- `flex-1` spacer between center search and right cluster.
+- Single `flex-1` spacer **after** the search wrapper (no spacer between divider/breadcrumb and search). Search pill sits immediately after the (optional) inline `<BreadcrumbBar>`, hugging the logo cluster. The trailing spacer pushes the right cluster (Bell + Theme + UserMenu) to the right edge.
 - `<NotificationBell>` square `size-9 rounded-[10px]` ghost icon button + Bell icon size-[17px] + red dot indicator `absolute top-[9px] right-[9px] size-[7px] bg-[#F43F5E] rounded-full border-2 border-background`. Tooltip "Sắp ra mắt".
 - `<ThemeToggle>` same `size-9 rounded-[10px]` ghost shape + Sun/Moon icon size-[17px].
 - `<UserMenu>` rewrite trigger:

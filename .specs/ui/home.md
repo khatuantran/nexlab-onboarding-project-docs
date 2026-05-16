@@ -8,7 +8,20 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 
 - **Screen ID**: `home`
 - **Status**: v2 Workspace shipped (CR-002 / Phase 2-1 `1d76919`); v3 + v3.1 Notion warm shipped (CR-006 pilot `a03f9c4` / `ab92574`); **v4 Dark vivid + glassmorphism pending (CR-006 v4 amend — supersedes v3 / v3.1 Wire-level + ProjectCard sections)**.
-- **Last updated**: 2026-05-16 (v4 amend)
+- **Last updated**: 2026-05-16 (v4.1 tightening)
+
+## v4.1 tightening (CR-006 v4.1 — 2026-05-16, refinement after user review)
+
+Post-pilot feedback: "card chưa giống design lắm, tìm kiếm chưa tìm được". v4.1 fixes:
+
+- **Card radius corrections**: ProjectCard container `rounded-[20px]` (was `rounded-2xl` which our tailwind config maps to 60px). Initials plate `rounded-[12px]` + stronger drop shadow `0_4px_10px_rgba(0,0,0,0.25)`. Decorative circle opacity 0.12 / 0.07 per reference. Tag pill drops `uppercase tracking-wide` for natural-case display ("E2E" instead of "E2E" with stretched tracking).
+- **ProgressRing pct% overlay**: card header ring now shows centered `{pct}%` text inside the ring (font-display 13px bold white). Wrapped in relative size-[52px] container; "doc" subscript stays below.
+- **Floating filter bar radius**: outer container `rounded-[16px]` (was `rounded-2xl` = 60px). Inline filter chips unchanged.
+- **Stat tile glassmorphism**: each tile `rounded-[16px]`; inner icon plate `rounded-[12px]`.
+- **AdminCreateTile**: `rounded-[20px]` matching ProjectCard sibling.
+- **Search input wired client-side**: floating bar `<input>` bound to `query` state; project list filtered by `name` + `description` substring (case-insensitive), AND with chip filter. No debounce. Empty match shows inline "Không tìm thấy dự án nào khớp với '{query}'" + hint "Thử từ khoá khác hoặc đổi bộ lọc."
+
+Rest of v4 spec below unchanged.
 
 ## v4 amendments (CR-006 v4 — Dark vivid + glassmorphism) — supersedes v3 / v3.1 + Wire-level below
 

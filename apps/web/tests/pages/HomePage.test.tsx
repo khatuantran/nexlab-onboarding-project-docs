@@ -128,6 +128,28 @@ describe("HomePage", () => {
     expect(await screen.findByRole("dialog", { name: /tạo project/i })).toBeInTheDocument();
   });
 
+  it("floating filter bar search filters projects client-side by name + description", async () => {
+    const user = userEvent.setup();
+    mockMe("author");
+    mockProjects([pilot, demo]);
+    renderHome();
+
+    // Both cards visible initially.
+    await screen.findByRole("link", { name: /xem chi tiết dự án pilot/i });
+    expect(screen.getByRole("link", { name: /xem chi tiết dự án demo/i })).toBeInTheDocument();
+
+    const searchBox = screen.getByLabelText(/tìm dự án, owner, tag/i);
+    await user.type(searchBox, "pilot");
+
+    expect(screen.getByRole("link", { name: /xem chi tiết dự án pilot/i })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /xem chi tiết dự án demo/i })).toBeNull();
+
+    // No-match state with query echo.
+    await user.clear(searchBox);
+    await user.type(searchBox, "không-có-gì-khớp");
+    expect(screen.getByText(/không tìm thấy dự án nào khớp với/i)).toBeInTheDocument();
+  });
+
   it("error state shows retry button", async () => {
     mockMe("author");
     server.use(

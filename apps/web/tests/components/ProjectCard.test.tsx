@@ -57,6 +57,8 @@ describe("ProjectCard — v4 vivid gradient header", () => {
 
     // ProgressRing svg present in header.
     expect(link.querySelector("svg[role='img']")).not.toBeNull();
+    // pct% text rendered inside ring + "doc" subscript below.
+    expect(within(link).getByText(/^\d+%$/)).toBeInTheDocument();
     expect(within(link).getByText(/^doc$/i)).toBeInTheDocument();
 
     // Features compact counter "3f" in bottom row.

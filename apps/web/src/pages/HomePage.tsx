@@ -36,11 +36,11 @@ interface StatTileProps {
 
 function StatTile({ icon: Icon, gradient, value, label }: StatTileProps): JSX.Element {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-[18px_14px_16px] text-center backdrop-blur-md">
+    <div className="rounded-[16px] border border-white/10 bg-white/[0.06] p-[18px_14px_16px] text-center backdrop-blur-md">
       <span
         aria-hidden="true"
         className={cn(
-          "mb-2.5 inline-flex size-[42px] items-center justify-center rounded-xl bg-gradient-to-br shadow-[0_4px_14px_rgba(0,0,0,0.35)]",
+          "mb-2.5 inline-flex size-[42px] items-center justify-center rounded-[12px] bg-gradient-to-br shadow-[0_4px_14px_rgba(0,0,0,0.35)]",
           gradient,
         )}
       >
@@ -56,7 +56,7 @@ function StatTile({ icon: Icon, gradient, value, label }: StatTileProps): JSX.El
 
 function ProjectCardSkeleton(): JSX.Element {
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-card">
+    <div className="overflow-hidden rounded-[20px] border border-border bg-card">
       <div className="h-[150px] animate-pulse bg-muted" />
       <div className="flex flex-col gap-3 p-5">
         <div className="h-5 w-3/4 animate-pulse rounded bg-muted" />
@@ -76,15 +76,23 @@ export function HomePage(): JSX.Element {
   const { data: me } = useMe();
   const isAdmin = me?.user.role === "admin";
   const [filter, setFilter] = useState<ProjectFilter>("all");
+  const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
     if (!projects) return [];
-    if (filter === "active") return projects.filter((p) => p.featureCount > 0);
-    if (filter === "needs") return projects.filter((p) => p.featureCount === 0);
+    let result = projects;
+    if (filter === "active") result = result.filter((p) => p.featureCount > 0);
+    else if (filter === "needs") result = result.filter((p) => p.featureCount === 0);
     // "doc" placeholder == active until BE filledSectionCount lands.
-    if (filter === "doc") return projects.filter((p) => p.featureCount > 0);
-    return projects;
-  }, [projects, filter]);
+    else if (filter === "doc") result = result.filter((p) => p.featureCount > 0);
+    const q = query.trim().toLowerCase();
+    if (q) {
+      result = result.filter(
+        (p) => p.name.toLowerCase().includes(q) || (p.description ?? "").toLowerCase().includes(q),
+      );
+    }
+    return result;
+  }, [projects, filter, query]);
 
   const totalProjects = projects?.length ?? 0;
   const totalFeatures = projects?.reduce((acc, p) => acc + p.featureCount, 0) ?? 0;
@@ -148,12 +156,14 @@ export function HomePage(): JSX.Element {
 
       {/* Floating filter bar — overlaps hero edge */}
       <div className="relative -mt-[22px] px-10">
-        <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-background p-2.5 px-3.5 shadow-[0_4px_24px_rgba(0,0,0,0.1)]">
+        <div className="flex flex-wrap items-center gap-2 rounded-[16px] border border-border bg-background p-2.5 px-3.5 shadow-[0_4px_24px_rgba(0,0,0,0.1)]">
           <Search aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
           <input
             type="search"
             aria-label="Tìm dự án, owner, tag"
             placeholder="Tìm project, owner, tag..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
             className="min-w-[120px] flex-1 border-0 bg-transparent font-ui text-sm font-medium text-foreground outline-none placeholder:text-muted-foreground"
           />
           <span aria-hidden="true" className="hidden h-[22px] w-px bg-border sm:block" />
@@ -244,6 +254,21 @@ export function HomePage(): JSX.Element {
             </p>
             {isAdmin ? <CreateProjectDialog triggerLabel="+ Tạo dự án đầu tiên" /> : null}
           </div>
+        ) : filtered.length === 0 ? (
+          <div
+            role="status"
+            className="mx-auto flex max-w-md flex-col items-center gap-3 py-16 text-center"
+          >
+            <span aria-hidden="true" role="img" className="select-none text-5xl leading-none">
+              🔍
+            </span>
+            <p className="font-display text-base font-semibold text-foreground">
+              Không tìm thấy dự án nào khớp với “{query.trim()}”
+            </p>
+            <p className="font-ui text-sm text-muted-foreground">
+              Thử từ khoá khác hoặc đổi bộ lọc.
+            </p>
+          </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {filtered.map((project) => (
@@ -263,9 +288,9 @@ function AdminCreateTile(): JSX.Element {
       customTrigger={
         <button
           type="button"
-          className="group flex min-h-[200px] flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-border bg-transparent text-center transition-all hover:border-primary/40 hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="group flex min-h-[200px] flex-col items-center justify-center gap-3 rounded-[20px] border-2 border-dashed border-border bg-transparent text-center transition-all hover:border-primary/40 hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-primary-50 transition-transform group-hover:scale-105">
+          <span className="inline-flex size-12 items-center justify-center rounded-[16px] bg-primary-50 transition-transform group-hover:scale-105">
             <Plus aria-hidden="true" className="size-6 text-primary-700" />
           </span>
           <span className="font-display text-base font-semibold text-foreground">

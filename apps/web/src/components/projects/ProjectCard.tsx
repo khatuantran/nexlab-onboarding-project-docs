@@ -94,7 +94,7 @@ export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
     <Link
       to={`/projects/${project.slug}`}
       aria-label={`Xem chi tiết dự án ${project.name}`}
-      className="card-hover group flex flex-col overflow-hidden rounded-2xl border border-border bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      className="card-hover group flex flex-col overflow-hidden rounded-[20px] border border-border bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
       {/* Header — vivid gradient + decorative circles + initials + tag/Live + ProgressRing */}
       <div
@@ -102,7 +102,7 @@ export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
       >
         <span
           aria-hidden="true"
-          className="absolute -right-10 -top-10 size-[140px] rounded-full bg-white/10"
+          className="absolute -right-10 -top-10 size-[140px] rounded-full bg-white/[0.12]"
         />
         <span
           aria-hidden="true"
@@ -113,12 +113,12 @@ export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
           <div className="flex min-w-0 flex-col gap-2.5">
             <span
               aria-hidden="true"
-              className="inline-flex size-[46px] items-center justify-center rounded-xl bg-white/[0.22] font-display text-[17px] font-extrabold text-white shadow"
+              className="inline-flex size-[46px] items-center justify-center rounded-[12px] bg-white/[0.22] font-display text-[17px] font-extrabold text-white shadow-[0_4px_10px_rgba(0,0,0,0.25)]"
             >
               {initials}
             </span>
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="inline-flex items-center rounded-full border border-white/30 bg-white/[0.22] px-2.5 py-1 font-ui text-[11px] font-bold uppercase tracking-wide text-white">
+              <span className="inline-flex items-center rounded-full border border-white/30 bg-white/[0.22] px-2.5 py-1 font-ui text-[11px] font-bold text-white">
                 {category}
               </span>
               {isAdmin ? (
@@ -130,7 +130,7 @@ export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
                   <ProjectActionsMenu project={project} />
                 </div>
               ) : isLive ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/[0.18] px-2.5 py-1 font-ui text-[11px] font-bold uppercase tracking-wide text-white">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/[0.18] px-2.5 py-1 font-ui text-[11px] font-bold text-white">
                   <span
                     aria-hidden="true"
                     className="size-1.5 animate-pulse rounded-full bg-white"
@@ -142,12 +142,20 @@ export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
           </div>
 
           <div className="flex shrink-0 flex-col items-center gap-1">
-            <ProgressRing
-              pct={pct}
-              size={52}
-              color="rgba(255,255,255,0.9)"
-              bg="rgba(255,255,255,0.2)"
-            />
+            <div className="relative size-[52px]">
+              <ProgressRing
+                pct={pct}
+                size={52}
+                color="rgba(255,255,255,0.9)"
+                bg="rgba(255,255,255,0.2)"
+              />
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 flex items-center justify-center font-display text-[13px] font-bold leading-none text-white"
+              >
+                {pct}%
+              </span>
+            </div>
             <span className="font-ui text-[10px] font-semibold text-white/70">doc</span>
           </div>
         </div>
