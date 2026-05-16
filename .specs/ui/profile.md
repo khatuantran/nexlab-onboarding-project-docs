@@ -15,6 +15,14 @@
 > - Tabs are decorative — all content renders always (test compat).
 > - Profile card actions add `Cập nhật hồ sơ` gradient CTA next to `Thông báo` (scrolls to the editable section below).
 > - Existing 3 functional form sections moved into "Quản lý tài khoản" sub-section below the visual cards (border separator).
+>
+> **v4.2 (CR-006 v4.2 — 2026-05-16)**: "Quản lý tài khoản" section REMOVED from page body. 3 functional flows converted to dialog actions triggered from the profile card:
+>
+> - **`EditProfileDialog`** — trigger = "Cập nhật hồ sơ" gradient CTA in profile card actions. Dialog title h2 "Thông tin tài khoản". Single field (Tên hiển thị input) + email note + Hủy/Lưu footer. Drops inline "Sửa" toggle.
+> - **`ChangePasswordDialog`** — trigger = "Đổi mật khẩu" outline button (NEW, next to Cập nhật hồ sơ). Dialog title h2 "Đổi mật khẩu". 3 password fields + inline errors. Submit button labeled "Cập nhật mật khẩu" (distinct from trigger).
+> - **`AvatarUploadDialog`** — trigger = avatar plate itself (button wrapper). Camera badge bottom-right + hover "Đổi ảnh" overlay. Dialog title h2 "Ảnh đại diện". Large avatar preview + file input + "Tải lên ảnh mới" CTA + size/format note.
+>
+> All dialogs reuse existing `useUpdateMyProfile` / `useChangePassword` / `useUploadAvatar` mutation hooks. Page body no longer renders 3 inline form sections — Profile h1 + meta + 4 visual cards (PersonalInfo / Skills / Stats / Recent / Activity) only.
 
 Referenced tokens / icons / components từ [design-system.md](design-system.md).
 

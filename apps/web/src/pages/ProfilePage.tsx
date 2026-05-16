@@ -1,7 +1,6 @@
 import { useRef, useState, type FormEvent } from "react";
 import {
   Activity as ActivityIcon,
-  Bell,
   Camera,
   Check as CheckIcon,
   Clock,
@@ -9,7 +8,9 @@ import {
   File as FileIcon,
   FolderOpen,
   Image as ImageIcon,
+  KeyRound,
   Loader2,
+  Mail,
   MapPin,
   Pencil,
   Phone,
@@ -25,6 +26,15 @@ import { Avatar } from "@/components/common/Avatar";
 import { RelativeTime } from "@/components/common/RelativeTime";
 import { GradientHero } from "@/components/patterns/GradientHero";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useMe } from "@/queries/auth";
@@ -72,21 +82,8 @@ export function ProfilePage(): JSX.Element | null {
       {/* Profile card overlap */}
       <div className="relative -mt-[60px] px-10">
         <div className="flex flex-col gap-5 rounded-[20px] border border-border bg-card p-[24px_28px] shadow-lg sm:flex-row sm:items-end">
-          {/* Avatar */}
-          <div className="relative shrink-0">
-            <div className="rounded-[20px] border-4 border-background">
-              <Avatar
-                name={user.displayName}
-                size="lg"
-                imageUrl={user.avatarUrl}
-                className="size-24 rounded-[16px] bg-gradient-to-br from-primary to-primary-700 text-[32px] shadow-[0_8px_24px_rgba(240,118,19,0.45)]"
-              />
-            </div>
-            <span
-              aria-hidden="true"
-              className="absolute bottom-1 right-1 size-[18px] rounded-full border-[3px] border-card bg-green-500"
-            />
-          </div>
+          {/* Avatar — clickable to open AvatarUploadDialog */}
+          <AvatarUploadDialog user={user} />
 
           {/* Name + meta */}
           <div className="flex-1">
@@ -118,6 +115,10 @@ export function ProfilePage(): JSX.Element | null {
                 {user.displayName}
               </span>
               <span className="inline-flex items-center gap-1.5">
+                <Mail aria-hidden="true" className="size-3.5" />
+                {user.email}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
                 <Clock aria-hidden="true" className="size-3.5" />
                 Joined{" "}
                 <RelativeTime iso={user.createdAt} showIcon={false} className="!text-[13px]" />
@@ -125,28 +126,10 @@ export function ProfilePage(): JSX.Element | null {
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex gap-2.5">
-            <button
-              type="button"
-              onClick={() => toast("Thông báo: tính năng đang phát triển")}
-              className="inline-flex items-center gap-2 rounded-[10px] border border-border bg-background px-3.5 py-2 font-ui text-[13px] font-semibold text-foreground hover:bg-muted"
-            >
-              <Bell aria-hidden="true" className="size-3.5" />
-              Thông báo
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                document
-                  .getElementById("profile-section-title")
-                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
-              }}
-              className="inline-flex items-center gap-2 rounded-[10px] bg-gradient-to-br from-primary to-primary-700 px-3.5 py-2 font-ui text-[13px] font-bold text-white shadow-[0_4px_16px_rgba(226,99,20,0.4)] hover:from-primary-600"
-            >
-              <Pencil aria-hidden="true" className="size-3.5" />
-              Cập nhật hồ sơ
-            </button>
+          {/* Actions — 3 dialog triggers */}
+          <div className="flex flex-wrap gap-2.5">
+            <ChangePasswordDialog />
+            <EditProfileDialog user={user} />
           </div>
         </div>
       </div>
@@ -167,20 +150,6 @@ export function ProfilePage(): JSX.Element | null {
           <RecentProjectsCard />
           <ActivityFeedCard />
         </div>
-      </div>
-
-      {/* Existing functional form sections (Thông tin tài khoản editable / Đổi mật khẩu / Ảnh đại diện) */}
-      <div className="mx-auto mt-8 flex max-w-3xl flex-col gap-6 px-10">
-        <div className="flex items-center gap-2.5">
-          <span aria-hidden="true" className="h-px flex-1 bg-border" />
-          <span className="font-ui text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-            Quản lý tài khoản
-          </span>
-          <span aria-hidden="true" className="h-px flex-1 bg-border" />
-        </div>
-        <ProfileSection user={user} />
-        <SecuritySection />
-        <AvatarSection user={user} />
       </div>
     </main>
   );
@@ -500,17 +469,29 @@ function ActivityFeedCard(): JSX.Element {
   );
 }
 
-function ProfileSection({ user }: { user: ProfileUser }): JSX.Element {
-  const [editing, setEditing] = useState(false);
+/* ---------- Types ---------- */
+
+interface ProfileUser {
+  displayName: string;
+  email: string;
+  role: "admin" | "author";
+  avatarUrl: string | null;
+  lastLoginAt: string | null;
+  createdAt: string;
+}
+
+/* ---------- EditProfileDialog ---------- */
+
+function EditProfileDialog({ user }: { user: ProfileUser }): JSX.Element {
+  const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState(user.displayName);
   const mutation = useUpdateMyProfile();
 
-  const onSave = (e: FormEvent): void => {
+  const onSubmit = (e: FormEvent): void => {
     e.preventDefault();
     const next = draft.trim();
     if (!next || next === user.displayName) {
-      setEditing(false);
-      setDraft(user.displayName);
+      setOpen(false);
       return;
     }
     mutation.mutate(
@@ -518,7 +499,7 @@ function ProfileSection({ user }: { user: ProfileUser }): JSX.Element {
       {
         onSuccess: () => {
           toast.success("Đã cập nhật hồ sơ");
-          setEditing(false);
+          setOpen(false);
         },
         onError: () => toast.error("Có lỗi xảy ra, thử lại sau"),
       },
@@ -526,92 +507,68 @@ function ProfileSection({ user }: { user: ProfileUser }): JSX.Element {
   };
 
   return (
-    <section
-      aria-labelledby="profile-section-title"
-      className="rounded-xl border border-border bg-card p-6"
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+        if (next) setDraft(user.displayName);
+      }}
     >
-      <h2 id="profile-section-title" className="font-display text-lg font-semibold">
-        Thông tin tài khoản
-      </h2>
-      <div className="mt-4 flex items-start gap-5">
-        <Avatar name={user.displayName} size="lg" imageUrl={user.avatarUrl} />
-        <dl className="flex-1 space-y-3 text-sm">
-          <Field label="Email" value={user.email} />
-          <div>
-            <dt className="font-ui text-xs uppercase tracking-wide text-muted-foreground">
+      <DialogTrigger asChild>
+        <button
+          type="button"
+          className="inline-flex items-center gap-2 rounded-[10px] bg-gradient-to-br from-primary to-primary-700 px-3.5 py-2 font-ui text-[13px] font-bold text-white shadow-[0_4px_16px_rgba(226,99,20,0.4)] hover:from-primary-600"
+        >
+          <Pencil aria-hidden="true" className="size-3.5" />
+          Cập nhật hồ sơ
+        </button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle className="font-display text-[18px] font-bold">
+            Thông tin tài khoản
+          </DialogTitle>
+          <DialogDescription className="font-body text-[13px] text-muted-foreground">
+            Cập nhật tên hiển thị xuất hiện trên header và các pages có avatar.
+          </DialogDescription>
+        </DialogHeader>
+        <form className="mt-2 flex flex-col gap-4" onSubmit={onSubmit}>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="edit-displayname" className="font-ui text-xs font-semibold">
               Tên hiển thị
-            </dt>
-            <dd className="mt-1 flex items-center gap-2">
-              {editing ? (
-                <form className="flex flex-1 items-center gap-2" onSubmit={onSave}>
-                  <Input
-                    autoFocus
-                    value={draft}
-                    onChange={(e) => setDraft(e.target.value)}
-                    aria-label="Tên hiển thị"
-                  />
-                  <Button type="submit" size="sm" disabled={mutation.isPending}>
-                    Lưu
-                  </Button>
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => {
-                      setEditing(false);
-                      setDraft(user.displayName);
-                    }}
-                  >
-                    Hủy
-                  </Button>
-                </form>
-              ) : (
-                <>
-                  <span className="font-medium text-foreground">{user.displayName}</span>
-                  <Button type="button" size="sm" variant="ghost" onClick={() => setEditing(true)}>
-                    <Pencil className="mr-1 size-3.5" aria-hidden="true" />
-                    Sửa
-                  </Button>
-                </>
-              )}
-            </dd>
+            </Label>
+            <Input
+              id="edit-displayname"
+              autoFocus
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              aria-label="Tên hiển thị"
+            />
+            <p className="font-ui text-[11px] text-muted-foreground">
+              Email cố định: <strong className="text-foreground">{user.email}</strong>
+            </p>
           </div>
-          <Field
-            label="Vai trò"
-            value={
-              <span
-                className={
-                  "inline-flex items-center rounded-full px-2 py-0.5 font-ui text-[10px] font-bold uppercase tracking-wide " +
-                  (user.role === "admin"
-                    ? "bg-primary/15 text-primary"
-                    : "bg-muted text-muted-foreground")
-                }
-              >
-                {user.role === "admin" ? "Admin" : "Author"}
-              </span>
-            }
-          />
-          <Field
-            label="Tham gia"
-            value={<RelativeTime iso={user.createdAt} className="text-foreground" />}
-          />
-          <Field
-            label="Lần login cuối"
-            value={
-              user.lastLoginAt ? (
-                <RelativeTime iso={user.lastLoginAt} className="text-foreground" />
-              ) : (
-                <span className="text-muted-foreground">—</span>
-              )
-            }
-          />
-        </dl>
-      </div>
-    </section>
+          <DialogFooter className="gap-2">
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              Hủy
+            </Button>
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending ? (
+                <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />
+              ) : null}
+              Lưu
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 
-function SecuritySection(): JSX.Element {
+/* ---------- ChangePasswordDialog ---------- */
+
+function ChangePasswordDialog(): JSX.Element {
+  const [open, setOpen] = useState(false);
   const [oldPassword, setOld] = useState("");
   const [newPassword, setNew] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -645,6 +602,7 @@ function SecuritySection(): JSX.Element {
         onSuccess: () => {
           toast.success("Đã đổi mật khẩu — các phiên khác đã đăng xuất");
           reset();
+          setOpen(false);
         },
         onError: (err) => {
           if (err instanceof ApiError && err.status === 401) {
@@ -662,75 +620,95 @@ function SecuritySection(): JSX.Element {
   };
 
   return (
-    <section
-      aria-labelledby="security-section-title"
-      className="rounded-xl border border-border bg-card p-6"
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+        if (!next) reset();
+      }}
     >
-      <h2 id="security-section-title" className="font-display text-lg font-semibold">
-        Đổi mật khẩu
-      </h2>
-      <p className="mt-1 font-body text-sm text-muted-foreground">
-        Đổi mật khẩu xong, các phiên đăng nhập khác sẽ bị thoát.
-      </p>
-      <form className="mt-4 grid gap-4" onSubmit={onSubmit}>
-        <div>
-          <Label htmlFor="me-old">Mật khẩu hiện tại</Label>
-          <Input
-            id="me-old"
-            type="password"
-            autoComplete="current-password"
-            value={oldPassword}
-            onChange={(e) => setOld(e.target.value)}
-            required
-          />
-          {oldErr ? (
-            <p role="alert" className="mt-1 text-xs text-destructive">
-              {oldErr}
-            </p>
-          ) : null}
-        </div>
-        <div>
-          <Label htmlFor="me-new">Mật khẩu mới (≥ 8 ký tự)</Label>
-          <Input
-            id="me-new"
-            type="password"
-            autoComplete="new-password"
-            value={newPassword}
-            onChange={(e) => setNew(e.target.value)}
-            required
-            minLength={8}
-          />
-        </div>
-        <div>
-          <Label htmlFor="me-confirm">Xác nhận mật khẩu mới</Label>
-          <Input
-            id="me-confirm"
-            type="password"
-            autoComplete="new-password"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-            required
-          />
-          {newErr ? (
-            <p role="alert" className="mt-1 text-xs text-destructive">
-              {newErr}
-            </p>
-          ) : null}
-        </div>
-        <div>
-          <Button type="submit" disabled={mutation.isPending}>
-            {mutation.isPending ? (
-              <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />
+      <DialogTrigger asChild>
+        <button
+          type="button"
+          className="inline-flex items-center gap-2 rounded-[10px] border border-border bg-background px-3.5 py-2 font-ui text-[13px] font-semibold text-foreground hover:bg-muted"
+        >
+          <KeyRound aria-hidden="true" className="size-3.5" />
+          Đổi mật khẩu
+        </button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle className="font-display text-[18px] font-bold">Đổi mật khẩu</DialogTitle>
+          <DialogDescription className="font-body text-[13px] text-muted-foreground">
+            Đổi mật khẩu xong, các phiên đăng nhập khác sẽ bị thoát.
+          </DialogDescription>
+        </DialogHeader>
+        <form className="mt-2 grid gap-4" onSubmit={onSubmit}>
+          <div>
+            <Label htmlFor="me-old">Mật khẩu hiện tại</Label>
+            <Input
+              id="me-old"
+              type="password"
+              autoComplete="current-password"
+              value={oldPassword}
+              onChange={(e) => setOld(e.target.value)}
+              required
+            />
+            {oldErr ? (
+              <p role="alert" className="mt-1 text-xs text-destructive">
+                {oldErr}
+              </p>
             ) : null}
-            Đổi mật khẩu
-          </Button>
-        </div>
-      </form>
-    </section>
+          </div>
+          <div>
+            <Label htmlFor="me-new">Mật khẩu mới (≥ 8 ký tự)</Label>
+            <Input
+              id="me-new"
+              type="password"
+              autoComplete="new-password"
+              value={newPassword}
+              onChange={(e) => setNew(e.target.value)}
+              required
+              minLength={8}
+            />
+          </div>
+          <div>
+            <Label htmlFor="me-confirm">Xác nhận mật khẩu mới</Label>
+            <Input
+              id="me-confirm"
+              type="password"
+              autoComplete="new-password"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              required
+            />
+            {newErr ? (
+              <p role="alert" className="mt-1 text-xs text-destructive">
+                {newErr}
+              </p>
+            ) : null}
+          </div>
+          <DialogFooter className="gap-2">
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              Hủy
+            </Button>
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending ? (
+                <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />
+              ) : null}
+              Cập nhật mật khẩu
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 
-function AvatarSection({ user }: { user: ProfileUser }): JSX.Element {
+/* ---------- AvatarUploadDialog ---------- */
+
+function AvatarUploadDialog({ user }: { user: ProfileUser }): JSX.Element {
+  const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const mutation = useUploadAvatar();
 
@@ -743,7 +721,10 @@ function AvatarSection({ user }: { user: ProfileUser }): JSX.Element {
       return;
     }
     mutation.mutate(file, {
-      onSuccess: () => toast.success("Đã cập nhật ảnh đại diện"),
+      onSuccess: () => {
+        toast.success("Đã cập nhật ảnh đại diện");
+        setOpen(false);
+      },
       onError: (err) => {
         if (err instanceof ApiError && err.status === 415) {
           toast.error("File phải là ảnh PNG/JPG/WebP");
@@ -760,62 +741,77 @@ function AvatarSection({ user }: { user: ProfileUser }): JSX.Element {
   };
 
   return (
-    <section
-      aria-labelledby="avatar-section-title"
-      className="rounded-xl border border-border bg-card p-6"
-    >
-      <h2 id="avatar-section-title" className="font-display text-lg font-semibold">
-        Ảnh đại diện
-      </h2>
-      <div className="mt-4 flex items-center gap-5">
-        <Avatar name={user.displayName} size="lg" imageUrl={user.avatarUrl} />
-        <div className="flex-1">
-          <p className="font-body text-sm text-muted-foreground">
-            PNG, JPG, hoặc WebP ≤ 2 MB. Ảnh hiển thị trên header và các pages có avatar.
-          </p>
-          <div className="mt-3 flex items-center gap-2">
-            <input
-              ref={inputRef}
-              type="file"
-              accept="image/png,image/jpeg,image/webp"
-              className="hidden"
-              onChange={onPick}
-              aria-label="Chọn ảnh đại diện"
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <button
+          type="button"
+          aria-label="Đổi ảnh đại diện"
+          className="group relative shrink-0 rounded-[20px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          <div className="rounded-[20px] border-4 border-background">
+            <Avatar
+              name={user.displayName}
+              size="lg"
+              imageUrl={user.avatarUrl}
+              className="size-24 rounded-[16px] bg-gradient-to-br from-primary to-primary-700 text-[32px] shadow-[0_8px_24px_rgba(240,118,19,0.45)]"
             />
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => inputRef.current?.click()}
-              disabled={mutation.isPending}
-            >
-              {mutation.isPending ? (
-                <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />
-              ) : (
-                <Camera className="mr-2 size-4" aria-hidden="true" />
-              )}
-              Tải lên ảnh mới
-            </Button>
           </div>
+          <span
+            aria-hidden="true"
+            className="absolute -bottom-1 -right-1 inline-flex size-7 items-center justify-center rounded-full border-[3px] border-card bg-primary shadow transition-transform group-hover:scale-110"
+          >
+            <Camera className="size-3.5 text-white" />
+          </span>
+          <span
+            aria-hidden="true"
+            className="absolute inset-0 hidden items-center justify-center rounded-[20px] bg-black/40 font-ui text-[11px] font-bold text-white group-hover:flex"
+          >
+            Đổi ảnh
+          </span>
+        </button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle className="font-display text-[18px] font-bold">Ảnh đại diện</DialogTitle>
+          <DialogDescription className="font-body text-[13px] text-muted-foreground">
+            PNG, JPG, hoặc WebP ≤ 2 MB. Ảnh hiển thị trên header và các pages có avatar.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="mt-2 flex flex-col items-center gap-4">
+          <Avatar
+            name={user.displayName}
+            size="lg"
+            imageUrl={user.avatarUrl}
+            className="size-32 rounded-[20px] bg-gradient-to-br from-primary to-primary-700 text-[44px]"
+          />
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            className="hidden"
+            onChange={onPick}
+            aria-label="Chọn ảnh đại diện"
+          />
+          <Button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={mutation.isPending}
+            className="w-full"
+          >
+            {mutation.isPending ? (
+              <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />
+            ) : (
+              <Camera className="mr-2 size-4" aria-hidden="true" />
+            )}
+            Tải lên ảnh mới
+          </Button>
         </div>
-      </div>
-    </section>
-  );
-}
-
-interface ProfileUser {
-  displayName: string;
-  email: string;
-  role: "admin" | "author";
-  avatarUrl: string | null;
-  lastLoginAt: string | null;
-  createdAt: string;
-}
-
-function Field({ label, value }: { label: string; value: React.ReactNode }): JSX.Element {
-  return (
-    <div>
-      <dt className="font-ui text-xs uppercase tracking-wide text-muted-foreground">{label}</dt>
-      <dd className="mt-1 text-foreground">{value}</dd>
-    </div>
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            Đóng
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

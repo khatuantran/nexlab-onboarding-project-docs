@@ -28,18 +28,19 @@ function mockMe(overrides: Partial<{ avatarUrl: string | null; displayName: stri
   );
 }
 
-describe("ProfilePage (US-009)", () => {
-  it("renders email + displayName + role + 3 sections", async () => {
+describe("ProfilePage (US-009 / v4.2 — 3 dialog actions)", () => {
+  it("renders page header + email + 3 dialog triggers (Cập nhật hồ sơ / Đổi mật khẩu / avatar)", async () => {
     mockMe();
     renderWithRouter(<ProfilePage />, ["/profile"]);
     expect(await screen.findByText("tester@nexlab.com")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /hồ sơ của tôi/i })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /thông tin tài khoản/i })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /đổi mật khẩu/i })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /ảnh đại diện/i })).toBeInTheDocument();
+    // 3 dialog trigger buttons exist on the page (dialogs not open yet).
+    expect(screen.getByRole("button", { name: /^cập nhật hồ sơ$/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^đổi mật khẩu$/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /đổi ảnh đại diện/i })).toBeInTheDocument();
   });
 
-  it("inline edit displayName: PATCH 200 swaps view + invalidates cache", async () => {
+  it("EditProfileDialog: click trigger → input → Lưu → PATCH 200 swaps + closes dialog", async () => {
     mockMe();
     server.use(
       http.patch(`${BASE}/me`, async ({ request }) => {
@@ -62,17 +63,18 @@ describe("ProfilePage (US-009)", () => {
     );
     renderWithRouter(<ProfilePage />, ["/profile"]);
     const user = userEvent.setup();
-    await user.click(await screen.findByRole("button", { name: /sửa/i }));
+    await user.click(await screen.findByRole("button", { name: /^cập nhật hồ sơ$/i }));
     const input = await screen.findByLabelText(/tên hiển thị/i);
     await user.clear(input);
     await user.type(input, "Tester Renamed");
     await user.click(screen.getByRole("button", { name: /^lưu$/i }));
     await waitFor(() => {
+      // Dialog closes — input no longer in DOM.
       expect(screen.queryByLabelText(/tên hiển thị/i)).toBeNull();
     });
   });
 
-  it("password form rejects mismatch client-side before POST", async () => {
+  it("ChangePasswordDialog: mismatch shows inline error, no POST", async () => {
     mockMe();
     let posted = false;
     server.use(
@@ -83,16 +85,16 @@ describe("ProfilePage (US-009)", () => {
     );
     renderWithRouter(<ProfilePage />, ["/profile"]);
     const user = userEvent.setup();
-    await screen.findByLabelText(/mật khẩu hiện tại/i);
-    await user.type(screen.getByLabelText(/mật khẩu hiện tại/i), "old12345");
+    await user.click(await screen.findByRole("button", { name: /^đổi mật khẩu$/i }));
+    await user.type(await screen.findByLabelText(/mật khẩu hiện tại/i), "old12345");
     await user.type(screen.getByLabelText(/mật khẩu mới \(/i), "new12345xx");
     await user.type(screen.getByLabelText(/xác nhận mật khẩu mới/i), "different00");
-    await user.click(screen.getByRole("button", { name: /^đổi mật khẩu$/i }));
+    await user.click(screen.getByRole("button", { name: /^cập nhật mật khẩu$/i }));
     expect(await screen.findByText(/xác nhận mật khẩu không khớp/i)).toBeInTheDocument();
     expect(posted).toBe(false);
   });
 
-  it("password 401 INVALID_CREDENTIALS shows inline error near old-password field", async () => {
+  it("ChangePasswordDialog: 401 INVALID_CREDENTIALS shows inline error near old-password field", async () => {
     mockMe();
     server.use(
       http.post(`${BASE}/me/password`, () =>
@@ -104,11 +106,11 @@ describe("ProfilePage (US-009)", () => {
     );
     renderWithRouter(<ProfilePage />, ["/profile"]);
     const user = userEvent.setup();
-    await screen.findByLabelText(/mật khẩu hiện tại/i);
-    await user.type(screen.getByLabelText(/mật khẩu hiện tại/i), "wrong-old");
+    await user.click(await screen.findByRole("button", { name: /^đổi mật khẩu$/i }));
+    await user.type(await screen.findByLabelText(/mật khẩu hiện tại/i), "wrong-old");
     await user.type(screen.getByLabelText(/mật khẩu mới \(/i), "new12345xx");
     await user.type(screen.getByLabelText(/xác nhận mật khẩu mới/i), "new12345xx");
-    await user.click(screen.getByRole("button", { name: /^đổi mật khẩu$/i }));
+    await user.click(screen.getByRole("button", { name: /^cập nhật mật khẩu$/i }));
     expect(await screen.findByText(/mật khẩu cũ không đúng/i)).toBeInTheDocument();
   });
 
@@ -121,7 +123,7 @@ describe("ProfilePage (US-009)", () => {
     expect(imgs[0]?.src).toContain("cloudinary.com");
   });
 
-  it("avatar file > 2 MB shows toast and never POSTs", async () => {
+  it("AvatarUploadDialog: click avatar → file > 2 MB shows toast and never POSTs", async () => {
     mockMe();
     let posted = false;
     server.use(
@@ -132,15 +134,14 @@ describe("ProfilePage (US-009)", () => {
     );
     renderWithRouter(<ProfilePage />, ["/profile"]);
     const user = userEvent.setup();
-    await screen.findByText("tester@nexlab.com");
-    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    await user.click(await screen.findByRole("button", { name: /đổi ảnh đại diện/i }));
+    const input = (await screen.findByLabelText(/chọn ảnh đại diện/i)) as HTMLInputElement;
     const bigFile = new File([new Uint8Array(3 * 1024 * 1024)], "big.png", { type: "image/png" });
     await user.upload(input, bigFile);
-    // Give the toast handler a beat.
     await new Promise((r) => setTimeout(r, 30));
     expect(posted).toBe(false);
   });
 });
 
-// Quiet down vi unused-import (vi is used implicitly via mock helpers elsewhere; keep for parity).
+// Quiet down vi unused-import.
 void vi;
