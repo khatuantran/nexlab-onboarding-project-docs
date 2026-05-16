@@ -274,6 +274,14 @@ Thêm variant / component mới:
 | `SearchInput`      | AppHeader persistent search field; Enter submit → `/search?q=...&projectSlug=?`                                                                                                                            | T10 (planned)                |
 | `FilterChip`       | Pill "× Trong Demo" cho scope filter remove                                                                                                                                                                | T10 (planned)                |
 
+### 5.2.1 Pattern primitives (v3.1 — CR-006) ([apps/web/src/components/patterns/](../../apps/web/src/components/patterns/))
+
+Decorative SVG primitives. Subtle, opt-in per caller. aria-hidden + pointer-events-none.
+
+| Component     | Purpose                                                                                                                                                               | File              |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| `CircleDecor` | 2 overlapping SVG circles using currentColor; caller controls tint via `text-{color}`. Default opacity 0.18. Used in ProjectCard tile bottom-right for visual reward. | `CircleDecor.tsx` |
+
 ### 5.3 Feature components ([apps/web/src/components/features/](../../apps/web/src/components/features/))
 
 Empty cho đến T9. Expect: `FeatureList`, `SectionIndicator`, `MarkdownView`, `FeatureSections`.

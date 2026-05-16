@@ -36,22 +36,39 @@ Pilot scope per [CR-006](../changes/CR-006.md) + charter v3 [visual-language.md]
   - "Lọc" outline button: `Button variant="outline"` + Filter icon size-3.5 + label. Click → ProjectFilterMenu dropdown (4 options Tất cả / Đang viết / Cần bổ sung).
   - Admin: **"+ Tạo dự án mới" solid filled primary CTA** (`Button` default variant). KHÔNG eyebrow / pre-text.
 
-### Project card grid (replaces v2 ProjectCard list with graphics-rich banner cards)
+### Project card grid (v3.1 — replaces v3 banner-top with full-color rich tile)
 
-- Grid `grid gap-4 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3`. Each card 200-240px tall.
-- **Card structure** (rewrite from v2):
-  - Container: `group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-md hover:scale-[1.01] focus-visible:ring-2 focus-visible:ring-ring`. Wrapped in semantic `<Link>`.
-  - **Filled banner top** `h-20 flex items-center justify-center gap-3` với solid `bg-{tone}` (deterministic from slug hash → 2 tones only: `primary` hoặc `sage`):
-    - **Icon prominent** `size-7 text-white` (chọn từ lucide: BookOpen / FolderKanban / Layers / GitBranch — deterministic theo hash thứ 2).
-    - **Project initials letter** `font-display text-2xl font-bold text-white` (2 chữ cái uppercase). Sits next to icon.
-  - **Body** `p-5 flex flex-col gap-3`:
-    - **Title** h3 `font-display text-[16px] leading-tight font-semibold line-clamp-1 text-foreground`.
-    - **Metric chips row** `flex flex-wrap items-center gap-2`:
-      - Pill 1: `inline-flex items-center gap-1.5 rounded-full bg-sage-bg px-2.5 py-1 text-xs font-semibold text-sage-text` — content "📄 {N} features" hoặc "📄 1 feature".
-      - Pill 2: `inline-flex items-center gap-1.5 rounded-full border border-border bg-canvas px-2.5 py-1 text-xs font-medium text-muted-foreground` — content "⏱ {RelativeTime}".
-    - **KHÔNG description paragraph** (v3 "ít chữ" rule).
-  - **Admin overflow menu** (existing ProjectActionsMenu): absolute top-3 right-3 z-10 trên banner, white/95 backdrop chip cho contrast.
-- **Hover**: card scale + shadow elevate; banner color unchanged.
+User mockup 2026-05-16 rejected v3 banner-top + 2-pill body design as "quá basic". v3.1 ProjectCard là full-color solid tile với rich data.
+
+- Grid `grid gap-4 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3`. Each tile fixed `h-[220px]`.
+- **Tile structure** (full rewrite from v3):
+  - Container: `<Link>` wraps entire tile `group relative flex h-[220px] flex-col overflow-hidden rounded-2xl p-5 text-white transition-all hover:scale-[1.01] hover:shadow-lg bg-tile-{tone}`. KHÔNG separate body section — toàn tile là 1 color block.
+  - **Tone**: deterministic từ slug hash → 1 trong 6 tile palette tones (`tile-orange` / `tile-navy` / `tile-green` / `tile-amber` / `tile-peach` / `tile-rust`). See [design-system.md §1.1 Project tile palette](design-system.md#11-token-map).
+  - **CircleDecor backdrop**: `<CircleDecor className="absolute -bottom-8 -right-8 h-48 w-48 text-white" opacity={0.18} />`. 2 overlapping circles, currentColor white. Subtle geometric visual reward.
+  - **Top row** `relative flex items-center justify-between gap-2`:
+    - **Category tag pill** (left): `inline-flex rounded-md bg-white/15 backdrop-blur-sm px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white`. Label deterministic từ tone → 1 trong 6 fixed strings ("E2E" / "Backend" / "Search" / "Payment" / "CRM" / "Admin"). v1 placeholder cho tới khi BE có category field.
+    - **Live indicator** (right, hide nếu admin): `inline-flex items-center gap-1.5 rounded-full bg-white/20 backdrop-blur-sm px-2 py-0.5 text-[10px] uppercase tracking-wide text-white` + pulsing dot `size-1.5 animate-pulse rounded-full bg-white`. v1: hardcoded "Live" khi `featureCount > 0`.
+    - **Admin overflow menu** (right, replaces Live slot): `ProjectActionsMenu` trong white/15 backdrop-blur chip. v3.1 rule: admin gets menu, author gets Live indicator.
+  - **Title** `relative mt-2 line-clamp-1 font-display text-[15px] font-semibold text-white`. Compact since color is visual identity.
+  - **Big %** `relative mt-auto flex items-end gap-1` chứa value `font-display text-[56px] leading-none font-bold tabular-nums text-white` + "doc" subscript `mb-2 font-ui text-xs text-white/70`. **Placeholder pct** = `((hash >> 4) % 6) * 20` → values 0/20/40/60/80/100 cycle for visual richness until BE filledSectionCount lands.
+  - **Progress bar** `relative mt-3 h-1 overflow-hidden rounded-full bg-white/20` + fill `h-full bg-white rounded-full transition-all duration-500` width = `${pct}%`.
+  - **Bottom row** `relative mt-3 flex items-center justify-between gap-2 font-ui text-[11px] text-white/85`:
+    - Left: "{filled}/{total} sections · {N} feature(s)" — `filled = round(total * pct / 100)`, `total = featureCount * 5`.
+    - Right cluster: `AvatarStack` (3 names from pool ["EK","PT","KT","NL","TR","TM"] deterministic by hash, size="xs") + `RelativeTime` (white-ish via `!text-[11px] !text-white/85` overrides).
+- **Hover**: `hover:scale-[1.01] hover:shadow-lg`. Tone unchanged.
+
+### Tile palette mapping reference
+
+| Tone (hash bucket) | Category label | Notes                |
+| ------------------ | -------------- | -------------------- |
+| `tile-orange`      | E2E            | Default first bucket |
+| `tile-navy`        | Backend        |                      |
+| `tile-green`       | Search         |                      |
+| `tile-amber`       | Payment        |                      |
+| `tile-peach`       | CRM            |                      |
+| `tile-rust`        | Admin          |                      |
+
+v1 placeholder: real `category` field doesn't exist on `ProjectSummary` schema. Deferred until BE extension.
 
 ### Admin Create tile (admin only, last cell)
 
