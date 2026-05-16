@@ -137,7 +137,7 @@ Multi-entity grouped search + filters (project + feature + section + author + up
 - [T6 + T7 + T8 + T9](stories/US-005/tasks.md#t6--frontend-query-hooks-usesearch-v2--useusers) FilterBar + 4 sub-filters + 5 entity cards + grouped SearchPage — ✅ `a9fbf86`.
 - [T10](stories/US-005/tasks.md#t10--tests--e2e--progress-sync) Playwright us-005 + progress sync — ✅ this commit.
 
-### Post-M2 phase — Real-data backfill (mock replacement) 🟡 _(2026-05-16, Sprint 1 ✅ shipped)_
+### Post-M2 phase — Real-data backfill (mock replacement) 🟡 _(2026-05-16, Sprint 1 + 2 ✅ shipped)_
 
 CR-006 v4 UI redesign shipped many surfaces with hardcoded placeholder data because no BE existed yet. Audit (2026-05-16) cataloged 13 mock surfaces; specs landed in `4e5d652` + `ba44036`. Execution sequenced into 5 phases — Phase 1 + 2 are the immediate path; Phase 3-5 are deferred candidates for M3 (pre-pilot) or M4 (post-pilot).
 
@@ -156,9 +156,12 @@ Replace the most visible, highest-impact mocks. No dependencies.
 
 US-001 status flipped `Draft` → `Done`. 5 stale traceability rows (FR-AUTH-001 / FR-FEAT-002 / FR-FEAT-003 / FR-EMBED-001 / FR-READ-001 / FR-UPLOAD-001) flipped 🟡 → ✅. NFR-PERF-001 + NFR-A11Y-001 spot-check baseline recorded (re-audit at M3 pilot).
 
-#### Phase 2 — P0 deferred (build after EditFeatureDialog ships) — ~5-7h
+#### Phase 2 — P0 deferred (repo + PR URL linking) — ✅ shipped 2026-05-16 (`e715991..7f5a9ec`)
 
-- [BL-001](backlog/BL-001.md) Project repo URL + Feature PR URL — needs `EditFeatureDialog` scoped first (no exists today). Schema: 2 nullable text columns. Replaces 2 `placeholderToast` buttons ("Repo" + "Xem PR") with real `<a href target="_blank">`.
+- [US-012](stories/US-012.md) EditFeatureDialog primitive (title + slug edit) — ~3-4h. ✅ shipped `a6d4798..7eb3c3a`. Fills FR-FEAT-001 "edit" gap.
+- [US-013](stories/US-013.md) Project repo URL + Feature PR URL (promoted from [BL-001](backlog/BL-001.md)) — ~4-5h. ✅ shipped `944257f..7f5a9ec`. Migration `0011` + 2 nullable text columns + `urlSchema` (any http(s) ≤ 500). Replaces 2 `placeholderToast` buttons with real `<a target="_blank" rel="noopener noreferrer">` / disabled-tooltip pair.
+
+**Outcome**: Repo / Xem PR buttons clickable across the app. **7 of 13 mock surfaces cleared** (5 from Sprint 1 + 2 from Sprint 2).
 
 #### Phase 3 — P1 batch (after US-011 lands; shared aggregation pattern) — ~15-18h total
 
@@ -204,8 +207,8 @@ BL-006 — standalone (US-009 avatar pattern is the template)
 #### Triage decisions (user, 2026-05-16)
 
 - Build top 1-2 P0 now; backlog the rest.
-- P0 priorities: profile fields ✓, contributors ✓, repo/PR (deferred to Phase 2).
-- Phase 3-5 to be re-triaged after Phase 1 + 2 ship, with user signal on which P1 to promote first.
+- P0 priorities: profile fields ✓, contributors ✓, repo/PR ✓ (Phase 2 ✅ 2026-05-16).
+- Phase 3-5 to be re-triaged with user signal on which P1 to promote first.
 
 ---
 

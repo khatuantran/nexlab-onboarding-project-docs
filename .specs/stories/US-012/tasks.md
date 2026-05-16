@@ -20,11 +20,11 @@ _Last updated_: 2026-05-16
 
 ## Task Summary
 
-| #                                           | Title                                                       | Effort | AC covered  | FR touched | UI spec                          | Status  |
-| ------------------------------------------- | ----------------------------------------------------------- | ------ | ----------- | ---------- | -------------------------------- | ------- |
-| [T1](#t1--shared-schema--featurerepoupdate) | Shared `updateFeatureRequestSchema` + `featureRepo.update`  | 1h     | AC-1..5     | FEAT-001   | —                                | pending |
-| [T2](#t2--patch-route-extend)               | `PATCH /projects/:slug/features/:featureSlug` route + tests | 1h     | AC-1..7     | FEAT-001   | —                                | pending |
-| [T3](#t3--editfeaturedialog-fe)             | FE dialog + menu item + mutation hook + tests               | 1.5-2h | AC-8, 9, 10 | —          | project-landing / feature-detail | pending |
+| #                                           | Title                                                       | Effort | AC covered  | FR touched | UI spec                          | Status     |
+| ------------------------------------------- | ----------------------------------------------------------- | ------ | ----------- | ---------- | -------------------------------- | ---------- |
+| [T1](#t1--shared-schema--featurerepoupdate) | Shared `updateFeatureRequestSchema` + `featureRepo.update`  | 1h     | AC-1..5     | FEAT-001   | —                                | ✅ shipped |
+| [T2](#t2--patch-route-extend)               | `PATCH /projects/:slug/features/:featureSlug` route + tests | 1h     | AC-1..7     | FEAT-001   | —                                | ✅ shipped |
+| [T3](#t3--editfeaturedialog-fe)             | FE dialog + menu item + mutation hook + tests               | 1.5-2h | AC-8, 9, 10 | —          | project-landing / feature-detail | ✅ shipped |
 
 ---
 
@@ -67,11 +67,11 @@ Shared schema có `updateFeatureRequestSchema` (≥ 1 key required) + featureRep
 
 ### DoD checklist
 
-- [ ] `pnpm --filter @onboarding/shared test` xanh.
-- [ ] `pnpm --filter @onboarding/api test repos/featureRepo.update` xanh.
-- [ ] AC-4 (empty body refine) test asserts message.
-- [ ] AC-5 (slug conflict) test asserts `FeatureSlugConflictError` thrown.
-- [ ] Commit `feat(shared,api): updateFeatureRequestSchema + featureRepo.update (US-012 / T1)`.
+- [x] `pnpm --filter @onboarding/shared test` xanh.
+- [x] `pnpm --filter @onboarding/api test repos/featureRepo.update` xanh.
+- [x] AC-4 (empty body refine) test asserts message.
+- [x] AC-5 (slug conflict) test asserts `FeatureSlugConflictError` thrown.
+- [x] Commit `feat(shared,api): updateFeatureRequestSchema + featureRepo.update (US-012 / T1)`.
 
 ### Commit example
 
@@ -111,11 +111,11 @@ feat(shared,api): updateFeatureRequestSchema + featureRepo.update (US-012 / T1 /
 
 ### DoD checklist
 
-- [ ] `pnpm --filter @onboarding/api test routes/features.patch` xanh.
-- [ ] AC-1, AC-2, AC-3, AC-5, AC-6, AC-7 covered.
-- [ ] `.specs/api-surface.md` thêm row PATCH feature.
-- [ ] `.specs/error-codes.md` confirm FEATURE_SLUG_TAKEN row (already exists).
-- [ ] Commit `feat(api): PATCH feature title/slug (US-012 / T2)`.
+- [x] `pnpm --filter @onboarding/api test routes/features.patch` xanh.
+- [x] AC-1, AC-2, AC-3, AC-5, AC-6, AC-7 covered.
+- [x] `.specs/api-surface.md` thêm row PATCH feature.
+- [x] `.specs/error-codes.md` confirm FEATURE_SLUG_TAKEN row (already exists).
+- [x] Commit `feat(api): PATCH feature title/slug (US-012 / T2)`.
 
 ### Commit example
 
@@ -156,10 +156,10 @@ feat(api): PATCH /projects/:slug/features/:featureSlug accept title + slug (US-0
 
 ### DoD checklist
 
-- [ ] `pnpm --filter @onboarding/web test` xanh full suite.
-- [ ] AC-8, 9, 10 covered.
-- [ ] UI spec `.specs/ui/project-landing.md` + `.specs/ui/feature-detail.md` note v4.8 overflow menu 2-item.
-- [ ] Commit `feat(web): EditFeatureDialog + menu item (US-012 / T3)`.
+- [x] `pnpm --filter @onboarding/web test` xanh full suite.
+- [x] AC-8, 9, 10 covered.
+- [x] UI spec `.specs/ui/project-landing.md` + `.specs/ui/feature-detail.md` note v4.8 overflow menu 2-item.
+- [x] Commit `feat(web): EditFeatureDialog + menu item (US-012 / T3)`.
 
 ### Commit example
 

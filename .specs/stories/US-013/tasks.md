@@ -19,11 +19,11 @@ _Last updated_: 2026-05-16
 
 ## Task Summary
 
-| #                                         | Title                                                                              | Effort | AC covered | FR touched                   | Status  |
-| ----------------------------------------- | ---------------------------------------------------------------------------------- | ------ | ---------- | ---------------------------- | ------- |
-| [T1](#t1--migration--shared-schemas)      | Migration `0011` + Zod `urlSchema` + extend update schemas + response types        | 1h     | prereq     | LINK-001                     | pending |
-| [T2](#t2--be-routes-extend)               | Wire `repoUrl` vào PATCH project + `prUrl` vào PATCH feature + tests + repo update | 1.5h   | AC-1..9    | LINK-001, PROJ-002, FEAT-001 | pending |
-| [T3](#t3--fe-wire-buttons--dialog-fields) | Repo / Xem PR buttons real link, EditProject + EditFeature dialog field, tests     | 2-2.5h | AC-10..14  | —                            | pending |
+| #                                         | Title                                                                              | Effort | AC covered | FR touched                   | Status     |
+| ----------------------------------------- | ---------------------------------------------------------------------------------- | ------ | ---------- | ---------------------------- | ---------- |
+| [T1](#t1--migration--shared-schemas)      | Migration `0011` + Zod `urlSchema` + extend update schemas + response types        | 1h     | prereq     | LINK-001                     | ✅ shipped |
+| [T2](#t2--be-routes-extend)               | Wire `repoUrl` vào PATCH project + `prUrl` vào PATCH feature + tests + repo update | 1.5h   | AC-1..9    | LINK-001, PROJ-002, FEAT-001 | ✅ shipped |
+| [T3](#t3--fe-wire-buttons--dialog-fields) | Repo / Xem PR buttons real link, EditProject + EditFeature dialog field, tests     | 2-2.5h | AC-10..14  | —                            | ✅ shipped |
 
 ---
 
@@ -61,11 +61,11 @@ DB có 2 nullable text cột mới; shared types + Zod schemas reflect; api comp
 
 ### DoD checklist
 
-- [ ] `pnpm db:generate` không sinh extra diff (manual SQL match Drizzle infer) hoặc generated file checked in.
-- [ ] `APP_ENV=test pnpm db:migrate` áp dụng 0011.
-- [ ] `pnpm --filter @onboarding/shared test` xanh.
-- [ ] `pnpm --filter @onboarding/api typecheck` xanh.
-- [ ] Commit `feat(shared,api): migration 0011 repo_url + pr_url + urlSchema (US-013 / T1)`.
+- [x] `pnpm db:generate` không sinh extra diff (manual SQL match Drizzle infer) hoặc generated file checked in.
+- [x] `APP_ENV=test pnpm db:migrate` áp dụng 0011.
+- [x] `pnpm --filter @onboarding/shared test` xanh.
+- [x] `pnpm --filter @onboarding/api typecheck` xanh.
+- [x] Commit `feat(shared,api): migration 0011 repo_url + pr_url + urlSchema (US-013 / T1)`.
 
 ### Commit example
 
@@ -106,10 +106,10 @@ PATCH project + PATCH feature accept new URL field với undefined-skip / null-c
 
 ### DoD checklist
 
-- [ ] AC-1..AC-9 đều có test.
-- [ ] `pnpm --filter @onboarding/api test` xanh.
-- [ ] `.specs/api-surface.md` row PATCH project + PATCH feature cập nhật body shape.
-- [ ] Commit `feat(api): PATCH project repoUrl + PATCH feature prUrl (US-013 / T2)`.
+- [x] AC-1..AC-9 đều có test.
+- [x] `pnpm --filter @onboarding/api test` xanh.
+- [x] `.specs/api-surface.md` row PATCH project + PATCH feature cập nhật body shape.
+- [x] Commit `feat(api): PATCH project repoUrl + PATCH feature prUrl (US-013 / T2)`.
 
 ### Commit example
 
@@ -152,10 +152,10 @@ feat(api): PATCH project repoUrl + PATCH feature prUrl (US-013 / T2 / FR-LINK-00
 
 ### DoD checklist
 
-- [ ] AC-10..AC-14 covered.
-- [ ] `pnpm --filter @onboarding/web test` xanh full suite.
-- [ ] UI spec `.specs/ui/project-landing.md` + `.specs/ui/feature-detail.md` v4.9 note Repo / PR buttons real link.
-- [ ] Commit `feat(web): Repo + PR buttons real link + dialog inputs (US-013 / T3)`.
+- [x] AC-10..AC-14 covered.
+- [x] `pnpm --filter @onboarding/web test` xanh full suite.
+- [x] UI spec `.specs/ui/project-landing.md` + `.specs/ui/feature-detail.md` v4.9 note Repo / PR buttons real link.
+- [x] Commit `feat(web): Repo + PR buttons real link + dialog inputs (US-013 / T3)`.
 
 ### Commit example
 
