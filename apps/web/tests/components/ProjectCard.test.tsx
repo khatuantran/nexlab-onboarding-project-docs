@@ -14,6 +14,7 @@ const project: ProjectSummary = {
   featureCount: 3,
   updatedAt: new Date().toISOString(),
   createdAt: new Date().toISOString(),
+  contributors: [],
 };
 
 function mockMe(role: "admin" | "author") {
@@ -74,5 +75,38 @@ describe("ProjectCard — v4 vivid gradient header", () => {
     await screen.findByRole("link", { name: /xem chi tiết dự án pilot project/i });
     expect(screen.queryByRole("button", { name: /thao tác project/i })).toBeNull();
     expect(screen.getByText(/^Live$/)).toBeInTheDocument();
+  });
+
+  it("US-011: renders real contributor initials from project.contributors[]", async () => {
+    mockMe("author");
+    // Render variant with contributors populated.
+    const withContribs = {
+      ...project,
+      contributors: [
+        {
+          userId: "u-1",
+          displayName: "Tester One",
+          avatarUrl: null,
+          lastUpdatedAt: new Date().toISOString(),
+        },
+        {
+          userId: "u-2",
+          displayName: "Lan",
+          avatarUrl: null,
+          lastUpdatedAt: new Date().toISOString(),
+        },
+      ],
+    };
+    renderWithRouter(
+      <Routes>
+        <Route path="/" element={<ProjectCard project={withContribs} />} />
+      </Routes>,
+      ["/"],
+    );
+    const link = await screen.findByRole("link", { name: /xem chi tiết dự án pilot project/i });
+    // Avatar 2-letter initials from first word of displayName ("Tester" → "TE", "Lan" → "LA").
+    // Confirms US-011 wiring drops hash-derived CONTRIBUTOR_POOL ("EK"/"PT"/"KT"/"NL"/"TR"/"TM").
+    expect(within(link).getByText(/^TE$/)).toBeInTheDocument();
+    expect(within(link).getByText(/^LA$/)).toBeInTheDocument();
   });
 });

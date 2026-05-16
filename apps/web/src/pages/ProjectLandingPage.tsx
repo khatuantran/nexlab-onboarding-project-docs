@@ -213,6 +213,7 @@ function HeroBlock({
       filledSections={filledSections}
       lastUpdatedAt={lastUpdatedAt}
       lastUpdatedBy={null}
+      contributors={(project.contributors ?? []).map((c) => c.displayName)}
       actions={
         <>
           <button

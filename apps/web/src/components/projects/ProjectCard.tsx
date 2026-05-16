@@ -36,8 +36,6 @@ const CATEGORY_LABEL: Record<Tone, string> = {
   amber: "Admin",
 };
 
-const CONTRIBUTOR_POOL = ["EK", "PT", "KT", "NL", "TR", "TM"];
-
 function hashSlug(slug: string): number {
   let h = 0;
   for (let i = 0; i < slug.length; i++) h = (h * 31 + slug.charCodeAt(i)) >>> 0;
@@ -53,15 +51,6 @@ function toneFromSlug(slug: string): { tone: Tone; category: string; pct: number
     // Placeholder %: 0/20/40/60/80/100 cycle until BE filledSectionCount lands.
     pct: ((h >> 4) % 6) * 20,
   };
-}
-
-function pickContributors(slug: string, count = 3): string[] {
-  const h = hashSlug(slug);
-  const start = h % CONTRIBUTOR_POOL.length;
-  return Array.from(
-    { length: count },
-    (_, i) => CONTRIBUTOR_POOL[(start + i) % CONTRIBUTOR_POOL.length]!,
-  );
 }
 
 function getInitials(name: string): string {
@@ -85,7 +74,9 @@ export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
   const { tone, category, pct } = toneFromSlug(project.slug);
   const totalSections = Math.max(project.featureCount * 5, 5);
   const filledSections = Math.round((totalSections * pct) / 100);
-  const contributors = pickContributors(project.slug);
+  // US-011 — real contributors from API. Empty array when no edits.
+  // `?? []` guards old test fixtures that haven't added the new field yet.
+  const contributorNames = (project.contributors ?? []).map((c) => c.displayName);
   const isLive = project.featureCount > 0;
   const initials = getInitials(project.name);
 
@@ -176,7 +167,7 @@ export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
         {/* Bottom row */}
         <div className="mt-auto flex items-center justify-between gap-2 border-t border-border pt-2.5 font-ui text-[12px]">
           <div className="flex items-center gap-2.5">
-            <AvatarStack names={contributors} size="xs" />
+            <AvatarStack names={contributorNames} size="xs" />
             <span className="font-semibold text-muted-foreground">{project.featureCount}f</span>
           </div>
           <span

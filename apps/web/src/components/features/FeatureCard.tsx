@@ -52,7 +52,9 @@ export function FeatureCard({ projectSlug, feature }: FeatureCardProps): JSX.Ele
   const status = deriveStatus(feature.filledCount);
   const total = 5;
   const gradient = GRADIENTS[hashSlug(feature.slug) % GRADIENTS.length]!;
-  const contributors = ["TM", "NL"];
+  // US-011 — real contributors from API (top 5 by recency). Empty when no edits.
+  // `?? []` guards old test fixtures that haven't added the new field yet.
+  const contributorNames = (feature.contributors ?? []).map((c) => c.displayName);
 
   return (
     <Link
@@ -118,7 +120,7 @@ export function FeatureCard({ projectSlug, feature }: FeatureCardProps): JSX.Ele
             showIcon={false}
             className="!font-ui !text-[11px] !text-muted-foreground"
           />
-          <AvatarStack names={contributors} size="xs" />
+          <AvatarStack names={contributorNames} size="xs" />
         </div>
       </div>
     </Link>

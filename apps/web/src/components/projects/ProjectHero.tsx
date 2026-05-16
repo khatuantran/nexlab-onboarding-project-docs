@@ -12,6 +12,8 @@ interface ProjectHeroProps {
   filledSections: number;
   lastUpdatedAt: string | null;
   lastUpdatedBy: string | null;
+  /** US-011 — real contributor display names (top 5). Empty when no edits. */
+  contributors: string[];
   actions?: ReactNode;
 }
 
@@ -53,6 +55,7 @@ export function ProjectHero({
   filledSections,
   lastUpdatedAt,
   lastUpdatedBy,
+  contributors,
   actions,
 }: ProjectHeroProps): JSX.Element {
   const pct = totalSections > 0 ? Math.round((filledSections / totalSections) * 100) : 0;
@@ -106,7 +109,7 @@ export function ProjectHero({
         {/* Actions cluster */}
         <div className="flex flex-col items-end gap-3">
           {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}
-          <AvatarStack names={["TM", "NL", "PT", "HD"]} size="sm" />
+          <AvatarStack names={contributors} size="sm" />
         </div>
       </div>
     </GradientHero>
