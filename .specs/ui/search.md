@@ -3,6 +3,12 @@
 <!-- template: 02-ui-spec-template.md@0.1 -->
 
 > **v4 amend (CR-006 v4 — 2026-05-16)**: Hero block uses `GradientHero` (blue + orange blobs + dot grid + watermark). Eyebrow chip "✦ Tìm kiếm" (blue-200) + h1 white `Kết quả cho "{q}"` with gradient text on the query + result count line in white/70. Filter bar + result body remain in `max-w-5xl px-10 pt-6` light container below. Empty state + scope chip + FilterBar logic unchanged.
+>
+> **v4.3 enrichment (CR-006 v4.3 — 2026-05-16)**:
+>
+> - **Floating filter bar**: FilterBar wrapped in v4 glassmorphism shell `relative -mt-[28px] px-10` → inner `rounded-[16px] border border-border bg-background p-3 shadow-[0_8px_28px_rgba(0,0,0,0.1)]` overlapping the dark hero (hero `pb-16` for clearance). Scope chip (when `projectSlug` set) renders inside the shell above FilterBar. FilterBar internal `mb-6 ... rounded-xl border bg-muted/40` chrome stripped (host now provides it).
+> - **EntityGroup accents**: each group has a per-entity accent (Projects=orange, Features=purple, Sections=green, Authors=blue, Uploads=rose). Header icon = `size-8 rounded-[10px]` gradient plate with white icon + drop shadow; count pill uses matching tinted bg/text.
+> - **Idle (q empty) state**: was centered text. Now mirrors result-page chrome — full `GradientHero` (purple + blue blobs) + eyebrow + h1 "Tìm trong workspace" + descriptor. Below hero in `max-w-3xl px-10 -mt-[28px]`: floating `TipCard` (rounded-[16px] shadow) + 3-tile entity hint row (Projects orange / Features purple / Sections green).
 
 Referenced tokens / icons / components từ [design-system.md](design-system.md). Visual quality bar per [visual-language.md](visual-language.md) charter (CR-002).
 
@@ -10,7 +16,7 @@ Referenced tokens / icons / components từ [design-system.md](design-system.md)
 
 - **Screen ID**: `search`
 - **Status**: Implemented (US-005 v2 multi-entity + filters shipped `a9fbf86` 2026-04-25). Previously Implemented v1: T10 `5ca8e49`; UI uplift v2 Workspace CR-002 / Phase 2-4 `4407c53`.
-- **Last updated**: 2026-04-25
+- **Last updated**: 2026-05-16
 
 ## Route
 

@@ -28,7 +28,7 @@ export function FilterBar({ value, onChange }: FilterBarProps): JSX.Element {
     <section
       role="search"
       aria-label="Bộ lọc tìm kiếm"
-      className="mb-6 flex flex-wrap items-center gap-x-5 gap-y-3 rounded-xl border border-border bg-muted/40 px-4 py-3"
+      className="flex flex-wrap items-center gap-x-5 gap-y-3 px-1"
     >
       <Cluster label="Loại">
         <SectionTypeChips

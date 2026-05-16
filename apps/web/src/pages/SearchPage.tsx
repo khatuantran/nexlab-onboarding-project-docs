@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { FileText, FolderOpen, Paperclip, Search, SearchX, ScrollText, User } from "lucide-react";
+import { FileText, FolderOpen, Paperclip, SearchX, ScrollText, User } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import type { FeatureStatus, SectionType } from "@onboarding/shared";
 import { Button } from "@/components/ui/button";
@@ -132,22 +132,67 @@ export function SearchPage(): JSX.Element {
   // Idle state — q empty.
   if (q === "") {
     return (
-      <main className="mx-auto max-w-2xl px-6 py-16 text-center">
-        <Search className="mx-auto size-16 text-primary/40" aria-hidden="true" />
-        <h1 className="mt-6 font-display text-xl font-semibold text-foreground">
-          Tìm trong workspace
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Nhập từ khoá vào search box ở thanh top để tìm projects, features, sections, tác giả,
-          file.
-        </p>
-        <TipCard title="MẸO TÌM KIẾM" className="mt-6 text-left">
-          <ul className="list-disc space-y-1 pl-4">
-            <li>Tìm theo title hoặc nội dung section.</li>
-            <li>Filter loại section để tìm theme cụ thể (vd. user-flow cho business flow).</li>
-            <li>Filter tác giả + thời gian để zoom vào edits gần đây.</li>
-          </ul>
-        </TipCard>
+      <main className="bg-background pb-16">
+        <GradientHero
+          showWatermark
+          gridOverlay
+          className="px-10 pb-14 pt-9"
+          blobs={[
+            { color: "rgba(139,92,246,0.42)", size: 320, pos: { top: -60, left: -40 } },
+            { color: "rgba(59,130,246,0.32)", size: 260, pos: { bottom: -40, right: 80 } },
+          ]}
+        >
+          <span className="mb-3 inline-flex items-center rounded-full border border-blue-500/45 bg-blue-500/[0.22] px-3.5 py-1 font-ui text-[11px] font-bold uppercase tracking-[0.12em] text-blue-200">
+            ✦ Tìm kiếm
+          </span>
+          <h1 className="font-display text-[32px] font-black leading-[38px] tracking-[-0.025em] text-white sm:text-[40px] sm:leading-[44px]">
+            Tìm trong{" "}
+            <span className="bg-gradient-to-r from-[hsl(var(--logo-grad-start))] to-[hsl(var(--logo-grad-end))] bg-clip-text text-transparent">
+              workspace
+            </span>
+          </h1>
+          <p className="mt-3 max-w-2xl font-body text-[15px] text-white/70">
+            Nhập từ khoá vào search box ở thanh top để tìm projects, features, sections, tác giả,
+            file.
+          </p>
+        </GradientHero>
+
+        <div className="mx-auto -mt-[28px] max-w-3xl px-10">
+          <TipCard
+            title="MẸO TÌM KIẾM"
+            className="rounded-[16px] shadow-[0_8px_28px_rgba(0,0,0,0.08)]"
+          >
+            <ul className="list-disc space-y-1 pl-4">
+              <li>Tìm theo title hoặc nội dung section.</li>
+              <li>Filter loại section để tìm theme cụ thể (vd. user-flow cho business flow).</li>
+              <li>Filter tác giả + thời gian để zoom vào edits gần đây.</li>
+            </ul>
+          </TipCard>
+          <div className="mt-6 grid gap-3.5 sm:grid-cols-3">
+            {[
+              { icon: FolderOpen, label: "Projects", color: "from-[#FB923C] to-[#F07613]" },
+              { icon: FileText, label: "Features", color: "from-[#A78BFA] to-[#8B5CF6]" },
+              { icon: ScrollText, label: "Sections", color: "from-[#34D399] to-[#10B981]" },
+            ].map((tile) => {
+              const Icon = tile.icon;
+              return (
+                <div
+                  key={tile.label}
+                  className="flex items-center gap-3 rounded-[16px] border border-border bg-card p-4"
+                >
+                  <span
+                    className={`inline-flex size-9 items-center justify-center rounded-[10px] bg-gradient-to-br text-white shadow-[0_4px_10px_rgba(0,0,0,0.18)] ${tile.color}`}
+                  >
+                    <Icon className="size-4" aria-hidden="true" />
+                  </span>
+                  <span className="font-ui text-sm font-semibold text-foreground">
+                    {tile.label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </main>
     );
   }
@@ -158,7 +203,7 @@ export function SearchPage(): JSX.Element {
       <GradientHero
         showWatermark
         gridOverlay
-        className="px-10 pb-10 pt-9"
+        className="px-10 pb-16 pt-9"
         blobs={[
           { color: "rgba(59,130,246,0.4)", size: 320, pos: { top: -60, left: -40 } },
           { color: "rgba(240,118,19,0.35)", size: 260, pos: { bottom: -30, right: 100 } },
@@ -188,18 +233,22 @@ export function SearchPage(): JSX.Element {
         </div>
       </GradientHero>
 
-      <div className="mx-auto max-w-5xl px-10 pt-6">
-        {/* Scope chip + filter bar */}
-        {projectSlug ? (
-          <div className="mb-3 flex items-center gap-2">
-            <span className="font-ui text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-              Phạm vi:
-            </span>
-            <FilterChip label={`Project: ${projectSlug}`} onRemove={removeScope} />
-          </div>
-        ) : null}
-        <FilterBar value={filterValue} onChange={updateFilters} />
+      {/* Floating filter bar overlap (v4 glassmorphism) */}
+      <div className="relative -mt-[28px] px-10">
+        <div className="rounded-[16px] border border-border bg-background p-3 shadow-[0_8px_28px_rgba(0,0,0,0.1)]">
+          {projectSlug ? (
+            <div className="mb-3 flex items-center gap-2 px-1">
+              <span className="font-ui text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                Phạm vi:
+              </span>
+              <FilterChip label={`Project: ${projectSlug}`} onRemove={removeScope} />
+            </div>
+          ) : null}
+          <FilterBar value={filterValue} onChange={updateFilters} />
+        </div>
+      </div>
 
+      <div className="mx-auto max-w-5xl px-10 pt-6">
         {/* Body */}
         {isLoading && (
           <div className="space-y-3.5">
@@ -271,21 +320,36 @@ export function SearchPage(): JSX.Element {
         {!isLoading && !isError && hitsTotal > 0 && data && (
           <div>
             {data.projects.length > 0 && (
-              <EntityGroup icon={FolderOpen} title="Projects" count={data.projects.length}>
+              <EntityGroup
+                icon={FolderOpen}
+                title="Projects"
+                count={data.projects.length}
+                accent="orange"
+              >
                 {data.projects.map((hit) => (
                   <ProjectResultCard key={hit.slug} hit={hit} />
                 ))}
               </EntityGroup>
             )}
             {data.features.length > 0 && (
-              <EntityGroup icon={FileText} title="Features" count={data.features.length}>
+              <EntityGroup
+                icon={FileText}
+                title="Features"
+                count={data.features.length}
+                accent="purple"
+              >
                 {data.features.map((hit) => (
                   <FeatureResultCard key={`${hit.projectSlug}/${hit.featureSlug}`} hit={hit} />
                 ))}
               </EntityGroup>
             )}
             {data.sections.length > 0 && (
-              <EntityGroup icon={ScrollText} title="Sections" count={data.sections.length}>
+              <EntityGroup
+                icon={ScrollText}
+                title="Sections"
+                count={data.sections.length}
+                accent="green"
+              >
                 {data.sections.map((hit) => (
                   <SectionResultCard
                     key={`${hit.projectSlug}/${hit.featureSlug}/${hit.sectionType}`}
@@ -295,14 +359,19 @@ export function SearchPage(): JSX.Element {
               </EntityGroup>
             )}
             {data.authors.length > 0 && (
-              <EntityGroup icon={User} title="Authors" count={data.authors.length}>
+              <EntityGroup icon={User} title="Authors" count={data.authors.length} accent="blue">
                 {data.authors.map((hit) => (
                   <AuthorResultCard key={hit.id} hit={hit} />
                 ))}
               </EntityGroup>
             )}
             {data.uploads.length > 0 && (
-              <EntityGroup icon={Paperclip} title="Uploads" count={data.uploads.length}>
+              <EntityGroup
+                icon={Paperclip}
+                title="Uploads"
+                count={data.uploads.length}
+                accent="rose"
+              >
                 {data.uploads.map((hit) => (
                   <UploadResultCard key={hit.id} hit={hit} />
                 ))}
