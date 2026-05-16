@@ -43,6 +43,8 @@ const userSkillsRepo = createUserSkillsRepo(db);
 const cloudinary = createCloudinaryClient(config.CLOUDINARY_URL);
 const cloudinaryFolder = `onboarding-portal/${config.NODE_ENV}`;
 const cloudinaryAvatarsFolder = `${cloudinaryFolder}/avatars`;
+const cloudinaryUserCoversFolder = `${cloudinaryFolder}/covers/users`;
+const cloudinaryProjectCoversFolder = `${cloudinaryFolder}/covers/projects`;
 const loginRateLimit = createRateLimit({
   redis,
   keyFn: (req) => `login:${req.ip}`,
@@ -57,7 +59,13 @@ const app = createApp({
   version: VERSION,
   sessionMiddleware: createSessionMiddleware(),
   authRouter: createAuthRouter({ userRepo, loginRateLimit }),
-  projectsRouter: createProjectsRouter({ projectRepo, requireAuth }),
+  projectsRouter: createProjectsRouter({
+    projectRepo,
+    requireAuth,
+    requireAdmin,
+    cloudinary,
+    cloudinaryProjectCoversFolder,
+  }),
   featuresRouter: createFeaturesRouter({ featureRepo, projectRepo, requireAuth, requireAdmin }),
   sectionsRouter: createSectionsRouter({ sectionRepo, requireAuth }),
   searchRouter: createSearchRouter({ searchRepo, requireAuth }),
@@ -81,6 +89,7 @@ const app = createApp({
     redis,
     cloudinary,
     cloudinaryAvatarsFolder,
+    cloudinaryUserCoversFolder,
   }),
   workspaceRouter: createWorkspaceRouter({ projectRepo, requireAuth }),
 });

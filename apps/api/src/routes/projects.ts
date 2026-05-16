@@ -1,7 +1,11 @@
+import crypto from "node:crypto";
 import { Router, type RequestHandler, type Router as ExpressRouter } from "express";
 import { z } from "zod";
+import multer, { MulterError } from "multer";
+import { fileTypeFromBuffer } from "file-type";
 import {
   ErrorCode,
+  UPLOAD_MIME_WHITELIST,
   createProjectRequestSchema,
   slugSchema,
   updateProjectRequestSchema,
@@ -11,9 +15,10 @@ import {
   type ProjectResponse,
   type ProjectSummary,
   type UpdateProjectRequest,
+  type UploadMimeType,
 } from "@onboarding/shared";
 import { HttpError } from "../errors.js";
-import { requireAdmin } from "../middleware/requireAdmin.js";
+import { requireAdmin as requireAdminDefault } from "../middleware/requireAdmin.js";
 import { zodValidate } from "../middleware/zodValidate.js";
 import {
   SlugConflictError,
@@ -22,10 +27,23 @@ import {
   type ProjectSummaryRow,
 } from "../repos/projectRepo.js";
 import type { Project } from "../db/schema.js";
+import type { CloudinaryClient } from "../lib/cloudinary.js";
+
+/** US-019 — cover ảnh lớn hơn avatar (~2000×860); 4 MB cap. */
+const COVER_MAX_BYTES = 4 * 1024 * 1024;
+
+function isWhitelistedMime(mime: string): mime is UploadMimeType {
+  return (UPLOAD_MIME_WHITELIST as readonly string[]).includes(mime);
+}
 
 export interface ProjectsRouterDeps {
   projectRepo: ProjectRepo;
   requireAuth: RequestHandler;
+  /** Optional override (tests); defaults to module-level requireAdmin. */
+  requireAdmin?: RequestHandler;
+  /** US-019 — cover upload deps; required for `POST /:slug/cover`. */
+  cloudinary?: CloudinaryClient;
+  cloudinaryProjectCoversFolder?: string;
 }
 
 /**
@@ -86,8 +104,37 @@ function toProjectResponse(row: Project, contributors: ContributorRow[]): Projec
 }
 
 export function createProjectsRouter(deps: ProjectsRouterDeps): ExpressRouter {
-  const { projectRepo, requireAuth } = deps;
+  const {
+    projectRepo,
+    requireAuth,
+    requireAdmin = requireAdminDefault,
+    cloudinary,
+    cloudinaryProjectCoversFolder,
+  } = deps;
   const router = Router();
+
+  const coverUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: COVER_MAX_BYTES, files: 1 },
+  });
+
+  const multerCoverSingle: RequestHandler = (req, res, next) => {
+    coverUpload.single("file")(req, res, (err) => {
+      if (err instanceof MulterError) {
+        if (err.code === "LIMIT_FILE_SIZE") {
+          next(new HttpError(413, ErrorCode.FILE_TOO_LARGE, "File quá lớn (max 4 MB)"));
+          return;
+        }
+        next(new HttpError(400, ErrorCode.VALIDATION_ERROR, err.message));
+        return;
+      }
+      if (err) {
+        next(err);
+        return;
+      }
+      next();
+    });
+  };
 
   const params = z.object({ slug: slugSchema });
 
@@ -212,5 +259,100 @@ export function createProjectsRouter(deps: ProjectsRouterDeps): ExpressRouter {
     patch,
   );
   router.post("/:slug/archive", requireAuth, requireAdmin, zodValidate({ params }), archive);
+
+  const uploadProjectCover: RequestHandler = async (req, res, next) => {
+    try {
+      if (!cloudinary || !cloudinaryProjectCoversFolder) {
+        next(
+          new HttpError(
+            503,
+            ErrorCode.UPLOADS_DISABLED,
+            "Upload tạm thời không khả dụng (Cloudinary chưa cấu hình)",
+          ),
+        );
+        return;
+      }
+
+      const { slug } = req.params as { slug: string };
+      const project = await projectRepo.findBySlug(slug);
+      if (!project || project.archivedAt !== null) {
+        next(new HttpError(404, ErrorCode.PROJECT_NOT_FOUND, "Project không tồn tại"));
+        return;
+      }
+
+      const file = req.file;
+      if (!file) {
+        next(
+          new HttpError(400, ErrorCode.VALIDATION_ERROR, "Thiếu field 'file' trong multipart body"),
+        );
+        return;
+      }
+
+      const sniffed = await fileTypeFromBuffer(file.buffer);
+      const realMime = sniffed?.mime;
+      if (!realMime || !isWhitelistedMime(realMime)) {
+        next(
+          new HttpError(
+            415,
+            ErrorCode.UNSUPPORTED_MEDIA_TYPE,
+            "Chỉ chấp nhận png, jpg, webp",
+            sniffed ? { detectedMime: sniffed.mime } : undefined,
+          ),
+        );
+        return;
+      }
+
+      if (!cloudinary.isConfigured()) {
+        next(
+          new HttpError(
+            503,
+            ErrorCode.UPLOADS_DISABLED,
+            "Upload tạm thời không khả dụng (Cloudinary chưa cấu hình)",
+          ),
+        );
+        return;
+      }
+
+      const id = crypto.randomUUID();
+      const publicId = `${cloudinaryProjectCoversFolder}/${id}`;
+
+      let cloudinaryResult;
+      try {
+        cloudinaryResult = await cloudinary.uploadImage({
+          buffer: file.buffer,
+          publicId,
+          filename: file.originalname,
+        });
+      } catch (err) {
+        next(
+          new HttpError(
+            502,
+            ErrorCode.UPLOAD_PROVIDER_ERROR,
+            "Upload provider trả lỗi, thử lại sau",
+            { cause: err instanceof Error ? err.message : String(err) },
+          ),
+        );
+        return;
+      }
+
+      const updated = await projectRepo.updateCoverUrl(slug, cloudinaryResult.secureUrl);
+      if (!updated) {
+        next(new HttpError(404, ErrorCode.PROJECT_NOT_FOUND, "Project không tồn tại"));
+        return;
+      }
+      res.status(200).json({ data: { coverUrl: cloudinaryResult.secureUrl } });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  router.post(
+    "/:slug/cover",
+    requireAuth,
+    requireAdmin,
+    zodValidate({ params }),
+    multerCoverSingle,
+    uploadProjectCover,
+  );
   return router;
 }

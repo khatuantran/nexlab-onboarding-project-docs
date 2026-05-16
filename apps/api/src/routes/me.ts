@@ -32,6 +32,8 @@ import type { UserStatsRepo } from "../repos/userStatsRepo.js";
 const BCRYPT_COST = 12;
 /** Avatar files are kept small (2 MB) — UI is a small circle, large originals waste bandwidth. */
 const AVATAR_MAX_BYTES = 2 * 1024 * 1024;
+/** US-019 — cover ảnh lớn hơn avatar (~2000×860); 4 MB cap. */
+const COVER_MAX_BYTES = 4 * 1024 * 1024;
 
 export interface MeRouterDeps {
   userRepo: UserRepo;
@@ -42,6 +44,8 @@ export interface MeRouterDeps {
   cloudinary: CloudinaryClient;
   /** Cloudinary folder for avatars, e.g. "onboarding-portal/dev/avatars". */
   cloudinaryAvatarsFolder: string;
+  /** US-019 — Cloudinary folder for user covers, e.g. "onboarding-portal/dev/covers/users". */
+  cloudinaryUserCoversFolder: string;
 }
 
 function isWhitelistedMime(mime: string): mime is UploadMimeType {
@@ -74,6 +78,7 @@ export function createMeRouter(deps: MeRouterDeps): ExpressRouter {
     redis,
     cloudinary,
     cloudinaryAvatarsFolder,
+    cloudinaryUserCoversFolder,
   } = deps;
   const router = Router();
 
@@ -87,6 +92,29 @@ export function createMeRouter(deps: MeRouterDeps): ExpressRouter {
       if (err instanceof MulterError) {
         if (err.code === "LIMIT_FILE_SIZE") {
           next(new HttpError(413, ErrorCode.FILE_TOO_LARGE, "File quá lớn (max 2 MB)"));
+          return;
+        }
+        next(new HttpError(400, ErrorCode.VALIDATION_ERROR, err.message));
+        return;
+      }
+      if (err) {
+        next(err);
+        return;
+      }
+      next();
+    });
+  };
+
+  const coverUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: COVER_MAX_BYTES, files: 1 },
+  });
+
+  const multerCoverSingle: RequestHandler = (req, res, next) => {
+    coverUpload.single("file")(req, res, (err) => {
+      if (err instanceof MulterError) {
+        if (err.code === "LIMIT_FILE_SIZE") {
+          next(new HttpError(413, ErrorCode.FILE_TOO_LARGE, "File quá lớn (max 4 MB)"));
           return;
         }
         next(new HttpError(400, ErrorCode.VALIDATION_ERROR, err.message));
@@ -246,6 +274,80 @@ export function createMeRouter(deps: MeRouterDeps): ExpressRouter {
     }
   };
 
+  const uploadCover: RequestHandler = async (req, res, next) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        next(new HttpError(401, ErrorCode.UNAUTHENTICATED, "Bạn cần đăng nhập"));
+        return;
+      }
+
+      const file = req.file;
+      if (!file) {
+        next(
+          new HttpError(400, ErrorCode.VALIDATION_ERROR, "Thiếu field 'file' trong multipart body"),
+        );
+        return;
+      }
+
+      const sniffed = await fileTypeFromBuffer(file.buffer);
+      const realMime = sniffed?.mime;
+      if (!realMime || !isWhitelistedMime(realMime)) {
+        next(
+          new HttpError(
+            415,
+            ErrorCode.UNSUPPORTED_MEDIA_TYPE,
+            "Chỉ chấp nhận png, jpg, webp",
+            sniffed ? { detectedMime: sniffed.mime } : undefined,
+          ),
+        );
+        return;
+      }
+
+      if (!cloudinary.isConfigured()) {
+        next(
+          new HttpError(
+            503,
+            ErrorCode.UPLOADS_DISABLED,
+            "Upload tạm thời không khả dụng (Cloudinary chưa cấu hình)",
+          ),
+        );
+        return;
+      }
+
+      const id = crypto.randomUUID();
+      const publicId = `${cloudinaryUserCoversFolder}/${id}`;
+
+      let cloudinaryResult;
+      try {
+        cloudinaryResult = await cloudinary.uploadImage({
+          buffer: file.buffer,
+          publicId,
+          filename: file.originalname,
+        });
+      } catch (err) {
+        next(
+          new HttpError(
+            502,
+            ErrorCode.UPLOAD_PROVIDER_ERROR,
+            "Upload provider trả lỗi, thử lại sau",
+            { cause: err instanceof Error ? err.message : String(err) },
+          ),
+        );
+        return;
+      }
+
+      const row = await userRepo.updateCoverUrl(userId, cloudinaryResult.secureUrl);
+      if (!row) {
+        next(new HttpError(401, ErrorCode.UNAUTHENTICATED, "Bạn cần đăng nhập"));
+        return;
+      }
+      res.status(200).json({ data: { coverUrl: cloudinaryResult.secureUrl } });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   const getStats: RequestHandler = async (req, res, next) => {
     try {
       const userId = req.user?.id;
@@ -342,5 +444,6 @@ export function createMeRouter(deps: MeRouterDeps): ExpressRouter {
     changePassword,
   );
   router.post("/avatar", requireAuth, multerSingle, uploadAvatar);
+  router.post("/cover", requireAuth, multerCoverSingle, uploadCover);
   return router;
 }

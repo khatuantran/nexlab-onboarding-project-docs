@@ -1,6 +1,4 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
-import { createUserSkillsRepo } from "../../src/repos/userSkillsRepo.js";
-import { createUserStatsRepo } from "../../src/repos/userStatsRepo.js";
 import session from "express-session";
 import request from "supertest";
 import { eq } from "drizzle-orm";
@@ -8,6 +6,8 @@ import { createApp } from "../../src/app.js";
 import { createAuthRouter } from "../../src/routes/auth.js";
 import { createMeRouter } from "../../src/routes/me.js";
 import { createUserRepo } from "../../src/repos/userRepo.js";
+import { createUserSkillsRepo } from "../../src/repos/userSkillsRepo.js";
+import { createUserStatsRepo } from "../../src/repos/userStatsRepo.js";
 import { createRateLimit, type RateLimitClient } from "../../src/middleware/rateLimit.js";
 import { createRequireAuth } from "../../src/middleware/requireAuth.js";
 import { db } from "../../src/db/client.js";
@@ -104,68 +104,67 @@ beforeEach(async () => {
   cloudinaryState.configured = true;
   cloudinaryState.shouldFail = false;
   cloudinaryState.calls = [];
-  // Clear any avatar set by a previous test on the dev seed user.
-  await db.update(users).set({ avatarUrl: null }).where(eq(users.email, "dev@local"));
+  await db.update(users).set({ coverUrl: null }).where(eq(users.email, "dev@local"));
 });
 
 afterAll(async () => {
   await pool.end();
 });
 
-describe("POST /api/v1/me/avatar (US-009 / T3)", () => {
-  it("returns 200 + persists Cloudinary URL on happy path", async () => {
+describe("POST /api/v1/me/cover (US-019 / T2)", () => {
+  it("AC-1: returns 200 + persists Cloudinary URL on happy path", async () => {
     const agent = await loginAs("dev@local");
     const res = await agent
-      .post("/api/v1/me/avatar")
-      .attach("file", realPng, { filename: "me.png", contentType: "image/png" });
+      .post("/api/v1/me/cover")
+      .attach("file", realPng, { filename: "cover.png", contentType: "image/png" });
     expect(res.status).toBe(200);
-    expect(res.body.data.avatarUrl).toMatch(/^https:\/\/res\.cloudinary\.com\//);
+    expect(res.body.data.coverUrl).toMatch(/^https:\/\/res\.cloudinary\.com\//);
     expect(cloudinaryState.calls).toHaveLength(1);
-    expect(cloudinaryState.calls[0]?.publicId).toMatch(/^onboarding-portal\/test\/avatars\//);
+    expect(cloudinaryState.calls[0]?.publicId).toMatch(/^onboarding-portal\/test\/covers\/users\//);
 
     const me = await agent.get("/api/v1/me");
-    expect(me.body.data.avatarUrl).toBe(res.body.data.avatarUrl);
+    expect(me.body.data.coverUrl).toBe(res.body.data.coverUrl);
   });
 
-  it("returns 415 UNSUPPORTED_MEDIA_TYPE for non-whitelisted mime (gif)", async () => {
+  it("AC-3: returns 415 UNSUPPORTED_MEDIA_TYPE for non-whitelisted mime (gif)", async () => {
     const agent = await loginAs("dev@local");
     const res = await agent
-      .post("/api/v1/me/avatar")
-      .attach("file", gifBuf, { filename: "a.gif", contentType: "image/gif" });
+      .post("/api/v1/me/cover")
+      .attach("file", gifBuf, { filename: "x.gif", contentType: "image/gif" });
     expect(res.status).toBe(415);
     expect(res.body.error.code).toBe("UNSUPPORTED_MEDIA_TYPE");
   });
 
-  it("returns 503 UPLOADS_DISABLED when Cloudinary not configured", async () => {
+  it("AC-9: returns 503 UPLOADS_DISABLED when Cloudinary not configured", async () => {
     cloudinaryState.configured = false;
     const agent = await loginAs("dev@local");
     const res = await agent
-      .post("/api/v1/me/avatar")
-      .attach("file", realPng, { filename: "me.png", contentType: "image/png" });
+      .post("/api/v1/me/cover")
+      .attach("file", realPng, { filename: "cover.png", contentType: "image/png" });
     expect(res.status).toBe(503);
     expect(res.body.error.code).toBe("UPLOADS_DISABLED");
   });
 
-  it("returns 502 UPLOAD_PROVIDER_ERROR when Cloudinary upload throws", async () => {
+  it("AC-8: returns 502 UPLOAD_PROVIDER_ERROR when Cloudinary throws", async () => {
     cloudinaryState.shouldFail = true;
     const agent = await loginAs("dev@local");
     const res = await agent
-      .post("/api/v1/me/avatar")
-      .attach("file", realPng, { filename: "me.png", contentType: "image/png" });
+      .post("/api/v1/me/cover")
+      .attach("file", realPng, { filename: "cover.png", contentType: "image/png" });
     expect(res.status).toBe(502);
     expect(res.body.error.code).toBe("UPLOAD_PROVIDER_ERROR");
   });
 
-  it("returns 401 UNAUTHENTICATED with no session", async () => {
+  it("AC-4: returns 401 UNAUTHENTICATED with no session", async () => {
     const res = await request(buildApp())
-      .post("/api/v1/me/avatar")
-      .attach("file", realPng, { filename: "me.png", contentType: "image/png" });
+      .post("/api/v1/me/cover")
+      .attach("file", realPng, { filename: "cover.png", contentType: "image/png" });
     expect(res.status).toBe(401);
   });
 
   it("returns 400 VALIDATION_ERROR when no file attached", async () => {
     const agent = await loginAs("dev@local");
-    const res = await agent.post("/api/v1/me/avatar");
+    const res = await agent.post("/api/v1/me/cover");
     expect(res.status).toBe(400);
     expect(res.body.error.code).toBe("VALIDATION_ERROR");
   });

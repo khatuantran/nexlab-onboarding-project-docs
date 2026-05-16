@@ -59,6 +59,7 @@ function buildApp() {
       redis: fakeRedisFull,
       cloudinary: fakeCloudinary,
       cloudinaryAvatarsFolder: "test",
+      cloudinaryUserCoversFolder: "test",
     }),
   });
 }

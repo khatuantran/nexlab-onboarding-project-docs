@@ -83,6 +83,7 @@ function buildApp(redis: FakeRedis) {
       redis,
       cloudinary: fakeCloudinary,
       cloudinaryAvatarsFolder: "onboarding-portal/test/avatars",
+      cloudinaryUserCoversFolder: "onboarding-portal/test/covers/users",
     }),
   });
 }
