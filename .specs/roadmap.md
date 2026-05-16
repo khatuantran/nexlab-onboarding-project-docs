@@ -227,13 +227,7 @@ Deploy lên free-tier managed stack ($0/tháng), pilot với ≥ 1 project thậ
 
 Dựa feedback pilot, ưu tiên fix pain points cao nhất. Không commit scope sớm — sẽ viết US mới sau pilot retro.
 
-Candidate items (có thể):
-
-- Admin UI quản lý user (list, disable, reset password).
-- Role-based permissions cứng (nếu pilot thấy cần).
-- Search filter per-project / per-section.
-- Markdown editor upgrade (WYSIWYG, image drag-drop).
-- Draft/publish state cho section.
+Candidate items được drop ngày 2026-05-16 (post-CR-006 v4 mock audit triage); sẽ refill sau pilot retro.
 
 ---
 
@@ -241,12 +235,7 @@ Candidate items (có thể):
 
 Xem tổng hợp trong [02-requirements.md §Deferred](02-requirements.md#deferred--out-of-scope-v1-documented-to-avoid-churn). Key items:
 
-- AI Q&A / RAG trên catalog.
-- Real-time collab editing.
-- Versioning / diff / comment / approval workflow.
 - SSO (Google/Azure AD).
-- 2-way sync Jira / Figma / GitHub.
-- Native mobile app.
 - K8s production deploy (xem [ADR-001 §2.6](adr/ADR-001-tech-stack.md#26-infrastructure)).
 - Advanced search (Meilisearch / Elasticsearch) nếu corpus > 10k feature.
 - S3-compatible file storage (nếu upload volume > pilot scale).

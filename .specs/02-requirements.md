@@ -534,16 +534,10 @@ Format theo [templates/01-non-functional-requirements-template.md](../templates/
 | Item                                                                  | Reason                                               | Revisit when                           |
 | --------------------------------------------------------------------- | ---------------------------------------------------- | -------------------------------------- |
 | Role-based permissions cứng (BA chỉ edit business, Dev chỉ edit tech) | YAGNI — v1 đi theo convention + audit trail          | Team > 20 active author, có bad actor  |
-| Versioning / diff / comments                                          | Complexity lớn, không critical cho onboarding        | User feedback sau pilot                |
-| AI Q&A / RAG                                                          | Out of scope vision                                  | v2                                     |
-| Real-time collab (y-websocket / liveblocks)                           | Complexity + infra                                   | v2+                                    |
-| Native mobile                                                         | Web responsive đủ cho reader                         | v2+                                    |
 | SSO (Google/Azure AD)                                                 | Local email/password đủ cho internal + solo maintain | Company mandates SSO                   |
-| 2-way sync Jira/Figma/GitHub                                          | OAuth + webhook infra tốn                            | User pain > embed card                 |
 | Advanced search (fuzzy, typo tolerance)                               | Postgres FTS đủ v1                                   | Corpus > 10k hoặc p95 > 500ms          |
 | Search autocomplete / saved searches / cross-project ACL              | Defer v2 (xem US-005 Scope out)                      | Pilot feedback                         |
 | Server-side rate limit toàn bộ API                                    | Chỉ auth endpoint v1                                 | Traffic pattern thực tế cho thấy abuse |
-| Automated backup                                                      | Manual pg_dump v1                                    | Có > 1 người maintain                  |
 
 ---
 
@@ -559,7 +553,6 @@ Format theo [templates/01-non-functional-requirements-template.md](../templates/
 
 ### Still open (revisit sau pilot)
 
-- **Session TTL**: default 7d sliding; có thể chuyển fixed hoặc kéo dài sau khi đo real usage.
 - ~~**Admin UI quản lý user**: v1 chỉ có endpoint `POST /api/v1/users` (cURL / seed). Admin UI list/disable user defer → US v2.~~ ✅ Resolved 2026-05-15: promoted thành scope qua [US-007](stories/US-007.md) (full lifecycle: list + invite + edit role + archive + reset password).
 
 ---
