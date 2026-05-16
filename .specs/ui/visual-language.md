@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-_Last updated: 2026-05-16 · v3 amendment (CR-006) · Source of truth cho design quality bar across screens. Mọi UI work phải tuân theo._
+_Last updated: 2026-05-16 · v4 amendment (CR-006) · Source of truth cho design quality bar across screens. Mọi UI work phải tuân theo._
 
 Related: [design-system.md](design-system.md) (tokens), [ADR-003](../adr/ADR-003-nexlab-design-system.md) (Nexlab DS adoption), per-screen specs `.specs/ui/<screen>.md`.
 
@@ -27,29 +27,38 @@ Related: [design-system.md](design-system.md) (tokens), [ADR-003](../adr/ADR-003
 - Card inner: 24px (p-6). Row inner: 20px (p-5). Hero: 32-48px vertical.
 - Stack gap: 4 (tight), 8 (related), 16 (sibling), 24 (group), 48 (section break).
 
-## 2. Color usage rules
+## 2. Color usage rules (v4 — CR-006)
 
-| Color group                                                         | When                                                                                                   |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| **Primary orange** (`primary`, `primary-50..900`)                   | Primary CTA buttons, active state, brand accents (logo, hero gradient), focus ring, hover transitions. |
-| **Secondary gold** (`secondary`, `secondary-bg/text`)               | Achievement / count chips, success-tinted surfaces, "feature count" pills, calm highlight.             |
-| **Warm canvas** (`canvas`) v3                                       | Page bg variant warm off-white. Headers + hero sections. Override page-level via `bg-canvas`.          |
-| **Sage** (`sage`, `sage-bg/text`) v3                                | Secondary accent (calmer than orange). Stat boxes #2-3, secondary CTAs, calm chips. Pair with primary. |
-| **Neutral** (`background`, `foreground`, `muted`, `border`, `card`) | Body text, surfaces, dividers, disabled states. Default; use unless brand moment.                      |
-| **Destructive**                                                     | Archive confirms, delete actions, error banners. Sparingly.                                            |
-| **Success / Warning / Info**                                        | Status badges, banners. Single-color rule: 1 semantic color per surface.                               |
+v3 lineage (warm canvas + sage) DROPPED. v4 reintroduces a multi-accent palette pinned to specific roles (card category identity, role badges, section nav, integration cards) — discipline below.
 
-**Don't**: mix primary + secondary (gold) trong cùng 1 surface (orange button + gold badge cùng card → noise). Primary + sage OK (chosen pairing). Pick 1 brand color per surface, neutral for rest.
+- **Primary orange** (`primary`, `primary-50..900`) — Primary CTA buttons (solid + gradient variant), brand wordmark, focus ring, active state, hero blob #1, ProjectCard gradient #1.
+- **Accent palette** (`purple`, `green`, `blue`, `rose`, `amber`) v4 — Category identity slots only. ProjectCard 6-gradient header (5 accents + orange), role badges (Admin=rose, PM=purple, BA=orange, Dev=blue, QA=green), section nav (Nghiệp vụ=purple, User flow=orange, Rules=green, Tech=blue, Shots=rose), integration cards. Not for body text or surfaces.
+- **Hero dark gradient** (`--hero-1..4`) v4 — Page hero bg, linear-gradient 145deg `#0B0520 → #180E3A → #0C1A3A → #0A0E16`. Full-bleed hero blocks only (HomePage, ProjectLanding, FeatureDetail, Users, Settings, Profile cover, Login left panel). Never on body cards.
+- **Logo gradient** (`--logo-grad-start`/`--logo-grad-end`) v4 — Wordmark mask + headline gradient text accent (e.g. h1 "Workspace / của bạn" with gradient span). Sparingly — 1 gradient text element per screen max.
+- **Glassmorphism overlay** (`bg-white/{6,10,15,20}` + `backdrop-blur-md`) v4 — Cards / chips layered over dark hero. Never over light bg.
+- **Secondary gold** (`secondary`, `secondary-bg/text`) — Achievement chips, "feature count" pills, calm highlight. Light surfaces only.
+- **Neutral semantic** (`background`, `foreground`, `muted`, `border`, `card`, `fg-1..4`) — Body text, surfaces, dividers, disabled states. Default. v4 adds explicit `fg-1/2/3/4/inverse` + `bg-subtle/muted/dark` semantic vars.
+- **Destructive** — Archive confirms, delete actions, error banners, danger zone in Settings. Sparingly.
+- **Success / Warning / Info** — Status badges (active/away/inactive), feedback banners, integration "Đã kết nối" pills. Single-color rule: 1 semantic color per surface.
+
+**Don't**:
+
+- ❌ Mix 3+ accent hues in 1 surface — pick 1 per card / chip / banner.
+- ❌ Apply dark hero gradient to body cards or modals — it's a hero-only treatment.
+- ❌ Use glassmorphism over light bg — only over the dark gradient hero.
+- ❌ Multi-color gradient on buttons — orange-only gradient (135deg `primary` → `primary-700`).
+- ❌ Use accent hues for body text — they're identity slots only.
 
 ## 3. Surface depth
 
-| Level        | Token                                                                                                    | Use                                             |
-| ------------ | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| Flat         | `border-b border-border`                                                                                 | List dividers (catalog rows).                   |
-| Raised       | `rounded-xl border border-border bg-card shadow-sm`                                                      | Cards (FeatureCard, SearchResultRow).           |
-| Hover-raised | `hover:shadow-md hover:border-primary/30 transition-all`                                                 | Card hover (interactive).                       |
-| Floating     | `rounded-xl bg-popover shadow-card`                                                                      | Dialogs, dropdowns, toasts.                     |
-| Hero panel   | `rounded-2xl bg-gradient-to-br from-primary-50 via-background to-secondary-bg/50 ring-1 ring-primary/10` | Page hero blocks (Home, ProjectLanding, Login). |
+| Level        | Token                                                    | Use                                   |
+| ------------ | -------------------------------------------------------- | ------------------------------------- |
+| Flat         | `border-b border-border`                                 | List dividers (catalog rows).         |
+| Raised       | `rounded-xl border border-border bg-card shadow-sm`      | Cards (FeatureCard, SearchResultRow). |
+| Hover-raised | `hover:shadow-md hover:border-primary/30 transition-all` | Card hover (interactive).             |
+| Floating     | `rounded-xl bg-popover shadow-card`                      | Dialogs, dropdowns, toasts.           |
+
+**Hero panel v4** — `GradientHero` primitive (see §13). Dark gradient bg (145deg, 4 stops `--hero-1..4`) with 3 radial color blobs + dot-grid overlay + optional `LogoWatermark`. Use on full-bleed hero blocks only (HomePage, ProjectLanding, FeatureDetail, Users, Settings, Profile cover, Login left panel). v3 light hero (`from-primary-50 via-background to-secondary-bg/50`) is SUPERSEDED.
 
 ## 4. Motion
 
@@ -95,42 +104,49 @@ Related: [design-system.md](design-system.md) (tokens), [ADR-003](../adr/ADR-003
 | Search results                       | 120-140px row           | Title + snippet (line-clamp-3) + meta breadcrumb.                                                                                   |
 | Auth (Login)                         | Single panel ~440px     | Hero left + form right (xl); stacked on mobile.                                                                                     |
 
-### Ít chữ nhiều hình (v3 — CR-006)
+### Density — moderate visual (v4 — CR-006)
 
-User constraint: design phải ưu tiên icon + color block over text. Apply per surface:
+v3 "Ít chữ nhiều hình" rule SOFTENED. v4 allows decorative subtitles + gradient text + eyebrow chips alongside graphics-rich treatment. Goal: bold visual hierarchy without sparse minimalism.
 
-- **Hero**: title (with emoji OK) ONLY. Drop subtitle paragraph by default. Add subtitle ≤ 1 dòng chỉ khi cần context không thay được bằng visual.
-- **Stat boxes**: icon plate (size 48 solid filled) + value (big font-display 32px) + 1-từ label uppercase. KHÔNG sub-line, KHÔNG description.
-- **Card grid items**: filled banner top + title + 2-3 metric chips. KHÔNG description paragraph (v2 đã có thì v3 drop).
-- **Empty state**: emoji 4xl HOẶC large filled icon + heading + solid CTA. KHÔNG description paragraph.
-- **Buttons**: label ngắn + optional icon prefix. KHÔNG button "Click here to do X" — verb ngắn.
+- **Hero**: eyebrow chip (Sprint badge / status) + h1 (2 lines OK, 1 line with gradient span) + optional 1-line subtitle. Stat tiles glassmorphism row (3-4 metrics) instead of inline stats.
+- **Stat tiles** (over dark hero): glassmorphism `bg-white/6 border-white/10 backdrop-blur-md` + icon plate gradient (size 40-42, solid color gradient) + value font-display 24-26px + label uppercase 11px white/50.
+- **Card grid items** (ProjectCard v4): gradient header h-150 + initials plate + tag pill + Live pill + ProgressRing. Body p-5: title h3 + 1-line description allowed (line-clamp-1) + section dots + bottom row [AvatarStack + features count + activity].
+- **Empty state**: dashed border card + filled icon plate 72×72 (accent color/12 bg with /25 border) + heading + 1 sentence body + dual CTA (template + start). KHÔNG full minimal-only as v3 imposed.
+- **Buttons**: solid filled or gradient (135deg primary→primary-700 with shadow). Label ngắn + optional icon prefix.
 
-Exception: **content body** (FeatureDetail 5-section prose, MarkdownView) giữ density cao như cũ — đó là core value.
+Exception: **content body** (FeatureDetail 5-section prose, MarkdownView) giữ density cao như cũ — core value.
 
-## 7. Illustration & icon policy (v3 — CR-006 graphics-rich)
+## 7. Illustration & icon policy (v4 — CR-006 dark vivid + glassmorphism)
 
-**Graphics-rich principles** (user constraint 2026-05-16):
+**Graphics-rich principles** (user constraint, refined 2026-05-16):
 
-- **Icons prominent**: lucide-react ở size **24-48px** cho hero / empty / card primary action; 16-20px chỉ cho inline body. Stroke-width 2 default. Tránh dùng icon nhỏ khi có chỗ cho icon lớn.
-- **Emoji as visual accent**: cho phép emoji decoration trong hero title + empty state + CTA labels (e.g. 📁 📄 👥 ⭐ 👋 ✨ ➕). Pair với text, không thay chữ entirely. Vietnamese friendly tone.
-- **Color-filled icon plates**: icon ngồi trong rounded square `size-10` to `size-14` với **solid accent bg** (`bg-primary text-white`, `bg-sage text-white`) — không phải `/10%` tinted như CR-002.
-- **Filled banner / hero block**: cards có thể có banner top `h-16` to `h-20` solid filled, chứa icon + text white. Visual reward.
+- **Icons prominent**: lucide-react ở size **24-48px** cho hero / empty / card primary action; 16-20px chỉ cho inline body. Stroke-width 1.8 default (per reference `icons.jsx`). Tránh dùng icon nhỏ khi có chỗ cho icon lớn.
+- **Gradient text headlines**: h1 với gradient span (logo-gradient applied via `bg-clip-text text-transparent`). 1 gradient text per screen max.
+- **Emoji as visual accent**: emoji decoration trong eyebrow chips (✦ ✨ ⚙ ⭐ 🚀 👋 ➕) + section labels. Pair với text, không thay chữ entirely.
+- **Color-filled icon plates**: icon ngồi trong rounded square `size-10` to `size-14` với **solid accent bg gradient** (`bg-gradient-to-br from-{tone} to-{tone}-700`) — không phải `/10%` tinted. Plate over dark hero uses gradient; plate over light card body uses `bg-{tone}/15` tinted with `text-{tone}` icon.
+- **Decorative circles**: card headers may include 2 absolute-positioned circles (rgba white .12 + .07) for depth. Not abstract primitives — inline `<div>`s.
+- **Radial blobs in hero**: 3-4 absolute-positioned radial gradients (orange / purple / blue / green / rose tints, 280-360px, opacity 0.3-0.45) over the dark hero bg. Reusable via `GradientHero` `blobs` prop.
+- **Dot grid + line grid overlays**: subtle (opacity 0.05-0.10) over hero bg for texture.
+- **Logo watermark**: masked SVG with logo gradient, opacity 0.10-0.13, positioned absolute top-right of hero. Via `LogoWatermark` primitive.
+- **ProgressRing**: SVG circular progress (size 44-56) for card headers + feature progress. White stroke over color gradient, primary stroke over light bg.
 
 **Allowed**:
 
-- Hero areas: warm canvas bg + optional NxLogo mark watermark.
-- Filled banner top trên card grid items.
-- Emoji decoration inline trong heading + CTA + empty state.
-- Solid filled icon plates (no tint).
+- Hero areas: dark gradient bg + 3 radial blobs + dot grid + logo watermark + gradient text headlines.
+- Card headers: gradient bg (1 of 6 palettes for ProjectCard, accent color gradient for SectionContent) + decorative circles + ProgressRing.
+- Glassmorphism cards over dark hero (bg-white/{6,10,15,20} + backdrop-blur-md + border-white/10).
+- Inline emoji decoration trong eyebrow + section labels + CTA.
 
 **Still banned**:
 
 - ❌ Character illustrations (Storyset / unDraw).
 - ❌ Stock photography (Unsplash / Pexels).
 - ❌ 3D renders / claymorphism.
-- ❌ Geometric SVG patterns (blob, mesh, dot field) — those were CR-005 reverted; reintroduce only nếu need với careful discipline.
+- ❌ Light hero gradients (`from-primary-50 via-background to-secondary-bg`) — v2/v3 lineage superseded.
+- ❌ Warm canvas / sage tinted surfaces (v3 lineage dropped).
+- ❌ Tinted icon plates `/10%` for primary surfaces (v1/v2 pattern) — v4 uses solid gradient or rgba-white-glass.
 
-Avatar: deterministic letter-based (slug hash → primary ramp), font-display bold uppercase. Image upload land US-009.
+Avatar: deterministic letter-based (slug hash → accent palette per role / category), font-display bold uppercase. Image upload land US-009.
 
 ## 8. Accessibility floor
 
@@ -202,31 +218,44 @@ Reusable visual patterns appearing across multiple screens. Implement as shared 
 - Optional count badge sau label: pill 10px primary bg với white number.
 - v1: chỉ Catalog tab active; Activity/Members/Settings render placeholder empty state.
 
-### Filled button + banner pattern (v3 — CR-006)
+### Gradient button + vivid card banner pattern (v4 — CR-006)
 
-Reusable filled-color patterns across screens for graphics-rich + warm feel.
+Reusable filled / gradient patterns across screens for dark vivid + glassmorphism feel. Supersedes v3 flat-color-block banner.
 
-**Buttons** (replaces shadcn outline/ghost as default):
+**Buttons**:
 
-- **Primary**: `bg-primary text-primary-foreground hover:bg-primary-600 active:scale-[0.98]`. Use cho main CTA per page (e.g. "+ Tạo dự án mới", "Lưu thay đổi").
-- **Secondary**: `bg-sage text-sage-foreground hover:bg-sage-600`. Use cho secondary action (e.g. "Xem thêm", "Mở filter").
-- **Outline**: `bg-card border border-border hover:bg-muted/50`. Chỉ cho tertiary actions như "Lọc", "Hủy".
-- **Ghost**: `hover:bg-muted/50`. Chỉ cho inline icon buttons (overflow menu, close).
-- **Destructive solid**: `bg-destructive text-destructive-foreground` cho confirm dialogs.
+- **Primary (gradient)**: `bg-gradient-to-br from-primary to-primary-700 text-white shadow-[0_4px_16px_rgba(226,99,20,0.45)] hover:from-primary-600 hover:to-primary-800 active:scale-[0.98]`. Use cho main CTA per page (e.g. "Tạo mới", "Lưu thay đổi", "Bắt đầu viết").
+- **Primary (solid)**: `bg-primary text-primary-foreground hover:bg-primary-600`. Use cho compact CTAs trong floating filter bar / tab row.
+- **Ghost over dark hero**: `bg-white/10 border border-white/25 text-white backdrop-blur-sm hover:bg-white/15`. Use cho secondary actions over dark hero (star, repo, view PR).
+- **Ghost over light bg**: `bg-card border border-border text-fg-1 hover:bg-bg-subtle`. Use cho secondary actions trên light content (cancel, edit).
+- **Destructive solid**: `bg-gradient-to-br from-rose-500 to-rose-700 text-white` cho confirm dialogs. Outline variant `border-rose-500 text-rose-500` cho danger zone.
 
-Default mode trong app: **solid filled**. KHÔNG dùng outline cho main CTA — gãy visual hierarchy.
+Default main CTA: **gradient primary**. KHÔNG dùng outline cho main CTA.
 
-**Banner / hero block**:
+**Vivid card banner** (ProjectCard v4):
 
-- **Card banner top**: `h-16` to `h-20` solid filled `bg-primary` hoặc `bg-sage`, chứa icon (size 28-32 text-white) + project letters (font-display text-xl text-white). Use cho ProjectCard, FeatureCard graphics-rich variant.
-- **Stat box**: `rounded-2xl p-5` với icon plate solid filled `size-12 bg-{tone} text-white` + value 32px + label uppercase. Use cho HomePage hero stats.
-- **Empty state hero**: emoji 4xl hoặc large filled icon `size-16 bg-primary rounded-2xl text-white` + heading + solid CTA.
+- Header gradient `bg-gradient-to-br from-{tone}-700 to-{tone}-500`, `min-h-[150px] p-5 text-white overflow-hidden relative`.
+- 6 palettes by hash: orange / purple / green / blue / rose / amber (each `{tone}-700` → `{tone}-500` gradient).
+- 2 decorative circles absolute (rgba white .12 + .07, 140 / 100px) for depth.
+- Top row: initials plate 46×46 `rounded-xl bg-white/22 text-white font-display font-bold` + tag pill + Live pill or admin overflow.
+- Top-right: `ProgressRing` 52px white-on-white-glass.
+- Body p-5 light: title h3 + 1-line desc + section dots row + bottom row [AvatarStack + features count + activity].
+
+**Stat tile (glassmorphism over dark hero)**:
+
+- `rounded-2xl p-4 bg-white/6 border border-white/10 backdrop-blur-md text-center` (over `GradientHero`).
+- Icon plate gradient 40×40 `bg-gradient-to-br from-{tone} to-{tone}-700 text-white shadow` + value font-display 24-26px white + label uppercase 11px white/50.
+
+**Empty state v4**:
+
+- Dashed border card `p-8 rounded-2xl border-2 border-dashed border-{tone}/30 bg-{tone}/5 backdrop-blur-sm flex items-center gap-5`.
+- Icon plate 72×72 `rounded-2xl bg-{tone}/12 border border-{tone}/25 text-{tone}` + heading + 1-line body + dual CTAs (template + start).
 
 **Don't**:
 
-- ❌ Mix outline + solid buttons trong 1 group — pick one variant.
-- ❌ Subtle tinted bg (`bg-primary/10`) cho buttons — that's v1/v2 pattern, v3 dùng solid.
-- ❌ Banner màu fade hoặc gradient — v3 dùng flat color block.
+- ❌ Mix outline + gradient buttons trong 1 group — pick one variant.
+- ❌ Subtle tinted bg (`bg-primary/10`) cho buttons — v4 dùng gradient.
+- ❌ Flat color block banner — v4 dùng gradient header.
 
 ### DecorativeMark (used: hero panels Home, Project detail, Login)
 
@@ -246,7 +275,30 @@ Default mode trong app: **solid filled**. KHÔNG dùng outline cho main CTA — 
 - Icon circle (32 round bg-primary-50) + heading + sub + (optional) inline action.
 - Khác standard EmptyState ở chỗ inline (in-flow, không centered page).
 
-## 11. Tone & copy (v3 — CR-006)
+## 11. Glassmorphism layering (v4 — CR-006)
+
+Glassmorphism is a v4 NEW pattern — used over the dark hero only.
+
+- **Base**: `bg-white/{6,10,15,20}` + `border border-white/{10,15,25,30}` + `backdrop-blur-md` (or `-sm` / `-lg`).
+- **Levels**:
+  - `bg-white/6 + border-white/10` — stat tile (subtle, low priority).
+  - `bg-white/12 + border-white/20` — feature pill / testimonial card.
+  - `bg-white/18 + border-white/25` — initials plate / Live pill.
+  - `bg-white/22 + border-white/30` — section nav active state pill / drag-handle.
+- **Never over light bg** — glassmorphism only exists over the dark hero gradient or dark gradient banner. On light surfaces, use solid `bg-card border-border shadow-sm` instead.
+- **Text contrast over glass**: always `text-white` (over dark hero) or `text-fg-1` (over light, but glass isn't used there).
+- **Don't** stack 3+ glass layers — readability collapses.
+
+## 12. Pattern primitives v2 (v4 — CR-006)
+
+Replaces CR-006 v3 single CircleDecor primitive. v4 introduces 3 cooperating primitives at `apps/web/src/components/patterns/`.
+
+- **GradientHero** — Wraps dark gradient bg + 3 radial color blobs (configurable color tuple) + dot-grid overlay + optional `<LogoWatermark>` slot + slot for hero content. Use as page hero block.
+- **LogoWatermark** — Absolute-positioned masked SVG with logo gradient. Props: `size`, `opacity`, `className`. Use inside `GradientHero` `watermark` slot.
+- **ProgressRing** — SVG circular progress. Props: `pct`, `size` (44-56 default), `color`, `bg`, `strokeWidth`. Use in card headers + feature progress.
+- **DROPPED in v4**: `CircleDecor` (v3.1 primitive — replaced by inline circle `<div>`s in card headers).
+
+## 13. Tone & copy (v4 — CR-006)
 
 Friendly welcoming + minimal Vietnamese natural. Examples:
 
@@ -262,7 +314,7 @@ Avoid:
 - ❌ Eyebrow + h1 + subtitle stack ở hero — chỉ h1, subtitle optional ≤ 1 dòng.
 - ❌ Generic "Click here", "Submit" — luôn verb cụ thể tiếng Việt.
 
-## 12. Compliance
+## 14. Compliance
 
 Mọi PR đụng UI:
 
@@ -277,3 +329,15 @@ Mọi PR đụng UI:
 | v1      | 2026-04-25 | Initial charter (CR-002). 5 screens uplift baseline. Hero panel pattern + density rules established.                                                                                                                                                                                                                                                                                                                                     |
 | v2      | 2026-04-25 | Workspace-style amendment: §6 Home density list→grid 2-col 180-220px; §10 NEW component patterns (StatChip, FloatStat, MiniStat, ProgressStrip, SectionDots, AvatarStack, LiveIndicator placeholder, TabBar, DecorativeMark, TemplateRadio, EmptyDashedCard); §11 renumbered. Skeleton-UI policy: build full reference design, dummy/placeholder cho data chưa có (no realtime presence, activity log static, tabs Catalog-only active). |
 | v3      | 2026-05-16 | CR-006 — Notion warm + graphics-rich. §2 add canvas + sage groups. §5 empty state filled icon / 4xl emoji + drop description. §6 NEW Ít chữ nhiều hình rule. §7 rewrite icon policy: prominent 24-48px + emoji + filled plates. §10 NEW Filled button + banner pattern. §11 NEW Tone & copy friendly minimal.                                                                                                                            |
+| v4      | 2026-05-16 | CR-006 amend — Dark vivid + glassmorphism (supersedes v3 / v3.1). See §2 / §3 / §6 / §7 / §10 / §11 / §12 for full v4 changes; details below.                                                                                                                                                                                                                                                                                            |
+
+### v4 change details
+
+- §2 — drop canvas + sage, reinstate multi-accent palette (purple/green/blue/rose/amber) for category identity slots; add dark hero gradient (`--hero-1..4`), logo gradient, glassmorphism overlay tokens.
+- §3 — hero panel → `GradientHero` primitive (replaces light v3 hero).
+- §6 — density softened to moderate visual (decorative subtitles + gradient text allowed). v3 "Ít chữ nhiều hình" rule replaced.
+- §7 — rewrite icon policy: gradient text headlines + radial blobs + dot grid + logo watermark + ProgressRing + glassmorphism over dark.
+- §10 — Gradient button + Vivid card banner (6 palettes for ProjectCard) supersedes v3 flat color block.
+- §11 NEW — Glassmorphism layering (over dark hero only).
+- §12 NEW — Pattern primitives v2 (`GradientHero` / `LogoWatermark` / `ProgressRing`; drop `CircleDecor`).
+- §13 — Tone & copy unchanged from v3.
