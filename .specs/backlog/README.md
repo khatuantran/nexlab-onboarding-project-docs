@@ -12,10 +12,19 @@ Related: [CLAUDE.md §When a request comes in](../../CLAUDE.md#when-a-request-co
 
 ## Items
 
-| ID     | Title                                     | Priority | Status  | Last activity | File                   |
-| ------ | ----------------------------------------- | -------- | ------- | ------------- | ---------------------- |
-| BL-001 | Project repo URL + Feature PR URL linking | P0       | Triaged | 2026-05-16    | [BL-001.md](BL-001.md) |
-| BL-002 | Profile skills CRUD                       | P2       | Triaged | 2026-05-16    | [BL-002.md](BL-002.md) |
+| ID     | Title                                                       | Priority | Status  | Last activity | File                   |
+| ------ | ----------------------------------------------------------- | -------- | ------- | ------------- | ---------------------- |
+| BL-001 | Project repo URL + Feature PR URL linking                   | P0       | Triaged | 2026-05-16    | [BL-001.md](BL-001.md) |
+| BL-002 | Profile skills CRUD                                         | P2       | Triaged | 2026-05-16    | [BL-002.md](BL-002.md) |
+| BL-003 | Profile stats aggregation                                   | P1       | Triaged | 2026-05-16    | [BL-003.md](BL-003.md) |
+| BL-004 | User's recent projects card                                 | P1       | Triaged | 2026-05-16    | [BL-004.md](BL-004.md) |
+| BL-005 | User activity feed (profile + ActivityRail expand)          | P1       | Triaged | 2026-05-16    | [BL-005.md](BL-005.md) |
+| BL-006 | Cover image upload (profile + project)                      | P2       | Triaged | 2026-05-16    | [BL-006.md](BL-006.md) |
+| BL-007 | Watch / follow project + feature ("Theo dõi")               | P2       | Triaged | 2026-05-16    | [BL-007.md](BL-007.md) |
+| BL-008 | Notification system + NotificationBell wiring               | P3       | Triaged | 2026-05-16    | [BL-008.md](BL-008.md) |
+| BL-009 | AdminSettings real wiring (system config CRUD)              | P3       | Triaged | 2026-05-16    | [BL-009.md](BL-009.md) |
+| BL-010 | ProjectTabs Activity / Members / Settings panels            | P2       | Triaged | 2026-05-16    | [BL-010.md](BL-010.md) |
+| BL-011 | HomePage hero stats real + `filledSectionCount` aggregation | P1       | Triaged | 2026-05-16    | [BL-011.md](BL-011.md) |
 
 ---
 
