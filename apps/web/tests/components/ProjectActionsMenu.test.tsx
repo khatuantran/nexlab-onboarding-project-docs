@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Routes, Route } from "react-router-dom";
 import { toast } from "sonner";
@@ -50,19 +50,30 @@ describe("ProjectActionsMenu", () => {
     expect(await screen.findByRole("dialog", { name: /sửa project/i })).toBeInTheDocument();
   });
 
-  it("click 'Lưu trữ project' shows native confirm with project name + consequence", async () => {
-    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(false);
+  it("click 'Lưu trữ project' opens ConfirmDialog; clicking 'Huỷ' closes it without POST", async () => {
+    let posted = false;
+    server.use(
+      http.post(`${BASE}/projects/pilot/archive`, () => {
+        posted = true;
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
     const user = userEvent.setup();
     renderMenu();
     await user.click(await screen.findByRole("button", { name: /thao tác project/i }));
     await user.click(await screen.findByRole("menuitem", { name: /lưu trữ project/i }));
-    expect(confirmSpy).toHaveBeenCalledWith(
-      'Lưu trữ project "Pilot Project"? Project sẽ ẩn khỏi catalog, features + sections giữ nguyên.',
+
+    const dialog = await screen.findByRole("dialog", { name: /lưu trữ project "pilot project"/i });
+    expect(dialog).toBeInTheDocument();
+    await user.click(within(dialog).getByRole("button", { name: /^huỷ$/i }));
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog", { name: /lưu trữ project/i })).toBeNull(),
     );
+    await new Promise((r) => setTimeout(r, 30));
+    expect(posted).toBe(false);
   });
 
   it("confirm archive → POST /archive → toast + navigate /", async () => {
-    vi.spyOn(window, "confirm").mockReturnValue(true);
     const successSpy = vi.spyOn(toast, "success").mockImplementation(() => "t" as never);
     server.use(
       http.post(`${BASE}/projects/pilot/archive`, () => new HttpResponse(null, { status: 204 })),
@@ -71,13 +82,14 @@ describe("ProjectActionsMenu", () => {
     renderMenu();
     await user.click(await screen.findByRole("button", { name: /thao tác project/i }));
     await user.click(await screen.findByRole("menuitem", { name: /lưu trữ project/i }));
+    const dialog = await screen.findByRole("dialog", { name: /lưu trữ project "pilot project"/i });
+    await user.click(within(dialog).getByRole("button", { name: /^lưu trữ$/i }));
 
     await waitFor(() => expect(successSpy).toHaveBeenCalledWith("Đã lưu trữ project"));
     expect(await screen.findByTestId("home-marker")).toBeInTheDocument();
   });
 
   it("archive 403 → destructive toast", async () => {
-    vi.spyOn(window, "confirm").mockReturnValue(true);
     const errorSpy = vi.spyOn(toast, "error").mockImplementation(() => "t" as never);
     server.use(
       http.post(`${BASE}/projects/pilot/archive`, () =>
@@ -91,6 +103,8 @@ describe("ProjectActionsMenu", () => {
     renderMenu();
     await user.click(await screen.findByRole("button", { name: /thao tác project/i }));
     await user.click(await screen.findByRole("menuitem", { name: /lưu trữ project/i }));
+    const dialog = await screen.findByRole("dialog", { name: /lưu trữ project "pilot project"/i });
+    await user.click(within(dialog).getByRole("button", { name: /^lưu trữ$/i }));
 
     await waitFor(() => expect(errorSpy).toHaveBeenCalledWith("Bạn không có quyền"));
   });

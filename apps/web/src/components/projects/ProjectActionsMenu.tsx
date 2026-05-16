@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { EditProjectDialog } from "./EditProjectDialog";
 
 interface ProjectActionsMenuProps {
@@ -21,20 +22,19 @@ interface ProjectActionsMenuProps {
 
 export function ProjectActionsMenu({ project }: ProjectActionsMenuProps): JSX.Element {
   const [editOpen, setEditOpen] = useState(false);
+  const [archiveOpen, setArchiveOpen] = useState(false);
   const navigate = useNavigate();
   const archiveMutation = useArchiveProject(project.slug);
 
   const handleArchive = (): void => {
-    const ok = window.confirm(
-      `Lưu trữ project "${project.name}"? Project sẽ ẩn khỏi catalog, features + sections giữ nguyên.`,
-    );
-    if (!ok) return;
     archiveMutation.mutate(undefined, {
       onSuccess: () => {
+        setArchiveOpen(false);
         toast.success("Đã lưu trữ project");
         navigate("/");
       },
       onError: (err) => {
+        setArchiveOpen(false);
         if (err instanceof ApiError && err.status === 403) {
           toast.error("Bạn không có quyền");
         } else if (err instanceof ApiError && err.status === 404) {
@@ -62,7 +62,7 @@ export function ProjectActionsMenu({ project }: ProjectActionsMenuProps): JSX.El
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            onSelect={handleArchive}
+            onSelect={() => setArchiveOpen(true)}
             disabled={archiveMutation.isPending}
             className="text-destructive focus:bg-destructive/10 focus:text-destructive"
           >
@@ -73,6 +73,20 @@ export function ProjectActionsMenu({ project }: ProjectActionsMenuProps): JSX.El
       </DropdownMenu>
 
       <EditProjectDialog project={project} open={editOpen} onOpenChange={setEditOpen} />
+
+      <ConfirmDialog
+        open={archiveOpen}
+        onOpenChange={(next) => {
+          if (!archiveMutation.isPending) setArchiveOpen(next);
+        }}
+        title={`Lưu trữ project "${project.name}"?`}
+        description="Project sẽ ẩn khỏi catalog. Features và sections vẫn được giữ nguyên, có thể khôi phục sau."
+        confirmLabel="Lưu trữ"
+        cancelLabel="Huỷ"
+        variant="destructive"
+        pending={archiveMutation.isPending}
+        onConfirm={handleArchive}
+      />
     </>
   );
 }
