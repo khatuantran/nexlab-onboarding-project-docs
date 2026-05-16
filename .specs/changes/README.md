@@ -19,7 +19,7 @@ Related: [CLAUDE.md §When a request comes in](../../CLAUDE.md#when-a-request-co
 | CR-003 | Free-tier pilot deployment (replace VPS path of M3)    | tech-change | Approved (impl pending)   | 2026-04-26 | [CR-003.md](CR-003.md) |
 | CR-004 | Image storage: Fly volume → Cloudinary                 | tech-change | Approved (Phase 1 ship)   | 2026-05-14 | [CR-004.md](CR-004.md) |
 | CR-005 | UI Quality Uplift v2 (patterns + multi-accent)         | spec-change | Rejected (rev `1b2f863`)  | 2026-05-16 | _deleted, superseded_  |
-| CR-006 | UI Redesign: Notion warm + graphics-rich               | spec-change | Proposed                  | 2026-05-16 | [CR-006.md](CR-006.md) |
+| CR-006 | UI Redesign: Dark vivid + glassmorphism (v4 amend)     | spec-change | Proposed                  | 2026-05-16 | [CR-006.md](CR-006.md) |
 
 ---
 
