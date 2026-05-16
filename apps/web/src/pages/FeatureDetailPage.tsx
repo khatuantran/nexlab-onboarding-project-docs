@@ -209,14 +209,29 @@ export function FeatureDetailPage(): JSX.Element {
 
           {/* Actions */}
           <div className="flex flex-wrap items-center gap-2 pt-1">
-            <button
-              type="button"
-              onClick={placeholderToast("Xem PR")}
-              className="inline-flex items-center gap-2 rounded-[10px] border border-white/25 bg-white/10 px-3.5 py-2 font-ui text-[13px] font-semibold text-white backdrop-blur-sm hover:bg-white/15"
-            >
-              <Eye className="size-3.5" aria-hidden="true" />
-              PR
-            </button>
+            {feature.prUrl ? (
+              <a
+                href={feature.prUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Xem PR trong tab mới"
+                className="inline-flex items-center gap-2 rounded-[10px] border border-white/25 bg-white/10 px-3.5 py-2 font-ui text-[13px] font-semibold text-white backdrop-blur-sm hover:bg-white/15"
+              >
+                <Eye className="size-3.5" aria-hidden="true" />
+                PR
+              </a>
+            ) : (
+              <button
+                type="button"
+                disabled
+                aria-label="Chưa link PR"
+                title="Chưa link PR — admin có thể thêm trong 'Sửa feature'."
+                className="inline-flex cursor-not-allowed items-center gap-2 rounded-[10px] border border-white/15 bg-white/[0.06] px-3.5 py-2 font-ui text-[13px] font-semibold text-white/60"
+              >
+                <Eye className="size-3.5" aria-hidden="true" />
+                PR
+              </button>
+            )}
             <button
               type="button"
               onClick={placeholderToast("Theo dõi feature")}

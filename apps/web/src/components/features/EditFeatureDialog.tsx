@@ -20,7 +20,7 @@ import { Label } from "@/components/ui/label";
 
 interface EditFeatureDialogProps {
   projectSlug: string;
-  feature: { slug: string; title: string };
+  feature: { slug: string; title: string; prUrl?: string | null };
   open: boolean;
   onOpenChange: (open: boolean) => void;
   /**
@@ -41,7 +41,11 @@ export function EditFeatureDialog({
 
   const form = useForm<UpdateFeatureRequest>({
     resolver: zodResolver(updateFeatureRequestSchema),
-    defaultValues: { title: feature.title, slug: feature.slug },
+    defaultValues: {
+      title: feature.title,
+      slug: feature.slug,
+      prUrl: feature.prUrl ?? "",
+    },
     mode: "onSubmit",
   });
 
@@ -49,15 +53,20 @@ export function EditFeatureDialog({
 
   useEffect(() => {
     if (open) {
-      reset({ title: feature.title, slug: feature.slug });
+      reset({
+        title: feature.title,
+        slug: feature.slug,
+        prUrl: feature.prUrl ?? "",
+      });
     }
-  }, [open, feature.title, feature.slug, reset]);
+  }, [open, feature.title, feature.slug, feature.prUrl, reset]);
 
   const isDirty = (): boolean => {
     const v = getValues();
     return (
       (v.title ?? "").trim() !== feature.title.trim() ||
-      (v.slug ?? "").trim() !== feature.slug.trim()
+      (v.slug ?? "").trim() !== feature.slug.trim() ||
+      (v.prUrl ?? "").trim() !== (feature.prUrl ?? "").trim()
     );
   };
 
@@ -74,6 +83,12 @@ export function EditFeatureDialog({
     const newSlug = values.slug?.trim();
     if (newTitle && newTitle !== feature.title) payload.title = newTitle;
     if (newSlug && newSlug !== feature.slug) payload.slug = newSlug;
+
+    const newPr = (values.prUrl ?? "").trim();
+    const oldPr = feature.prUrl ?? "";
+    if (newPr !== oldPr) {
+      payload.prUrl = newPr === "" ? null : newPr;
+    }
 
     if (Object.keys(payload).length === 0) {
       onOpenChange(false);
@@ -138,6 +153,25 @@ export function EditFeatureDialog({
               {formState.errors.slug && (
                 <p role="alert" className="text-xs text-destructive">
                   {formState.errors.slug.message}
+                </p>
+              )}
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="efd-pr">PR URL (tùy chọn)</Label>
+              <Input
+                id="efd-pr"
+                type="url"
+                placeholder="https://github.com/owner/repo/pull/123"
+                aria-invalid={!!formState.errors.prUrl || undefined}
+                aria-describedby={formState.errors.prUrl ? "efd-pr-error" : "efd-pr-hint"}
+                {...register("prUrl", { setValueAs: (v) => (v === "" ? undefined : v) })}
+              />
+              <p id="efd-pr-hint" className="text-xs text-muted-foreground">
+                Bất kỳ link http(s), tối đa 500 ký tự. Để trống để gỡ link.
+              </p>
+              {formState.errors.prUrl && (
+                <p id="efd-pr-error" role="alert" className="text-xs text-destructive">
+                  {formState.errors.prUrl.message}
                 </p>
               )}
             </div>

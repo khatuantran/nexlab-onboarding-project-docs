@@ -224,14 +224,29 @@ function HeroBlock({
             <Star aria-hidden="true" className="size-3.5" />
             Theo dõi
           </button>
-          <button
-            type="button"
-            onClick={placeholderToast("Mở repo")}
-            className="inline-flex items-center gap-2 rounded-[10px] border border-white/25 bg-white/10 px-3.5 py-2 font-ui text-[13px] font-semibold text-white backdrop-blur-sm hover:bg-white/15"
-          >
-            <Code aria-hidden="true" className="size-3.5" />
-            Repo
-          </button>
+          {project.repoUrl ? (
+            <a
+              href={project.repoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Mở repo trong tab mới"
+              className="inline-flex items-center gap-2 rounded-[10px] border border-white/25 bg-white/10 px-3.5 py-2 font-ui text-[13px] font-semibold text-white backdrop-blur-sm hover:bg-white/15"
+            >
+              <Code aria-hidden="true" className="size-3.5" />
+              Repo
+            </a>
+          ) : (
+            <button
+              type="button"
+              disabled
+              aria-label="Chưa link repo"
+              title="Chưa link repo — admin có thể thêm trong 'Sửa project'."
+              className="inline-flex cursor-not-allowed items-center gap-2 rounded-[10px] border border-white/15 bg-white/[0.06] px-3.5 py-2 font-ui text-[13px] font-semibold text-white/60"
+            >
+              <Code aria-hidden="true" className="size-3.5" />
+              Repo
+            </button>
+          )}
           <AuthorGate>
             <CreateFeatureDialog projectSlug={project.slug} projectName={project.name} />
           </AuthorGate>

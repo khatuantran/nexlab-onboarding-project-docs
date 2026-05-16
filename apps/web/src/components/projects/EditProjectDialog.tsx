@@ -24,7 +24,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 interface EditProjectDialogProps {
-  project: Pick<ProjectResponse, "slug" | "name" | "description">;
+  project: Pick<ProjectResponse, "slug" | "name" | "description" | "repoUrl">;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -38,7 +38,11 @@ export function EditProjectDialog({
 
   const form = useForm<UpdateProjectRequest>({
     resolver: zodResolver(updateProjectRequestSchema),
-    defaultValues: { name: project.name, description: project.description ?? "" },
+    defaultValues: {
+      name: project.name,
+      description: project.description ?? "",
+      repoUrl: project.repoUrl ?? "",
+    },
     mode: "onSubmit",
   });
 
@@ -46,15 +50,20 @@ export function EditProjectDialog({
 
   useEffect(() => {
     if (open) {
-      reset({ name: project.name, description: project.description ?? "" });
+      reset({
+        name: project.name,
+        description: project.description ?? "",
+        repoUrl: project.repoUrl ?? "",
+      });
     }
-  }, [open, project.name, project.description, reset]);
+  }, [open, project.name, project.description, project.repoUrl, reset]);
 
   const isDirty = (): boolean => {
     const v = getValues();
     return (
       (v.name ?? "").trim() !== project.name.trim() ||
-      (v.description ?? "").trim() !== (project.description ?? "").trim()
+      (v.description ?? "").trim() !== (project.description ?? "").trim() ||
+      (v.repoUrl ?? "").trim() !== (project.repoUrl ?? "").trim()
     );
   };
 
@@ -70,6 +79,12 @@ export function EditProjectDialog({
       name: values.name.trim(),
       description: values.description?.trim() ? values.description.trim() : undefined,
     };
+    // US-013 repoUrl: empty string → null (explicit clear) only if previously set; otherwise omit.
+    const newRepo = (values.repoUrl ?? "").trim();
+    const oldRepo = project.repoUrl ?? "";
+    if (newRepo !== oldRepo) {
+      payload.repoUrl = newRepo === "" ? null : newRepo;
+    }
     mutation.mutate(payload, {
       onSuccess: () => {
         toast.success("Đã cập nhật project");
@@ -130,6 +145,25 @@ export function EditProjectDialog({
               {formState.errors.description && (
                 <p role="alert" className="text-xs text-destructive">
                   {formState.errors.description.message}
+                </p>
+              )}
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="epd-repo">Repo URL (tùy chọn)</Label>
+              <Input
+                id="epd-repo"
+                type="url"
+                placeholder="https://github.com/owner/repo"
+                aria-invalid={!!formState.errors.repoUrl || undefined}
+                aria-describedby={formState.errors.repoUrl ? "epd-repo-error" : "epd-repo-hint"}
+                {...register("repoUrl", { setValueAs: (v) => (v === "" ? undefined : v) })}
+              />
+              <p id="epd-repo-hint" className="text-xs text-muted-foreground">
+                Bất kỳ link http(s), tối đa 500 ký tự. Để trống để gỡ link.
+              </p>
+              {formState.errors.repoUrl && (
+                <p id="epd-repo-error" role="alert" className="text-xs text-destructive">
+                  {formState.errors.repoUrl.message}
                 </p>
               )}
             </div>

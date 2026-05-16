@@ -11,6 +11,7 @@ const project = {
   slug: "pilot",
   name: "Pilot Project",
   description: "MVP v1",
+  repoUrl: null,
 };
 
 function renderMenu(initialPath = "/projects/pilot") {

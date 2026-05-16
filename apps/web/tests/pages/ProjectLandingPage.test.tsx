@@ -68,6 +68,68 @@ describe("ProjectLandingPage", () => {
     expect(within(exportCard).getByText(/xuất báo cáo/i)).toBeInTheDocument();
   });
 
+  it("US-013: renders Repo as <a> when repoUrl set, disabled <button> when null", async () => {
+    server.use(
+      http.get(`${BASE}/projects/with-repo`, () =>
+        HttpResponse.json(
+          {
+            data: {
+              project: {
+                id: "p-1",
+                slug: "with-repo",
+                name: "Repo Project",
+                description: "",
+                createdAt: "2026-04-20T10:00:00Z",
+                updatedAt: "2026-04-23T10:00:00Z",
+                contributors: [],
+                repoUrl: "https://github.com/foo/bar",
+              },
+              features: [],
+            },
+          },
+          { status: 200 },
+        ),
+      ),
+    );
+
+    renderLanding("with-repo");
+
+    const repoLink = await screen.findByRole("link", { name: /mở repo trong tab mới/i });
+    expect(repoLink).toHaveAttribute("href", "https://github.com/foo/bar");
+    expect(repoLink).toHaveAttribute("target", "_blank");
+    expect(repoLink).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
+  it("US-013: renders disabled Repo button when repoUrl null", async () => {
+    server.use(
+      http.get(`${BASE}/projects/no-repo`, () =>
+        HttpResponse.json(
+          {
+            data: {
+              project: {
+                id: "p-2",
+                slug: "no-repo",
+                name: "No Repo",
+                description: "",
+                createdAt: "2026-04-20T10:00:00Z",
+                updatedAt: "2026-04-23T10:00:00Z",
+                contributors: [],
+                repoUrl: null,
+              },
+              features: [],
+            },
+          },
+          { status: 200 },
+        ),
+      ),
+    );
+
+    renderLanding("no-repo");
+
+    const repoBtn = await screen.findByRole("button", { name: /chưa link repo/i });
+    expect(repoBtn).toBeDisabled();
+  });
+
   it("renders empty state when features is empty (AC-4)", async () => {
     server.use(
       http.get(`${BASE}/projects/demo`, () =>

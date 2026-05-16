@@ -17,7 +17,7 @@ import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { EditProjectDialog } from "./EditProjectDialog";
 
 interface ProjectActionsMenuProps {
-  project: Pick<ProjectResponse, "slug" | "name" | "description">;
+  project: Pick<ProjectResponse, "slug" | "name" | "description" | "repoUrl">;
 }
 
 export function ProjectActionsMenu({ project }: ProjectActionsMenuProps): JSX.Element {

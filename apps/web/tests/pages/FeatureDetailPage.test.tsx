@@ -174,4 +174,63 @@ describe("FeatureDetailPage", () => {
     expect(within(crumb).getByRole("link", { name: /^demo$/i })).toBeInTheDocument();
     expect(within(crumb).getByText(/đăng nhập bằng email/i)).toBeInTheDocument();
   });
+
+  it("US-013: renders PR as <a> when prUrl set", async () => {
+    server.use(
+      http.get(`${BASE}/projects/demo/features/login-with-email`, () =>
+        HttpResponse.json(
+          {
+            data: {
+              feature: {
+                id: "f-1",
+                slug: "login-with-email",
+                title: "Login",
+                createdAt: "2026-04-20T10:00:00Z",
+                updatedAt: "2026-04-23T09:00:00Z",
+                contributors: [],
+                prUrl: "https://github.com/foo/bar/pull/42",
+              },
+              sections: buildSections(),
+            },
+          },
+          { status: 200 },
+        ),
+      ),
+    );
+
+    renderDetail();
+
+    const prLink = await screen.findByRole("link", { name: /xem pr trong tab mới/i });
+    expect(prLink).toHaveAttribute("href", "https://github.com/foo/bar/pull/42");
+    expect(prLink).toHaveAttribute("target", "_blank");
+  });
+
+  it("US-013: renders disabled PR button when prUrl null", async () => {
+    server.use(
+      http.get(`${BASE}/projects/demo/features/login-with-email`, () =>
+        HttpResponse.json(
+          {
+            data: {
+              feature: {
+                id: "f-1",
+                slug: "login-with-email",
+                title: "Login",
+                createdAt: "2026-04-20T10:00:00Z",
+                updatedAt: "2026-04-23T09:00:00Z",
+                contributors: [],
+                prUrl: null,
+              },
+              sections: buildSections(),
+            },
+          },
+          { status: 200 },
+        ),
+      ),
+    );
+
+    renderDetail();
+
+    const prBtn = await screen.findByRole("button", { name: /chưa link pr/i });
+    expect(prBtn).toBeDisabled();
+  });
 });
