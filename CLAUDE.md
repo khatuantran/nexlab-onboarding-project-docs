@@ -105,9 +105,16 @@ Xem [stories/US-001/tasks.md §Conventions](.specs/stories/US-001/tasks.md). Min
 - [ ] Commit message format `type(scope): subject (spec-ref)`.
 - [ ] Liên quan spec update (API surface / error codes / traceability) cùng commit nếu áp dụng.
 
-## Post-task progress sync (mandatory)
+## Post-commit progress sync (mandatory)
 
-Sau khi commit task `T<N>` land (DoD pass), **trong cùng phiên làm việc** tạo 1 commit follow-up riêng với message `docs: sync progress markers after T<N> land (US-NNN / T<N> follow-up)` update các file sau nếu bị ảnh hưởng:
+Sau khi **bất kỳ** commit nào land trong phiên (kể cả refinement/iteration/CR-version commits không gắn task `T<N>`), nếu commit chạm code (`apps/` / `packages/`) hoặc đổi spec-relevant state → **trong cùng phiên** tạo 1 commit follow-up riêng update các file sau nếu bị ảnh hưởng. KHÔNG có exception cho "pilot" / "iteration" / "quick fix" / "v4.x refinement". Spec-only hoặc docs-only commits LÀ sync chính nó — không trigger lại (tránh loop).
+
+Commit-message:
+
+- Task milestone: `docs: sync progress markers after T<N> land (US-NNN / T<N> follow-up)`
+- Iteration/refinement: `docs: sync progress markers after <commit-sha-short> (<scope> follow-up)` — ví dụ `docs: sync progress markers after 7c31340 (CR-006 v4.5 follow-up)`.
+
+Files cần check (update nếu bị ảnh hưởng):
 
 - [README.md](README.md) — status line, "Next task" pointer, live-command list.
 - [docs/SETUP.md](docs/SETUP.md) — nhãn 🟡 → ✅ cho section task-covered; §Common commands cột Status.
@@ -171,24 +178,37 @@ Nếu 1 trong 3 câu lộ ra deviation → STOP, dùng §Response format khi fla
 
 **Counter-example (đã xảy ra 2026-05-15, BUG-004)**: user gửi screenshot "2 icon đè lên nhau, hãy fix" → tôi parse là UI tweak nhỏ → Edit ProjectCard ngay → commit `1adc157` không có BUG-004.md, không có failing test. Đúng phải là: pre-flight trả lời "bug report → cần BUG-004 + regression test trước" → ship paperwork trước rồi mới fix. Failure mode: bỏ qua pre-flight với lý do "fix obviously đúng".
 
+### End-of-turn self-check (mandatory khi turn có ≥1 code commit)
+
+Trước khi end turn (final user-facing message), nếu turn này có ≥1 commit chạm `apps/` hoặc `packages/`, answer 3 câu sau **bằng văn bản trong tin nhắn user-facing** (không chỉ nội tâm):
+
+1. **Commits land turn này?** Liệt kê short-sha + subject (chạy `git log --oneline <turn-start>..HEAD` nếu cần).
+2. **Sync delta?** Với mỗi commit, check 12-bullet list ở §Post-commit progress sync — bullet nào bị ảnh hưởng (UI spec, design-system CHANGELOG, traceability, api-surface, error-codes, releases/CHANGELOG `[Unreleased]`, ...)?
+3. **Action?** Nếu ≥1 bullet bị ảnh hưởng → chạy progress-sync commit NGAY trước khi end turn. Nếu không → ghi rõ `(no progress sync needed this turn)` trong response cuối.
+
+**Skip end-of-turn check** = vi phạm SDD. **Không** dựa vào user nhắc "update docs chưa" — đó chính là failure signal, không phải workflow bình thường.
+
+**Counter-example (2026-05-16, CR-006 v4 redesign session)**: 9 iteration commits (SearchPage v4.3 `7990e5c` / ProjectCard v4.4 `e017419` / FeatureCard v4.4 `0ce7a3a` / SearchPage v4.5 `7c31340` + 5 commits khác) shipped trong 1 phiên; sync không chạy cho tới khi user hỏi "update docs chua" → mới chạy `31ed2f5`. Failure mode: treat each refinement commit như "iteration không phải task `T<N>`" → §Post-task progress sync rule không trigger. Fix: rule rename §Post-commit progress sync (trigger trên **bất kỳ** code commit); end-of-turn gate này bắt buộc tự verify trước khi end turn.
+
 ### Common violations + response
 
-| Trigger từ user                                                                                     | Rule bị vi phạm                               | Đề xuất                                                                                                                                                         |
-| --------------------------------------------------------------------------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| "Thêm endpoint / feature X" chưa có FR + US                                                         | SDD Contract #3 (No spec-less code)           | "FR/US nào cover? Nếu chưa, viết FR + US trước, clone từ `templates/01-*.md`."                                                                                  |
-| "Fix bug Y" không có regression test                                                                | #4 (TDD)                                      | "Viết failing test reproduce trước, commit riêng. Sau đó fix + commit."                                                                                         |
-| Start T\<N+1\> khi T\<N\> chưa DoD pass                                                             | §tasks.md Conventions "Order"                 | "T\<N\> chưa ✅ trong traceability/roadmap. Finish DoD + progress-sync trước."                                                                                  |
-| Viết file `.specs/` không clone template                                                            | #8 (Template is law)                          | "Clone từ `templates/XX-*.md`. Template không fit → propose update + bump version."                                                                             |
-| Gom spec change + code change vào 1 commit                                                          | #5 (Small commits) + §Post-task progress sync | "Tách: spec commit riêng → code commit riêng → progress-sync commit riêng. Mỗi diff 1 concern."                                                                 |
-| "Skip test đi" / `--no-verify` / bypass husky                                                       | #4 + §Hard DO NOTs                            | Flag + ask explicit lý do. Không tự bypass.                                                                                                                     |
-| Scope creep: "làm task hiện tại + feature X luôn"                                                   | §Default mode of working                      | "Feature X ngoài scope task hiện tại. Viết US/task riêng, hoặc split sau khi task N xong."                                                                      |
-| Commit secrets / `.env*` / key file                                                                 | §Hard DO NOTs                                 | **Block thẳng**, không override.                                                                                                                                |
-| FE task chạm screen mà `.specs/ui/<screen>.md` không tồn tại HOẶC chưa update reflect behavior task | SDD #3 + §DoR + §UI documentation gate        | "Tạo/update `.specs/ui/<screen>.md` trước hoặc cùng commit FE. Clone `templates/02-ui-spec-template.md` nếu screen mới. KHÔNG ship FE code trước rồi spec sau." |
-| FE code add token/variant/icon chưa có trong `.specs/ui/design-system.md`                           | SDD #3 + §DoR                                 | "Token/variant/icon mới chưa trong design-system.md. Update registry trước (commit riêng) → rồi code."                                                          |
-| "Fix bug Y" không có `.specs/bugs/BUG-NNN.md`                                                       | SDD #3 + #4 (TDD)                             | "Bug chưa có BUG-NNN. Clone `templates/05-bug-template.md`, viết repro + failing regression test trước (commit test riêng) → rồi fix."                          |
-| Scope/spec/tech change mid-milestone không có `.specs/changes/CR-NNN.md`                            | SDD #3 + Roadmap integrity                    | "Scope change cần CR-NNN capture Impact + Alternatives + Decision. Clone `templates/05-change-request-template.md` → user approve → rồi đụng code."             |
-| "Thêm FR/US mới" cho idea loose chưa ready                                                          | SDD #3 + Backlog discipline                   | "Idea chưa có US đầy đủ → viết `.specs/backlog/BL-NNN.md` trước (P0-P3), triage sau. Không đẩy thẳng vào `02-requirements.md` / `stories/`."                    |
-| Post-mortem prod không có INC-NNN sau 48h                                                           | §Incident SLA                                 | "Sự cố đã mitigate nhưng chưa có INC-NNN. Clone `templates/06-incident-template.md` trong 48h kể từ resolved."                                                  |
+| Trigger từ user                                                                                     | Rule bị vi phạm                                      | Đề xuất                                                                                                                                                                           |
+| --------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Thêm endpoint / feature X" chưa có FR + US                                                         | SDD Contract #3 (No spec-less code)                  | "FR/US nào cover? Nếu chưa, viết FR + US trước, clone từ `templates/01-*.md`."                                                                                                    |
+| "Fix bug Y" không có regression test                                                                | #4 (TDD)                                             | "Viết failing test reproduce trước, commit riêng. Sau đó fix + commit."                                                                                                           |
+| Start T\<N+1\> khi T\<N\> chưa DoD pass                                                             | §tasks.md Conventions "Order"                        | "T\<N\> chưa ✅ trong traceability/roadmap. Finish DoD + progress-sync trước."                                                                                                    |
+| Viết file `.specs/` không clone template                                                            | #8 (Template is law)                                 | "Clone từ `templates/XX-*.md`. Template không fit → propose update + bump version."                                                                                               |
+| Gom spec change + code change vào 1 commit                                                          | #5 (Small commits) + §Post-commit progress sync      | "Tách: spec commit riêng → code commit riêng → progress-sync commit riêng. Mỗi diff 1 concern."                                                                                   |
+| "Skip test đi" / `--no-verify` / bypass husky                                                       | #4 + §Hard DO NOTs                                   | Flag + ask explicit lý do. Không tự bypass.                                                                                                                                       |
+| Scope creep: "làm task hiện tại + feature X luôn"                                                   | §Default mode of working                             | "Feature X ngoài scope task hiện tại. Viết US/task riêng, hoặc split sau khi task N xong."                                                                                        |
+| Commit secrets / `.env*` / key file                                                                 | §Hard DO NOTs                                        | **Block thẳng**, không override.                                                                                                                                                  |
+| FE task chạm screen mà `.specs/ui/<screen>.md` không tồn tại HOẶC chưa update reflect behavior task | SDD #3 + §DoR + §UI documentation gate               | "Tạo/update `.specs/ui/<screen>.md` trước hoặc cùng commit FE. Clone `templates/02-ui-spec-template.md` nếu screen mới. KHÔNG ship FE code trước rồi spec sau."                   |
+| FE code add token/variant/icon chưa có trong `.specs/ui/design-system.md`                           | SDD #3 + §DoR                                        | "Token/variant/icon mới chưa trong design-system.md. Update registry trước (commit riêng) → rồi code."                                                                            |
+| "Fix bug Y" không có `.specs/bugs/BUG-NNN.md`                                                       | SDD #3 + #4 (TDD)                                    | "Bug chưa có BUG-NNN. Clone `templates/05-bug-template.md`, viết repro + failing regression test trước (commit test riêng) → rồi fix."                                            |
+| Scope/spec/tech change mid-milestone không có `.specs/changes/CR-NNN.md`                            | SDD #3 + Roadmap integrity                           | "Scope change cần CR-NNN capture Impact + Alternatives + Decision. Clone `templates/05-change-request-template.md` → user approve → rồi đụng code."                               |
+| "Thêm FR/US mới" cho idea loose chưa ready                                                          | SDD #3 + Backlog discipline                          | "Idea chưa có US đầy đủ → viết `.specs/backlog/BL-NNN.md` trước (P0-P3), triage sau. Không đẩy thẳng vào `02-requirements.md` / `stories/`."                                      |
+| Post-mortem prod không có INC-NNN sau 48h                                                           | §Incident SLA                                        | "Sự cố đã mitigate nhưng chưa có INC-NNN. Clone `templates/06-incident-template.md` trong 48h kể từ resolved."                                                                    |
+| End turn sau ≥1 code commit (chạm `apps/`/`packages/`) mà không chạy progress-sync follow-up        | §Post-commit progress sync + §End-of-turn self-check | "Vi phạm end-of-turn gate. Chạy `git log --oneline <turn-start>..HEAD` → identify code commits → run sync commit NGAY trước khi end turn. Không đợi user hỏi 'update docs chưa'." |
 
 ### Response format khi flag
 
