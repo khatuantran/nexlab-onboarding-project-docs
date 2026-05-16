@@ -1,20 +1,20 @@
 import { useMemo } from "react";
-import { Bookmark, Eye, MoreHorizontal, Pencil } from "lucide-react";
+import { Bookmark, Eye, Pencil } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { ApiError } from "@/lib/api";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { AuthorGate } from "@/components/common/AuthorGate";
+import { AvatarStack } from "@/components/common/AvatarStack";
 import { Breadcrumb } from "@/components/common/Breadcrumb";
-import { ProgressStrip } from "@/components/common/ProgressStrip";
 import { RelativeTime } from "@/components/common/RelativeTime";
+import { GradientHero } from "@/components/patterns/GradientHero";
 import { ActivityRail } from "@/components/features/ActivityRail";
 import { FeatureSections } from "@/components/features/FeatureSections";
 import { SectionToc, SectionTocMobile } from "@/components/features/SectionToc";
 import { useFeature } from "@/queries/projects";
 
-const SECTION_LABELS_SHORT = ["Nghiệp vụ", "Flow", "Rules", "Tech", "Screens"];
+const SECTION_COLORS = ["#8B5CF6", "#F07613", "#10B981", "#3B82F6", "#F43F5E"]; // 5 sections
 
 function placeholderToast(label: string): () => void {
   return () => toast(`${label}: tính năng đang phát triển trong v2`);
@@ -111,110 +111,137 @@ export function FeatureDetailPage(): JSX.Element {
   };
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-6 lg:px-10">
-      <Breadcrumb
-        className="mb-4"
-        items={[
-          { label: "Projects", to: "/" },
-          { label: slug, to: `/projects/${slug}` },
-          { label: feature.title },
+    <main className="bg-background pb-16">
+      <div className="px-10 pt-4">
+        <Breadcrumb
+          items={[
+            { label: "Projects", to: "/" },
+            { label: slug, to: `/projects/${slug}` },
+            { label: feature.title },
+          ]}
+          className="text-xs"
+        />
+      </div>
+      {/* Dark vivid hero — v4 */}
+      <GradientHero
+        showWatermark
+        gridOverlay
+        className="mx-10 mb-6 mt-3 rounded-[22px]"
+        blobs={[
+          { color: "rgba(139,92,246,0.45)", size: 320, pos: { top: -60, left: -40 } },
+          { color: "rgba(240,118,19,0.35)", size: 280, pos: { bottom: -40, right: 160 } },
         ]}
-      />
-
-      <header className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="flex-1">
-          <div className="mb-2 flex flex-wrap items-center gap-2">
-            <span
-              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-ui text-[10px] font-bold uppercase tracking-wide ${
-                status.tone === "success"
-                  ? "bg-success/15 text-success"
-                  : status.tone === "primary"
-                    ? "bg-primary/15 text-primary"
-                    : "bg-muted text-muted-foreground"
-              }`}
-            >
+      >
+        <div className="flex flex-col gap-6 p-[28px_36px_26px] sm:flex-row sm:items-start">
+          <div className="flex-1">
+            {/* Chips row */}
+            <div className="mb-2.5 flex flex-wrap items-center gap-2">
               <span
-                aria-hidden="true"
-                className={`size-1.5 rounded-full ${
+                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-ui text-[11px] font-bold ${
                   status.tone === "success"
-                    ? "bg-success"
+                    ? "bg-green-500/25 text-green-200"
                     : status.tone === "primary"
-                      ? "bg-primary"
-                      : "bg-muted-foreground/60"
+                      ? "bg-primary/25 text-[#FFD092]"
+                      : "bg-white/15 text-white/80"
                 }`}
-              />
-              {status.label}
-            </span>
-            <span className="rounded-full bg-info/15 px-2.5 py-0.5 font-ui text-[10px] font-bold uppercase tracking-wide text-info">
-              v2
-            </span>
-            <span className="font-ui text-xs text-muted-foreground">
-              · Cập nhật{" "}
-              <RelativeTime
-                iso={feature.updatedAt}
-                showIcon={false}
-                className="inline-flex text-xs"
-              />
-              {lastUpdater.name ? (
-                <>
-                  {" "}
-                  · @<strong className="font-medium text-foreground/80">{lastUpdater.name}</strong>
-                </>
-              ) : null}
-            </span>
-          </div>
-          <h1 className="font-display text-[32px] leading-10 font-bold tracking-[-0.02em] text-foreground">
-            {feature.title}
-          </h1>
-          <p className="mt-2 max-w-3xl font-body text-sm leading-relaxed text-foreground/80">
-            Tài liệu nghiệp vụ + tech notes. Mọi section đều có thể chỉnh sửa song song bởi BA và
-            Dev.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button variant="outline" size="sm" type="button" onClick={placeholderToast("Xem PR")}>
-            <Eye className="mr-2 size-4" aria-hidden="true" />
-            Xem PR
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            type="button"
-            onClick={placeholderToast("Theo dõi feature")}
-          >
-            <Bookmark className="mr-2 size-4" aria-hidden="true" />
-            Theo dõi
-          </Button>
-          <AuthorGate>
-            <Button variant="default" size="sm" type="button" onClick={handleQuickEdit}>
-              <Pencil className="mr-2 size-4" aria-hidden="true" />
-              Sửa nhanh
-            </Button>
-          </AuthorGate>
-          <AuthorGate>
-            <Button
-              variant="outline"
-              size="icon"
-              type="button"
-              aria-label="Thao tác feature"
-              onClick={placeholderToast("Menu admin feature")}
-            >
-              <MoreHorizontal className="size-4" aria-hidden="true" />
-            </Button>
-          </AuthorGate>
-        </div>
-      </header>
+              >
+                <span
+                  aria-hidden="true"
+                  className={`size-1.5 rounded-full ${
+                    status.tone === "success"
+                      ? "bg-green-400 animate-pulse"
+                      : status.tone === "primary"
+                        ? "bg-primary animate-pulse"
+                        : "bg-white/60"
+                  }`}
+                />
+                {status.label}
+              </span>
+              <span className="inline-flex items-center rounded-full bg-blue-500/25 px-2.5 py-1 font-ui text-[11px] font-bold text-blue-200">
+                v2
+              </span>
+              <span className="font-ui text-[12px] font-medium text-white/45">
+                · Cập nhật{" "}
+                <RelativeTime
+                  iso={feature.updatedAt}
+                  showIcon={false}
+                  className="inline-flex !text-[12px] !text-white/45"
+                />
+                {lastUpdater.name ? (
+                  <>
+                    {" "}
+                    · @<strong className="font-semibold text-white/70">{lastUpdater.name}</strong>
+                  </>
+                ) : null}
+              </span>
+            </div>
 
-      <ProgressStrip
-        filled={filledCount}
-        total={5}
-        labels={SECTION_LABELS_SHORT}
-        className="mb-7"
-      />
+            <h1 className="font-display text-[28px] font-black leading-[34px] tracking-[-0.025em] text-white sm:text-[34px] sm:leading-[40px]">
+              {feature.title}
+            </h1>
+
+            {/* Section progress dots row */}
+            <div className="mt-4 flex flex-wrap items-center gap-5">
+              <div className="flex gap-1.5">
+                {SECTION_COLORS.map((c, i) => (
+                  <span
+                    key={i}
+                    aria-hidden="true"
+                    className="h-2 w-14 rounded-full"
+                    style={{
+                      background: i < filledCount ? c : "rgba(255,255,255,0.15)",
+                      boxShadow: i < filledCount ? `0 2px 8px ${c}60` : undefined,
+                    }}
+                  />
+                ))}
+              </div>
+              <span className="font-ui text-[14px] font-bold text-white/90">
+                {filledCount}/5 sections
+              </span>
+              <span aria-hidden="true" className="h-4 w-px bg-white/20" />
+              <div className="flex items-center gap-2">
+                <span aria-hidden="true" className="live-dot size-1.5 rounded-full" />
+                <AvatarStack names={["TM", "NL"]} size="xs" />
+                <span className="font-ui text-[12px] font-medium text-white/65">2 đang chỉnh</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            <button
+              type="button"
+              onClick={placeholderToast("Xem PR")}
+              className="inline-flex items-center gap-2 rounded-[10px] border border-white/25 bg-white/10 px-3.5 py-2 font-ui text-[13px] font-semibold text-white backdrop-blur-sm hover:bg-white/15"
+            >
+              <Eye className="size-3.5" aria-hidden="true" />
+              PR
+            </button>
+            <button
+              type="button"
+              onClick={placeholderToast("Theo dõi feature")}
+              className="inline-flex items-center gap-2 rounded-[10px] border border-white/25 bg-white/10 px-3.5 py-2 font-ui text-[13px] font-semibold text-white backdrop-blur-sm hover:bg-white/15"
+            >
+              <Bookmark className="size-3.5" aria-hidden="true" />
+              Lưu
+            </button>
+            <AuthorGate>
+              <button
+                type="button"
+                onClick={handleQuickEdit}
+                className="inline-flex items-center gap-2 rounded-[10px] bg-gradient-to-br from-primary to-primary-700 px-4 py-2 font-ui text-[13px] font-bold text-white shadow-[0_4px_16px_rgba(226,99,20,0.45)]"
+              >
+                <Pencil className="size-3.5" aria-hidden="true" />
+                Sửa nhanh
+              </button>
+            </AuthorGate>
+          </div>
+        </div>
+      </GradientHero>
 
       <SectionTocMobile />
 
-      <div className="grid gap-8 lg:grid-cols-[200px_1fr] xl:grid-cols-[240px_1fr_280px]">
+      <div className="grid gap-8 px-10 lg:grid-cols-[200px_1fr] xl:grid-cols-[240px_1fr_280px]">
         <SectionToc sections={sections} />
         <article className="min-w-0">
           <FeatureSections

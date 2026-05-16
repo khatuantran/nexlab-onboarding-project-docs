@@ -2,6 +2,8 @@
 
 <!-- template: 02-ui-spec-template.md@0.1 -->
 
+> **v4 amend (CR-006 v4 — 2026-05-16)**: Dark vivid hero rewrite. Header section uses `GradientHero` primitive (dark gradient + 2 blobs purple/orange + dot grid + logo watermark) wrapped `rounded-[22px]` with `mx-10 mt-3 mb-6`. Chips row (status + v2 + cập nhật) + h1 white 28→34px + 5-color section progress dots row (purple/orange/green/blue/rose, each `h-2 w-14`, filled with glow shadow) + Live indicator + AvatarStack + ghost-glass action buttons (PR / Lưu) + gradient primary "Sửa nhanh" CTA. Replaces v2 light header + ProgressStrip (ProgressStrip removed). SectionToc + FeatureSections + ActivityRail 3-col grid unchanged.
+
 Referenced tokens / icons / components từ [design-system.md](design-system.md). Visual quality bar per [visual-language.md](visual-language.md) charter (CR-002).
 
 ## Screen metadata
