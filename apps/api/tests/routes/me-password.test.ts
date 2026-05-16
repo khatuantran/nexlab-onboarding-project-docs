@@ -18,6 +18,7 @@ import type { CloudinaryClient } from "../../src/lib/cloudinary.js";
 
 const fakeCloudinary: CloudinaryClient = {
   isConfigured: () => true,
+  destroyImage: async () => {},
   async uploadImage(input) {
     return {
       publicId: input.publicId,

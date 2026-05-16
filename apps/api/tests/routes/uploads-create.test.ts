@@ -34,11 +34,15 @@ interface FakeCloudinaryState {
   configured: boolean;
   shouldFail: boolean;
   calls: Array<{ publicId: string; bytes: number; filename?: string }>;
+  destroyCalls?: string[];
 }
 
 function createFakeCloudinary(state: FakeCloudinaryState): CloudinaryClient {
   return {
     isConfigured: () => state.configured,
+    destroyImage: async (publicId) => {
+      state.destroyCalls?.push(publicId);
+    },
     async uploadImage(input) {
       state.calls.push({
         publicId: input.publicId,

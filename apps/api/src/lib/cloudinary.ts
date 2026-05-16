@@ -13,6 +13,27 @@ export interface CloudinaryClient {
   /** True only when CLOUDINARY_URL is non-empty (creds available). */
   isConfigured(): boolean;
   uploadImage(input: UploadImageInput): Promise<UploadImageResult>;
+  /**
+   * US-009/US-019 delete amend — best-effort asset removal. Throws on
+   * SDK failure; callers swallow + log (DELETE endpoints must clear DB
+   * URL regardless). No-op when not configured.
+   */
+  destroyImage(publicId: string): Promise<void>;
+}
+
+/**
+ * Parse Cloudinary `secure_url` → `publicId` for `destroy()`.
+ *
+ * Format: `https://res.cloudinary.com/<cloud>/image/upload/[<transform>/...]v<n>/<publicId>.<ext>`.
+ * `publicId` can contain slashes (folder path) and is *not* URL-encoded.
+ * Returns `null` if the URL doesn't match (caller skips destroy).
+ */
+export function publicIdFromUrl(url: string): string | null {
+  // Match everything between the last `/v<digits>/` segment and the
+  // trailing `.<ext>`. Transformation chunks (eg. `c_fill,w_2000`) sit
+  // *before* the version segment, so this regex naturally skips them.
+  const m = url.match(/\/upload\/(?:.+\/)?v\d+\/(.+)\.[a-z0-9]+$/i);
+  return m?.[1] ?? null;
 }
 
 export interface UploadImageInput {
@@ -81,6 +102,19 @@ export function createCloudinaryClient(cloudinaryUrl: string): CloudinaryClient 
         format: response.format,
         version: response.version,
       };
+    },
+
+    async destroyImage(publicId) {
+      if (!configured) return;
+      await new Promise<void>((resolve, reject) => {
+        cloudinarySdk.uploader.destroy(publicId, { invalidate: true }, (err) => {
+          if (err) {
+            reject(err instanceof Error ? err : new Error(String(err)));
+            return;
+          }
+          resolve();
+        });
+      });
     },
   };
 }

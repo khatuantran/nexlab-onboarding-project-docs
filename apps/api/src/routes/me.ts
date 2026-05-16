@@ -23,7 +23,8 @@ import {
 import { HttpError } from "../errors.js";
 import { zodValidate } from "../middleware/zodValidate.js";
 import { purgeSessionsForUserExcept } from "../lib/sessionPurge.js";
-import type { CloudinaryClient } from "../lib/cloudinary.js";
+import { publicIdFromUrl, type CloudinaryClient } from "../lib/cloudinary.js";
+import { logger } from "../logger.js";
 import type { UserRepo, AdminUserRow } from "../repos/userRepo.js";
 import type { UserSkillsRepo } from "../repos/userSkillsRepo.js";
 import type { UserStatsRepo } from "../repos/userStatsRepo.js";
@@ -443,7 +444,73 @@ export function createMeRouter(deps: MeRouterDeps): ExpressRouter {
     zodValidate({ body: changePasswordRequestSchema }),
     changePassword,
   );
+  const deleteAvatar: RequestHandler = async (req, res, next) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        next(new HttpError(401, ErrorCode.UNAUTHENTICATED, "Bạn cần đăng nhập"));
+        return;
+      }
+      const current = await userRepo.getAdminById(userId);
+      if (!current) {
+        next(new HttpError(401, ErrorCode.UNAUTHENTICATED, "Bạn cần đăng nhập"));
+        return;
+      }
+      if (current.avatarUrl) {
+        const publicId = publicIdFromUrl(current.avatarUrl);
+        if (publicId && cloudinary.isConfigured()) {
+          try {
+            await cloudinary.destroyImage(publicId);
+          } catch (err) {
+            logger.warn(
+              { event: "avatar.destroy_failed", userId, publicId, err: String(err) },
+              "Cloudinary destroy failed; proceeding with DB clear",
+            );
+          }
+        }
+        await userRepo.updateAvatarUrl(userId, null);
+      }
+      res.status(204).end();
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  const deleteCover: RequestHandler = async (req, res, next) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        next(new HttpError(401, ErrorCode.UNAUTHENTICATED, "Bạn cần đăng nhập"));
+        return;
+      }
+      const current = await userRepo.getAdminById(userId);
+      if (!current) {
+        next(new HttpError(401, ErrorCode.UNAUTHENTICATED, "Bạn cần đăng nhập"));
+        return;
+      }
+      if (current.coverUrl) {
+        const publicId = publicIdFromUrl(current.coverUrl);
+        if (publicId && cloudinary.isConfigured()) {
+          try {
+            await cloudinary.destroyImage(publicId);
+          } catch (err) {
+            logger.warn(
+              { event: "cover.destroy_failed", userId, publicId, err: String(err) },
+              "Cloudinary destroy failed; proceeding with DB clear",
+            );
+          }
+        }
+        await userRepo.updateCoverUrl(userId, null);
+      }
+      res.status(204).end();
+    } catch (err) {
+      next(err);
+    }
+  };
+
   router.post("/avatar", requireAuth, multerSingle, uploadAvatar);
+  router.delete("/avatar", requireAuth, deleteAvatar);
   router.post("/cover", requireAuth, multerCoverSingle, uploadCover);
+  router.delete("/cover", requireAuth, deleteCover);
   return router;
 }

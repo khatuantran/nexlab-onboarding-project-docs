@@ -22,6 +22,7 @@ interface FakeCloudinaryState {
   configured: boolean;
   shouldFail: boolean;
   calls: Array<{ publicId: string; bytes: number }>;
+  destroyCalls?: string[];
 }
 
 const state: FakeCloudinaryState = { configured: true, shouldFail: false, calls: [] };
@@ -29,6 +30,9 @@ const state: FakeCloudinaryState = { configured: true, shouldFail: false, calls:
 function createFakeCloudinary(): CloudinaryClient {
   return {
     isConfigured: () => state.configured,
+    destroyImage: async (publicId) => {
+      state.destroyCalls?.push(publicId);
+    },
     async uploadImage(input) {
       state.calls.push({ publicId: input.publicId, bytes: input.buffer.length });
       if (state.shouldFail) throw new Error("simulated cloudinary outage");
@@ -157,5 +161,27 @@ describe("POST /api/v1/projects/:slug/cover (US-019 / T2)", () => {
       (p) => p.slug === slug,
     );
     expect(row?.coverUrl).toMatch(/^https:\/\/res\.cloudinary\.com\//);
+  });
+
+  it("AC-16: admin DELETE returns 204 + clears coverUrl + Cloudinary destroy", async () => {
+    const { agent, slug } = await createProject();
+    await agent
+      .post(`/api/v1/projects/${slug}/cover`)
+      .attach("file", realPng, { filename: "c.png", contentType: "image/png" });
+    state.destroyCalls = [];
+
+    const del = await agent.delete(`/api/v1/projects/${slug}/cover`);
+    expect(del.status).toBe(204);
+    expect(state.destroyCalls).toHaveLength(1);
+
+    const get = await agent.get(`/api/v1/projects/${slug}`);
+    expect(get.body.data.project.coverUrl).toBeNull();
+  });
+
+  it("AC-16: non-admin (author) DELETE → 403 FORBIDDEN", async () => {
+    const { slug } = await createProject();
+    const authorAgent = await loginAs("dev@local");
+    const res = await authorAgent.delete(`/api/v1/projects/${slug}/cover`);
+    expect(res.status).toBe(403);
   });
 });

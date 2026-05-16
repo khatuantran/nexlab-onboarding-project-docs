@@ -24,11 +24,15 @@ interface FakeCloudinaryState {
   configured: boolean;
   shouldFail: boolean;
   calls: Array<{ publicId: string; bytes: number }>;
+  destroyCalls?: string[];
 }
 
 function createFakeCloudinary(state: FakeCloudinaryState): CloudinaryClient {
   return {
     isConfigured: () => state.configured,
+    destroyImage: async (publicId) => {
+      state.destroyCalls?.push(publicId);
+    },
     async uploadImage(input) {
       state.calls.push({ publicId: input.publicId, bytes: input.buffer.length });
       if (state.shouldFail) throw new Error("simulated cloudinary outage");
@@ -168,5 +172,31 @@ describe("POST /api/v1/me/avatar (US-009 / T3)", () => {
     const res = await agent.post("/api/v1/me/avatar");
     expect(res.status).toBe(400);
     expect(res.body.error.code).toBe("VALIDATION_ERROR");
+  });
+});
+
+describe("DELETE /api/v1/me/avatar (US-009 delete amend / AC-8a)", () => {
+  it("204 + clears DB + Cloudinary destroy called when avatarUrl set", async () => {
+    const agent = await loginAs("dev@local");
+    const uploadRes = await agent
+      .post("/api/v1/me/avatar")
+      .attach("file", realPng, { filename: "me.png", contentType: "image/png" });
+    expect(uploadRes.status).toBe(200);
+    cloudinaryState.destroyCalls = [];
+
+    const del = await agent.delete("/api/v1/me/avatar");
+    expect(del.status).toBe(204);
+    expect(cloudinaryState.destroyCalls).toHaveLength(1);
+
+    const me = await agent.get("/api/v1/me");
+    expect(me.body.data.avatarUrl).toBeNull();
+  });
+
+  it("idempotent: 204 + no Cloudinary call when avatarUrl already null", async () => {
+    const agent = await loginAs("dev@local");
+    cloudinaryState.destroyCalls = [];
+    const del = await agent.delete("/api/v1/me/avatar");
+    expect(del.status).toBe(204);
+    expect(cloudinaryState.destroyCalls).toHaveLength(0);
   });
 });

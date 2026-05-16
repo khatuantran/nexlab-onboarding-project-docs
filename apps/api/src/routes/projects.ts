@@ -27,7 +27,8 @@ import {
   type ProjectSummaryRow,
 } from "../repos/projectRepo.js";
 import type { Project } from "../db/schema.js";
-import type { CloudinaryClient } from "../lib/cloudinary.js";
+import { publicIdFromUrl, type CloudinaryClient } from "../lib/cloudinary.js";
+import { logger } from "../logger.js";
 
 /** US-019 — cover ảnh lớn hơn avatar (~2000×860); 4 MB cap. */
 const COVER_MAX_BYTES = 4 * 1024 * 1024;
@@ -346,6 +347,34 @@ export function createProjectsRouter(deps: ProjectsRouterDeps): ExpressRouter {
     }
   };
 
+  const deleteProjectCover: RequestHandler = async (req, res, next) => {
+    try {
+      const { slug } = req.params as { slug: string };
+      const project = await projectRepo.findBySlug(slug);
+      if (!project || project.archivedAt !== null) {
+        next(new HttpError(404, ErrorCode.PROJECT_NOT_FOUND, "Project không tồn tại"));
+        return;
+      }
+      if (project.coverUrl) {
+        const publicId = publicIdFromUrl(project.coverUrl);
+        if (publicId && cloudinary?.isConfigured()) {
+          try {
+            await cloudinary.destroyImage(publicId);
+          } catch (err) {
+            logger.warn(
+              { event: "project_cover.destroy_failed", slug, publicId, err: String(err) },
+              "Cloudinary destroy failed; proceeding with DB clear",
+            );
+          }
+        }
+        await projectRepo.updateCoverUrl(slug, null);
+      }
+      res.status(204).end();
+    } catch (err) {
+      next(err);
+    }
+  };
+
   router.post(
     "/:slug/cover",
     requireAuth,
@@ -353,6 +382,13 @@ export function createProjectsRouter(deps: ProjectsRouterDeps): ExpressRouter {
     zodValidate({ params }),
     multerCoverSingle,
     uploadProjectCover,
+  );
+  router.delete(
+    "/:slug/cover",
+    requireAuth,
+    requireAdmin,
+    zodValidate({ params }),
+    deleteProjectCover,
   );
   return router;
 }

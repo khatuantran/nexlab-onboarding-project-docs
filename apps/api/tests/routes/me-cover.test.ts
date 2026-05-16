@@ -24,11 +24,15 @@ interface FakeCloudinaryState {
   configured: boolean;
   shouldFail: boolean;
   calls: Array<{ publicId: string; bytes: number }>;
+  destroyCalls?: string[];
 }
 
 function createFakeCloudinary(state: FakeCloudinaryState): CloudinaryClient {
   return {
     isConfigured: () => state.configured,
+    destroyImage: async (publicId) => {
+      state.destroyCalls?.push(publicId);
+    },
     async uploadImage(input) {
       state.calls.push({ publicId: input.publicId, bytes: input.buffer.length });
       if (state.shouldFail) throw new Error("simulated cloudinary outage");
@@ -167,5 +171,37 @@ describe("POST /api/v1/me/cover (US-019 / T2)", () => {
     const res = await agent.post("/api/v1/me/cover");
     expect(res.status).toBe(400);
     expect(res.body.error.code).toBe("VALIDATION_ERROR");
+  });
+});
+
+describe("DELETE /api/v1/me/cover (US-019 delete amend)", () => {
+  it("AC-15: 204 + clears DB + calls Cloudinary destroy when coverUrl set", async () => {
+    const agent = await loginAs("dev@local");
+    const uploadRes = await agent
+      .post("/api/v1/me/cover")
+      .attach("file", realPng, { filename: "cover.png", contentType: "image/png" });
+    expect(uploadRes.status).toBe(200);
+    cloudinaryState.destroyCalls = [];
+
+    const del = await agent.delete("/api/v1/me/cover");
+    expect(del.status).toBe(204);
+    expect(cloudinaryState.destroyCalls).toHaveLength(1);
+    expect(cloudinaryState.destroyCalls?.[0]).toMatch(/^onboarding-portal\/test\/covers\/users\//);
+
+    const me = await agent.get("/api/v1/me");
+    expect(me.body.data.coverUrl).toBeNull();
+  });
+
+  it("idempotent: 204 when coverUrl already null", async () => {
+    const agent = await loginAs("dev@local");
+    cloudinaryState.destroyCalls = [];
+    const del = await agent.delete("/api/v1/me/cover");
+    expect(del.status).toBe(204);
+    expect(cloudinaryState.destroyCalls).toHaveLength(0);
+  });
+
+  it("returns 401 UNAUTHENTICATED with no session", async () => {
+    const res = await request(buildApp()).delete("/api/v1/me/cover");
+    expect(res.status).toBe(401);
   });
 });
