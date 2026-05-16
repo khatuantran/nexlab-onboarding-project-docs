@@ -5,6 +5,7 @@ import type { FeatureStatus, SectionType } from "@onboarding/shared";
 import { Button } from "@/components/ui/button";
 import { FilterChip } from "@/components/common/FilterChip";
 import { TipCard } from "@/components/common/TipCard";
+import { GradientHero } from "@/components/patterns/GradientHero";
 import { AuthorResultCard } from "@/components/search/AuthorResultCard";
 import { EntityGroup } from "@/components/search/EntityGroup";
 import { FilterBar, type FilterBarValue } from "@/components/search/FilterBar";
@@ -152,151 +153,164 @@ export function SearchPage(): JSX.Element {
   }
 
   return (
-    <main className="mx-auto max-w-5xl px-6 py-7 lg:px-10" aria-busy={isLoading}>
-      {/* Hero block */}
-      <div className="mb-6">
-        <p className="font-ui text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-          Tìm kiếm
-        </p>
-        <h1 className="mt-2 font-display text-[32px] leading-[38px] font-bold tracking-[-0.02em] text-foreground">
-          Kết quả cho <span className="text-primary">"{q}"</span>
+    <main className="bg-background pb-16" aria-busy={isLoading}>
+      {/* Dark vivid hero */}
+      <GradientHero
+        showWatermark
+        gridOverlay
+        className="px-10 pb-10 pt-9"
+        blobs={[
+          { color: "rgba(59,130,246,0.4)", size: 320, pos: { top: -60, left: -40 } },
+          { color: "rgba(240,118,19,0.35)", size: 260, pos: { bottom: -30, right: 100 } },
+        ]}
+      >
+        <span className="mb-3 inline-flex items-center rounded-full border border-blue-500/45 bg-blue-500/[0.22] px-3.5 py-1 font-ui text-[11px] font-bold uppercase tracking-[0.12em] text-blue-200">
+          ✦ Tìm kiếm
+        </span>
+        <h1 className="font-display text-[32px] font-black leading-[38px] tracking-[-0.025em] text-white sm:text-[40px] sm:leading-[44px]">
+          Kết quả cho{" "}
+          <span className="bg-gradient-to-r from-[hsl(var(--logo-grad-start))] to-[hsl(var(--logo-grad-end))] bg-clip-text text-transparent">
+            "{q}"
+          </span>
         </h1>
         <div
-          className="mt-2 flex flex-wrap items-baseline gap-x-2 text-base text-muted-foreground"
+          className="mt-3 flex flex-wrap items-baseline gap-x-2 font-body text-[15px] text-white/70"
           aria-live="polite"
         >
           {isLoading ? (
             <span>Đang tìm...</span>
           ) : (
             <>
-              <span className="font-semibold text-foreground">{`${hitsTotal} kết quả`}</span>
+              <span className="font-semibold text-white">{`${hitsTotal} kết quả`}</span>
               <span>· {projectSlug ? `trong project ${projectSlug}` : "trong toàn workspace"}</span>
             </>
           )}
         </div>
-      </div>
+      </GradientHero>
 
-      {/* Scope chip + filter bar */}
-      {projectSlug ? (
-        <div className="mb-3 flex items-center gap-2">
-          <span className="font-ui text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Phạm vi:
-          </span>
-          <FilterChip label={`Project: ${projectSlug}`} onRemove={removeScope} />
-        </div>
-      ) : null}
-      <FilterBar value={filterValue} onChange={updateFilters} />
-
-      {/* Body */}
-      {isLoading && (
-        <div className="space-y-3.5">
-          {[0, 1, 2].map((i) => (
-            <ResultSkeleton key={i} />
-          ))}
-        </div>
-      )}
-
-      {isError && !isLoading && (
-        <p
-          role="alert"
-          className="rounded-md border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive"
-        >
-          Có lỗi xảy ra, thử lại sau.
-        </p>
-      )}
-
-      {!isLoading && !isError && hitsTotal === 0 && (
-        <div className="mx-auto max-w-md py-12 text-center">
-          <SearchX className="mx-auto size-16 text-primary/40" aria-hidden="true" />
-          <h2 className="mt-6 font-display text-xl font-semibold text-foreground">
-            {filtersActive
-              ? "Không có kết quả với filter hiện tại"
-              : `Không tìm thấy feature nào khớp với "${q}"`}
-          </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Thử từ khoá khác hoặc bỏ filter. FTS hỗ trợ tiếng Việt có dấu — kiểm tra chính tả nếu
-            kết quả trống.
-          </p>
-          {filtersActive && (
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-              {sectionTypes.length > 0 && (
-                <FilterChip
-                  label={`Loại: ${sectionTypes.join(", ")}`}
-                  onRemove={() => clearFilter("sectionTypes")}
-                />
-              )}
-              {authorId && (
-                <FilterChip
-                  label={`Tác giả: ${authorDisplayName ?? "đã chọn"}`}
-                  onRemove={() => clearFilter("authorId")}
-                />
-              )}
-              {updatedSince && (
-                <FilterChip label="Thời gian" onRemove={() => clearFilter("updatedSince")} />
-              )}
-              {status && (
-                <FilterChip
-                  label={`Trạng thái: ${status}`}
-                  onRemove={() => clearFilter("status")}
-                />
-              )}
-            </div>
-          )}
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            {projectSlug ? (
-              <Button variant="outline" size="sm" type="button" onClick={removeScope}>
-                Bỏ filter project
-              </Button>
-            ) : null}
-            <Button variant="default" size="sm" type="button" onClick={() => navigate("/")}>
-              Quay về catalog
-            </Button>
+      <div className="mx-auto max-w-5xl px-10 pt-6">
+        {/* Scope chip + filter bar */}
+        {projectSlug ? (
+          <div className="mb-3 flex items-center gap-2">
+            <span className="font-ui text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              Phạm vi:
+            </span>
+            <FilterChip label={`Project: ${projectSlug}`} onRemove={removeScope} />
           </div>
-        </div>
-      )}
+        ) : null}
+        <FilterBar value={filterValue} onChange={updateFilters} />
 
-      {!isLoading && !isError && hitsTotal > 0 && data && (
-        <div>
-          {data.projects.length > 0 && (
-            <EntityGroup icon={FolderOpen} title="Projects" count={data.projects.length}>
-              {data.projects.map((hit) => (
-                <ProjectResultCard key={hit.slug} hit={hit} />
-              ))}
-            </EntityGroup>
-          )}
-          {data.features.length > 0 && (
-            <EntityGroup icon={FileText} title="Features" count={data.features.length}>
-              {data.features.map((hit) => (
-                <FeatureResultCard key={`${hit.projectSlug}/${hit.featureSlug}`} hit={hit} />
-              ))}
-            </EntityGroup>
-          )}
-          {data.sections.length > 0 && (
-            <EntityGroup icon={ScrollText} title="Sections" count={data.sections.length}>
-              {data.sections.map((hit) => (
-                <SectionResultCard
-                  key={`${hit.projectSlug}/${hit.featureSlug}/${hit.sectionType}`}
-                  hit={hit}
-                />
-              ))}
-            </EntityGroup>
-          )}
-          {data.authors.length > 0 && (
-            <EntityGroup icon={User} title="Authors" count={data.authors.length}>
-              {data.authors.map((hit) => (
-                <AuthorResultCard key={hit.id} hit={hit} />
-              ))}
-            </EntityGroup>
-          )}
-          {data.uploads.length > 0 && (
-            <EntityGroup icon={Paperclip} title="Uploads" count={data.uploads.length}>
-              {data.uploads.map((hit) => (
-                <UploadResultCard key={hit.id} hit={hit} />
-              ))}
-            </EntityGroup>
-          )}
-        </div>
-      )}
+        {/* Body */}
+        {isLoading && (
+          <div className="space-y-3.5">
+            {[0, 1, 2].map((i) => (
+              <ResultSkeleton key={i} />
+            ))}
+          </div>
+        )}
+
+        {isError && !isLoading && (
+          <p
+            role="alert"
+            className="rounded-md border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive"
+          >
+            Có lỗi xảy ra, thử lại sau.
+          </p>
+        )}
+
+        {!isLoading && !isError && hitsTotal === 0 && (
+          <div className="mx-auto max-w-md py-12 text-center">
+            <SearchX className="mx-auto size-16 text-primary/40" aria-hidden="true" />
+            <h2 className="mt-6 font-display text-xl font-semibold text-foreground">
+              {filtersActive
+                ? "Không có kết quả với filter hiện tại"
+                : `Không tìm thấy feature nào khớp với "${q}"`}
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Thử từ khoá khác hoặc bỏ filter. FTS hỗ trợ tiếng Việt có dấu — kiểm tra chính tả nếu
+              kết quả trống.
+            </p>
+            {filtersActive && (
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+                {sectionTypes.length > 0 && (
+                  <FilterChip
+                    label={`Loại: ${sectionTypes.join(", ")}`}
+                    onRemove={() => clearFilter("sectionTypes")}
+                  />
+                )}
+                {authorId && (
+                  <FilterChip
+                    label={`Tác giả: ${authorDisplayName ?? "đã chọn"}`}
+                    onRemove={() => clearFilter("authorId")}
+                  />
+                )}
+                {updatedSince && (
+                  <FilterChip label="Thời gian" onRemove={() => clearFilter("updatedSince")} />
+                )}
+                {status && (
+                  <FilterChip
+                    label={`Trạng thái: ${status}`}
+                    onRemove={() => clearFilter("status")}
+                  />
+                )}
+              </div>
+            )}
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              {projectSlug ? (
+                <Button variant="outline" size="sm" type="button" onClick={removeScope}>
+                  Bỏ filter project
+                </Button>
+              ) : null}
+              <Button variant="default" size="sm" type="button" onClick={() => navigate("/")}>
+                Quay về catalog
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {!isLoading && !isError && hitsTotal > 0 && data && (
+          <div>
+            {data.projects.length > 0 && (
+              <EntityGroup icon={FolderOpen} title="Projects" count={data.projects.length}>
+                {data.projects.map((hit) => (
+                  <ProjectResultCard key={hit.slug} hit={hit} />
+                ))}
+              </EntityGroup>
+            )}
+            {data.features.length > 0 && (
+              <EntityGroup icon={FileText} title="Features" count={data.features.length}>
+                {data.features.map((hit) => (
+                  <FeatureResultCard key={`${hit.projectSlug}/${hit.featureSlug}`} hit={hit} />
+                ))}
+              </EntityGroup>
+            )}
+            {data.sections.length > 0 && (
+              <EntityGroup icon={ScrollText} title="Sections" count={data.sections.length}>
+                {data.sections.map((hit) => (
+                  <SectionResultCard
+                    key={`${hit.projectSlug}/${hit.featureSlug}/${hit.sectionType}`}
+                    hit={hit}
+                  />
+                ))}
+              </EntityGroup>
+            )}
+            {data.authors.length > 0 && (
+              <EntityGroup icon={User} title="Authors" count={data.authors.length}>
+                {data.authors.map((hit) => (
+                  <AuthorResultCard key={hit.id} hit={hit} />
+                ))}
+              </EntityGroup>
+            )}
+            {data.uploads.length > 0 && (
+              <EntityGroup icon={Paperclip} title="Uploads" count={data.uploads.length}>
+                {data.uploads.map((hit) => (
+                  <UploadResultCard key={hit.id} hit={hit} />
+                ))}
+              </EntityGroup>
+            )}
+          </div>
+        )}
+      </div>
     </main>
   );
 }

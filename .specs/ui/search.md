@@ -2,6 +2,8 @@
 
 <!-- template: 02-ui-spec-template.md@0.1 -->
 
+> **v4 amend (CR-006 v4 — 2026-05-16)**: Hero block uses `GradientHero` (blue + orange blobs + dot grid + watermark). Eyebrow chip "✦ Tìm kiếm" (blue-200) + h1 white `Kết quả cho "{q}"` with gradient text on the query + result count line in white/70. Filter bar + result body remain in `max-w-5xl px-10 pt-6` light container below. Empty state + scope chip + FilterBar logic unchanged.
+
 Referenced tokens / icons / components từ [design-system.md](design-system.md). Visual quality bar per [visual-language.md](visual-language.md) charter (CR-002).
 
 ## Screen metadata
