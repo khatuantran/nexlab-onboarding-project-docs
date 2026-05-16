@@ -85,6 +85,13 @@
       "when": 1779300000000,
       "tag": "0011_projects_repo_url_features_pr_url",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1779400000000,
+      "tag": "0012_user_skills",
+      "breakpoints": true
     }
   ]
 }

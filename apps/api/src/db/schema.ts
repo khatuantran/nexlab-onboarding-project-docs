@@ -1,4 +1,14 @@
-import { integer, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import {
+  index,
+  integer,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 /**
  * Drizzle schema — source of truth for DB structure.
@@ -113,6 +123,27 @@ export const uploads = pgTable("uploads", {
   cloudinaryPublicId: text("cloudinary_public_id"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+export const userSkills = pgTable(
+  "user_skills",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    label: text("label").notNull(),
+    color: text("color").notNull(),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("user_skills_user_label_uidx").on(table.userId, sql`lower(${table.label})`),
+    index("user_skills_user_idx").on(table.userId, table.sortOrder),
+  ],
+);
+
+export type UserSkill = typeof userSkills.$inferSelect;
+export type NewUserSkill = typeof userSkills.$inferInsert;
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
