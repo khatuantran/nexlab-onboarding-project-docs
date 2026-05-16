@@ -62,7 +62,7 @@ export function AdminUsersPage(): JSX.Element {
       >
         <div className="flex flex-col gap-10 lg:flex-row lg:items-end">
           <div className="flex-1">
-            <span className="mb-3.5 inline-flex items-center rounded-full border border-rose-500/45 bg-rose-500/[0.22] px-3.5 py-1 font-ui text-[11px] font-bold uppercase tracking-[0.12em] text-rose-200">
+            <span className="mb-3.5 inline-flex items-center rounded-full border border-rose-500/55 bg-rose-500/35 px-3.5 py-1 font-ui text-[11px] font-bold uppercase tracking-[0.12em] text-rose-100">
               ✦ Quản trị hệ thống
             </span>
             <h1 className="font-display text-[44px] font-black leading-[48px] tracking-[-0.03em] text-white sm:text-[52px] sm:leading-[56px]">

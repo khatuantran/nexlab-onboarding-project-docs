@@ -205,6 +205,47 @@ describe("FeatureDetailPage", () => {
     expect(prLink).toHaveAttribute("target", "_blank");
   });
 
+  it("BUG-006 v2: hero status + v2 chips use *-100 shade for dark-mode readability", async () => {
+    server.use(
+      http.get(`${BASE}/projects/demo/features/login-with-email`, () =>
+        HttpResponse.json(
+          {
+            data: {
+              feature: {
+                id: "f-1",
+                slug: "login-with-email",
+                title: "Login",
+                createdAt: "2026-04-20T10:00:00Z",
+                updatedAt: "2026-04-23T09:00:00Z",
+                contributors: [],
+                prUrl: null,
+              },
+              sections: buildSections({
+                business: "x",
+                "user-flow": "x",
+                "business-rules": "x",
+                "tech-notes": "x",
+                screenshots: "x",
+              }),
+            },
+          },
+          { status: 200 },
+        ),
+      ),
+    );
+
+    renderDetail();
+
+    const v2 = await screen.findByText(/^v2$/);
+    expect(v2.className).toContain("text-blue-100");
+    expect(v2.className).not.toContain("text-blue-200");
+
+    // Status chip "Đủ doc" — success tone → text-green-100
+    const statusChip = await screen.findByText(/đủ doc/i);
+    expect(statusChip.className).toContain("text-green-100");
+    expect(statusChip.className).not.toContain("text-green-200");
+  });
+
   it("BUG-005: hero meta line uses text-white/75 (not /45) for dark-mode contrast", async () => {
     server.use(
       http.get(`${BASE}/projects/demo/features/login-with-email`, () =>

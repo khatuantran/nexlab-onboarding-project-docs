@@ -139,10 +139,10 @@ export function FeatureDetailPage(): JSX.Element {
               <span
                 className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-ui text-[11px] font-bold ${
                   status.tone === "success"
-                    ? "bg-green-500/25 text-green-200"
+                    ? "border border-green-500/55 bg-green-500/35 text-green-100"
                     : status.tone === "primary"
-                      ? "bg-primary/30 text-orange-200"
-                      : "bg-white/15 text-white/80"
+                      ? "border border-primary/55 bg-primary/40 text-orange-100"
+                      : "border border-white/20 bg-white/15 text-white"
                 }`}
               >
                 <span
@@ -157,7 +157,7 @@ export function FeatureDetailPage(): JSX.Element {
                 />
                 {status.label}
               </span>
-              <span className="inline-flex items-center rounded-full bg-blue-500/25 px-2.5 py-1 font-ui text-[11px] font-bold text-blue-200">
+              <span className="inline-flex items-center rounded-full border border-blue-500/55 bg-blue-500/35 px-2.5 py-1 font-ui text-[11px] font-bold text-blue-100">
                 v2
               </span>
               <span className="font-ui text-[12px] font-medium text-white/75">

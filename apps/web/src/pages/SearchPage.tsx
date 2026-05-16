@@ -142,7 +142,7 @@ export function SearchPage(): JSX.Element {
             { color: "rgba(59,130,246,0.32)", size: 260, pos: { bottom: -40, right: 80 } },
           ]}
         >
-          <span className="mb-3 inline-flex items-center rounded-full border border-blue-500/45 bg-blue-500/[0.22] px-3.5 py-1 font-ui text-[11px] font-bold uppercase tracking-[0.12em] text-blue-200">
+          <span className="mb-3 inline-flex items-center rounded-full border border-blue-500/55 bg-blue-500/35 px-3.5 py-1 font-ui text-[11px] font-bold uppercase tracking-[0.12em] text-blue-100">
             ✦ Tìm kiếm
           </span>
           <h1 className="font-display text-[32px] font-black leading-[38px] tracking-[-0.025em] text-white sm:text-[40px] sm:leading-[44px]">
@@ -209,7 +209,7 @@ export function SearchPage(): JSX.Element {
           { color: "rgba(240,118,19,0.35)", size: 260, pos: { bottom: -30, right: 100 } },
         ]}
       >
-        <span className="mb-3 inline-flex items-center rounded-full border border-blue-500/45 bg-blue-500/[0.22] px-3.5 py-1 font-ui text-[11px] font-bold uppercase tracking-[0.12em] text-blue-200">
+        <span className="mb-3 inline-flex items-center rounded-full border border-blue-500/55 bg-blue-500/35 px-3.5 py-1 font-ui text-[11px] font-bold uppercase tracking-[0.12em] text-blue-100">
           ✦ Tìm kiếm
         </span>
         <h1 className="font-display text-[32px] font-black leading-[38px] tracking-[-0.025em] text-white sm:text-[40px] sm:leading-[44px]">

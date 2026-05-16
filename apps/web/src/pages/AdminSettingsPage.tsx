@@ -340,7 +340,7 @@ export function AdminSettingsPage(): JSX.Element {
           { color: "rgba(139,92,246,0.35)", size: 260, pos: { bottom: -30, right: 100 } },
         ]}
       >
-        <span className="mb-3 inline-flex items-center rounded-full border border-amber-500/45 bg-amber-500/[0.22] px-3.5 py-1 font-ui text-[11px] font-bold uppercase tracking-[0.12em] text-amber-200">
+        <span className="mb-3 inline-flex items-center rounded-full border border-amber-500/55 bg-amber-500/35 px-3.5 py-1 font-ui text-[11px] font-bold uppercase tracking-[0.12em] text-amber-100">
           ⚙ Quản trị
         </span>
         <h1 className="font-display text-[40px] font-black leading-[44px] tracking-[-0.03em] text-white sm:text-[48px] sm:leading-[52px]">

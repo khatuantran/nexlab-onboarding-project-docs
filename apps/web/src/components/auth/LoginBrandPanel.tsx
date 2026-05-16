@@ -95,7 +95,7 @@ export function LoginBrandPanel(): JSX.Element {
             <p className="font-body text-[13px] italic leading-[18px] text-white/[0.88]">
               "Onboard 2 ngày thay vì cả tuần."
             </p>
-            <div className="mt-1.5 font-ui text-[11px] font-semibold text-orange-200">
+            <div className="mt-1.5 font-ui text-[11px] font-semibold text-orange-100">
               Ngọc Linh · Senior Dev
             </div>
           </div>

@@ -68,15 +68,16 @@ const demo: ProjectSummary = {
 };
 
 describe("HomePage", () => {
-  it("BUG-006: hero Sprint chip uses text-orange-200 (not custom #FFD092) for dark-mode contrast", async () => {
+  it("BUG-006 v2: hero Sprint chip uses text-orange-100 for dark-mode readability", async () => {
     mockMe("author");
     mockProjects([pilot]);
     renderHome();
 
     const chip = await screen.findByText(/Sprint 14/i);
     const cls = chip.className;
-    expect(cls).toContain("text-orange-200");
+    expect(cls).toContain("text-orange-100");
     expect(cls).not.toContain("text-[#FFD092]");
+    expect(cls).not.toContain("text-orange-200");
   });
 
   it("BUG-005: HeroStat label uses text-white/75 (not /50) for dark-mode contrast", async () => {

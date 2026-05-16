@@ -77,10 +77,10 @@ export function ProjectHero({
         <div className="flex-1">
           {/* Tag + Live chips */}
           <div className="mb-3 flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center rounded-full border border-primary/50 bg-primary/30 px-3 py-1 font-ui text-[11px] font-bold uppercase tracking-[0.1em] text-orange-200">
+            <span className="inline-flex items-center rounded-full border border-primary/55 bg-primary/40 px-3 py-1 font-ui text-[11px] font-bold uppercase tracking-[0.1em] text-orange-100">
               Pilot
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-green-500/40 bg-green-500/20 px-3 py-1 font-ui text-[11px] font-semibold text-green-200">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-green-500/55 bg-green-500/35 px-3 py-1 font-ui text-[11px] font-semibold text-green-100">
               <span
                 aria-hidden="true"
                 className="size-1.5 animate-pulse rounded-full bg-green-300"

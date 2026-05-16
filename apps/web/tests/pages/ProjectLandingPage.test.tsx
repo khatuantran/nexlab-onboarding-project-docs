@@ -130,7 +130,7 @@ describe("ProjectLandingPage", () => {
     expect(repoBtn).toBeDisabled();
   });
 
-  it("BUG-006: Pilot hero chip uses text-orange-200 (not #FFD092) for dark-mode contrast", async () => {
+  it("BUG-006 v2: Pilot hero chip uses text-orange-100 for dark-mode readability", async () => {
     server.use(
       http.get(`${BASE}/projects/demo`, () =>
         HttpResponse.json(
@@ -156,8 +156,9 @@ describe("ProjectLandingPage", () => {
 
     const chip = await screen.findByText(/^Pilot$/);
     const cls = chip.className;
-    expect(cls).toContain("text-orange-200");
+    expect(cls).toContain("text-orange-100");
     expect(cls).not.toContain("text-[#FFD092]");
+    expect(cls).not.toContain("text-orange-200");
   });
 
   it("renders empty state when features is empty (AC-4)", async () => {
