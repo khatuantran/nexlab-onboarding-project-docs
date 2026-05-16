@@ -14,7 +14,7 @@ Related: [roadmap.md](../roadmap.md), [traceability.md](../traceability.md).
 
 ### Changed
 
-- **Delete flow cho avatar + cover image** ([US-009](../stories/US-009.md) AC-8a + [US-019](../stories/US-019.md) AC-15/16 amend, 2026-05-16) — Bổ sung 3 endpoint DELETE: `DELETE /api/v1/me/avatar` (`requireAuth`), `DELETE /api/v1/me/cover` (`requireAuth`), `DELETE /api/v1/projects/:slug/cover` (admin gate). Mỗi handler best-effort gọi Cloudinary `destroy(publicId)` (parse từ secureUrl; log warn nếu fail nhưng vẫn proceed) rồi clear URL trong DB → 204. FE: 3 dialog (Avatar / profile cover / project cover) thêm outline danger button "Xóa ảnh" visible khi URL set; toast "Đã xóa ảnh" + invalidate cache. Reuses existing repo null-accept signatures (`updateAvatarUrl/updateCoverUrl(id, null)`). No new error codes.
+- **Delete flow cho avatar + cover image** ([US-009](../stories/US-009.md) AC-8a + [US-019](../stories/US-019.md) AC-15/16 amend, 2026-05-16) — Bổ sung 3 endpoint DELETE: `DELETE /api/v1/me/avatar` (`requireAuth`), `DELETE /api/v1/me/cover` (`requireAuth`), `DELETE /api/v1/projects/:slug/cover` (admin gate). Mỗi handler best-effort gọi Cloudinary `destroy(publicId)` (parse từ secureUrl qua `publicIdFromUrl` util; log warn nếu fail nhưng vẫn proceed) rồi clear URL trong DB → 204. FE: 3 dialog (Avatar / profile cover / project cover) thêm outline danger button "Xóa ảnh" visible khi URL set; toast "Đã xóa ảnh" + invalidate cache. Reuses existing repo null-accept signatures (`updateAvatarUrl/updateCoverUrl(id, null)`). No new error codes. 279/279 api + 188/188 web tests green. Commits: `7c0c914` (spec) → `5e9416f` (BE) → `93e4dc1` (FE) → this commit (progress sync).
 
 ### Added
 
