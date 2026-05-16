@@ -2,7 +2,7 @@
 
 <!-- exempt: registry (no template required) -->
 
-_Last updated: 2026-05-16 · Source of truth for cross-screen UI consistency: tokens, icons, components, a11y floor._
+_Last updated: 2026-05-16 (v4 amend — CR-006 dark vivid + glassmorphism) · Source of truth for cross-screen UI consistency: tokens, icons, components, a11y floor._
 
 Mỗi file `.specs/ui/<screen>.md` **must** reference tokens/components ở file này — không redefine colors/fonts/spacing locally. Thêm token/variant/icon mới = update file này trong commit riêng trước khi code.
 
@@ -61,35 +61,101 @@ Primary ramp 50-900 exposed cho tinted surfaces (Tailwind `bg-primary-100` etc.)
 | 800  | `17 73% 34%` | rgb(149, 59, 23)       |
 | 900  | `15 69% 28%` | rgb(120, 51, 22)       |
 
-**Project tile palette (v3.1 — CR-006)** — 6 named tile colors cho ProjectCard category identity. Saturated, white-foreground. NOT a generic accent palette — only used by ProjectCard tile bg + CircleDecor:
+**Accent palette (v4 — CR-006)** — 5 hues × 5 stops (50/200/400/500/700). Category identity slots only (ProjectCard 6-gradient, role badges, section nav, integration cards). NOT a generic body-surface palette.
 
-| Token           | Light HSL     | Dark HSL      | Dùng ở                                   |
-| --------------- | ------------- | ------------- | ---------------------------------------- |
-| `--tile-orange` | `27 88% 51%`  | `28 89% 58%`  | ProjectCard tile bg — category "E2E"     |
-| `--tile-navy`   | `223 50% 40%` | `223 55% 50%` | ProjectCard tile bg — category "Backend" |
-| `--tile-green`  | `145 45% 38%` | `145 45% 48%` | ProjectCard tile bg — category "Search"  |
-| `--tile-amber`  | `38 80% 50%`  | `38 80% 58%`  | ProjectCard tile bg — category "Payment" |
-| `--tile-peach`  | `25 70% 60%`  | `25 70% 65%`  | ProjectCard tile bg — category "CRM"     |
-| `--tile-rust`   | `12 60% 40%`  | `12 60% 50%`  | ProjectCard tile bg — category "Admin"   |
+| Hue      | 50 (Light HSL) | 200 (Light HSL) | 400 (Light HSL) | 500 base (Light HSL) | 700 (Light HSL) | Reference hex (500) |
+| -------- | -------------- | --------------- | --------------- | -------------------- | --------------- | ------------------- |
+| `purple` | `258 100% 96%` | `253 92% 86%`   | `258 90% 76%`   | `258 90% 67%`        | `262 79% 50%`   | `#8B5CF6`           |
+| `green`  | `152 81% 96%`  | `156 73% 80%`   | `158 64% 52%`   | `158 64% 39%`        | `158 92% 24%`   | `#10B981`           |
+| `blue`   | `214 100% 97%` | `213 97% 87%`   | `213 94% 68%`   | `217 91% 60%`        | `225 73% 48%`   | `#3B82F6`           |
+| `rose`   | `356 100% 97%` | `351 100% 91%`  | `351 95% 71%`   | `350 89% 60%`        | `348 84% 42%`   | `#F43F5E`           |
+| `amber`  | `48 100% 96%`  | `49 96% 80%`    | `43 96% 56%`    | `38 92% 50%`         | `26 88% 35%`    | `#F59E0B`           |
 
-All tiles use white foreground (`text-white`); no separate foreground token. Category hash → tone is deterministic per `project.slug`. Pool of 6 fixed category labels (E2E / Backend / Search / Payment / CRM / Admin) — v1 placeholder until BE category field exists.
+Dark mode: bump each step lightness +8-12% for readability over dark hero (e.g. `purple-500` light `258 90% 67%` → dark `258 90% 75%`). Exact dark values in [index.css](../../apps/web/src/styles/index.css).
 
-**Warm canvas + Sage (v3 — CR-006)** — warm page bg variant + sage secondary accent for graphics-rich Notion direction:
+Usage rules:
 
-| Token               | Light HSL     | Dark HSL      | Dùng ở                                                        |
-| ------------------- | ------------- | ------------- | ------------------------------------------------------------- |
-| `--canvas`          | `35 30% 97%`  | `0 0% 15%`    | Warm off-white page bg (override `bg-background` page-level)  |
-| `--canvas-muted`    | `35 25% 93%`  | `0 0% 18%`    | Hero / card subtle warm tint                                  |
-| `--sage`            | `145 30% 50%` | `145 30% 60%` | Sage secondary CTA bg + filled banner alt + stat box #2 plate |
-| `--sage-foreground` | `0 0% 100%`   | `0 0% 15%`    | Text on sage solid bg                                         |
-| `--sage-bg`         | `145 30% 94%` | `145 20% 22%` | Sage tinted surface (pill chips, hover)                       |
-| `--sage-text`       | `145 30% 35%` | `145 30% 70%` | Text on sage-bg tint                                          |
+- ProjectCard 6-gradient header — orange-500/700 + the 5 accents-500/700, deterministic by `project.slug` hash.
+- Role badges — Admin=rose-50/rose-700 / PM=purple-50/purple-700 / BA=primary-50/primary-700 / Dev=blue-50/blue-700 / QA=green-50/green-700.
+- Section nav (FeatureDetail 5 sections) — Nghiệp vụ=purple / User flow=primary / Rules=green / Tech=blue / Shots=rose.
+- Integration cards (Settings) — GitHub neutral, Jira=blue, Slack=purple, Google=rose, Confluence=neutral.
+- 1 accent per surface. Don't stack ≥ 2 accent hues in same card.
 
-Usage rules (per [visual-language §2 + §10](visual-language.md)):
+**Hero dark gradient (v4 — CR-006)** — 4 stops for `GradientHero` primitive bg. Dark navy → purple → indigo → near-black:
 
-- `--canvas` overrides `--background` ở page-level via `<main className="bg-canvas">`. Không touch global body để minimize ripple.
-- `--sage` primary pair với orange `--primary` (chosen pairing). KHÔNG mix gold `--secondary` + sage cùng surface.
-- 1 accent per surface — sage cho stat box #2-3, không stack ≥ 2 accents trong 1 card.
+| Token      | Light HSL     | Dark HSL      | Reference hex | Dùng ở                          |
+| ---------- | ------------- | ------------- | ------------- | ------------------------------- |
+| `--hero-1` | `261 73% 8%`  | `261 73% 8%`  | `#0B0520`     | Hero top-left (anchor + 0%)     |
+| `--hero-2` | `255 60% 14%` | `255 60% 14%` | `#180E3A`     | Hero ~30% via stop              |
+| `--hero-3` | `222 65% 14%` | `222 65% 14%` | `#0C1A3A`     | Hero ~60% via stop              |
+| `--hero-4` | `216 25% 6%`  | `216 25% 6%`  | `#0A0E16`     | Hero bottom-right (anchor 100%) |
+
+Same values in light + dark — the hero is intentionally dark in both modes (it's a hero treatment, not a surface).
+
+**Logo gradient (v4 — CR-006)** — used for wordmark mask + gradient text headline accent:
+
+| Token               | Light HSL     | Dark HSL      | Reference hex | Dùng ở                                  |
+| ------------------- | ------------- | ------------- | ------------- | --------------------------------------- |
+| `--logo-grad-start` | `31 100% 50%` | `31 100% 50%` | `#FF9200`     | NxLogo mask start + gradient text start |
+| `--logo-grad-end`   | `31 100% 78%` | `31 100% 78%` | `#FFD092`     | NxLogo mask end + gradient text end     |
+
+Apply via `bg-gradient-to-r from-[hsl(var(--logo-grad-start))] to-[hsl(var(--logo-grad-end))] bg-clip-text text-transparent` on the gradient span.
+
+**Neutral scale explicit (v4 — CR-006)** — explicit 000-1000 + ink + black, complementing existing shadcn semantic surfaces. Reference rgb in source comments.
+
+| Token             | Light HSL     | Dark HSL      | Reference rgb    |
+| ----------------- | ------------- | ------------- | ---------------- |
+| `--neutral-000`   | `0 0% 100%`   | `220 12% 7%`  | rgb(255,255,255) |
+| `--neutral-050`   | `0 0% 98%`    | `220 12% 10%` | rgb(249,249,249) |
+| `--neutral-100`   | `0 0% 95%`    | `220 12% 12%` | rgb(242,242,242) |
+| `--neutral-200`   | `0 0% 94%`    | `220 12% 16%` | rgb(239,239,239) |
+| `--neutral-300`   | `0 0% 89%`    | `220 12% 19%` | rgb(227,227,227) |
+| `--neutral-400`   | `0 0% 81%`    | `220 12% 26%` | rgb(206,206,206) |
+| `--neutral-500`   | `0 0% 68%`    | `220 12% 37%` | rgb(173,173,173) |
+| `--neutral-600`   | `0 0% 55%`    | `220 12% 48%` | rgb(140,140,140) |
+| `--neutral-700`   | `0 0% 39%`    | `220 12% 60%` | rgb(100,100,100) |
+| `--neutral-800`   | `285 4% 28%`  | `220 12% 71%` | rgb(73,69,79)    |
+| `--neutral-900`   | `240 3% 16%`  | `220 12% 84%` | rgb(39,39,41)    |
+| `--neutral-1000`  | `203 31% 15%` | `220 12% 92%` | rgb(27,42,51)    |
+| `--neutral-ink`   | `0 0% 15%`    | `220 12% 5%`  | rgb(38,38,38)    |
+| `--neutral-black` | `0 0% 0%`     | `0 0% 0%`     | rgb(0,0,0)       |
+
+Semantic fg / bg aliases (v4):
+
+| Token          | Maps to (light) | Maps to (dark)    | Dùng ở                       |
+| -------------- | --------------- | ----------------- | ---------------------------- |
+| `--fg-1`       | `--neutral-900` | `--neutral-100`   | Primary body text            |
+| `--fg-2`       | `--neutral-800` | `--neutral-200`   | Secondary text               |
+| `--fg-3`       | `--neutral-600` | `--neutral-500`   | Muted / help text            |
+| `--fg-4`       | `--neutral-500` | `--neutral-600`   | Disabled text                |
+| `--fg-inverse` | `--neutral-000` | `--neutral-ink`   | Text on dark surfaces        |
+| `--bg-subtle`  | `--neutral-100` | `--neutral-ink`   | Section bg, hover surface    |
+| `--bg-muted`   | `--neutral-200` | `--neutral-300`   | Disabled bg, divider surface |
+| `--bg-dark`    | `--neutral-ink` | `--neutral-black` | Dark elevation surface       |
+
+**Slate (v4 — CR-006)** — for NxLogo wordmark slate text + secondary strokes:
+
+| Token         | Light HSL     | Dark HSL      | Reference hex | Dùng ở                     |
+| ------------- | ------------- | ------------- | ------------- | -------------------------- |
+| `--slate-500` | `221 12% 51%` | `221 12% 60%` | `#777E90`     | Wordmark slate text        |
+| `--slate-600` | `221 12% 46%` | `221 12% 55%` | `#6A7182`     | Stroke + secondary divider |
+
+**Glassmorphism utilities (v4 — CR-006)** — applied via Tailwind class combos, not standalone tokens. Per [visual-language §11](visual-language.md#11-glassmorphism-layering-v4--cr-006):
+
+- `bg-white/6 border-white/10 backdrop-blur-md` — Subtle (stat tile over dark hero).
+- `bg-white/12 border-white/20 backdrop-blur-md` — Feature pill / testimonial.
+- `bg-white/18 border-white/25 backdrop-blur-md` — Initials plate / Live pill.
+- `bg-white/22 border-white/30 backdrop-blur-md` — Section nav active state.
+
+Only over `GradientHero` or dark gradient banners. Never over light bg.
+
+**Dropped tokens (v3 / v3.1 lineage)**:
+
+- `--canvas` / `--canvas-muted` — warm off-white page bg (v3).
+- `--sage` / `--sage-foreground` / `--sage-bg` / `--sage-text` — sage secondary accent (v3).
+- `--tile-orange` / `--tile-navy` / `--tile-green` / `--tile-amber` / `--tile-peach` / `--tile-rust` — muted tile palette (v3.1).
+
+v4 replaces these with the accent palette + hero gradient + logo gradient + neutrals/slate/glassmorphism above.
 
 **Secondary — Nexlab gold** (default button bg per Nexlab convention):
 
@@ -137,7 +203,7 @@ Usage rules (per [visual-language §2 + §10](visual-language.md)):
 - **Body**: `Roboto` (400 / 500 / 700). Tailwind class `font-body` (default `font-sans` alias).
 - **Display / Heading / Label**: `Inter` (400 / 500 / 600 / 700). Tailwind class `font-display`.
 - **UI chrome (buttons, fields)**: SF Pro Text fallback Inter via `font-ui` stack (`-apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", ...`).
-- **Brand wordmark**: SVG lockup (no font needed). Reserved Montserrat if future override needed.
+- **Brand wordmark**: SVG lockup (no font needed). `Montserrat` 200/300/400 loaded via `@fontsource/montserrat` for the reserved `font-brand` Tailwind family — used only if wordmark is rendered as text (e.g., compact fallback). Per [ADR-003](../adr/ADR-003-nexlab-design-system.md) and [tokens.css reference](../../screens/dev%27s%20onboarding%20portal/styles/tokens.css).
 - Applied tự động: `body` → Roboto, `h1..h6` → Inter (index.css). Override per-screen qua Tailwind class nếu cần.
 
 **Scale** (Nexlab Material 3 mapping):
@@ -274,13 +340,17 @@ Thêm variant / component mới:
 | `SearchInput`      | AppHeader persistent search field; Enter submit → `/search?q=...&projectSlug=?`                                                                                                                            | T10 (planned)                |
 | `FilterChip`       | Pill "× Trong Demo" cho scope filter remove                                                                                                                                                                | T10 (planned)                |
 
-### 5.2.1 Pattern primitives (v3.1 — CR-006) ([apps/web/src/components/patterns/](../../apps/web/src/components/patterns/))
+### 5.2.1 Pattern primitives v2 (v4 — CR-006) ([apps/web/src/components/patterns/](../../apps/web/src/components/patterns/))
 
-Decorative SVG primitives. Subtle, opt-in per caller. aria-hidden + pointer-events-none.
+Replaces v3.1 single `CircleDecor` primitive. v4 introduces 3 cooperating primitives for dark vivid hero treatment. All `aria-hidden` + `pointer-events-none` where decorative.
 
-| Component     | Purpose                                                                                                                                                               | File              |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
-| `CircleDecor` | 2 overlapping SVG circles using currentColor; caller controls tint via `text-{color}`. Default opacity 0.18. Used in ProjectCard tile bottom-right for visual reward. | `CircleDecor.tsx` |
+| Component       | Purpose                                                                                                                                                                                                                                                 | File                |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `GradientHero`  | Wrapper section with dark gradient bg (4 stops `--hero-1..4`, 145deg) + 3 radial color blob `<div>`s + dot-grid overlay + optional `<LogoWatermark>` slot + children slot. Props: `blobs?` (3 default), `showWatermark?`, `gridOverlay?`, `className?`. | `GradientHero.tsx`  |
+| `LogoWatermark` | Absolute-positioned masked SVG with logo gradient. Props: `size`, `opacity` (0.10-0.13 default), `className`. Used inside `GradientHero` for brand watermark in hero corner.                                                                            | `LogoWatermark.tsx` |
+| `ProgressRing`  | SVG circular progress (2 concentric circles, rotate -90°). Props: `pct` (0-100), `size` (44-56 default), `color` (stroke), `bg` (track), `strokeWidth` (6 default).                                                                                     | `ProgressRing.tsx`  |
+
+**Dropped in v4**: `CircleDecor` — v3.1 abstract primitive replaced by inline circle `<div>`s in card headers (e.g. ProjectCard 2 decorative circles directly in JSX with rgba white .12 + .07).
 
 ### 5.3 Feature components ([apps/web/src/components/features/](../../apps/web/src/components/features/))
 
@@ -358,6 +428,8 @@ Thêm row khi đổi token, icon registry, component inventory. Breaking change 
 | 2026-05-15 | **US-009 Gate 1 scaffold** — `ProfilePage` registered §5.3 + planned `Avatar` extension (`imageUrl` prop). Spec only — implementation lands T2-T5.                                                                                                                                                                                                                                                                                                                                                                                                                               | US-009 Gate 1 (spec only)                   |
 | 2026-05-15 | **US-009 implemented** — `ProfilePage` ships ở `/profile`. `Avatar` gains `imageUrl` prop + `lg` size; UserMenu trigger + dropdown header pass `user.avatarUrl`. UserMenu "Hồ sơ của tôi" item enabled qua `asChild <Link to="/profile">`.                                                                                                                                                                                                                                                                                                                                       | US-009 ship `ef3b59a`                       |
 | 2026-05-16 | **CR-006 (v3) — warm canvas + sage tokens** ([visual-language v3](visual-language.md)). Add `--canvas` + `--canvas-muted` + `--sage` + `--sage-bg/-text/-foreground` (light + dark). Drops CR-005 reverted accent palette. Used for Notion warm direction: warm page bg variant + sage secondary CTA/banner per [§10 Filled button + banner](visual-language.md#10-component-patterns).                                                                                                                                                                                          | CR-006 Gate 1 (spec only)                   |
+| 2026-05-16 | **CR-006 (v3.1) — tile palette + CircleDecor** ([visual-language v3.1](visual-language.md)). Add 6 `--tile-*` tokens (orange/navy/green/amber/peach/rust) + `CircleDecor` primitive. Drops CR-005 reverted. Used for ProjectCard rich tile category identity. Shipped `e1e1f5e` / `ab92574` / `55b6356`, superseded by v4.                                                                                                                                                                                                                                                       | CR-006 v3.1 ship                            |
+| 2026-05-16 | **CR-006 (v4) — Dark vivid + glassmorphism amend** ([v4](visual-language.md)). DROP v3/v3.1 tokens. ADD accent palette + hero gradient + logo gradient + neutrals + slate + Montserrat. Replace `CircleDecor` with `GradientHero` / `LogoWatermark` / `ProgressRing`. Pilot scope only.                                                                                                                                                                                                                                                                                          | CR-006 v4 Gate 1 (spec only)                |
 
 ---
 
