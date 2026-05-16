@@ -38,7 +38,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useMe } from "@/queries/auth";
-import { useChangePassword, useUpdateMyProfile, useUploadAvatar } from "@/queries/me";
+import {
+  useChangePassword,
+  useUpdateMyProfile,
+  useUploadAvatar,
+  useUploadMyCover,
+} from "@/queries/me";
 import { useMeStats, useMyActivity, useMyRecentProjects } from "@/queries/stats";
 import { useMySkills } from "@/queries/skills";
 import { EditSkillsDialog, SKILL_COLOR_HEX } from "@/components/profile/EditSkillsDialog";
@@ -62,27 +67,36 @@ export function ProfilePage(): JSX.Element | null {
 
   return (
     <main className="bg-background pb-16">
-      {/* Cover hero — v4 */}
-      <GradientHero
-        showWatermark
-        gridOverlay
-        className="relative h-[200px]"
-        blobs={[
-          { color: "rgba(139,92,246,0.5)", size: 320, pos: { top: -60, left: -40 } },
-          { color: "rgba(240,118,19,0.45)", size: 280, pos: { bottom: -40, right: 120 } },
-        ]}
-      >
-        <div className="relative h-full">
-          <button
-            type="button"
-            onClick={() => toast("Đổi ảnh bìa: tính năng đang phát triển trong v2")}
-            className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-[10px] border border-white/25 bg-white/12 px-3.5 py-1.5 font-ui text-[12px] font-semibold text-white backdrop-blur-sm hover:bg-white/15"
+      {/* Cover hero — v4 (US-019: real image overlay when coverUrl set) */}
+      <div className="relative h-[200px] overflow-hidden">
+        {user.coverUrl ? (
+          <>
+            <img
+              src={user.coverUrl}
+              alt=""
+              className="absolute inset-0 size-full object-cover"
+              aria-hidden="true"
+            />
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/60"
+            />
+          </>
+        ) : (
+          <GradientHero
+            showWatermark
+            gridOverlay
+            className="absolute inset-0"
+            blobs={[
+              { color: "rgba(139,92,246,0.5)", size: 320, pos: { top: -60, left: -40 } },
+              { color: "rgba(240,118,19,0.45)", size: 280, pos: { bottom: -40, right: 120 } },
+            ]}
           >
-            <ImageIcon className="size-3.5" aria-hidden="true" />
-            Đổi ảnh bìa
-          </button>
-        </div>
-      </GradientHero>
+            <div />
+          </GradientHero>
+        )}
+        <CoverUploadDialog />
+      </div>
 
       {/* Profile card overlap */}
       <div className="relative -mt-[60px] px-10">
@@ -935,6 +949,93 @@ function AvatarUploadDialog({ user }: { user: ProfileUser }): JSX.Element {
               <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />
             ) : (
               <Camera className="mr-2 size-4" aria-hidden="true" />
+            )}
+            Tải lên ảnh mới
+          </Button>
+        </div>
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            Đóng
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/* ---------- CoverUploadDialog (US-019) ---------- */
+
+function CoverUploadDialog(): JSX.Element {
+  const [open, setOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const mutation = useUploadMyCover();
+
+  const onPick = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 4 * 1024 * 1024) {
+      toast.error("File quá lớn (≤ 4 MB)");
+      e.target.value = "";
+      return;
+    }
+    mutation.mutate(file, {
+      onSuccess: () => {
+        toast.success("Đã cập nhật ảnh bìa");
+        setOpen(false);
+      },
+      onError: (err) => {
+        if (err instanceof ApiError && err.status === 415) {
+          toast.error("File phải là ảnh PNG/JPG/WebP");
+        } else if (err instanceof ApiError && err.status === 413) {
+          toast.error("File quá lớn (≤ 4 MB)");
+        } else if (err instanceof ApiError && (err.status === 502 || err.status === 503)) {
+          toast.error("Upload tạm thời không khả dụng, thử lại sau");
+        } else {
+          toast.error("Có lỗi xảy ra, thử lại sau");
+        }
+      },
+    });
+    e.target.value = "";
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <button
+          type="button"
+          aria-label="Đổi ảnh bìa"
+          className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-[10px] border border-white/25 bg-white/12 px-3.5 py-1.5 font-ui text-[12px] font-semibold text-white backdrop-blur-sm hover:bg-white/15"
+        >
+          <ImageIcon className="size-3.5" aria-hidden="true" />
+          Đổi ảnh bìa
+        </button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle className="font-display text-[18px] font-bold">Ảnh bìa</DialogTitle>
+          <DialogDescription className="font-body text-[13px] text-muted-foreground">
+            PNG, JPG, hoặc WebP ≤ 4 MB. Ảnh hiển thị ở đầu trang hồ sơ.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex flex-col gap-4 px-6 pb-4 pt-2">
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            className="hidden"
+            onChange={onPick}
+            aria-label="Chọn ảnh bìa"
+          />
+          <Button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={mutation.isPending}
+            className="w-full"
+          >
+            {mutation.isPending ? (
+              <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />
+            ) : (
+              <ImageIcon className="mr-2 size-4" aria-hidden="true" />
             )}
             Tải lên ảnh mới
           </Button>

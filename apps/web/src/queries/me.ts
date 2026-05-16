@@ -62,3 +62,25 @@ export function useUploadAvatar(): UseMutationResult<UploadAvatarResponse, Error
     },
   });
 }
+
+/** US-019 — upload cover image for own profile. Invalidates auth.me. */
+interface UploadCoverResponse {
+  coverUrl: string;
+}
+
+export function useUploadMyCover(): UseMutationResult<UploadCoverResponse, Error, File> {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (file: File) => {
+      const form = new FormData();
+      form.append("file", file);
+      return apiFetch<UploadCoverResponse>("/me/cover", {
+        method: "POST",
+        body: form,
+      });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: authKeys.me });
+    },
+  });
+}

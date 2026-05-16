@@ -98,6 +98,27 @@ export function useArchiveProject(slug: string): UseMutationResult<void, Error, 
   });
 }
 
+/** US-019 — admin uploads project cover. Invalidates project detail + list. */
+export function useUploadProjectCover(
+  slug: string,
+): UseMutationResult<{ coverUrl: string }, Error, File> {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (file: File) => {
+      const form = new FormData();
+      form.append("file", file);
+      return apiFetch<{ coverUrl: string }>(`/projects/${slug}/cover`, {
+        method: "POST",
+        body: form,
+      });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: projectKeys.byId(slug) });
+      qc.invalidateQueries({ queryKey: projectKeys.all });
+    },
+  });
+}
+
 /**
  * US-008: admin-only soft-delete of a feature inside a project. Mirrors
  * `useArchiveProject` shape. Invalidate the project detail query so the

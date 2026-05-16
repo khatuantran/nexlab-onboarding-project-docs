@@ -161,6 +161,39 @@ describe("ProjectLandingPage", () => {
     expect(cls).not.toContain("text-orange-200");
   });
 
+  it("US-019: renders ProjectHero <img> when project.coverUrl set", async () => {
+    server.use(
+      http.get(`${BASE}/projects/with-cover`, () =>
+        HttpResponse.json(
+          {
+            data: {
+              project: {
+                id: "p-1",
+                slug: "with-cover",
+                name: "Cover Project",
+                description: "",
+                createdAt: "2026-04-20T10:00:00Z",
+                updatedAt: "2026-04-23T10:00:00Z",
+                contributors: [],
+                repoUrl: null,
+                coverUrl: "https://res.cloudinary.com/x/image/upload/v1/proj-cover.png",
+              },
+              features: [],
+            },
+          },
+          { status: 200 },
+        ),
+      ),
+    );
+
+    renderLanding("with-cover");
+    await screen.findByRole("heading", { name: /cover project/i });
+    const img = document.querySelector(
+      "img[src='https://res.cloudinary.com/x/image/upload/v1/proj-cover.png']",
+    );
+    expect(img).not.toBeNull();
+  });
+
   it("renders empty state when features is empty (AC-4)", async () => {
     server.use(
       http.get(`${BASE}/projects/demo`, () =>

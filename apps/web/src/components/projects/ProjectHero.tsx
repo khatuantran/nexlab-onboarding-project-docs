@@ -14,6 +14,8 @@ interface ProjectHeroProps {
   lastUpdatedBy: string | null;
   /** US-011 — real contributor display names (top 5). Empty when no edits. */
   contributors: string[];
+  /** US-019 — Cloudinary cover URL; null → fallback to GradientHero. */
+  coverUrl?: string | null;
   actions?: ReactNode;
 }
 
@@ -56,6 +58,7 @@ export function ProjectHero({
   lastUpdatedAt,
   lastUpdatedBy,
   contributors,
+  coverUrl = null,
   actions,
 }: ProjectHeroProps): JSX.Element {
   const pct = totalSections > 0 ? Math.round((filledSections / totalSections) * 100) : 0;
@@ -67,13 +70,27 @@ export function ProjectHero({
     <GradientHero
       showWatermark
       gridOverlay
-      className="mx-10 mb-7 mt-3 rounded-[22px]"
+      className="relative mx-10 mb-7 mt-3 overflow-hidden rounded-[22px]"
       blobs={[
         { color: "rgba(240,118,19,0.4)", size: 300, pos: { top: -50, left: -30 } },
         { color: "rgba(139,92,246,0.35)", size: 260, pos: { bottom: -40, right: 120 } },
       ]}
     >
-      <div className="flex flex-col gap-6 p-[32px_36px_30px] sm:flex-row sm:items-start">
+      {coverUrl ? (
+        <>
+          <img
+            src={coverUrl}
+            alt=""
+            className="absolute inset-0 size-full object-cover"
+            aria-hidden="true"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/60"
+          />
+        </>
+      ) : null}
+      <div className="relative flex flex-col gap-6 p-[32px_36px_30px] sm:flex-row sm:items-start">
         <div className="flex-1">
           {/* Tag + Live chips */}
           <div className="mb-3 flex flex-wrap items-center gap-2">

@@ -1,11 +1,21 @@
-import { useMemo } from "react";
-import { Code, FolderPlus, Plus, Star } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import { Code, FolderPlus, Image as ImageIcon, Loader2, Plus, Star } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import type { FeatureListItem, ProjectResponse } from "@onboarding/shared";
 import { ApiError } from "@/lib/api";
 import { Breadcrumb } from "@/components/common/Breadcrumb";
 import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { AdminGate } from "@/components/common/AdminGate";
 import { AuthorGate } from "@/components/common/AuthorGate";
 import { EmptyState } from "@/components/common/EmptyState";
@@ -14,7 +24,94 @@ import { FeatureCard } from "@/components/features/FeatureCard";
 import { ProjectActionsMenu } from "@/components/projects/ProjectActionsMenu";
 import { ProjectHero } from "@/components/projects/ProjectHero";
 import { ProjectTabs } from "@/components/projects/ProjectTabs";
-import { useProject } from "@/queries/projects";
+import { useProject, useUploadProjectCover } from "@/queries/projects";
+
+/* ---------- ProjectCoverUploadDialog (US-019) ---------- */
+
+function ProjectCoverUploadDialog({ slug }: { slug: string }): JSX.Element {
+  const [open, setOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const mutation = useUploadProjectCover(slug);
+
+  const onPick = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 4 * 1024 * 1024) {
+      toast.error("File quá lớn (≤ 4 MB)");
+      e.target.value = "";
+      return;
+    }
+    mutation.mutate(file, {
+      onSuccess: () => {
+        toast.success("Đã cập nhật ảnh bìa project");
+        setOpen(false);
+      },
+      onError: (err) => {
+        if (err instanceof ApiError && err.status === 415) {
+          toast.error("File phải là ảnh PNG/JPG/WebP");
+        } else if (err instanceof ApiError && err.status === 413) {
+          toast.error("File quá lớn (≤ 4 MB)");
+        } else if (err instanceof ApiError && (err.status === 502 || err.status === 503)) {
+          toast.error("Upload tạm thời không khả dụng, thử lại sau");
+        } else {
+          toast.error("Có lỗi xảy ra, thử lại sau");
+        }
+      },
+    });
+    e.target.value = "";
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <button
+          type="button"
+          aria-label="Đổi ảnh bìa project"
+          className="inline-flex items-center gap-2 rounded-[10px] border border-white/25 bg-white/10 px-3.5 py-2 font-ui text-[13px] font-semibold text-white backdrop-blur-sm hover:bg-white/15"
+        >
+          <ImageIcon aria-hidden="true" className="size-3.5" />
+          Ảnh bìa
+        </button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle className="font-display text-[18px] font-bold">Ảnh bìa project</DialogTitle>
+          <DialogDescription className="font-body text-[13px] text-muted-foreground">
+            PNG, JPG, hoặc WebP ≤ 4 MB. Ảnh hiển thị trên hero của project.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex flex-col gap-4 px-6 pb-4 pt-2">
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            className="hidden"
+            onChange={onPick}
+            aria-label="Chọn ảnh bìa project"
+          />
+          <Button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={mutation.isPending}
+            className="w-full"
+          >
+            {mutation.isPending ? (
+              <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />
+            ) : (
+              <ImageIcon className="mr-2 size-4" aria-hidden="true" />
+            )}
+            Tải lên ảnh mới
+          </Button>
+        </div>
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            Đóng
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 function placeholderToast(label: string): () => void {
   return () => toast(`${label}: tính năng đang phát triển trong v2`);
@@ -214,6 +311,7 @@ function HeroBlock({
       lastUpdatedAt={lastUpdatedAt}
       lastUpdatedBy={null}
       contributors={(project.contributors ?? []).map((c) => c.displayName)}
+      coverUrl={project.coverUrl}
       actions={
         <>
           <button
@@ -251,6 +349,7 @@ function HeroBlock({
             <CreateFeatureDialog projectSlug={project.slug} projectName={project.name} />
           </AuthorGate>
           <AdminGate>
+            <ProjectCoverUploadDialog slug={project.slug} />
             <div className="rounded-[10px] bg-white/15 backdrop-blur-sm">
               <ProjectActionsMenu project={project} />
             </div>

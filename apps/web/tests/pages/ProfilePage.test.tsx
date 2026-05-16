@@ -13,6 +13,7 @@ function mockMe(
     department: string | null;
     location: string | null;
     bio: string | null;
+    coverUrl: string | null;
   }> = {},
 ) {
   server.use(
@@ -32,6 +33,7 @@ function mockMe(
               department: overrides.department ?? null,
               location: overrides.location ?? null,
               bio: overrides.bio ?? null,
+              coverUrl: overrides.coverUrl ?? null,
             },
           },
         },
@@ -40,6 +42,28 @@ function mockMe(
     ),
   );
 }
+
+describe("ProfilePage US-019 — cover image hero", () => {
+  it("renders cover <img> + overlay when coverUrl set", async () => {
+    mockMe({ coverUrl: "https://res.cloudinary.com/x/image/upload/v1/cover.png" });
+    renderWithRouter(<ProfilePage />, ["/profile"]);
+    await screen.findByText("tester@nexlab.com");
+    const img = document.querySelector(
+      "img[src='https://res.cloudinary.com/x/image/upload/v1/cover.png']",
+    );
+    expect(img).not.toBeNull();
+  });
+
+  it("falls back to gradient hero when coverUrl null", async () => {
+    mockMe({ coverUrl: null });
+    renderWithRouter(<ProfilePage />, ["/profile"]);
+    await screen.findByText("tester@nexlab.com");
+    const img = document.querySelector("img[src*='cloudinary']");
+    expect(img).toBeNull();
+    // "Đổi ảnh bìa" button still present.
+    expect(screen.getByRole("button", { name: /đổi ảnh bìa/i })).toBeInTheDocument();
+  });
+});
 
 describe("ProfilePage (US-009 / v4.2 — 3 dialog actions)", () => {
   it("renders page header + email + 3 dialog triggers (Cập nhật hồ sơ / Đổi mật khẩu / avatar)", async () => {
