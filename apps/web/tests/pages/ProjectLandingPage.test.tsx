@@ -130,6 +130,36 @@ describe("ProjectLandingPage", () => {
     expect(repoBtn).toBeDisabled();
   });
 
+  it("BUG-006: Pilot hero chip uses text-orange-200 (not #FFD092) for dark-mode contrast", async () => {
+    server.use(
+      http.get(`${BASE}/projects/demo`, () =>
+        HttpResponse.json(
+          {
+            data: {
+              project: {
+                id: "p-1",
+                slug: "demo",
+                name: "Demo Project",
+                description: null,
+                createdAt: "2026-04-20T10:00:00Z",
+                updatedAt: "2026-04-20T10:00:00Z",
+              },
+              features: [],
+            },
+          },
+          { status: 200 },
+        ),
+      ),
+    );
+
+    renderLanding();
+
+    const chip = await screen.findByText(/^Pilot$/);
+    const cls = chip.className;
+    expect(cls).toContain("text-orange-200");
+    expect(cls).not.toContain("text-[#FFD092]");
+  });
+
   it("renders empty state when features is empty (AC-4)", async () => {
     server.use(
       http.get(`${BASE}/projects/demo`, () =>
