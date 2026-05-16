@@ -106,13 +106,22 @@ export function UserMenu({ user }: UserMenuProps): JSX.Element {
             Hồ sơ của tôi
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem disabled title="Sắp ra mắt">
-          <Settings className="size-4" aria-hidden="true" />
-          Cài đặt
-          <span className="ml-auto font-ui text-[10px] uppercase tracking-wide text-muted-foreground">
-            Sắp ra mắt
-          </span>
-        </DropdownMenuItem>
+        {isAdmin ? (
+          <DropdownMenuItem asChild>
+            <Link to="/admin/settings">
+              <Settings className="size-4" aria-hidden="true" />
+              Cài đặt hệ thống
+            </Link>
+          </DropdownMenuItem>
+        ) : (
+          <DropdownMenuItem disabled title="Sắp ra mắt">
+            <Settings className="size-4" aria-hidden="true" />
+            Cài đặt
+            <span className="ml-auto font-ui text-[10px] uppercase tracking-wide text-muted-foreground">
+              Sắp ra mắt
+            </span>
+          </DropdownMenuItem>
+        )}
         {isAdmin ? (
           <DropdownMenuItem asChild>
             <Link to="/admin/users">
