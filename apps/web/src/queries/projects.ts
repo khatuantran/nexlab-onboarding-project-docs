@@ -12,6 +12,7 @@ import type {
   ProjectResponse,
   ProjectSummary,
   SectionResponse,
+  UpdateFeatureRequest,
   UpdateProjectRequest,
 } from "@onboarding/shared";
 import { apiFetch } from "@/lib/api";
@@ -113,6 +114,29 @@ export function useArchiveFeature(
         method: "POST",
       });
     },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: projectKeys.byId(projectSlug) });
+      qc.invalidateQueries({ queryKey: projectKeys.feature(projectSlug, featureSlug) });
+    },
+  });
+}
+
+/**
+ * US-012: admin updates a feature's title and/or slug. On success, invalidates
+ * project detail (feature row refresh) + the old feature key (caller is
+ * responsible for navigating to the new slug when it changes).
+ */
+export function useUpdateFeature(
+  projectSlug: string,
+  featureSlug: string,
+): UseMutationResult<FeatureResponse, Error, UpdateFeatureRequest> {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body) =>
+      apiFetch<FeatureResponse>(`/projects/${projectSlug}/features/${featureSlug}`, {
+        method: "PATCH",
+        body: JSON.stringify(body),
+      }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: projectKeys.byId(projectSlug) });
       qc.invalidateQueries({ queryKey: projectKeys.feature(projectSlug, featureSlug) });

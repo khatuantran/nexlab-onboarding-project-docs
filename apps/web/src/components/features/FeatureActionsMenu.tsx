@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Archive, MoreHorizontal } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Archive, MoreHorizontal, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { ApiError } from "@/lib/api";
 import { useArchiveFeature } from "@/queries/projects";
@@ -11,10 +12,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { EditFeatureDialog } from "@/components/features/EditFeatureDialog";
 
 interface FeatureActionsMenuProps {
   projectSlug: string;
   feature: { slug: string; title: string };
+  /**
+   * When true, navigate to the new slug after a successful rename. Set on
+   * FeatureDetailPage where the current URL embeds the old slug; leave off
+   * on grid contexts (FeatureCard) where invalidation alone suffices.
+   */
+  navigateOnSlugChange?: boolean;
 }
 
 /**
@@ -24,8 +32,14 @@ interface FeatureActionsMenuProps {
  * `window.confirm` (v4.6); sau success: toast + cache invalidate
  * (handled by useArchiveFeature).
  */
-export function FeatureActionsMenu({ projectSlug, feature }: FeatureActionsMenuProps): JSX.Element {
+export function FeatureActionsMenu({
+  projectSlug,
+  feature,
+  navigateOnSlugChange = false,
+}: FeatureActionsMenuProps): JSX.Element {
+  const navigate = useNavigate();
   const [archiveOpen, setArchiveOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
   const archiveMutation = useArchiveFeature(projectSlug, feature.slug);
 
   const handleArchive = (): void => {
@@ -56,6 +70,10 @@ export function FeatureActionsMenu({ projectSlug, feature }: FeatureActionsMenuP
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          <DropdownMenuItem onSelect={() => setEditOpen(true)}>
+            <Pencil className="mr-2 size-4" aria-hidden="true" />
+            Sửa feature
+          </DropdownMenuItem>
           <DropdownMenuItem
             onSelect={() => setArchiveOpen(true)}
             disabled={archiveMutation.isPending}
@@ -66,6 +84,19 @@ export function FeatureActionsMenu({ projectSlug, feature }: FeatureActionsMenuP
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <EditFeatureDialog
+        projectSlug={projectSlug}
+        feature={feature}
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        onSlugChange={
+          navigateOnSlugChange
+            ? (newSlug) =>
+                navigate(`/projects/${projectSlug}/features/${newSlug}`, { replace: true })
+            : undefined
+        }
+      />
 
       <ConfirmDialog
         open={archiveOpen}
