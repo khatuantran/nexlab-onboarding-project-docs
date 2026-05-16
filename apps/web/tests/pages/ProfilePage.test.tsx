@@ -5,7 +5,16 @@ import { ProfilePage } from "@/pages/ProfilePage";
 import { renderWithRouter } from "../lib/test-utils";
 import { server, http, HttpResponse, BASE } from "../lib/msw";
 
-function mockMe(overrides: Partial<{ avatarUrl: string | null; displayName: string }> = {}) {
+function mockMe(
+  overrides: Partial<{
+    avatarUrl: string | null;
+    displayName: string;
+    phone: string | null;
+    department: string | null;
+    location: string | null;
+    bio: string | null;
+  }> = {},
+) {
   server.use(
     http.get(`${BASE}/auth/me`, () =>
       HttpResponse.json(
@@ -19,6 +28,10 @@ function mockMe(overrides: Partial<{ avatarUrl: string | null; displayName: stri
               avatarUrl: overrides.avatarUrl ?? null,
               lastLoginAt: new Date().toISOString(),
               createdAt: "2026-01-01T00:00:00.000Z",
+              phone: overrides.phone ?? null,
+              department: overrides.department ?? null,
+              location: overrides.location ?? null,
+              bio: overrides.bio ?? null,
             },
           },
         },
@@ -140,6 +153,61 @@ describe("ProfilePage (US-009 / v4.2 — 3 dialog actions)", () => {
     await user.upload(input, bigFile);
     await new Promise((r) => setTimeout(r, 30));
     expect(posted).toBe(false);
+  });
+});
+
+describe("ProfilePage US-010 — PersonalInfoCard real fields + EditProfileDialog 4-input", () => {
+  it("AC-7: renders real phone/department/location from /me", async () => {
+    mockMe({ phone: "0912345678", department: "Dev Team", location: "Hà Nội" });
+    renderWithRouter(<ProfilePage />, ["/profile"]);
+    expect(await screen.findByText("tester@nexlab.com")).toBeInTheDocument();
+    expect(screen.getByText("0912345678")).toBeInTheDocument();
+    expect(screen.getByText("Dev Team")).toBeInTheDocument();
+    expect(screen.getByText("Hà Nội")).toBeInTheDocument();
+  });
+
+  it("AC-8: renders '— Chưa cập nhật' for null phone/department/location", async () => {
+    mockMe({ phone: null, department: null, location: null });
+    renderWithRouter(<ProfilePage />, ["/profile"]);
+    await screen.findByText("tester@nexlab.com");
+    expect(screen.getAllByText(/chưa cập nhật/i).length).toBeGreaterThanOrEqual(3);
+  });
+
+  it("AC-9: EditProfileDialog accepts phone input → PATCH includes phone", async () => {
+    mockMe();
+    let patchedBody: Record<string, unknown> = {};
+    server.use(
+      http.patch(`${BASE}/me`, async ({ request }) => {
+        patchedBody = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json(
+          {
+            data: {
+              id: "u-1",
+              email: "tester@nexlab.com",
+              displayName: "Tester",
+              role: "author",
+              avatarUrl: null,
+              lastLoginAt: null,
+              createdAt: "2026-01-01T00:00:00.000Z",
+              phone: patchedBody.phone ?? null,
+              department: null,
+              location: null,
+              bio: null,
+            },
+          },
+          { status: 200 },
+        );
+      }),
+    );
+    renderWithRouter(<ProfilePage />, ["/profile"]);
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole("button", { name: /^cập nhật hồ sơ$/i }));
+    const phoneInput = await screen.findByLabelText(/^điện thoại$/i);
+    await user.type(phoneInput, "0987654321");
+    await user.click(screen.getByRole("button", { name: /^lưu$/i }));
+    await waitFor(() => {
+      expect(patchedBody.phone).toBe("0987654321");
+    });
   });
 });
 

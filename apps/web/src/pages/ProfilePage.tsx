@@ -193,11 +193,12 @@ function ProfileTabs(): JSX.Element {
 interface InfoRowProps {
   icon: LucideIcon;
   label: string;
-  value: string;
+  value: string | null;
   accent: string;
 }
 
 function InfoRow({ icon: Icon, label, value, accent }: InfoRowProps): JSX.Element {
+  const isEmpty = value == null || value.trim().length === 0;
   return (
     <div className="flex items-center gap-3 border-b border-border py-3 last:border-b-0">
       <span
@@ -211,7 +212,15 @@ function InfoRow({ icon: Icon, label, value, accent }: InfoRowProps): JSX.Elemen
         <div className="font-ui text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
           {label}
         </div>
-        <div className="mt-1 font-ui text-[14px] font-semibold text-foreground">{value}</div>
+        <div
+          className={
+            isEmpty
+              ? "mt-1 font-ui text-[14px] italic text-muted-foreground"
+              : "mt-1 font-ui text-[14px] font-semibold text-foreground"
+          }
+        >
+          {isEmpty ? "— Chưa cập nhật" : value}
+        </div>
       </div>
     </div>
   );
@@ -235,14 +244,9 @@ function PersonalInfoCard({ user }: { user: ProfileUser }): JSX.Element {
         </span>
       </div>
       <InfoRow icon={UserIcon} label="Họ tên" value={user.displayName} accent="#F07613" />
-      <InfoRow icon={Phone} label="Điện thoại" value="0901 234 567" accent="#10B981" />
-      <InfoRow
-        icon={UsersIcon}
-        label="Phòng ban"
-        value={user.role === "admin" ? "Admin · System" : "Product · BA Team"}
-        accent="#8B5CF6"
-      />
-      <InfoRow icon={MapPin} label="Địa chỉ" value="TP. Hồ Chí Minh" accent="#F43F5E" />
+      <InfoRow icon={Phone} label="Điện thoại" value={user.phone} accent="#10B981" />
+      <InfoRow icon={UsersIcon} label="Phòng ban" value={user.department} accent="#8B5CF6" />
+      <InfoRow icon={MapPin} label="Địa chỉ" value={user.location} accent="#F43F5E" />
     </section>
   );
 }
@@ -478,32 +482,81 @@ interface ProfileUser {
   avatarUrl: string | null;
   lastLoginAt: string | null;
   createdAt: string;
+  // US-010 — profile enrichment, all nullable.
+  phone: string | null;
+  department: string | null;
+  location: string | null;
+  bio: string | null;
 }
 
 /* ---------- EditProfileDialog ---------- */
 
+interface ProfileFormDraft {
+  displayName: string;
+  phone: string;
+  department: string;
+  location: string;
+  bio: string;
+}
+
+function makeDraft(user: ProfileUser): ProfileFormDraft {
+  return {
+    displayName: user.displayName,
+    phone: user.phone ?? "",
+    department: user.department ?? "",
+    location: user.location ?? "",
+    bio: user.bio ?? "",
+  };
+}
+
 function EditProfileDialog({ user }: { user: ProfileUser }): JSX.Element {
   const [open, setOpen] = useState(false);
-  const [draft, setDraft] = useState(user.displayName);
+  const [draft, setDraft] = useState<ProfileFormDraft>(() => makeDraft(user));
   const mutation = useUpdateMyProfile();
+
+  /**
+   * US-010 — diff against original. For each text field:
+   *   - missing key in patch → leave untouched on server.
+   *   - explicit `null` → clear (only if had a value and user emptied it).
+   *   - string → update.
+   */
+  const buildPatch = (): {
+    displayName?: string;
+    phone?: string | null;
+    department?: string | null;
+    location?: string | null;
+    bio?: string | null;
+  } => {
+    const patch: ReturnType<typeof buildPatch> = {};
+    const nextDisplay = draft.displayName.trim();
+    if (nextDisplay && nextDisplay !== user.displayName) patch.displayName = nextDisplay;
+    const diff = (key: "phone" | "department" | "location" | "bio") => {
+      const original = user[key] ?? "";
+      const next = draft[key].trim();
+      if (next === original) return;
+      patch[key] = next === "" ? null : next;
+    };
+    diff("phone");
+    diff("department");
+    diff("location");
+    diff("bio");
+    return patch;
+  };
 
   const onSubmit = (e: FormEvent): void => {
     e.preventDefault();
-    const next = draft.trim();
-    if (!next || next === user.displayName) {
+    const patch = buildPatch();
+    if (Object.keys(patch).length === 0) {
       setOpen(false);
       return;
     }
-    mutation.mutate(
-      { displayName: next },
-      {
-        onSuccess: () => {
-          toast.success("Đã cập nhật hồ sơ");
-          setOpen(false);
-        },
-        onError: () => toast.error("Có lỗi xảy ra, thử lại sau"),
+    mutation.mutate(patch, {
+      onSuccess: () => {
+        toast.success("Đã cập nhật hồ sơ");
+        setOpen(false);
       },
-    );
+      onError: () => toast.error("Có lỗi xảy ra, thử lại sau"),
+    });
   };
 
   return (
@@ -511,7 +564,7 @@ function EditProfileDialog({ user }: { user: ProfileUser }): JSX.Element {
       open={open}
       onOpenChange={(next) => {
         setOpen(next);
-        if (next) setDraft(user.displayName);
+        if (next) setDraft(makeDraft(user));
       }}
     >
       <DialogTrigger asChild>
@@ -529,7 +582,7 @@ function EditProfileDialog({ user }: { user: ProfileUser }): JSX.Element {
             Thông tin tài khoản
           </DialogTitle>
           <DialogDescription className="font-body text-[13px] text-muted-foreground">
-            Cập nhật tên hiển thị xuất hiện trên header và các pages có avatar.
+            Cập nhật tên hiển thị, số điện thoại, phòng ban, địa chỉ và bio.
           </DialogDescription>
         </DialogHeader>
         <form className="flex flex-col gap-4 px-6 pb-4 pt-2" onSubmit={onSubmit}>
@@ -540,13 +593,63 @@ function EditProfileDialog({ user }: { user: ProfileUser }): JSX.Element {
             <Input
               id="edit-displayname"
               autoFocus
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
+              value={draft.displayName}
+              onChange={(e) => setDraft({ ...draft, displayName: e.target.value })}
               aria-label="Tên hiển thị"
             />
             <p className="font-ui text-[11px] text-muted-foreground">
               Email cố định: <strong className="text-foreground">{user.email}</strong>
             </p>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="edit-phone" className="font-ui text-xs font-semibold">
+              Điện thoại
+            </Label>
+            <Input
+              id="edit-phone"
+              value={draft.phone}
+              onChange={(e) => setDraft({ ...draft, phone: e.target.value })}
+              placeholder="0901 234 567"
+              aria-label="Điện thoại"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="edit-department" className="font-ui text-xs font-semibold">
+              Phòng ban
+            </Label>
+            <Input
+              id="edit-department"
+              value={draft.department}
+              onChange={(e) => setDraft({ ...draft, department: e.target.value })}
+              placeholder="vd. BA Team"
+              aria-label="Phòng ban"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="edit-location" className="font-ui text-xs font-semibold">
+              Địa chỉ
+            </Label>
+            <Input
+              id="edit-location"
+              value={draft.location}
+              onChange={(e) => setDraft({ ...draft, location: e.target.value })}
+              placeholder="vd. TP. Hồ Chí Minh"
+              aria-label="Địa chỉ"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="edit-bio" className="font-ui text-xs font-semibold">
+              Bio (tối đa 500 ký tự)
+            </Label>
+            <textarea
+              id="edit-bio"
+              value={draft.bio}
+              maxLength={500}
+              rows={3}
+              onChange={(e) => setDraft({ ...draft, bio: e.target.value })}
+              aria-label="Bio"
+              className="flex w-full rounded-md border border-input bg-background px-3 py-2 font-body text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            />
           </div>
           <DialogFooter className="gap-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
