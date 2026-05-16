@@ -1,9 +1,10 @@
 import { useRef, useState, type FormEvent } from "react";
-import { Camera, Loader2, Pencil } from "lucide-react";
+import { Bell, Camera, Clock, FolderOpen, Image as ImageIcon, Loader2, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { ApiError } from "@/lib/api";
 import { Avatar } from "@/components/common/Avatar";
 import { RelativeTime } from "@/components/common/RelativeTime";
+import { GradientHero } from "@/components/patterns/GradientHero";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,17 +26,101 @@ export function ProfilePage(): JSX.Element | null {
   const user = data.user;
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-8">
-      <header className="mb-7">
-        <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
-          Hồ sơ của tôi
-        </h1>
-        <p className="mt-1 font-body text-sm text-muted-foreground">
-          Quản lý thông tin tài khoản và bảo mật.
-        </p>
-      </header>
+    <main className="bg-background pb-16">
+      {/* Cover hero — v4 */}
+      <GradientHero
+        showWatermark
+        gridOverlay
+        className="relative h-[200px]"
+        blobs={[
+          { color: "rgba(139,92,246,0.5)", size: 320, pos: { top: -60, left: -40 } },
+          { color: "rgba(240,118,19,0.45)", size: 280, pos: { bottom: -40, right: 120 } },
+        ]}
+      >
+        <div className="relative h-full">
+          <button
+            type="button"
+            onClick={() => toast("Đổi ảnh bìa: tính năng đang phát triển trong v2")}
+            className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-[10px] border border-white/25 bg-white/12 px-3.5 py-1.5 font-ui text-[12px] font-semibold text-white backdrop-blur-sm hover:bg-white/15"
+          >
+            <ImageIcon className="size-3.5" aria-hidden="true" />
+            Đổi ảnh bìa
+          </button>
+        </div>
+      </GradientHero>
 
-      <div className="flex flex-col gap-6">
+      {/* Profile card overlap */}
+      <div className="relative -mt-[60px] px-10">
+        <div className="flex flex-col gap-5 rounded-[20px] border border-border bg-card p-[24px_28px] shadow-lg sm:flex-row sm:items-end">
+          {/* Avatar */}
+          <div className="relative shrink-0">
+            <div className="rounded-[20px] border-4 border-background">
+              <Avatar
+                name={user.displayName}
+                size="lg"
+                imageUrl={user.avatarUrl}
+                className="size-24 rounded-[16px] bg-gradient-to-br from-primary to-primary-700 text-[32px] shadow-[0_8px_24px_rgba(240,118,19,0.45)]"
+              />
+            </div>
+            <span
+              aria-hidden="true"
+              className="absolute bottom-1 right-1 size-[18px] rounded-full border-[3px] border-card bg-green-500"
+            />
+          </div>
+
+          {/* Name + meta */}
+          <div className="flex-1">
+            <div className="mb-1.5 flex flex-wrap items-center gap-2.5">
+              <h1 className="font-display text-[26px] font-extrabold leading-none tracking-[-0.02em] text-foreground">
+                Hồ sơ của tôi
+              </h1>
+              <span
+                className={
+                  "inline-flex items-center rounded-full px-3 py-1 font-ui text-[12px] font-bold " +
+                  (user.role === "admin"
+                    ? "bg-primary-50 text-primary-700"
+                    : "bg-muted text-muted-foreground")
+                }
+              >
+                {user.role === "admin" ? "Admin" : "Author"}
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 font-ui text-[12px] font-semibold text-green-700">
+                <span
+                  aria-hidden="true"
+                  className="size-1.5 rounded-full bg-green-500 ring-2 ring-green-500/30"
+                />
+                Online
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-5 font-body text-[13px] text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5">
+                <FolderOpen aria-hidden="true" className="size-3.5" />
+                {user.displayName}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Clock aria-hidden="true" className="size-3.5" />
+                Joined{" "}
+                <RelativeTime iso={user.createdAt} showIcon={false} className="!text-[13px]" />
+              </span>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-2.5">
+            <button
+              type="button"
+              onClick={() => toast("Thông báo: tính năng đang phát triển")}
+              className="inline-flex items-center gap-2 rounded-[10px] border border-border bg-background px-3.5 py-2 font-ui text-[13px] font-semibold text-foreground hover:bg-muted"
+            >
+              <Bell aria-hidden="true" className="size-3.5" />
+              Thông báo
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Three sections (compatibility with existing tests + functional form pieces) */}
+      <div className="mx-auto mt-6 flex max-w-3xl flex-col gap-6 px-10">
         <ProfileSection user={user} />
         <SecuritySection />
         <AvatarSection user={user} />

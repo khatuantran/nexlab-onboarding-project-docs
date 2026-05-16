@@ -2,6 +2,12 @@
 
 <!-- template: 02-ui-spec-template.md@0.1 -->
 
+> **v4 amend (CR-006 v4 — 2026-05-16)**: Cover hero overlap pattern per variation-a-profile.jsx. Header rewrites:
+>
+> - Cover `GradientHero` h-[200px] with 2 blobs (purple + orange) + dot grid + logo watermark + "Đổi ảnh bìa" placeholder button top-right.
+> - Profile card overlap `-mt-[60px] px-10`: avatar 96×96 (rounded-[16px] gradient bg-primary→primary-700 with strong shadow) + Online green dot + h1 "Hồ sơ của tôi" (was h1 page title) + Role badge (primary-50/700 for admin, muted for author) + Online pill (green-50/700) + meta row (displayName + Joined relative time) + "Thông báo" button (placeholder).
+> - 3 sections (Thông tin tài khoản / Đổi mật khẩu / Ảnh đại diện) stacked below in max-w-3xl container with px-10 mt-6 gap-6. Existing form behavior preserved.
+
 Referenced tokens / icons / components từ [design-system.md](design-system.md).
 
 ## Screen metadata
