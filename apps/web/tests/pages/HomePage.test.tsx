@@ -156,6 +156,46 @@ describe("HomePage", () => {
     expect(screen.getByText(/không tìm thấy dự án nào khớp với/i)).toBeInTheDocument();
   });
 
+  it("US-014: hero renders 3 real tiles from /workspace/stats", async () => {
+    mockMe("author");
+    mockProjects([pilot, demo]);
+    server.use(
+      http.get(`${BASE}/workspace/stats`, () =>
+        HttpResponse.json(
+          { data: { projectCount: 5, featuresDocumented: 12, contributorsActive: 3 } },
+          { status: 200 },
+        ),
+      ),
+    );
+    renderHome();
+
+    expect(await screen.findByText(/^5$/)).toBeInTheDocument();
+    expect(await screen.findByText(/^12$/)).toBeInTheDocument();
+    expect(await screen.findByText(/^3$/)).toBeInTheDocument();
+    // Old "Onboard TB" 4th tile is gone.
+    expect(screen.queryByText(/onboard tb/i)).toBeNull();
+    expect(screen.getByText(/đóng góp \(30 ngày\)/i)).toBeInTheDocument();
+  });
+
+  it("US-014: 'Đủ doc' chip filters by filledSectionCount === featureCount * 5", async () => {
+    const user = userEvent.setup();
+    mockMe("author");
+    mockProjects([
+      { ...pilot, featureCount: 2, filledSectionCount: 10 },
+      { ...demo, featureCount: 2, filledSectionCount: 7 },
+    ]);
+    renderHome();
+
+    // Both visible initially.
+    await screen.findByRole("link", { name: /xem chi tiết dự án pilot/i });
+    expect(screen.getByRole("link", { name: /xem chi tiết dự án demo/i })).toBeInTheDocument();
+
+    await user.click(screen.getByRole("tab", { name: /đủ doc/i }));
+
+    expect(screen.getByRole("link", { name: /xem chi tiết dự án pilot/i })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /xem chi tiết dự án demo/i })).toBeNull();
+  });
+
   it("error state shows retry button", async () => {
     mockMe("author");
     server.use(

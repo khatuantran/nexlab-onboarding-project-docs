@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import {
   CheckCircle2,
-  Clock,
   FolderOpen,
   Grid as GridIcon,
   List as ListIcon,
@@ -11,6 +10,7 @@ import {
 } from "lucide-react";
 import { useMe } from "@/queries/auth";
 import { useProjects } from "@/queries/projects";
+import { useWorkspaceStats } from "@/queries/stats";
 import { GradientHero } from "@/components/patterns/GradientHero";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { CreateProjectDialog } from "@/components/projects/CreateProjectDialog";
@@ -83,8 +83,11 @@ export function HomePage(): JSX.Element {
     let result = projects;
     if (filter === "active") result = result.filter((p) => p.featureCount > 0);
     else if (filter === "needs") result = result.filter((p) => p.featureCount === 0);
-    // "doc" placeholder == active until BE filledSectionCount lands.
-    else if (filter === "doc") result = result.filter((p) => p.featureCount > 0);
+    // US-014: real "Đủ doc" filter — projects whose every feature has 5/5 sections filled.
+    else if (filter === "doc")
+      result = result.filter(
+        (p) => p.featureCount > 0 && p.filledSectionCount === p.featureCount * 5,
+      );
     const q = query.trim().toLowerCase();
     if (q) {
       result = result.filter(
@@ -94,8 +97,9 @@ export function HomePage(): JSX.Element {
     return result;
   }, [projects, filter, query]);
 
+  const { data: workspaceStats } = useWorkspaceStats();
   const totalProjects = projects?.length ?? 0;
-  const totalFeatures = projects?.reduce((acc, p) => acc + p.featureCount, 0) ?? 0;
+  const totalFeatures = workspaceStats?.featuresDocumented ?? 0;
 
   return (
     <main className="min-h-[calc(100vh-4rem)] bg-background" aria-busy={isLoading || undefined}>
@@ -125,30 +129,24 @@ export function HomePage(): JSX.Element {
               </span>
             </h1>
           </div>
-          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
             <StatTile
               icon={FolderOpen}
               gradient="from-primary-700 to-primary"
-              value={isLoading ? "—" : totalProjects}
+              value={workspaceStats?.projectCount ?? "—"}
               label="Projects"
             />
             <StatTile
               icon={CheckCircle2}
               gradient="from-green-700 to-green-500"
-              value={isLoading ? "—" : totalFeatures}
+              value={workspaceStats?.featuresDocumented ?? "—"}
               label="Đủ tài liệu"
             />
             <StatTile
               icon={Users}
               gradient="from-purple-700 to-purple-500"
-              value="8"
-              label="Đóng góp"
-            />
-            <StatTile
-              icon={Clock}
-              gradient="from-blue-700 to-blue-500"
-              value="2.3h"
-              label="Onboard TB"
+              value={workspaceStats?.contributorsActive ?? "—"}
+              label="Đóng góp (30 ngày)"
             />
           </div>
         </div>
