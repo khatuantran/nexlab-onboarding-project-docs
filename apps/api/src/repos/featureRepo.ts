@@ -32,6 +32,16 @@ export interface FeatureRepo {
    * (projectSlug, featureSlug) pair doesn't match any row.
    */
   archive(projectSlug: string, featureSlug: string): Promise<boolean>;
+  /**
+   * US-012: update feature `title` and/or `slug`. Returns updated row, or null
+   * if no (active) match found. Throws `FeatureSlugConflictError` when the new
+   * slug collides with an existing feature in the same project.
+   */
+  update(
+    projectSlug: string,
+    featureSlug: string,
+    patch: { title?: string; slug?: string },
+  ): Promise<Feature | null>;
 }
 
 export function createFeatureRepo(db: Db): FeatureRepo {
@@ -94,6 +104,60 @@ export function createFeatureRepo(db: Db): FeatureRepo {
           );
           return feature;
         });
+      } catch (err) {
+        if (
+          typeof err === "object" &&
+          err !== null &&
+          "code" in err &&
+          (err as { code: string }).code === "23505"
+        ) {
+          throw new FeatureSlugConflictError();
+        }
+        throw err;
+      }
+    },
+    async update(projectSlug, featureSlug, patch) {
+      // Skip update entirely if no fields provided (defensive — Zod refine should catch).
+      if (patch.title === undefined && patch.slug === undefined) {
+        const existing = await db
+          .select({ feature: features })
+          .from(features)
+          .innerJoin(projects, eq(projects.id, features.projectId))
+          .where(
+            and(
+              eq(projects.slug, projectSlug),
+              eq(features.slug, featureSlug),
+              isNull(features.archivedAt),
+            ),
+          )
+          .limit(1);
+        return existing[0]?.feature ?? null;
+      }
+
+      const projectIdSub = db
+        .select({ id: projects.id })
+        .from(projects)
+        .where(eq(projects.slug, projectSlug));
+
+      const setClause: Partial<{ title: string; slug: string; updatedAt: Date }> = {
+        updatedAt: new Date(),
+      };
+      if (patch.title !== undefined) setClause.title = patch.title;
+      if (patch.slug !== undefined) setClause.slug = patch.slug;
+
+      try {
+        const rows = await db
+          .update(features)
+          .set(setClause)
+          .where(
+            and(
+              eq(features.slug, featureSlug),
+              eq(features.projectId, projectIdSub),
+              isNull(features.archivedAt),
+            ),
+          )
+          .returning();
+        return rows[0] ?? null;
       } catch (err) {
         if (
           typeof err === "object" &&

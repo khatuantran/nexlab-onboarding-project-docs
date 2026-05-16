@@ -34,6 +34,22 @@ export const createFeatureRequestSchema = z.object({
 
 export type CreateFeatureRequest = z.infer<typeof createFeatureRequestSchema>;
 
+/**
+ * US-012 — admin edit feature metadata (title + slug). Both fields optional
+ * but ≥ 1 must be present; empty body rejected. Slug collisions surface as
+ * 409 `FEATURE_SLUG_TAKEN` (server-side enforced).
+ */
+export const updateFeatureRequestSchema = z
+  .object({
+    title: z.string().min(1, "Tiêu đề bắt buộc").max(160, "Tiêu đề tối đa 160 ký tự").optional(),
+    slug: slugSchema.optional(),
+  })
+  .refine((v) => v.title !== undefined || v.slug !== undefined, {
+    message: "Cần ít nhất 1 trường",
+  });
+
+export type UpdateFeatureRequest = z.infer<typeof updateFeatureRequestSchema>;
+
 export const searchQuerySchema = z.object({
   q: z.string().min(1, "q is required").max(200, "q quá dài"),
   projectSlug: slugSchema.optional(),
