@@ -119,6 +119,20 @@ export function useUploadProjectCover(
   });
 }
 
+/** US-019 delete amend — admin clears project cover. */
+export function useDeleteProjectCover(slug: string): UseMutationResult<void, Error, void> {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      await apiFetch<void>(`/projects/${slug}/cover`, { method: "DELETE" });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: projectKeys.byId(slug) });
+      qc.invalidateQueries({ queryKey: projectKeys.all });
+    },
+  });
+}
+
 /**
  * US-008: admin-only soft-delete of a feature inside a project. Mirrors
  * `useArchiveProject` shape. Invalidate the project detail query so the

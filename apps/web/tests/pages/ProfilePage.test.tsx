@@ -63,6 +63,22 @@ describe("ProfilePage US-019 — cover image hero", () => {
     // "Đổi ảnh bìa" button still present.
     expect(screen.getByRole("button", { name: /đổi ảnh bìa/i })).toBeInTheDocument();
   });
+
+  it("US-019 delete amend: 'Xóa ảnh bìa' button visible only when coverUrl set", async () => {
+    mockMe({ coverUrl: "https://res.cloudinary.com/x/image/upload/v1/cover.png" });
+    renderWithRouter(<ProfilePage />, ["/profile"]);
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole("button", { name: /đổi ảnh bìa/i }));
+    expect(await screen.findByRole("button", { name: /^xóa ảnh bìa$/i })).toBeInTheDocument();
+  });
+
+  it("US-019 delete amend: 'Xóa ảnh bìa' hidden when coverUrl null", async () => {
+    mockMe({ coverUrl: null });
+    renderWithRouter(<ProfilePage />, ["/profile"]);
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole("button", { name: /đổi ảnh bìa/i }));
+    expect(screen.queryByRole("button", { name: /^xóa ảnh bìa$/i })).toBeNull();
+  });
 });
 
 describe("ProfilePage (US-009 / v4.2 — 3 dialog actions)", () => {

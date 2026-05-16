@@ -84,3 +84,29 @@ export function useUploadMyCover(): UseMutationResult<UploadCoverResponse, Error
     },
   });
 }
+
+/** US-009 delete amend — clear avatar (Cloudinary destroy + DB null). */
+export function useDeleteAvatar(): UseMutationResult<void, Error, void> {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      await apiFetch<void>("/me/avatar", { method: "DELETE" });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: authKeys.me });
+    },
+  });
+}
+
+/** US-019 delete amend — clear profile cover. */
+export function useDeleteMyCover(): UseMutationResult<void, Error, void> {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      await apiFetch<void>("/me/cover", { method: "DELETE" });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: authKeys.me });
+    },
+  });
+}

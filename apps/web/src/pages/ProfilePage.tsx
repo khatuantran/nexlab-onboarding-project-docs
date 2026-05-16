@@ -40,6 +40,8 @@ import { Label } from "@/components/ui/label";
 import { useMe } from "@/queries/auth";
 import {
   useChangePassword,
+  useDeleteAvatar,
+  useDeleteMyCover,
   useUpdateMyProfile,
   useUploadAvatar,
   useUploadMyCover,
@@ -95,7 +97,7 @@ export function ProfilePage(): JSX.Element | null {
             <div />
           </GradientHero>
         )}
-        <CoverUploadDialog />
+        <CoverUploadDialog coverUrl={user.coverUrl} />
       </div>
 
       {/* Profile card overlap */}
@@ -858,6 +860,17 @@ function AvatarUploadDialog({ user }: { user: ProfileUser }): JSX.Element {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const mutation = useUploadAvatar();
+  const deleteMutation = useDeleteAvatar();
+
+  const onDelete = (): void => {
+    deleteMutation.mutate(undefined, {
+      onSuccess: () => {
+        toast.success("Đã xóa ảnh đại diện");
+        setOpen(false);
+      },
+      onError: () => toast.error("Có lỗi xảy ra, thử lại sau"),
+    });
+  };
 
   const onPick = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const file = e.target.files?.[0];
@@ -952,6 +965,20 @@ function AvatarUploadDialog({ user }: { user: ProfileUser }): JSX.Element {
             )}
             Tải lên ảnh mới
           </Button>
+          {user.avatarUrl ? (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onDelete}
+              disabled={deleteMutation.isPending}
+              className="w-full border-destructive text-destructive hover:bg-destructive/10"
+            >
+              {deleteMutation.isPending ? (
+                <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />
+              ) : null}
+              Xóa ảnh
+            </Button>
+          ) : null}
         </div>
         <DialogFooter>
           <Button type="button" variant="outline" onClick={() => setOpen(false)}>
@@ -965,10 +992,21 @@ function AvatarUploadDialog({ user }: { user: ProfileUser }): JSX.Element {
 
 /* ---------- CoverUploadDialog (US-019) ---------- */
 
-function CoverUploadDialog(): JSX.Element {
+function CoverUploadDialog({ coverUrl }: { coverUrl: string | null }): JSX.Element {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const mutation = useUploadMyCover();
+  const deleteMutation = useDeleteMyCover();
+
+  const onDelete = (): void => {
+    deleteMutation.mutate(undefined, {
+      onSuccess: () => {
+        toast.success("Đã xóa ảnh bìa");
+        setOpen(false);
+      },
+      onError: () => toast.error("Có lỗi xảy ra, thử lại sau"),
+    });
+  };
 
   const onPick = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const file = e.target.files?.[0];
@@ -1039,6 +1077,20 @@ function CoverUploadDialog(): JSX.Element {
             )}
             Tải lên ảnh mới
           </Button>
+          {coverUrl ? (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onDelete}
+              disabled={deleteMutation.isPending}
+              className="w-full border-destructive text-destructive hover:bg-destructive/10"
+            >
+              {deleteMutation.isPending ? (
+                <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />
+              ) : null}
+              Xóa ảnh bìa
+            </Button>
+          ) : null}
         </div>
         <DialogFooter>
           <Button type="button" variant="outline" onClick={() => setOpen(false)}>

@@ -24,14 +24,31 @@ import { FeatureCard } from "@/components/features/FeatureCard";
 import { ProjectActionsMenu } from "@/components/projects/ProjectActionsMenu";
 import { ProjectHero } from "@/components/projects/ProjectHero";
 import { ProjectTabs } from "@/components/projects/ProjectTabs";
-import { useProject, useUploadProjectCover } from "@/queries/projects";
+import { useDeleteProjectCover, useProject, useUploadProjectCover } from "@/queries/projects";
 
 /* ---------- ProjectCoverUploadDialog (US-019) ---------- */
 
-function ProjectCoverUploadDialog({ slug }: { slug: string }): JSX.Element {
+function ProjectCoverUploadDialog({
+  slug,
+  coverUrl,
+}: {
+  slug: string;
+  coverUrl: string | null;
+}): JSX.Element {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const mutation = useUploadProjectCover(slug);
+  const deleteMutation = useDeleteProjectCover(slug);
+
+  const onDelete = (): void => {
+    deleteMutation.mutate(undefined, {
+      onSuccess: () => {
+        toast.success("Đã xóa ảnh bìa project");
+        setOpen(false);
+      },
+      onError: () => toast.error("Có lỗi xảy ra, thử lại sau"),
+    });
+  };
 
   const onPick = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const file = e.target.files?.[0];
@@ -102,6 +119,20 @@ function ProjectCoverUploadDialog({ slug }: { slug: string }): JSX.Element {
             )}
             Tải lên ảnh mới
           </Button>
+          {coverUrl ? (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onDelete}
+              disabled={deleteMutation.isPending}
+              className="w-full border-destructive text-destructive hover:bg-destructive/10"
+            >
+              {deleteMutation.isPending ? (
+                <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />
+              ) : null}
+              Xóa ảnh bìa
+            </Button>
+          ) : null}
         </div>
         <DialogFooter>
           <Button type="button" variant="outline" onClick={() => setOpen(false)}>
@@ -349,7 +380,7 @@ function HeroBlock({
             <CreateFeatureDialog projectSlug={project.slug} projectName={project.name} />
           </AuthorGate>
           <AdminGate>
-            <ProjectCoverUploadDialog slug={project.slug} />
+            <ProjectCoverUploadDialog slug={project.slug} coverUrl={project.coverUrl} />
             <div className="rounded-[10px] bg-white/15 backdrop-blur-sm">
               <ProjectActionsMenu project={project} />
             </div>
