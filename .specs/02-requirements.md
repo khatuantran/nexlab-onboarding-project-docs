@@ -31,26 +31,29 @@ Mỗi FR có:
 
 ## FR Summary Table
 
-| ID                                                            | Area    | Summary                                                   | Priority | Maps to                        |
-| ------------------------------------------------------------- | ------- | --------------------------------------------------------- | -------- | ------------------------------ |
-| [FR-AUTH-001](#fr-auth-001--emailpassword-auth)               | Auth    | Email + password login/logout, session cookie             | P0       | US-001, US-002, US-003         |
-| [FR-PROJ-001](#fr-proj-001--project-crud-minimal)             | Project | Admin tạo project + liệt kê non-archived                  | P0       | US-002, US-004                 |
-| [FR-PROJ-002](#fr-proj-002--project-metadata-edit--archive)   | Project | Admin rename metadata + archive soft-delete               | P0       | US-004, US-013                 |
-| [FR-FEAT-001](#fr-feat-001--feature-crud-within-project)      | Feature | Tạo / sửa / list / archive feature trong project          | P0       | US-002, US-008, US-012, US-013 |
-| [FR-FEAT-002](#fr-feat-002--5-section-template)               | Feature | Feature có template cố định 5 section                     | P0       | US-001, US-002, US-003         |
-| [FR-FEAT-003](#fr-feat-003--per-section-multi-author)         | Feature | Multi-author theo từng section                            | P0       | US-002, US-003                 |
-| [FR-EMBED-001](#fr-embed-001--external-link-embed)            | Embed   | Paste Jira/Figma/GitHub URL → preview card                | P0       | US-003                         |
-| [FR-SEARCH-001](#fr-search-001--full-text-search)             | Search  | FTS feature theo title + section content                  | P0       | US-001                         |
-| [FR-SEARCH-002](#fr-search-002--multi-entity-search)          | Search  | Search grouped: project/feature/section/author/upload     | P1       | US-005                         |
-| [FR-SEARCH-003](#fr-search-003--search-filters)               | Search  | Filter section-type / time / author / status              | P1       | US-005                         |
-| [FR-SEARCH-004](#fr-search-004--query-semantics)              | Search  | Prefix + accent-insensitive + fuzzy match semantics       | P1       | US-006                         |
-| [FR-READ-001](#fr-read-001--project-landing--feature-index)   | Read    | Project landing page có feature index                     | P0       | US-001                         |
-| [FR-UPLOAD-001](#fr-upload-001--image-upload-for-screenshots) | Upload  | Upload image file → volume, trả stable URL                | P0       | US-003                         |
-| [FR-USER-001](#fr-user-001--user-list-endpoint)               | User    | List user (read) cho author filter dropdown               | P1       | US-005, US-007                 |
-| [FR-USER-002](#fr-user-002--admin-user-lifecycle)             | User    | Admin invite / edit role / archive / reset password       | P1       | US-007                         |
-| [FR-USER-003](#fr-user-003--self-service-profile-management)  | User    | View / edit displayName / change password / avatar        | P1       | US-009, US-010                 |
-| [FR-PROJ-003](#fr-proj-003--contributors-derivation)          | Project | Derive top contributors per project/feature from edits    | P1       | US-011                         |
-| [FR-LINK-001](#fr-link-001--external-repo--pr-url-linking)    | Project | Project repoUrl + Feature prUrl (nullable, click-through) | P1       | US-013                         |
+| ID                                                                   | Area    | Summary                                                     | Priority | Maps to                        |
+| -------------------------------------------------------------------- | ------- | ----------------------------------------------------------- | -------- | ------------------------------ |
+| [FR-AUTH-001](#fr-auth-001--emailpassword-auth)                      | Auth    | Email + password login/logout, session cookie               | P0       | US-001, US-002, US-003         |
+| [FR-PROJ-001](#fr-proj-001--project-crud-minimal)                    | Project | Admin tạo project + liệt kê non-archived                    | P0       | US-002, US-004                 |
+| [FR-PROJ-002](#fr-proj-002--project-metadata-edit--archive)          | Project | Admin rename metadata + archive soft-delete                 | P0       | US-004, US-013                 |
+| [FR-FEAT-001](#fr-feat-001--feature-crud-within-project)             | Feature | Tạo / sửa / list / archive feature trong project            | P0       | US-002, US-008, US-012, US-013 |
+| [FR-FEAT-002](#fr-feat-002--5-section-template)                      | Feature | Feature có template cố định 5 section                       | P0       | US-001, US-002, US-003         |
+| [FR-FEAT-003](#fr-feat-003--per-section-multi-author)                | Feature | Multi-author theo từng section                              | P0       | US-002, US-003                 |
+| [FR-EMBED-001](#fr-embed-001--external-link-embed)                   | Embed   | Paste Jira/Figma/GitHub URL → preview card                  | P0       | US-003                         |
+| [FR-SEARCH-001](#fr-search-001--full-text-search)                    | Search  | FTS feature theo title + section content                    | P0       | US-001                         |
+| [FR-SEARCH-002](#fr-search-002--multi-entity-search)                 | Search  | Search grouped: project/feature/section/author/upload       | P1       | US-005                         |
+| [FR-SEARCH-003](#fr-search-003--search-filters)                      | Search  | Filter section-type / time / author / status                | P1       | US-005                         |
+| [FR-SEARCH-004](#fr-search-004--query-semantics)                     | Search  | Prefix + accent-insensitive + fuzzy match semantics         | P1       | US-006                         |
+| [FR-READ-001](#fr-read-001--project-landing--feature-index)          | Read    | Project landing page có feature index                       | P0       | US-001                         |
+| [FR-UPLOAD-001](#fr-upload-001--image-upload-for-screenshots)        | Upload  | Upload image file → volume, trả stable URL                  | P0       | US-003                         |
+| [FR-USER-001](#fr-user-001--user-list-endpoint)                      | User    | List user (read) cho author filter dropdown                 | P1       | US-005, US-007                 |
+| [FR-USER-002](#fr-user-002--admin-user-lifecycle)                    | User    | Admin invite / edit role / archive / reset password         | P1       | US-007                         |
+| [FR-USER-003](#fr-user-003--self-service-profile-management)         | User    | View / edit displayName / change password / avatar          | P1       | US-009, US-010                 |
+| [FR-PROJ-003](#fr-proj-003--contributors-derivation)                 | Project | Derive top contributors per project/feature from edits      | P1       | US-011                         |
+| [FR-LINK-001](#fr-link-001--external-repo--pr-url-linking)           | Project | Project repoUrl + Feature prUrl (nullable, click-through)   | P1       | US-013                         |
+| [FR-STATS-001](#fr-stats-001--workspace-aggregate-stats)             | Stats   | Workspace stats endpoint + per-project `filledSectionCount` | P1       | US-014                         |
+| [FR-PROFILE-001](#fr-profile-001--per-user-projection-stats--recent) | User    | `/me/stats` + `/me/recent-projects` projections             | P1       | US-015, US-016                 |
+| [FR-ACTIVITY-001](#fr-activity-001--user-activity-feed)              | User    | `/me/activity` cursor-paginated feed of own section edits   | P1       | US-017                         |
 
 Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 
@@ -439,6 +442,70 @@ Priority: **P0** = must-have v1. P1/P2 deferred sẽ list ở cuối file.
 - FE: button renders as `<a href={url} target="_blank" rel="noopener noreferrer">` when URL set; disabled `<button>` with tooltip "Chưa link repo / PR" when null. No layout shift.
 - Response shape: `repoUrl` / `prUrl` appear in `ProjectResponse`, `ProjectSummary`, `FeatureResponse`, `FeatureListItem`.
 - Out of scope: domain whitelist, GitHub API fetch, per-section PR links, branch/commit links.
+
+---
+
+## FR-STATS-001 — Workspace aggregate stats
+
+**Statement (Event-driven + Ubiquitous):**
+
+- When an authenticated user fetches `GET /api/v1/workspace/stats`, the system shall return `{ projectCount, featuresDocumented, contributorsActive }` where `featuresDocumented` counts features whose 5 sections all have non-empty bodies, and `contributorsActive` counts distinct `sections.updated_by` within the last 30 days.
+- The system shall exclude archived projects and archived features from all three counts.
+- The system shall include a `filledSectionCount: number` on every `ProjectSummary` returned by `GET /api/v1/projects`, summing non-empty sections across that project's non-archived features.
+
+**Rationale**: CR-006 v4 HomePage hero ships 4 hardcoded stat tiles (`Contributors=8`, `Onboard TB=2.3h`) and a "Đủ doc" filter chip wired to `featureCount > 0` placeholder. Real numbers come from `sections.updated_at` and `sections.body` — no new schema. `onboardingMedianHours` dropped per 2026-05-16 triage (no DB signal).
+
+**Maps to**: US-014. Personas: P1/P2/P3.
+
+**Acceptance hints**:
+
+- 30-day active window hardcoded v1.
+- No caching v1; compute on-demand (revisit when N > 100 projects).
+- Hero grid renders **3 tiles** post-US-014 (4th tile dropped).
+- "Đủ doc" filter chip uses `filledSectionCount === featureCount * 5 && featureCount > 0`.
+
+---
+
+## FR-PROFILE-001 — Per-user projection (stats + recent)
+
+**Statement (Event-driven + Ubiquitous):**
+
+- When an authenticated user fetches `GET /api/v1/me/stats`, the system shall return `{ projectsTouched, featuresDocumented, totalEdits, sectionsCompleted }` aggregated from rows where `sections.updated_by = sessionUserId`.
+- When an authenticated user fetches `GET /api/v1/me/recent-projects?limit=N`, the system shall return projects the caller has touched, sorted by `MAX(sections.updated_at)` descending, capped at `min(N, 20)` with default 4.
+- The system shall exclude archived projects and archived features from both projections.
+
+**Rationale**: CR-006 v4 ProfilePage ships hardcoded `StatsCard` (`4 / 18 / 42 / 12`) and `RecentProjectsCard` (4 fake rows). Same data primitive as FR-PROJ-003 (US-011); inverted grouping (by project per-user instead of by project per-everyone).
+
+**Maps to**: US-015, US-016.
+
+**Acceptance hints**:
+
+- `totalEdits` = count of current section rows where `updated_by = me` (no history v1; PUT overwrites).
+- `featuresDocumented` requires the feature to have all 5 sections non-empty (any author), not just the caller's.
+- Recent-projects row shape: `{ slug, name, lastTouchedAt, sectionsTouched }`. No `pct` v1 — that would require a join with the workspace-wide `filledSectionCount`.
+- Empty-user shapes: `{0,0,0,0}` / `[]`.
+
+---
+
+## FR-ACTIVITY-001 — User activity feed
+
+**Statement (Event-driven + Optional):**
+
+- When an authenticated user fetches `GET /api/v1/me/activity?limit=N&cursor=<iso>`, the system shall return `{ items: ActivityItem[], nextCursor: string | null }` listing section edits by the caller sorted by `updated_at` descending.
+- `ActivityItem` includes `{ id, sectionType, featureSlug, featureTitle, projectSlug, projectName, updatedAt, verbCode: 'updated' }`.
+- The system shall paginate via cursor: clients send the `updated_at` of the last received item; the system returns items with `updated_at < cursor` up to `limit`. Default limit 20, max 50.
+- The system shall exclude archived projects / archived features.
+
+**Rationale**: ProfilePage `ActivityFeedCard` + FeatureDetail `ActivityRail`'s "Xem tất cả" both wire to a placeholder (toast / 4 fake rows). v1 only tracks current section state — `verbCode` fixed `'updated'`. Feature-scoped pagination unnecessary because each feature has ≤ 5 section rows; drawer reuses already-loaded sections instead of a new endpoint.
+
+**Maps to**: US-017.
+
+**Acceptance hints**:
+
+- Cursor format: ISO 8601 UTC timestamp string.
+- Items returned + 1 over-fetch trick: if rows.length > limit, pop last and set `nextCursor = popped.updatedAt`.
+- Empty feed: `{ items: [], nextCursor: null }`.
+- Invalid limit (`< 1` / `> 50` / non-numeric) → 400 `VALIDATION_ERROR`.
 
 ---
 
