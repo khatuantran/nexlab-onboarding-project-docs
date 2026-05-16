@@ -39,7 +39,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useMe } from "@/queries/auth";
 import { useChangePassword, useUpdateMyProfile, useUploadAvatar } from "@/queries/me";
+import { useMeStats, useMyActivity, useMyRecentProjects } from "@/queries/stats";
 import { cn } from "@/lib/cn";
+import { Link } from "react-router-dom";
+import { formatRelativeVi } from "@/lib/relativeTime";
 
 /**
  * `/profile` — self-service profile page (US-009). Three section card:
@@ -303,14 +306,15 @@ function SkillsCard(): JSX.Element {
 
 /* ---------- Stats 4-tile card ---------- */
 
-const STATS = [
-  { icon: FolderOpen, v: "4", l: "Projects", c: "#F07613" },
-  { icon: FileIcon, v: "18", l: "Features doc", c: "#8B5CF6" },
-  { icon: EditIcon, v: "42", l: "Lần chỉnh sửa", c: "#3B82F6" },
-  { icon: CheckIcon, v: "12", l: "Sections xong", c: "#10B981" },
-];
+const STATS_META = [
+  { key: "projectsTouched", icon: FolderOpen, l: "Projects", c: "#F07613" },
+  { key: "featuresDocumented", icon: FileIcon, l: "Features doc", c: "#8B5CF6" },
+  { key: "totalEdits", icon: EditIcon, l: "Lần chỉnh sửa", c: "#3B82F6" },
+  { key: "sectionsCompleted", icon: CheckIcon, l: "Sections xong", c: "#10B981" },
+] as const;
 
 function StatsCard(): JSX.Element {
+  const { data: stats } = useMeStats();
   return (
     <section
       aria-labelledby="stats-title"
@@ -326,27 +330,30 @@ function StatsCard(): JSX.Element {
         <h3 id="stats-title">Thống kê đóng góp</h3>
       </span>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {STATS.map((s) => (
-          <div
-            key={s.l}
-            className="rounded-xl border p-[14px_12px] text-center"
-            style={{ background: `${s.c}1A`, borderColor: `${s.c}40` }}
-          >
-            <span
-              aria-hidden="true"
-              className="mb-2 inline-flex size-8 items-center justify-center rounded-lg"
-              style={{ background: `${s.c}33` }}
+        {STATS_META.map((s) => {
+          const v = stats ? stats[s.key] : null;
+          return (
+            <div
+              key={s.l}
+              className="rounded-xl border p-[14px_12px] text-center"
+              style={{ background: `${s.c}1A`, borderColor: `${s.c}40` }}
             >
-              <s.icon className="size-4" style={{ color: s.c }} />
-            </span>
-            <div className="font-display text-[22px] font-black tracking-[-0.02em] text-foreground">
-              {s.v}
+              <span
+                aria-hidden="true"
+                className="mb-2 inline-flex size-8 items-center justify-center rounded-lg"
+                style={{ background: `${s.c}33` }}
+              >
+                <s.icon className="size-4" style={{ color: s.c }} />
+              </span>
+              <div className="font-display text-[22px] font-black tracking-[-0.02em] text-foreground">
+                {v === null ? "—" : v}
+              </div>
+              <div className="mt-1.5 font-ui text-[11px]/[1.3] font-semibold text-muted-foreground">
+                {s.l}
+              </div>
             </div>
-            <div className="mt-1.5 font-ui text-[11px]/[1.3] font-semibold text-muted-foreground">
-              {s.l}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
@@ -354,14 +361,11 @@ function StatsCard(): JSX.Element {
 
 /* ---------- Recent projects card ---------- */
 
-const RECENT_PROJECTS = [
-  { name: "USthree E2E", tag: "E2E", pct: 80, c: "#F07613" },
-  { name: "E2E Backend", tag: "Backend", pct: 50, c: "#8B5CF6" },
-  { name: "Catalog Search", tag: "Search", pct: 40, c: "#10B981" },
-  { name: "Momo Payment", tag: "Payment", pct: 100, c: "#3B82F6" },
-];
+const RECENT_PALETTE = ["#F07613", "#8B5CF6", "#10B981", "#3B82F6"] as const;
 
 function RecentProjectsCard(): JSX.Element {
+  const { data, isLoading } = useMyRecentProjects(4);
+  const rows = data ?? [];
   return (
     <section
       aria-labelledby="recent-projects-title"
@@ -376,61 +380,70 @@ function RecentProjectsCard(): JSX.Element {
         </span>
         <h3 id="recent-projects-title">Projects tham gia</h3>
       </span>
-      <div className="flex flex-col">
-        {RECENT_PROJECTS.map((p, i) => (
-          <div
-            key={p.name}
-            className={cn(
-              "flex items-center gap-3 py-2.5",
-              i < RECENT_PROJECTS.length - 1 && "border-b border-border",
-            )}
-          >
-            <span
-              aria-hidden="true"
-              className="inline-flex size-9 shrink-0 items-center justify-center rounded-[10px]"
-              style={{ background: `${p.c}26` }}
-            >
-              <FolderOpen className="size-4" style={{ color: p.c }} />
-            </span>
-            <div className="min-w-0 flex-1">
-              <div className="truncate font-ui text-[13px] font-semibold text-foreground">
-                {p.name}
-              </div>
-              <div className="mt-1.5 flex items-center gap-2">
-                <div className="h-1 flex-1 rounded-full bg-muted">
-                  <div
-                    className="h-full rounded-full"
-                    style={{ width: `${p.pct}%`, background: p.c }}
-                  />
+      {!isLoading && rows.length === 0 ? (
+        <p className="font-body text-xs italic text-muted-foreground">
+          Chưa có dự án nào — bắt đầu chỉnh sửa để xuất hiện ở đây.
+        </p>
+      ) : (
+        <div className="flex flex-col">
+          {rows.map((p, i) => {
+            const c = RECENT_PALETTE[i % RECENT_PALETTE.length]!;
+            return (
+              <div
+                key={p.slug}
+                className={cn(
+                  "flex items-center gap-3 py-2.5",
+                  i < rows.length - 1 && "border-b border-border",
+                )}
+              >
+                <Link
+                  to={`/projects/${p.slug}`}
+                  aria-label={`Mở dự án ${p.name}`}
+                  className="inline-flex size-9 shrink-0 items-center justify-center rounded-[10px]"
+                  style={{ background: `${c}26` }}
+                >
+                  <FolderOpen className="size-4" style={{ color: c }} aria-hidden="true" />
+                </Link>
+                <div className="min-w-0 flex-1">
+                  <Link
+                    to={`/projects/${p.slug}`}
+                    className="truncate font-ui text-[13px] font-semibold text-foreground hover:text-primary"
+                  >
+                    {p.name}
+                  </Link>
+                  <div className="mt-1 font-ui text-[11px] text-muted-foreground">
+                    Chỉnh sửa {formatRelativeVi(p.lastTouchedAt)}
+                  </div>
                 </div>
-                <span className="shrink-0 font-ui text-[11px] font-semibold text-muted-foreground">
-                  {p.pct}%
+                <span
+                  className="shrink-0 rounded-md px-2 py-0.5 font-ui text-[11px] font-bold"
+                  style={{ background: `${c}1F`, color: c }}
+                  title="Số section bạn đã chỉnh sửa trong project này"
+                >
+                  {p.sectionsTouched} sect.
                 </span>
               </div>
-            </div>
-            <span
-              className="shrink-0 rounded-md px-2 py-0.5 font-ui text-[11px] font-bold"
-              style={{ background: `${p.c}1F`, color: p.c }}
-            >
-              {p.tag}
-            </span>
-          </div>
-        ))}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 }
 
 /* ---------- Activity feed card ---------- */
 
-const ACTIVITY = [
-  { what: "Thêm Tech notes vào", target: "Feature 1777027304928", time: "12 phút trước" },
-  { what: "Cập nhật User flow ở", target: "USthree E2E 1777027126142", time: "1 giờ trước" },
-  { what: "Đánh dấu hoàn thành", target: "Webhook Momo v2", time: "3 giờ trước" },
-  { what: "Tạo project", target: "Catalog Search", time: "1 ngày trước" },
-];
+const SECTION_LABEL_VI: Record<string, string> = {
+  business: "Nghiệp vụ",
+  "user-flow": "User flow",
+  "business-rules": "Business rules",
+  "tech-notes": "Tech notes",
+  screenshots: "Screenshots",
+};
 
 function ActivityFeedCard(): JSX.Element {
+  const { data, isLoading } = useMyActivity(20);
+  const items = data?.items ?? [];
   return (
     <section
       aria-labelledby="activity-title"
@@ -445,30 +458,46 @@ function ActivityFeedCard(): JSX.Element {
         </span>
         <h3 id="activity-title">Hoạt động gần đây</h3>
       </span>
-      <div className="flex flex-col">
-        {ACTIVITY.map((a, i) => (
-          <div
-            key={i}
-            className={cn(
-              "flex gap-2.5 py-2.5",
-              i < ACTIVITY.length - 1 && "border-b border-border",
-            )}
-          >
-            <span
-              aria-hidden="true"
-              className="mt-1.5 size-1.5 shrink-0 rounded-full bg-green-500"
-            />
-            <div className="flex-1">
-              <span className="font-body text-[13px] leading-[18px] text-muted-foreground">
-                {a.what} <strong className="font-semibold text-primary-700">{a.target}</strong>
-              </span>
-              <div className="mt-1 font-ui text-[11px] font-medium text-muted-foreground">
-                {a.time}
+      {!isLoading && items.length === 0 ? (
+        <p className="font-body text-xs italic text-muted-foreground">
+          Chưa có hoạt động — bắt đầu chỉnh sửa để xuất hiện ở đây.
+        </p>
+      ) : (
+        <div className="flex flex-col">
+          {items.map((a, i) => (
+            <div
+              key={a.id}
+              className={cn(
+                "flex gap-2.5 py-2.5",
+                i < items.length - 1 && "border-b border-border",
+              )}
+            >
+              <span
+                aria-hidden="true"
+                className="mt-1.5 size-1.5 shrink-0 rounded-full bg-green-500"
+              />
+              <div className="flex-1">
+                <span className="font-body text-[13px] leading-[18px] text-muted-foreground">
+                  Cập nhật{" "}
+                  <strong className="font-semibold text-foreground">
+                    {SECTION_LABEL_VI[a.sectionType] ?? a.sectionType}
+                  </strong>{" "}
+                  ở{" "}
+                  <Link
+                    to={`/projects/${a.projectSlug}/features/${a.featureSlug}`}
+                    className="font-semibold text-primary-700 hover:underline"
+                  >
+                    {a.featureTitle}
+                  </Link>
+                </span>
+                <div className="mt-1 font-ui text-[11px] font-medium text-muted-foreground">
+                  {formatRelativeVi(a.updatedAt)}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

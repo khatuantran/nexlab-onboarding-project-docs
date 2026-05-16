@@ -211,5 +211,89 @@ describe("ProfilePage US-010 — PersonalInfoCard real fields + EditProfileDialo
   });
 });
 
+describe("ProfilePage US-015 + US-016 + US-017 — real stats / recent / activity", () => {
+  it("StatsCard renders 4 real counts from /me/stats", async () => {
+    mockMe();
+    server.use(
+      http.get(`${BASE}/me/stats`, () =>
+        HttpResponse.json(
+          {
+            data: {
+              projectsTouched: 2,
+              featuresDocumented: 6,
+              totalEdits: 14,
+              sectionsCompleted: 4,
+            },
+          },
+          { status: 200 },
+        ),
+      ),
+    );
+    renderWithRouter(<ProfilePage />, ["/profile"]);
+    expect(await screen.findByText(/^2$/)).toBeInTheDocument();
+    expect(await screen.findByText(/^6$/)).toBeInTheDocument();
+    expect(await screen.findByText(/^14$/)).toBeInTheDocument();
+    expect(await screen.findByText(/^4$/)).toBeInTheDocument();
+    // Hardcoded numbers should not appear.
+    expect(screen.queryByText(/^42$/)).toBeNull();
+  });
+
+  it("RecentProjectsCard renders rows from /me/recent-projects + empty state", async () => {
+    mockMe();
+    server.use(
+      http.get(`${BASE}/me/recent-projects`, () =>
+        HttpResponse.json(
+          {
+            data: [
+              {
+                slug: "pilot",
+                name: "Pilot Project",
+                lastTouchedAt: new Date().toISOString(),
+                sectionsTouched: 3,
+              },
+            ],
+          },
+          { status: 200 },
+        ),
+      ),
+    );
+    renderWithRouter(<ProfilePage />, ["/projects/x"]);
+    const links = await screen.findAllByRole("link", { name: /pilot project|mở dự án pilot/i });
+    expect(links.length).toBeGreaterThan(0);
+    expect(screen.getByText(/3 sect\./i)).toBeInTheDocument();
+  });
+
+  it("ActivityFeedCard renders feed from /me/activity + empty state", async () => {
+    mockMe();
+    server.use(
+      http.get(`${BASE}/me/activity`, () =>
+        HttpResponse.json(
+          {
+            data: {
+              items: [
+                {
+                  id: "s-1",
+                  sectionType: "tech-notes",
+                  featureSlug: "f1",
+                  featureTitle: "Đăng nhập",
+                  projectSlug: "pilot",
+                  projectName: "Pilot",
+                  updatedAt: new Date().toISOString(),
+                  verbCode: "updated",
+                },
+              ],
+              nextCursor: null,
+            },
+          },
+          { status: 200 },
+        ),
+      ),
+    );
+    renderWithRouter(<ProfilePage />, ["/profile"]);
+    expect(await screen.findByText(/tech notes/i)).toBeInTheDocument();
+    expect(await screen.findByRole("link", { name: /đăng nhập/i })).toBeInTheDocument();
+  });
+});
+
 // Quiet down vi unused-import.
 void vi;

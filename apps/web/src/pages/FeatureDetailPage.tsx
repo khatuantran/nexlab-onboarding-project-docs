@@ -266,7 +266,7 @@ export function FeatureDetailPage(): JSX.Element {
             sections={sections}
           />
         </article>
-        <ActivityRail sections={sections} />
+        <ActivityRail sections={sections} featureTitle={feature.title} />
       </div>
     </main>
   );
